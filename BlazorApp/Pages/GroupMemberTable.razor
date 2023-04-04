@@ -24,14 +24,9 @@
 @code {
     [Parameter]
     public List<GroupMember> GroupMembers { get; set; }
-
-    // private IGroupMemberService GroupMemberService;
     
     protected override async Task OnInitializedAsync()
     {
-        // GroupMemberService = new InMemoryGroupMemberService();
         GroupMembers = GroupMemberService.GetMembers();
     }
-
-
 }
