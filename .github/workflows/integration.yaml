@@ -1,0 +1,24 @@
+name: integration
+on:
+  push:
+  workflow_dispatch:
+jobs:
+  check-build-test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checking out repo
+        uses: actions/checkout@v3
+
+      - name: Setting up SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.0.x'
+
+      - name: Building TestProject1
+        run: dotnet build
+
+      - name: Running tests
+        run: dotnet test
