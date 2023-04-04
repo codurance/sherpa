@@ -8,22 +8,30 @@
 
 <table>
     <thead>
+    <tr>
+        <th>Name</th>
+        <th>Last Name</th>
+        <th>Position</th>
+    </tr>
     </thead>
-    <tbody>
-    @foreach (var currentMember in GroupMembers)
+    @if (GroupMembers is not null)
     {
-        <tr>
-            <td>@currentMember.Name</td>
-            <td>@currentMember.LastName</td>
-            <td>@currentMember.Position</td>
-        </tr>
+        <tbody>
+        @foreach (var currentMember in GroupMembers)
+        {
+            <tr>
+                <td>@currentMember.Name</td>
+                <td>@currentMember.LastName</td>
+                <td>@currentMember.Position</td>
+            </tr>
+        }
+        </tbody>
     }
-    </tbody>
 </table>
 
 @code {
     [Parameter]
-    public List<GroupMember> GroupMembers { get; set; }
+    public List<GroupMember>? GroupMembers { get; set; }
     
     protected override async Task OnInitializedAsync()
     {

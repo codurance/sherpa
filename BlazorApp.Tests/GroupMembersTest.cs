@@ -54,4 +54,45 @@ public class GroupMembersTest
         Assert.Equal(groupMember1.Name, members[0].Children[0].InnerHtml);
         Assert.Equal(groupMember2.Name, members[1].Children[0].InnerHtml);
     }
+
+    [Fact]
+    public void AssertTableHasTheProperHeaders()
+    {
+        _mockGroupMemberService.Setup(m => m.GetMembers())
+            .Returns(new List<GroupMember>{new GroupMember("asdf","qwer","zxcv")});
+        _renderedComponent = _testContext.RenderComponent<GroupMemberTable>();
+
+        var headers = _renderedComponent.FindAll("table>thead>tr>th");
+        Assert.Equal("Name", headers[0].InnerHtml);
+        Assert.Equal("Last Name", headers[1].InnerHtml);
+        Assert.Equal("Position", headers[2].InnerHtml);
+    }
+
+    [Fact]
+    public void AssertTableLoadsWithNullMemberList()
+    {
+        
+        _renderedComponent = _testContext.RenderComponent<GroupMemberTable>();
+
+        var headers = _renderedComponent.FindAll("table>thead>tr>th");
+        Assert.Equal("Name", headers[0].InnerHtml);
+        Assert.Equal("Last Name", headers[1].InnerHtml);
+        Assert.Equal("Position", headers[2].InnerHtml);
+    }
+
+    [Fact]
+    public void AssertTableLoadsWithEmptyMemberList()
+    {
+        _mockGroupMemberService.Setup(m => m.GetMembers())
+            .Returns(Enumerable.Empty<GroupMember>().ToList);
+        _renderedComponent = _testContext.RenderComponent<GroupMemberTable>();
+
+        var headers = _renderedComponent.FindAll("table>thead>tr>th");
+        Assert.Equal("Name", headers[0].InnerHtml);
+        Assert.Equal("Last Name", headers[1].InnerHtml);
+        Assert.Equal("Position", headers[2].InnerHtml);
+    }
+    
+    
+        
 }
