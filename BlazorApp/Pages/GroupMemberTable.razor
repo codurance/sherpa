@@ -1,9 +1,34 @@
 @using BlazorApp.Model
+
+@page "/group-members"
+
 <h3>GroupMemberTable</h3>
 
-
+<table>
+    <thead>
+    </thead>
+    <tbody>
+    @foreach (var currentMember in GroupMembers)
+    {
+        <tr>
+            <td>@currentMember.Name</td>
+            <td>@currentMember.LastName</td>
+            <td>@currentMember.Position</td>
+        </tr>
+    }
+    </tbody>
+</table>
 
 @code {
     [Parameter]
     public List<GroupMember> GroupMembers { get; set; }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        GroupMembers = new List<GroupMember>
+        {
+            new GroupMember("Bob", "Smith", "CEO"),
+            new GroupMember("Tom", "Hardy", "CP"),
+        };
+    }
 }
