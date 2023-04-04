@@ -18,21 +18,36 @@ public class GroupMembersTest
     [Fact]
     public void AssertFirstElementOfTheListShowsTheRightValues()
     {
-        var _groupMember = new GroupMember("Bob","Smith","CEO");
+        var groupMember = new GroupMember("Bob","Smith","CEO");
         _renderedComponent = _testContext.RenderComponent<Pages.GroupMemberTable>(b => 
-            b.Add( e => e.GroupMembers, new List<GroupMember>{_groupMember}));
+            b.Add( e => e.GroupMembers, new List<GroupMember>{groupMember}));
         
-        Assert.Equal(_groupMember.Name,_renderedComponent.Instance.GroupMembers[0].Name);
+        Assert.Equal(groupMember.Name,_renderedComponent.Instance.GroupMembers[0].Name);
     }
 
     [Fact]
     public void AssertLastNameCanBeEmpty()
     {
-        var _groupMember = new GroupMember("Bob",null,"CEO");
+        var groupMember1 = new GroupMember("Bob","Smith","CEO");
+        var groupMember2 = new GroupMember("Tom","Hurdy","CP");
         var renderedComponent = _testContext.RenderComponent<Pages.GroupMemberTable>(b => 
-            b.Add( e => e.GroupMembers, new List<GroupMember>{_groupMember}));
+            b.Add( e => e.GroupMembers, new List<GroupMember>
+            {
+                groupMember1, 
+                groupMember2
+            }));
 
-        Assert.Equal(_groupMember.LastName,renderedComponent.Instance.GroupMembers[0].LastName);
+        var members = renderedComponent.FindAll("table>tbody>tr");
+        Assert.Equal(groupMember1.Name, members[0].Children[0].InnerHtml);
+        
+    }
+
+    [Fact]
+    public void AssertThatGroupMemberRenderedInTheTable()
+    {
+        var groupMember = new GroupMember("Bob",null,"CEO");
+        var renderedComponent = _testContext.RenderComponent<Pages.GroupMemberTable>(b => 
+            b.Add( e => e.GroupMembers, new List<GroupMember>{groupMember}));
     }
     
 }
