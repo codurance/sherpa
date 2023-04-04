@@ -1,4 +1,6 @@
 @using BlazorApp.Model
+@using BlazorApp.Services
+@inject IGroupMemberService GroupMemberService
 
 @page "/group-members"
 
@@ -22,13 +24,14 @@
 @code {
     [Parameter]
     public List<GroupMember> GroupMembers { get; set; }
+
+    // private IGroupMemberService GroupMemberService;
     
     protected override async Task OnInitializedAsync()
     {
-        /*GroupMembers = new List<GroupMember>
-        {
-            new GroupMember("Bob", "Smith", "CEO"),
-            new GroupMember("Tom", "Hardy", "CP"),
-        };*/
+        // GroupMemberService = new InMemoryGroupMemberService();
+        GroupMembers = GroupMemberService.GetMembers();
     }
+
+
 }
