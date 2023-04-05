@@ -1,0 +1,44 @@
+@inject IGroupMemberService GroupMemberService
+
+@page "/group-members"
+@using SherpaFrontEnd.Services
+@using SherpaFrontEnd.Model
+
+<h3>GroupMemberTable</h3>
+
+<table>
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Last Name</th>
+        <th>Position</th>
+    </tr>
+    </thead>
+    @if (GroupMembers is not null)
+    {
+        <tbody>
+        @foreach (var currentMember in GroupMembers)
+        {
+            <tr>
+                <td>@currentMember.Name</td>
+                <td>@currentMember.LastName</td>
+                <td>@currentMember.Position</td>
+            </tr>
+        }
+        </tbody>
+    }
+</table>
+
+@code {
+    [Parameter]
+    public List<GroupMember>? GroupMembers { get; set; }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        GroupMembers = GroupMemberService.GetMembers();
+        if (GroupMembers is not null)
+        {
+            GroupMembers.Sort((m1, m2) => String.Compare(m1.LastName, m2.LastName, StringComparison.Ordinal));
+    
+        }}
+}
