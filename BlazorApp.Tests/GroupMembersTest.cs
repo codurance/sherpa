@@ -45,8 +45,8 @@ public class GroupMembersTest
     [Fact]
     public void AssertMembersRenderedInTheTable()
     {
-        var groupMember1 = new GroupMember("Bob", "Smith", "CEO");
-        var groupMember2 = new GroupMember("Tom", "Hurdy", "CP");
+        var groupMember1 = new GroupMember("Tom", "Hardy", "CP");
+        var groupMember2 = new GroupMember("Bob", "Smith", "CEO");
         _mockGroupMemberService.Setup(m => m.GetMembers()).Returns(new List<GroupMember> { groupMember1,groupMember2 });
         _renderedComponent = _testContext.RenderComponent<GroupMemberTable>();
 
@@ -92,7 +92,23 @@ public class GroupMembersTest
         Assert.Equal("Last Name", headers[1].InnerHtml);
         Assert.Equal("Position", headers[2].InnerHtml);
     }
-    
+
+    [Fact]
+    public void AssertThatListOfMembersInTheAlphabeticalOrder()
+    {
+        var groupMember1 = new GroupMember("Bob", "Smith", "CEO");
+        var groupMember2 = new GroupMember("Tom", "Hardy", "CP");
+        var groupMember3 = new GroupMember("Mike", "Fox", "CP");
+        _mockGroupMemberService.Setup(m => m.GetMembers())
+            .Returns(new List<GroupMember> { groupMember1, groupMember2, groupMember3 });
+        _renderedComponent = _testContext.RenderComponent<GroupMemberTable>();
+
+        var members = _renderedComponent.FindAll("table>tbody>tr");
+        Assert.Equal(groupMember3.LastName, members[0].Children[1].InnerHtml);
+        Assert.Equal(groupMember2.LastName, members[1].Children[1].InnerHtml);
+        Assert.Equal(groupMember1.LastName, members[2].Children[1].InnerHtml);
+
+    }
     
         
 }
