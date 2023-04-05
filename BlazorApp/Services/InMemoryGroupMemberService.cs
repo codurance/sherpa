@@ -9,7 +9,7 @@ public class InMemoryGroupMemberService : IGroupMemberService
         return new List<GroupMember>
         {
             new("Bob", "Smith", "CEO"),
-            new("Tom", "Hurdy", "CP")
+            new("Tom", "Hardy", "CP")
         };
     }
 }
