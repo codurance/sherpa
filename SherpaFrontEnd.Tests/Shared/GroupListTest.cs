@@ -20,7 +20,7 @@ public class GroupListTest
     {
         var group = new Group{Name = "group1"};
         
-        _renderedComponent = _testContext.RenderComponent<GroupList>();
+        _renderedComponent = _testContext.RenderComponent<GroupList>(b => b.Add(b => b.Groups,new List<Group>{group}));
         
         Assert.Equal(group.Name, _renderedComponent.Instance.Groups[0].Name);
     }

@@ -103,6 +103,7 @@ public class GroupMembersTest
             .Returns(new List<GroupMember> { groupMember1, groupMember2, groupMember3 });
         _renderedComponent = _testContext.RenderComponent<GroupMemberTable>();
 
+        //todo: refactor to use Assert.collection
         var members = _renderedComponent.FindAll("table>tbody>tr");
         Assert.Equal(groupMember3.LastName, members[0].Children[1].InnerHtml);
         Assert.Equal(groupMember2.LastName, members[1].Children[1].InnerHtml);
