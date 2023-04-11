@@ -39,13 +39,13 @@ jobs:
 
     - name: Deploy artifact to S3 bucket
       run: |
-        aws s3 cp SherpaBackEnd/sherpa-backend.zip s3://sherpa-source-code-versions/sherpa-backend-1.${{ github.run_attempt }}.zip 
+        aws s3 cp SherpaBackEnd/sherpa-backend.zip s3://sherpa-source-code-versions/sherpa-backend-1.${{ github.run_number }}.zip 
 
     - name: Create application version
       run: |
-        aws elasticbeanstalk create-application-version --application-name Sherpa --version-label 1.${{ github.run_attempt }} --source-bundle S3Bucket="sherpa-source-code-versions",S3Key="sherpa-backend-1.${{ github.run_attempt }}.zip" 
+        aws elasticbeanstalk create-application-version --application-name Sherpa --version-label 1.${{ github.run_number }} --source-bundle S3Bucket="sherpa-source-code-versions",S3Key="sherpa-backend-1.${{ github.run_number }}.zip" 
         
     - name: Update environment
       run: |
-        aws elasticbeanstalk update-environment --environment-name Sherpa-dev --version-label 1.${{ github.run_attempt }}
+        aws elasticbeanstalk update-environment --environment-name Sherpa-dev --version-label 1.${{ github.run_number }}
         
