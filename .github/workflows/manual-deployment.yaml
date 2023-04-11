@@ -22,8 +22,7 @@ jobs:
       run: |
         cd SherpaBackEnd
         dotnet build --configuration Release --no-restore
-        dotnet publish -c Release -f net6.0 -o ./publish \ 
-        --runtime linux-x64 /p:PublishProfile=EBDeploy
+        dotnet publish -c Release -f net6.0 -o ./publish --runtime linux-x64 /p:PublishProfile=EBDeploy 
   
     - name: Zip application
       run: |
@@ -44,11 +43,9 @@ jobs:
 
     - name: Create application version
       run: |
-        aws elasticbeanstalk create-application-version \ 
-        --application-name Sherpa --version-label 1.${{vars.GITHUB_RUN_ATTEMPT}} \
-        --source-bundle S3Bucket="sherpa-source-code-versions",S3Key="sherpa-backend-1.${{vars.GITHUB_RUN_ATTEMPT}}.zip"
-
+        aws elasticbeanstalk create-application-version --application-name Sherpa --version-label 1.${{vars.GITHUB_RUN_ATTEMPT}} --source-bundle S3Bucket="sherpa-source-code-versions",S3Key="sherpa-backend-1.${{vars.GITHUB_RUN_ATTEMPT}}.zip" 
+        
     - name: Update environment
       run: |
-        aws elasticbeanstalk update-environment \ 
-        --environment-name Sherpa-dev --version-label 1.${{vars.GITHUB_RUN_ATTEMPT}}
+        aws elasticbeanstalk update-environment --environment-name Sherpa-dev --version-label 1.${{vars.GITHUB_RUN_ATTEMPT}}
+        
