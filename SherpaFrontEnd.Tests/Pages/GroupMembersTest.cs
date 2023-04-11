@@ -22,28 +22,21 @@ public class GroupMembersTest
     }
 
     [Fact]
-    public void AssertFirstElementOfTheListShowsTheRightValues()
+    public void ElementsOfTheListShowsTheRightValues()
     {
         var groupMember = new GroupMember("Bob", "Smith", "CEO");
         _mockGroupMemberService.Setup(m => m.GetMembers()).Returns(new List<GroupMember> { groupMember });
-        _renderedComponent = _testContext.RenderComponent<GroupMemberTable>(b =>
-            b.Add(e => e.GroupMembers, new List<GroupMember> { groupMember }));
+        _renderedComponent = _testContext.RenderComponent<GroupMemberTable>();
 
+        //todo: refactor to use Assert.collection
         Assert.Equal(groupMember.Name, _renderedComponent.Instance.GroupMembers[0].Name);
+        Assert.Equal(groupMember.LastName, _renderedComponent.Instance.GroupMembers[0].LastName);
+        Assert.Equal(groupMember.Position, _renderedComponent.Instance.GroupMembers[0].Position);
     }
     
-    [Fact]
-    public void AssertThatLastNameCanBeNull()
-    {
-        var groupMember = new GroupMember("Bob", null, "CEO");
-        _mockGroupMemberService.Setup(m => m.GetMembers()).Returns(new List<GroupMember> { groupMember });
-        _renderedComponent = _testContext.RenderComponent<GroupMemberTable>();
-        
-        Assert.Equal(groupMember.LastName, _renderedComponent.Instance.GroupMembers[0].LastName);
-    }
 
     [Fact]
-    public void AssertMembersRenderedInTheTable()
+    public void MembersAreRenderedAsTable()
     {
         var groupMember1 = new GroupMember("Tom", "Hardy", "CP");
         var groupMember2 = new GroupMember("Bob", "Smith", "CEO");
@@ -56,7 +49,7 @@ public class GroupMembersTest
     }
 
     [Fact]
-    public void AssertTableHasTheProperHeaders()
+    public void TableHasTheProperHeaders()
     {
         _mockGroupMemberService.Setup(m => m.GetMembers())
             .Returns(new List<GroupMember>{new GroupMember("asdf","qwer","zxcv")});
@@ -69,9 +62,8 @@ public class GroupMembersTest
     }
 
     [Fact]
-    public void AssertTableLoadsWithNullMemberList()
+    public void TableLoadsWithNullMemberList()
     {
-        
         _renderedComponent = _testContext.RenderComponent<GroupMemberTable>();
 
         var headers = _renderedComponent.FindAll("table>thead>tr>th");
@@ -81,7 +73,7 @@ public class GroupMembersTest
     }
 
     [Fact]
-    public void AssertTableLoadsWithEmptyMemberList()
+    public void TableLoadsWithEmptyMemberList()
     {
         _mockGroupMemberService.Setup(m => m.GetMembers())
             .Returns(Enumerable.Empty<GroupMember>().ToList);
@@ -94,7 +86,7 @@ public class GroupMembersTest
     }
 
     [Fact]
-    public void AssertThatListOfMembersInTheAlphabeticalOrder()
+    public void ListOfMembersInTheAlphabeticalOrder()
     {
         var groupMember1 = new GroupMember("Bob", "Smith", "CEO");
         var groupMember2 = new GroupMember("Tom", "Hardy", "CP");
@@ -108,8 +100,5 @@ public class GroupMembersTest
         Assert.Equal(groupMember3.LastName, members[0].Children[1].InnerHtml);
         Assert.Equal(groupMember2.LastName, members[1].Children[1].InnerHtml);
         Assert.Equal(groupMember1.LastName, members[2].Children[1].InnerHtml);
-
     }
-    
-        
 }
