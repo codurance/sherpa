@@ -1,6 +1,6 @@
-@inject IHttpClientFactory ClientFactory;
+@inject IGroupDataService GroupDataService;
 @using SherpaFrontEnd.Model
-@using System.Text.Json
+@using SherpaFrontEnd.Services
 @page "/groups-view"
 
 <h3>GroupsList</h3>
@@ -19,23 +19,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var client = ClientFactory.CreateClient();
-
-        var request = new HttpRequestMessage(HttpMethod.Get,
-            "https://localhost:7281/groups");
-
-        var response = await client.SendAsync(request);
-
-        if (response.IsSuccessStatusCode)
-        {
-            await using var responseStream = await response.Content.ReadAsStreamAsync();
-            Groups = (List<Group>?) await JsonSerializer.DeserializeAsync<IEnumerable<Group>>(
-                responseStream, 
-                new JsonSerializerOptions{PropertyNameCaseInsensitive = true});
-        }
-        
-        
-
+        Groups = GroupDataService.getGroups().Result;
     }
 
 }

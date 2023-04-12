@@ -27,7 +27,7 @@ public class GroupListTest
     {
         var group = new Group("Group A");
         _mockGroupDataService.Setup(groupService => groupService.getGroups())
-            .Returns(new List<Group> { new Group("Group A") });
+            .Returns(Task.FromResult(new List<Group> { new Group("Group A") }));
         
         _renderedComponent = _testContext.RenderComponent<GroupsList>(b => b.Add(b => b.Groups,new List<Group>{group}));
         
