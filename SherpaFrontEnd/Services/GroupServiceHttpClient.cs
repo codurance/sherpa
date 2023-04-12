@@ -15,8 +15,8 @@ public class GroupServiceHttpClient : IGroupDataService
 
     public List<Group> getGroups()
     {
-        // var response =  HttpClient.GetFromJsonAsync<IEnumerable<Group>>("groups");
-        // return response.Result.ToList();
-        return new List<Group> { new Group("Group A"), new Group("Group B") };
+        var response = HttpClient.GetFromJsonAsync<IEnumerable<Group>>("groups");
+        return response.Result.ToList();
+        // return new List<Group> { new Group("Group A"), new Group("Group B") };
     }
 }

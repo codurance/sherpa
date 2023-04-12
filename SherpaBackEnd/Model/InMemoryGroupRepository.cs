@@ -24,10 +24,6 @@ public class InMemoryGroupRepository : IGroupRepository
         _dataSet.Add(groupWithoutMembers.Id, groupWithoutMembers);
     }
 
-    public InMemoryGroupRepository(DataContext? dataContext)
-    {
-    }
-
     public async Task<IEnumerable<Group>> GetGroups()
     {
         return await Task.FromResult(_dataSet.Values.ToList());
@@ -42,4 +38,6 @@ public class InMemoryGroupRepository : IGroupRepository
     {
         throw new NotImplementedException();
     }
+    
+    
 }

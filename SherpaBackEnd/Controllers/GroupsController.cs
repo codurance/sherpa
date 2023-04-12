@@ -48,6 +48,7 @@ public class GroupsController
         return new OkResult();
     }
 
+    [HttpGet("/groups/{guid:guid}")]
     public async Task<ActionResult<Group>> GetGroupAsync(Guid guid)
     {
         var group = await _groupRepository.GetGroup(guid);
