@@ -19,7 +19,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Groups = GroupDataService.getGroups().Result;
+        Groups = await GroupDataService.getGroups();
     }
 
 }
