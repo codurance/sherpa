@@ -16,14 +16,22 @@ public class GroupsController
     }
 
     [HttpGet("/groups")]
-    public ActionResult<IEnumerable<GroupDTO>> getGroups()
+    
+    public async Task<ActionResult<IEnumerable<GroupDTO>>> getGroups()
     {
-        List<GroupDTO> groups = _groupRepository.getGroups();
-        if (groups.Count == 0)
+        IEnumerable<GroupDTO> groups = await _groupRepository.getGroups();
+        if (!groups.Any())
         {
             return new NotFoundResult();
         }
         return new OkObjectResult(groups);
+    }
+
+    [HttpPost("/groups")]
+    public ActionResult<GroupDTO> addGroup(GroupDTO group)
+    {
+        _groupRepository.AddGroup(group);
+        return new OkResult();
     }
 
 }

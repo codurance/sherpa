@@ -1,3 +1,6 @@
+using SherpaBackEnd.Helpers;
+using SherpaBackEnd.Model;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -9,6 +12,10 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
+builder.Services.AddDbContext<DataContext>();
+builder.Services.AddSingleton<DataContext>();
+builder.Services.AddSingleton<IGroupRepository, InMemoryGroupRepository>();
+
 
 var app = builder.Build();
 
@@ -20,7 +27,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseSwagger();
 app.UseSwaggerUI();
-
 app.UseHttpsRedirection();
 
 app.UseBlazorFrameworkFiles();
@@ -30,7 +36,6 @@ app.UseRouting();
 app.UseCors("CorsPolicy");
 
 app.UseAuthorization();
-
 app.MapRazorPages();
 app.MapControllers();
 app.MapFallbackToFile("index.html");

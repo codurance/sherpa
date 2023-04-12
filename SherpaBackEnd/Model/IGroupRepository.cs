@@ -1,8 +1,12 @@
 using SherpaBackEnd.Dtos;
+using SherpaBackEnd.Helpers;
 
 namespace SherpaBackEnd.Model;
 
 public interface IGroupRepository
 {
-    List<GroupDTO> getGroups();
+
+    Task<IEnumerable<GroupDTO>> getGroups();
+
+    void AddGroup(GroupDTO group);
 }
