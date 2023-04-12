@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -67,5 +68,16 @@ public class GroupsControllerTest
         var okObjectResult = Assert.IsType<OkObjectResult>(actionResult.Result);
         var actualGroup = Assert.IsAssignableFrom<Group>(okObjectResult.Value);
         Assert.Empty(actualGroup.Members);
+    }
+
+
+    [Fact]
+    public async Task GetGroupById_RepoDoesntReturnGroup_NotFoundExpected()
+    {
+        _mockGroupRepository.Setup(m => m.GetGroup(It.IsAny<Guid>()))
+            .ReturnsAsync((Group)null);
+        
+        var actionResult = await _groupsController.GetGroup(new Guid());
+        Assert.IsType<NotFoundResult>(actionResult.Result);
     }
 }

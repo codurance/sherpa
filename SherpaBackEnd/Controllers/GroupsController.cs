@@ -51,6 +51,12 @@ public class GroupsController
     public async Task<ActionResult<Group>> GetGroup(Guid guid)
     {
         var group = await _groupRepository.GetGroup(guid);
+
+        if (group is null)
+        {
+            return new NotFoundResult();
+        }
+            
         return new OkObjectResult(group);
     }
 }

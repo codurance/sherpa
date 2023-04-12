@@ -8,6 +8,6 @@ public interface IGroupRepository
 
     Task<IEnumerable<Group>> GetGroups();
 
-    Task<Group> GetGroup(Guid guid);
+    Task<Group?> GetGroup(Guid guid);
     void AddGroup(Group group);
 }
