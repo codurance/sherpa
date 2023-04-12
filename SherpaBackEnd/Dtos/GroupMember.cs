@@ -1,5 +1,5 @@
 namespace SherpaBackEnd.Dtos;
 
-public class GroupMemberDto
+public class GroupMember
 {
 }

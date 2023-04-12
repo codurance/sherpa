@@ -20,9 +20,9 @@ public class DataContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<GroupDTO>().HasData(
-            new GroupDTO("Group A"), new GroupDTO("Group B"));
+        modelBuilder.Entity<Group>().HasData(
+            new Group("Group A"), new Group("Group B"));
     }
 
-    public DbSet<GroupDTO> Groups { get; set; }
+    public DbSet<Group> Groups { get; set; }
 }

@@ -6,7 +6,8 @@ namespace SherpaBackEnd.Model;
 public interface IGroupRepository
 {
 
-    Task<IEnumerable<GroupDTO>> getGroups();
+    Task<IEnumerable<Group>> GetGroups();
 
-    void AddGroup(GroupDTO group);
+    Task<Group> GetGroup(Guid guid);
+    void AddGroup(Group group);
 }

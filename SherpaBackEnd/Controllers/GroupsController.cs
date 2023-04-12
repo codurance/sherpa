@@ -18,12 +18,12 @@ public class GroupsController
 
     [HttpGet("/groups")]
     
-    public async Task<ActionResult<IEnumerable<GroupDTO>>> GetGroups()
+    public async Task<ActionResult<IEnumerable<Group>>> GetGroups()
     {
-        IEnumerable<GroupDTO> groups = new List<GroupDTO>();
+        IEnumerable<Group> groups = new List<Group>();
         try
         { 
-            groups = await _groupRepository.getGroups();
+            groups = await _groupRepository.GetGroups();
         }
         catch(RepositoryException repositoryException)
         {
@@ -42,10 +42,15 @@ public class GroupsController
     }
 
     [HttpPost("/groups")]
-    public ActionResult<GroupDTO> AddGroup(GroupDTO group)
+    public ActionResult<Group> AddGroup(Group group)
     {
         _groupRepository.AddGroup(group);
         return new OkResult();
     }
 
+    public async Task<ActionResult<Group>> GetGroup(Guid guid)
+    {
+        var group = await _groupRepository.GetGroup(guid);
+        return new OkObjectResult(group);
+    }
 }

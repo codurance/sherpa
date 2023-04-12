@@ -13,12 +13,17 @@ public class InMemoryGroupRepository : IGroupRepository
         _dataContext = dataContext;
     }
 
-    public async Task<IEnumerable<GroupDTO>> getGroups()
+    public async Task<IEnumerable<Group>> GetGroups()
     {
         return _dataContext.Groups.AsEnumerable().ToArray();
     }
 
-    public void AddGroup(GroupDTO group)
+    public Task<Group> GetGroup(Guid guid)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void AddGroup(Group group)
     {
         _dataContext.Groups.Add(group);
         _dataContext.SaveChanges();
