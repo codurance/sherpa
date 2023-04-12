@@ -11,13 +11,13 @@ public class InMemoryGroupRepository : IGroupRepository
     {
         _dataSet = new Dictionary<Guid, Group>();
         
-        var groupWithMembers = new Group();
-        var groupWithoutMembers = new Group();
+        var groupWithMembers = new Group("Group A");
+        var groupWithoutMembers = new Group("Group B");
         groupWithMembers.Members = new List<GroupMember>
         {
-            new GroupMember(),
-            new GroupMember(),
-            new GroupMember()
+            new (),
+            new (),
+            new ()
         };
 
         _dataSet.Add(groupWithMembers.Id, groupWithMembers);

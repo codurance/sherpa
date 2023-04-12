@@ -35,7 +35,7 @@ public class GroupsControllerTest
     public async Task GetGroups_RepoReturnsList_OkExpected()
     {
         _mockGroupRepository.Setup(repo => repo.GetGroups())
-            .ReturnsAsync(new List<Group>{new(),new()});
+            .ReturnsAsync(new List<Group>{new("Group A"),new("Group B")});
 
         var actionResult = await _groupsController.GetGroupsAsync();
         var objectResult = Assert.IsType<OkObjectResult>(actionResult.Result);
@@ -59,7 +59,7 @@ public class GroupsControllerTest
     [Fact]
     public async Task GetGroupById_RepoReturnsEmptyGroup_OkExpected()
     {
-        var expectedGroup = new Group();
+        var expectedGroup = new Group("Group");
         var guid = expectedGroup.Id;
         
         _mockGroupRepository.Setup(m => m.GetGroup(guid)).ReturnsAsync(expectedGroup);

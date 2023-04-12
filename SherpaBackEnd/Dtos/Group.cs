@@ -6,9 +6,11 @@ public class Group
 {
     public Guid Id { get; }
     public IEnumerable<GroupMember> Members { get; set; } = new List<GroupMember>();
+    public string Name { get; set; }
 
-    public Group()
+    public Group(string name)
     {
         Id = Guid.NewGuid();
+        Name = name;
     }
 }
