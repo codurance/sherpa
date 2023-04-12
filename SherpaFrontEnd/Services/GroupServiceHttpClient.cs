@@ -13,9 +13,9 @@ public class GroupServiceHttpClient : IGroupDataService
         HttpClient = httpClient;
     }
 
-    public List<Group> getGroups()
+    public List<Group>? getGroups()
     {
-        var response = HttpClient.GetFromJsonAsync<IEnumerable<Group>>("groups");
+        var response = HttpClient.GetFromJsonAsync<IEnumerable<Group>>("https://localhost:7281/groups");
         return response.Result.ToList();
         // return new List<Group> { new Group("Group A"), new Group("Group B") };
     }

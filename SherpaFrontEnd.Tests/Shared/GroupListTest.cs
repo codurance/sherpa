@@ -29,8 +29,8 @@ public class GroupListTest
         _mockGroupDataService.Setup(groupService => groupService.getGroups())
             .Returns(new List<Group> { new Group("Group A") });
         
-        _renderedComponent = _testContext.RenderComponent<GroupsList>(b => b.Add(b => b.groups,new List<Group>{group}));
+        _renderedComponent = _testContext.RenderComponent<GroupsList>(b => b.Add(b => b.Groups,new List<Group>{group}));
         
-        Assert.Equal(group.Name, _renderedComponent.Instance.groups[0].Name);
+        Assert.Equal(group.Name, _renderedComponent.Instance.Groups[0].Name);
     }
 }

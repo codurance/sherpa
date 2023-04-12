@@ -10,6 +10,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddHttpClient("SherpaBackEnd", client =>
     client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
 
+builder.Services.AddHttpClient();
 builder.Services.AddScoped<IGroupMemberService, InMemoryGroupMemberService>();
 builder.Services.AddScoped<IGroupDataService, GroupServiceHttpClient>();
 

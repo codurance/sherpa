@@ -4,5 +4,5 @@ namespace SherpaFrontEnd.Services;
 
 public interface IGroupDataService
 {
-    public List<Group> getGroups();
+    public List<Group>? getGroups();
 }

@@ -1,13 +1,13 @@
-@inject IGroupDataService GroupDataService;
+@inject IHttpClientFactory ClientFactory;
 @using SherpaFrontEnd.Model
-@using SherpaFrontEnd.Services
-@page "/groups"
+@using System.Text.Json
+@page "/groups-view"
 
 <h3>GroupsList</h3>
 
-@if (groups is not null)
+@if (Groups is not null)
 {
-    @foreach (var group in groups)
+    @foreach (var group in Groups)
     {
         <li>@group.Name</li>
     }
@@ -15,11 +15,27 @@
 
 @code {
     [Parameter]
-    public List<Group> groups { get; set; }
+    public List<Group>? Groups { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        groups = GroupDataService.getGroups();
+        var client = ClientFactory.CreateClient();
+
+        var request = new HttpRequestMessage(HttpMethod.Get,
+            "https://localhost:7281/groups");
+
+        var response = await client.SendAsync(request);
+
+        if (response.IsSuccessStatusCode)
+        {
+            await using var responseStream = await response.Content.ReadAsStreamAsync();
+            Groups = (List<Group>?) await JsonSerializer.DeserializeAsync<IEnumerable<Group>>(
+                responseStream, 
+                new JsonSerializerOptions{PropertyNameCaseInsensitive = true});
+        }
+        
+        
+
     }
 
 }
