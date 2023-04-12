@@ -6,15 +6,21 @@ namespace SherpaBackEnd.Model;
 public class InMemoryGroupRepository : IGroupRepository
 {
 
-    private DataContext _dataContext;
+    private DataContext? _dataContext;
 
-    public InMemoryGroupRepository(DataContext dataContext)
+    public InMemoryGroupRepository()
+    {
+        _dataContext = null;
+    }
+
+    public InMemoryGroupRepository(DataContext? dataContext)
     {
         _dataContext = dataContext;
     }
 
     public async Task<IEnumerable<Group>> GetGroups()
     {
+        throw new NotImplementedException();
         return _dataContext.Groups.AsEnumerable().ToArray();
     }
 

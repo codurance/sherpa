@@ -27,7 +27,7 @@ public class GroupsControllerTest
         _mockGroupRepository.Setup(repo => repo.GetGroups())
             .ReturnsAsync(new List<Group>());
 
-        var actionResult = await _groupsController.GetGroups();
+        var actionResult = await _groupsController.GetGroupsAsync();
         Assert.IsType<NotFoundResult>(actionResult.Result);
     }
 
@@ -37,7 +37,7 @@ public class GroupsControllerTest
         _mockGroupRepository.Setup(repo => repo.GetGroups())
             .ReturnsAsync(new List<Group>{new("Group A"),new("Group B")});
 
-        var actionResult = await _groupsController.GetGroups();
+        var actionResult = await _groupsController.GetGroupsAsync();
         var objectResult = Assert.IsType<OkObjectResult>(actionResult.Result);
         var groups = Assert.IsAssignableFrom<IEnumerable<Group>>(objectResult.Value);
         Assert.Equal(2,groups.Count());
@@ -49,7 +49,7 @@ public class GroupsControllerTest
         var dbException = new RepositoryException("Couldn't connect to the database");
         _mockGroupRepository.Setup(repo => repo.GetGroups())
             .ThrowsAsync(dbException);
-        var actionResult = await _groupsController.GetGroups();
+        var actionResult = await _groupsController.GetGroupsAsync();
 
         var objectResult = Assert.IsType<ObjectResult>(actionResult.Result);
         Assert.Equal(StatusCodes.Status500InternalServerError, objectResult.StatusCode);
@@ -63,7 +63,7 @@ public class GroupsControllerTest
         var guid = expectedGroup.Id;
         
         _mockGroupRepository.Setup(m => m.GetGroup(guid)).ReturnsAsync(expectedGroup);
-        var actionResult = await _groupsController.GetGroup(guid);
+        var actionResult = await _groupsController.GetGroupAsync(guid);
 
         var okObjectResult = Assert.IsType<OkObjectResult>(actionResult.Result);
         var actualGroup = Assert.IsAssignableFrom<Group>(okObjectResult.Value);
@@ -77,7 +77,7 @@ public class GroupsControllerTest
         _mockGroupRepository.Setup(m => m.GetGroup(It.IsAny<Guid>()))
             .ReturnsAsync((Group)null);
         
-        var actionResult = await _groupsController.GetGroup(new Guid());
+        var actionResult = await _groupsController.GetGroupAsync(new Guid());
         Assert.IsType<NotFoundResult>(actionResult.Result);
     }
 }

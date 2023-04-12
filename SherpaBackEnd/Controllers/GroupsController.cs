@@ -18,7 +18,7 @@ public class GroupsController
 
     [HttpGet("/groups")]
     
-    public async Task<ActionResult<IEnumerable<Group>>> GetGroups()
+    public async Task<ActionResult<IEnumerable<Group>>> GetGroupsAsync()
     {
         IEnumerable<Group> groups = new List<Group>();
         try
@@ -48,7 +48,7 @@ public class GroupsController
         return new OkResult();
     }
 
-    public async Task<ActionResult<Group>> GetGroup(Guid guid)
+    public async Task<ActionResult<Group>> GetGroupAsync(Guid guid)
     {
         var group = await _groupRepository.GetGroup(guid);
 
