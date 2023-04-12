@@ -11,5 +11,6 @@ builder.Services.AddHttpClient("SherpaBackEnd", client =>
     client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
 
 builder.Services.AddScoped<IGroupMemberService, InMemoryGroupMemberService>();
+builder.Services.AddScoped<IGroupDataService, GroupServiceHttpClient>();
 
 await builder.Build().RunAsync();

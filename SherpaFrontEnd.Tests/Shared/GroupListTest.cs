@@ -1,6 +1,7 @@
 ﻿using Bunit;
 using SherpaFrontEnd.Model;
 using SherpaFrontEnd.Shared;
+using SherpaFrontEnd.Pages;
 
 namespace BlazorApp.Tests.Shared;
 
@@ -8,7 +9,7 @@ public class GroupListTest
 {
 
     private TestContext _testContext;
-    private IRenderedComponent<GroupList> _renderedComponent;
+    private IRenderedComponent<GroupsList> _renderedComponent;
 
     public GroupListTest()
     {
@@ -18,10 +19,10 @@ public class GroupListTest
     [Fact]
     public void AsssertThatListOfGroupsIsRendered()
     {
-        var group = new Group{Name = "group1"};
+        var group = new Group("group1");
         
-        _renderedComponent = _testContext.RenderComponent<GroupList>(b => b.Add(b => b.Groups,new List<Group>{group}));
+        _renderedComponent = _testContext.RenderComponent<GroupsList>(b => b.Add(b => b.groups,new List<Group>{group}));
         
-        Assert.Equal(group.Name, _renderedComponent.Instance.Groups[0].Name);
+        Assert.Equal(group.Name, _renderedComponent.Instance.groups[0].Name);
     }
 }

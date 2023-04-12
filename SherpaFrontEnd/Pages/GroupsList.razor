@@ -1,0 +1,24 @@
+@inject IGroupDataService GroupDataService;
+@using SherpaFrontEnd.Model
+@using SherpaFrontEnd.Services
+@page "/groups"
+
+<h3>GroupsList</h3>
+
+@if (groups is not null)
+{
+    @foreach (var group in groups)
+    {
+        <li>@group.Name</li>
+    }
+}
+
+@code {
+    public List<Group> groups { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        groups = GroupDataService.getGroups();
+    }
+
+}
