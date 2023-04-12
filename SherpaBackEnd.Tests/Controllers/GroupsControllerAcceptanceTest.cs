@@ -9,7 +9,7 @@ namespace SherpaBackEnd.Tests.Controllers;
 public class GroupsControllerAcceptanceTest
 {
     [Fact]
-    public async Task Foo_test()
+    public async Task GetGroupsReturnCorrectNumberOfGroupsAndMembersInside()
     {
         var inMemoryGroupRepository = new InMemoryGroupRepository();
         var groupsController = new GroupsController(inMemoryGroupRepository);
@@ -18,7 +18,7 @@ public class GroupsControllerAcceptanceTest
         var groupsObjectResult = Assert.IsType<OkObjectResult>(groupsActionResult.Result);
         var groups = Assert.IsAssignableFrom<IEnumerable<Group>>(groupsObjectResult.Value);
         Assert.Equal(2, groups.Count());
-
+        
         var firstGroupId = groups.First().Id;
 
         var singleGroupActionResult = await groupsController.GetGroupAsync(firstGroupId);

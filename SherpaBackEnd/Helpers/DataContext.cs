@@ -21,7 +21,7 @@ public class DataContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Group>().HasData(
-            new Group("Group A"), new Group("Group B"));
+            new Group(), new Group());
     }
 
     public DbSet<Group> Groups { get; set; }

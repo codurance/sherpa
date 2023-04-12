@@ -5,9 +5,9 @@ namespace SherpaBackEnd.Dtos;
 public class Group
 {
     public Guid Id { get; }
-    public IEnumerable<GroupMember> Members { get; } = new List<GroupMember>();
+    public IEnumerable<GroupMember> Members { get; set; } = new List<GroupMember>();
 
-    public Group(string name)
+    public Group()
     {
         Id = Guid.NewGuid();
     }

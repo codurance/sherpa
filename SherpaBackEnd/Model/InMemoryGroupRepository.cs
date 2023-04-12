@@ -5,33 +5,41 @@ namespace SherpaBackEnd.Model;
 
 public class InMemoryGroupRepository : IGroupRepository
 {
-
-    private DataContext? _dataContext;
+    private Dictionary<Guid, Group> _dataSet;
 
     public InMemoryGroupRepository()
     {
-        _dataContext = null;
+        _dataSet = new Dictionary<Guid, Group>();
+        
+        var groupWithMembers = new Group();
+        var groupWithoutMembers = new Group();
+        groupWithMembers.Members = new List<GroupMember>
+        {
+            new GroupMember(),
+            new GroupMember(),
+            new GroupMember()
+        };
+
+        _dataSet.Add(groupWithMembers.Id, groupWithMembers);
+        _dataSet.Add(groupWithoutMembers.Id, groupWithoutMembers);
     }
 
     public InMemoryGroupRepository(DataContext? dataContext)
     {
-        _dataContext = dataContext;
     }
 
     public async Task<IEnumerable<Group>> GetGroups()
     {
-        throw new NotImplementedException();
-        return _dataContext.Groups.AsEnumerable().ToArray();
+        return await Task.FromResult(_dataSet.Values.ToList());
     }
 
-    public Task<Group> GetGroup(Guid guid)
+    public async Task<Group> GetGroup(Guid guid)
     {
-        throw new NotImplementedException();
+        return await Task.FromResult(_dataSet.GetValueOrDefault(guid));
     }
 
     public void AddGroup(Group group)
     {
-        _dataContext.Groups.Add(group);
-        _dataContext.SaveChanges();
+        throw new NotImplementedException();
     }
 }
