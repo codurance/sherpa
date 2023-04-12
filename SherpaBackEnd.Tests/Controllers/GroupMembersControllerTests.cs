@@ -11,8 +11,9 @@ public class GroupMembersControllerTests
     {
         var controller = new GroupMembersController();
         
-
         var actionResult = controller.GetGroupMemberDtos(new Guid());
         Assert.IsType<NotFoundResult>(actionResult.Result);
     }
+    
+    
 }

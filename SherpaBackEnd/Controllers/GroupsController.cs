@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SherpaBackEnd.Dtos;
+using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Model;
 
 namespace SherpaBackEnd.Controllers;
@@ -17,9 +18,22 @@ public class GroupsController
 
     [HttpGet("/groups")]
     
-    public async Task<ActionResult<IEnumerable<GroupDTO>>> getGroups()
+    public async Task<ActionResult<IEnumerable<GroupDTO>>> GetGroups()
     {
-        IEnumerable<GroupDTO> groups = await _groupRepository.getGroups();
+        IEnumerable<GroupDTO> groups = new List<GroupDTO>();
+        try
+        { 
+            groups = await _groupRepository.getGroups();
+        }
+        catch(RepositoryException repositoryException)
+        {
+            var error = new { message = "Internal server error. Try again later" };
+            return new ObjectResult(error)
+            {
+                StatusCode = StatusCodes.Status500InternalServerError
+            };
+        }
+
         if (!groups.Any())
         {
             return new NotFoundResult();
@@ -28,7 +42,7 @@ public class GroupsController
     }
 
     [HttpPost("/groups")]
-    public ActionResult<GroupDTO> addGroup(GroupDTO group)
+    public ActionResult<GroupDTO> AddGroup(GroupDTO group)
     {
         _groupRepository.AddGroup(group);
         return new OkResult();
