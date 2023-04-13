@@ -12,14 +12,25 @@
         <li>@group.Name</li>
     }
 }
+else
+{
+    <h3>Groups not found</h3>
+}
 
 @code {
-    [Parameter]
-    public List<Group>? Groups { get; set; }
+    public List<Group>? Groups { get; private set; }
 
     protected override async Task OnInitializedAsync()
     {
-        Groups = await GroupDataService.getGroups();
+        try
+        {
+            Groups = await GroupDataService.getGroups();
+
+        }
+        catch (HttpRequestException e)
+        {
+            // TODO exception component?
+        }
     }
 
 }

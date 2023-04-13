@@ -14,21 +14,16 @@ public class GroupServiceHttpClient : IGroupDataService
         _clientFactory = httpClientFactory;
     }
 
-    public async Task<List<Group>> getGroups()
+    public async Task<List<Group>?> getGroups()
     {
         var client = _clientFactory.CreateClient();
         var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7281/groups");
         var response = await client.SendAsync(request);
 
-        if (response.IsSuccessStatusCode)
-        {
-            await using var responseStream = await response.Content.ReadAsStreamAsync();
-            var groups = (List<Group>?)await JsonSerializer.DeserializeAsync<IEnumerable<Group>>(
-                responseStream,
-                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-            return groups;
-        }
-
-        return null;
+        response.EnsureSuccessStatusCode();
+        var responseString = await response.Content.ReadAsStringAsync();
+        
+        return JsonSerializer.Deserialize<List<Group>>(
+            responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
     }
 }
