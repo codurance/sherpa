@@ -3,7 +3,7 @@
 @inject IGroupDataService GroupDataService;
 @page "/groups-page"
 
-<GroupsList Groups="@Groups"></GroupsList>
+<GroupsList Groups="@Groups" OnGroupClick="UpdateSelectedGroup"></GroupsList>
 <GroupMemberTable GroupMembers="@SelectedGroupMembers"></GroupMemberTable>
 
 @code {
@@ -15,7 +15,6 @@
     {
         try
         {
-            
             var requestedGroups = await GroupDataService.getGroups();
 
             if (requestedGroups != null)
@@ -33,5 +32,11 @@
         {
             // TODO exception component?
         }
+    }
+    
+    protected void UpdateSelectedGroup(Guid id)
+    {
+        Console.WriteLine("Callback");
+        Console.WriteLine(id);
     }
 }
