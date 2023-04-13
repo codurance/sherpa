@@ -4,16 +4,30 @@
 @page "/groups-page"
 
 <GroupsList Groups="@Groups"></GroupsList>
+<GroupMemberTable GroupMembers="@SelectedGroupMembers"></GroupMemberTable>
 
 @code {
     
     public List<Group>? Groups { get; private set; }
+    public List<GroupMember>? SelectedGroupMembers { get; private set; }
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            Groups = await GroupDataService.getGroups();
+            
+            var requestedGroups = await GroupDataService.getGroups();
+
+            if (requestedGroups != null)
+            {
+                requestedGroups.ForEach(group => group.Members?
+                    .Sort((m1, m2) =>
+                        String.Compare(m1.LastName, m2.LastName, StringComparison.Ordinal)));
+
+                Groups = requestedGroups;
+                SelectedGroupMembers = Groups.First().Members;
+            }
+
         }
         catch (HttpRequestException e)
         {

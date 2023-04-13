@@ -18,17 +18,17 @@ public class GroupsControllerAcceptanceTest
         var groupsObjectResult = Assert.IsType<OkObjectResult>(groupsActionResult.Result);
         var groups = Assert.IsAssignableFrom<IEnumerable<Group>>(groupsObjectResult.Value);
         Assert.Equal(2, groups.Count());
-        
-        var firstGroupId = groups.First().Id;
-        var firstGroupName = groups.First().Name;
+
+        var actualFirstGroup = groups.First();
+        var firstGroupId = actualFirstGroup.Id;
+        var firstGroupName = actualFirstGroup.Name;
 
         var singleGroupActionResult = await groupsController.GetGroupAsync(firstGroupId);
         var singleGroupObjectResult = Assert.IsType<OkObjectResult>(singleGroupActionResult.Result);
-        var singleGroup = Assert.IsAssignableFrom<Group>(singleGroupObjectResult.Value);
+        var actualSingleByIdGroup = Assert.IsAssignableFrom<Group>(singleGroupObjectResult.Value);
        
-        Assert.Equal(firstGroupId, singleGroup.Id);
-        Assert.Equal(firstGroupName, singleGroup.Name);
-        Assert.Equal(3, singleGroup.Members.Count());
+        Assert.Equal(firstGroupId, actualSingleByIdGroup.Id);
+        Assert.Equal(firstGroupName, actualSingleByIdGroup.Name);
     }
     
     

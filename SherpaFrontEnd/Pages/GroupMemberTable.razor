@@ -1,7 +1,4 @@
-@inject IGroupMemberService GroupMemberService
-
 @page "/group-members"
-@using SherpaFrontEnd.Services
 @using SherpaFrontEnd.Model
 
 <h3>GroupMemberTable</h3>
@@ -30,14 +27,6 @@
 </table>
 
 @code {
+    [Parameter]
     public List<GroupMember>? GroupMembers { get; set; }
-    
-    protected override async Task OnInitializedAsync()
-    {
-        GroupMembers = GroupMemberService.GetMembers();
-        if (GroupMembers is not null)
-        {
-            GroupMembers.Sort((m1, m2) => String.Compare(m1.LastName, m2.LastName, StringComparison.Ordinal));
-    
-        }}
 }

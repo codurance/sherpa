@@ -5,8 +5,10 @@ public class Group
     public String Name { get; set; }
     
     public Guid Id { get; }
-
-    public Group(string name)
+    
+    public List<GroupMember>? Members { get; set; }
+    
+public Group(string name)
     {
         Id = Guid.NewGuid();
         Name = name;
