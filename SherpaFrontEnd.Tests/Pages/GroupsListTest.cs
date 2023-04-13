@@ -7,31 +7,43 @@ using SherpaFrontEnd.Services;
 
 namespace BlazorApp.Tests.Pages;
 
-public class GroupsListTest
+public class GroupListTest
 {
-    private readonly TestContext _testContext;
+
+    private TestContext _testContext;
     private IRenderedComponent<GroupsList> _renderedComponent;
-    private readonly Mock<IGroupDataService> _dataService;
+    private Mock<IGroupDataService> _mockGroupDataService;
 
-    public GroupsListTest()
+    public GroupListTest()
     {
-        var groups = new List<Group> { new Group("Group A") };
-
         _testContext = new TestContext();
-        _dataService = new Mock<IGroupDataService>();
-
-        _dataService.Setup(dataService => dataService.getGroups())
-            .Returns(Task.FromResult(groups)!);
-        
-        _testContext.Services.AddScoped(p => _dataService.Object);
+        _mockGroupDataService = new Mock<IGroupDataService>();
+        _testContext.Services.AddScoped(p => _mockGroupDataService.Object);
     }
 
     [Fact]
-    public async Task ListComponentRendersProperly()
+    public void AssertThatListOfGroupsIsRendered()
     {
         var group = new Group("Group A");
+        _mockGroupDataService.Setup(groupService => groupService.getGroups())
+            .Returns(Task.FromResult(new List<Group> { new Group("Group A") }));
+        
         _renderedComponent = _testContext.RenderComponent<GroupsList>();
         
         Assert.Equal(group.Name, _renderedComponent.Instance.Groups[0].Name);
+    }
+
+    [Fact]
+    public async Task GroupAreRenderedAsCheckboxes()
+    {
+        var group = new Group("Group A");
+        _mockGroupDataService.Setup(groupService => groupService.getGroups())
+            .ReturnsAsync(await Task.FromResult(new List<Group> { group }));
+
+        _renderedComponent = _testContext.RenderComponent<GroupsList>();
+
+        var actualGroupInput = _renderedComponent.Find($"input[id='{group.Id.ToString()}']");
+
+        Assert.Equal(group.Id.ToString(), actualGroupInput.Id);
     }
 }

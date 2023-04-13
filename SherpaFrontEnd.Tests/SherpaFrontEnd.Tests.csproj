@@ -29,4 +29,8 @@
       <ProjectReference Include="..\SherpaFrontEnd\SherpaFrontEnd.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Shared" />
+    </ItemGroup>
+
 </Project>
