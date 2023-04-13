@@ -1,7 +1,6 @@
 @inject IGroupDataService GroupDataService;
 @using SherpaFrontEnd.Model
 @using SherpaFrontEnd.Services
-@page "/groups-view"
 
 <h3>GroupsList</h3>
 
@@ -23,18 +22,6 @@ else
 }
 
 @code {
-    public List<Group>? Groups { get; private set; }
-
-    protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            Groups = await GroupDataService.getGroups();
-        }
-        catch (HttpRequestException e)
-        {
-    // TODO exception component?
-        }
-    }
-
+    [Parameter]
+    public List<Group>? Groups { get; set; }
 }
