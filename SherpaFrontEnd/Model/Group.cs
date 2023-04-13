@@ -8,6 +8,7 @@ public class Group
 
     public Group(string name)
     {
+        Id = Guid.NewGuid();
         Name = name;
     }
 }
