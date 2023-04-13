@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using SherpaBackEnd.Dtos;
 using SherpaBackEnd.Exceptions;
@@ -6,6 +7,7 @@ using SherpaBackEnd.Model;
 namespace SherpaBackEnd.Controllers;
 
 [ApiController]
+[Route("[controller]")]
 public class GroupsController
 {
 
@@ -16,7 +18,7 @@ public class GroupsController
         _groupRepository = groupRepository;
     }
 
-    [HttpGet("/groups")]
+    [HttpGet()]
     
     public async Task<ActionResult<IEnumerable<Group>>> GetGroupsAsync()
     {
@@ -41,14 +43,14 @@ public class GroupsController
         return new OkObjectResult(groups);
     }
 
-    [HttpPost("/groups")]
+    [HttpPost()]
     public ActionResult<Group> AddGroup(Group group)
     {
         _groupRepository.AddGroup(group);
         return new OkResult();
     }
 
-    [HttpGet("/groups/{guid:guid}")]
+    [HttpGet("{guid:guid}")]
     public async Task<ActionResult<Group>> GetGroupAsync(Guid guid)
     {
         var group = await _groupRepository.GetGroup(guid);
