@@ -3,12 +3,14 @@
 @inject IGroupDataService GroupDataService;
 @page "/groups-page"
 
-<GroupsList Groups="@Groups" OnGroupClick="UpdateSelectedGroup"></GroupsList>
+<GroupsList Groups="@Groups" OnGroupClick="UpdateSelectedGroup" SelectedGroupId="@SelectedGroupId"></GroupsList>
 <GroupMemberTable GroupMembers="@SelectedGroupMembers"></GroupMemberTable>
 
 @code {
     
     public List<Group>? Groups { get; private set; }
+
+    public Guid SelectedGroupId {  get; private set; }
     public List<GroupMember>? SelectedGroupMembers { get; private set; }
 
     protected override async Task OnInitializedAsync()
@@ -21,10 +23,11 @@
             {
                 requestedGroups.ForEach(group => group.Members?
                     .Sort((m1, m2) =>
-                        String.Compare(m1.LastName, m2.LastName, StringComparison.Ordinal)));
+                        string.Compare(m1.LastName, m2.LastName, StringComparison.Ordinal)));
 
                 Groups = requestedGroups;
                 SelectedGroupMembers = Groups.First().Members;
+                SelectedGroupId = Groups.First().Id;
             }
 
         }
@@ -39,5 +42,6 @@
         Console.WriteLine("Callback");
         Console.WriteLine(id);
         SelectedGroupMembers = Groups.First(group => group.Id.Equals(id)).Members;
+        SelectedGroupId = id;
     }
 }
