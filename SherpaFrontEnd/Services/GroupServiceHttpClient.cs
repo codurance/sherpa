@@ -17,7 +17,7 @@ public class GroupServiceHttpClient : IGroupDataService
     public async Task<List<Group>?> getGroups()
     {
         var client = _clientFactory.CreateClient();
-        var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7281/groups");
+        var request = new HttpRequestMessage(HttpMethod.Get, "http://sherpa-dev.eu-central-1.elasticbeanstalk.com/groups");
         var response = await client.SendAsync(request);
 
         response.EnsureSuccessStatusCode();
