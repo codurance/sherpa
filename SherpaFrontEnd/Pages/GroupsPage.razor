@@ -21,10 +21,6 @@
 
             if (requestedGroups != null)
             {
-                requestedGroups.ForEach(group => group.Members?
-                    .Sort((m1, m2) =>
-                        string.Compare(m1.LastName, m2.LastName, StringComparison.Ordinal)));
-
                 Groups = requestedGroups;
                 SelectedGroupMembers = Groups.First().Members;
                 SelectedGroupId = Groups.First().Id;

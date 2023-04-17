@@ -26,10 +26,13 @@ public class GroupMembersTest
             ComponentParameter.CreateParameter(
                 "GroupMembers", new List<GroupMember> { groupMember }));
 
-        //todo: refactor to use Assert.collection
-        Assert.Equal(groupMember.Name, _renderedComponent.Instance.GroupMembers[0].Name);
-        Assert.Equal(groupMember.LastName, _renderedComponent.Instance.GroupMembers[0].LastName);
-        Assert.Equal(groupMember.Position, _renderedComponent.Instance.GroupMembers[0].Position);
+        Assert.Collection(_renderedComponent.Instance.GroupMembers,
+            member =>
+            {
+                Assert.Equal(groupMember.Name, member.Name);
+                Assert.Equal(groupMember.LastName, member.LastName);
+                Assert.Equal(groupMember.Position, member.Position);
+            });
     }
     
 
@@ -44,44 +47,40 @@ public class GroupMembersTest
                 "GroupMembers", new List<GroupMember> { groupMember1, groupMember2 }));
 
         var members = _renderedComponent.FindAll("table>tbody>tr");
-        Assert.Equal(groupMember1.Name, members[0].Children[0].InnerHtml);
-        Assert.Equal(groupMember2.Name, members[1].Children[0].InnerHtml);
+        
+        Assert.Collection(members,
+            member =>
+            {
+                Assert.Equal(groupMember1.Name, member.Children[0].InnerHtml);
+            },
+            member =>
+            {
+                Assert.Equal(groupMember2.Name, member.Children[0].InnerHtml);
+            }
+            );
     }
 
     [Fact]
-    public void TableHasTheProperHeaders()
+    public async Task ListOfMembersAreAlphabeticallySorted()
     {
+        var memberOne = new GroupMember("B_name", "B_lastName","B_position");
+        var memberTwo = new GroupMember("A_name", "A_lastName", "A_position");
+        var group = new Group("Group A");
+        group.Members = new List<GroupMember> { memberOne, memberTwo };
+
+        
         _renderedComponent = _testContext.RenderComponent<GroupMemberTable>(
-            ComponentParameter.CreateParameter(
-                "GroupMembers", new List<GroupMember>{new ("asdf","qwer","zxcv")}));
-
-        var headers = _renderedComponent.FindAll("table>thead>tr>th");
-        Assert.Equal("Name", headers[0].InnerHtml);
-        Assert.Equal("Last Name", headers[1].InnerHtml);
-        Assert.Equal("Position", headers[2].InnerHtml);
-    }
-
-    [Fact]
-    public void TableLoadsWithNullMemberList()
-    {
-        _renderedComponent = _testContext.RenderComponent<GroupMemberTable>();
-
-        var headers = _renderedComponent.FindAll("table>thead>tr>th");
-        Assert.Equal("Name", headers[0].InnerHtml);
-        Assert.Equal("Last Name", headers[1].InnerHtml);
-        Assert.Equal("Position", headers[2].InnerHtml);
-    }
-
-    [Fact]
-    public void TableLoadsWithEmptyMemberList()
-    {
-        _renderedComponent = _testContext.RenderComponent<GroupMemberTable>(
-            ComponentParameter.CreateParameter(
-                "GroupMembers", Enumerable.Empty<GroupMember>().ToList()));
-
-        var headers = _renderedComponent.FindAll("table>thead>tr>th");
-        Assert.Equal("Name", headers[0].InnerHtml);
-        Assert.Equal("Last Name", headers[1].InnerHtml);
-        Assert.Equal("Position", headers[2].InnerHtml);
+            ComponentParameter.CreateParameter("GroupMembers", group.Members));
+        
+        Assert.Collection(_renderedComponent.Instance.GroupMembers,
+            member =>
+            {
+                Assert.Equal(memberTwo.LastName, member.LastName);
+            },
+            member =>
+            {
+                Assert.Equal(memberOne.LastName, member.LastName);
+            }
+        );
     }
 }

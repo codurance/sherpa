@@ -27,8 +27,18 @@
 </table>
 
 @code {
+
+    private List<GroupMember>? _groupMembers;
+
     [Parameter]
-    public List<GroupMember>? GroupMembers { get; set; }
-    
-    
+    public List<GroupMember>? GroupMembers
+    {
+        get => _groupMembers;
+        set
+        {
+            _groupMembers = value;
+            _groupMembers?.Sort((m1, m2) =>
+                    string.Compare(m1.LastName, m2.LastName, StringComparison.Ordinal));
+        } 
+    }
 }
