@@ -44,9 +44,13 @@ public class GroupsController
     }
 
     [HttpPost()]
-    public ActionResult<Group> AddGroup(Group group)
+    public async Task<ActionResult<Group>> AddGroup(Group group)
     {
-        _groupRepository.AddGroup(group);
+        if (group.Name is null || group.Name == string.Empty)
+        {
+            return new BadRequestResult();
+        }
+        await Task.Run(() =>_groupRepository.AddGroup(group));
         return new OkResult();
     }
 

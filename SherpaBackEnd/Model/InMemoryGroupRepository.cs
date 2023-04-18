@@ -40,7 +40,7 @@ public class InMemoryGroupRepository : IGroupRepository
         return await Task.FromResult(_dataSet.GetValueOrDefault(guid));
     }
 
-    public void AddGroup(Group group)
+    public async void AddGroup(Group group)
     {
         throw new NotImplementedException();
     }
