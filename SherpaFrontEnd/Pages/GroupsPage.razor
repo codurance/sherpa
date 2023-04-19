@@ -54,6 +54,11 @@
 
     private async Task DeleteSelectedGroup()
     {
-        await GroupDataService.DeleteGroup(SelectedGroupId);
+        if (Groups.Any(g => g.Id == SelectedGroupId))
+        {
+            await GroupDataService.DeleteGroup(SelectedGroupId);
+            Groups.Remove(Groups.First(group => group.Id.Equals(SelectedGroupId)));
+            SelectedGroupMembers = new List<GroupMember>();
+        }
     }
 }
