@@ -3,6 +3,7 @@ using Moq;
 using SherpaBackEnd.Controllers;
 using SherpaBackEnd.Dtos;
 using SherpaBackEnd.Model;
+using SherpaBackEnd.Services;
 
 namespace SherpaBackEnd.Tests.Controllers;
 
@@ -12,7 +13,8 @@ public class GroupsControllerAcceptanceTest
     public async Task GetGroupsReturnCorrectNumberOfGroupsAndMembersInside()
     {
         var inMemoryGroupRepository = new InMemoryGroupRepository();
-        var groupsController = new GroupsController(inMemoryGroupRepository);
+        var groupsService = new GroupsService(inMemoryGroupRepository);
+        var groupsController = new GroupsController(groupsService);
 
         var groupsActionResult = await groupsController.GetGroupsAsync();
         var groupsObjectResult = Assert.IsType<OkObjectResult>(groupsActionResult.Result);
@@ -36,7 +38,8 @@ public class GroupsControllerAcceptanceTest
     public async Task GetGroupsListIsUpdatedAfterDelete()
     {
         var inMemoryGroupRepository = new InMemoryGroupRepository();
-        var groupsController = new GroupsController(inMemoryGroupRepository);
+        var groupsService = new GroupsService(inMemoryGroupRepository);
+        var groupsController = new GroupsController(groupsService);
 
         var groupsActionResult = await groupsController.GetGroupsAsync();
         var groupsObjectResult = Assert.IsType<OkObjectResult>(groupsActionResult.Result);

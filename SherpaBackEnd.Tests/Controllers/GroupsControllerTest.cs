@@ -6,25 +6,26 @@ using SherpaBackEnd.Controllers;
 using SherpaBackEnd.Dtos;
 using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Model;
+using SherpaBackEnd.Services;
 
 namespace SherpaBackEnd.Tests.Controllers;
 
 public class GroupsControllerTest
 {
 
-    private readonly Mock<IGroupRepository> _mockGroupRepository;
+    private readonly Mock<IGroupsService> _mockGroupService;
     private readonly GroupsController _groupsController;
 
     public GroupsControllerTest()
     {
-        _mockGroupRepository = new Mock<IGroupRepository>();
-        _groupsController = new GroupsController(_mockGroupRepository.Object);
+        _mockGroupService = new Mock<IGroupsService>();
+        _groupsController = new GroupsController(_mockGroupService.Object);
     }
 
     [Fact]
     public async Task GetGroups_RepoReturnsEmptyList_NotFoundExpected()
     {
-        _mockGroupRepository.Setup(repo => repo.GetGroups())
+        _mockGroupService.Setup(repo => repo.GetGroups())
             .ReturnsAsync(new List<Group>());
 
         var actionResult = await _groupsController.GetGroupsAsync();
@@ -34,7 +35,7 @@ public class GroupsControllerTest
     [Fact]
     public async Task GetGroups_RepoReturnsList_OkExpected()
     {
-        _mockGroupRepository.Setup(repo => repo.GetGroups())
+        _mockGroupService.Setup(repo => repo.GetGroups())
             .ReturnsAsync(new List<Group>{new("Group A"),new("Group B")});
 
         var actionResult = await _groupsController.GetGroupsAsync();
@@ -47,7 +48,7 @@ public class GroupsControllerTest
     public async Task GetGroups_RepoThrowsError_ServerErrorExpected()
     {
         var dbException = new RepositoryException("Couldn't connect to the database");
-        _mockGroupRepository.Setup(repo => repo.GetGroups())
+        _mockGroupService.Setup(repo => repo.GetGroups())
             .ThrowsAsync(dbException);
         var actionResult = await _groupsController.GetGroupsAsync();
 
@@ -62,7 +63,7 @@ public class GroupsControllerTest
         var expectedGroup = new Group("Group");
         var guid = expectedGroup.Id;
         
-        _mockGroupRepository.Setup(m => m.GetGroup(guid)).ReturnsAsync(expectedGroup);
+        _mockGroupService.Setup(m => m.GetGroup(guid)).ReturnsAsync(expectedGroup);
         var actionResult = await _groupsController.GetGroupAsync(guid);
 
         var okObjectResult = Assert.IsType<OkObjectResult>(actionResult.Result);
@@ -74,7 +75,7 @@ public class GroupsControllerTest
     [Fact]
     public async Task GetGroupById_RepoDoesntReturnGroup_NotFoundExpected()
     {
-        _mockGroupRepository.Setup(m => m.GetGroup(It.IsAny<Guid>()))
+        _mockGroupService.Setup(m => m.GetGroup(It.IsAny<Guid>()))
             .ReturnsAsync((Group)null);
         
         var actionResult = await _groupsController.GetGroupAsync(new Guid());
@@ -86,7 +87,7 @@ public class GroupsControllerTest
     {
         var expectedGroup = new Group("New group");
 
-        _mockGroupRepository.Setup(m => m.AddGroup(It.IsAny<Group>()));
+        _mockGroupService.Setup(m => m.AddGroup(It.IsAny<Group>()));
 
         var actionResult = await _groupsController.AddGroup(expectedGroup);
         Assert.IsType<OkResult>(actionResult.Result);
@@ -104,7 +105,7 @@ public class GroupsControllerTest
     [Fact]
     public async Task DeleteGroup_GroupDoesNotExist_ExpectedNotFound()
     {
-        _mockGroupRepository.Setup(repo => repo.GetGroup(It.IsAny<Guid>()))
+        _mockGroupService.Setup(repo => repo.GetGroup(It.IsAny<Guid>()))
             .ReturnsAsync((Group)null);
         
         var actionResult = await _groupsController.DeleteGroupAsync(Guid.NewGuid());
@@ -115,7 +116,7 @@ public class GroupsControllerTest
     public async Task DeleteGroup_GroupExists_ExpectedOkResult()
     {
         var group = new Group("Deleting Group");
-        _mockGroupRepository.Setup(repo => repo.GetGroup(It.IsAny<Guid>()))
+        _mockGroupService.Setup(repo => repo.GetGroup(It.IsAny<Guid>()))
             .ReturnsAsync(group);
         
         var actionResult = await _groupsController.DeleteGroupAsync(group.Id);
@@ -126,19 +127,19 @@ public class GroupsControllerTest
     public async Task DeleteGroup_GroupExists_VerifyInteractionWithRepository()
     {
         var group = new Group("Deleting Group");
-        _mockGroupRepository.Setup(repo => repo.GetGroup(group.Id))
+        _mockGroupService.Setup(repo => repo.GetGroup(group.Id))
             .ReturnsAsync(group);
         
         await _groupsController.DeleteGroupAsync(group.Id);
-        _mockGroupRepository.Verify(repo => repo.GetGroup(group.Id));
+        _mockGroupService.Verify(repo => repo.GetGroup(group.Id));
         Assert.True(group.IsDeleted);
-        _mockGroupRepository.Verify(repo => repo.UpdateGroup(group));
+        _mockGroupService.Verify(repo => repo.UpdateGroup(group));
     }
     
     [Fact]
     public async Task UpdateGroup_GroupDoesNotExist_ExpectedNotFound()
     {
-        _mockGroupRepository.Setup(repo => repo.GetGroup(It.IsAny<Guid>()))
+        _mockGroupService.Setup(repo => repo.GetGroup(It.IsAny<Guid>()))
             .ReturnsAsync((Group)null);
         
         var actionResult = await _groupsController.UpdateGroup(Guid.NewGuid(), new Group("name"));
@@ -155,7 +156,7 @@ public class GroupsControllerTest
             new ("Name B", "lastName B", "position B")
         };
         
-        _mockGroupRepository.Setup(repo => repo.GetGroup(It.IsAny<Guid>()))
+        _mockGroupService.Setup(repo => repo.GetGroup(It.IsAny<Guid>()))
             .ReturnsAsync(group);
 
         var members = group.Members.ToList();
@@ -164,7 +165,7 @@ public class GroupsControllerTest
         
         await _groupsController.UpdateGroup(group.Id,group);
      
-        _mockGroupRepository.Verify(repo => repo.UpdateGroup(It.Is<Group>(updatedGroup => updatedGroup.Members.ToList().Count.Equals(3))));
+        _mockGroupService.Verify(repo => repo.UpdateGroup(It.Is<Group>(updatedGroup => updatedGroup.Members.ToList().Count.Equals(3))));
     }
     
     [Fact]
@@ -177,13 +178,13 @@ public class GroupsControllerTest
             new ("Name B", "lastName B", "position B")
         };
         
-        _mockGroupRepository.Setup(repo => repo.GetGroup(It.IsAny<Guid>()))
+        _mockGroupService.Setup(repo => repo.GetGroup(It.IsAny<Guid>()))
             .ReturnsAsync(group);
 
         group.Name = "updated name";
         
         await _groupsController.UpdateGroup(group.Id,group);
      
-        _mockGroupRepository.Verify(repo => repo.UpdateGroup(It.Is<Group>(updatedGroup => updatedGroup.Id.Equals(group.Id))));
+        _mockGroupService.Verify(repo => repo.UpdateGroup(It.Is<Group>(updatedGroup => updatedGroup.Id.Equals(group.Id))));
     }
 }

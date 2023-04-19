@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SherpaBackEnd.Dtos;
 using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Model;
+using SherpaBackEnd.Services;
 
 namespace SherpaBackEnd.Controllers;
 
@@ -10,12 +11,12 @@ namespace SherpaBackEnd.Controllers;
 [Route("[controller]")]
 public class GroupsController
 {
+    private readonly IGroupsService _groupsService;
 
-    private IGroupRepository _groupRepository;
 
-    public GroupsController(IGroupRepository groupRepository)
+    public GroupsController(IGroupsService groupsService)
     {
-        _groupRepository = groupRepository;
+        this._groupsService = groupsService;
     }
 
     [HttpGet()]
@@ -25,7 +26,7 @@ public class GroupsController
         IEnumerable<Group> groups;
         try
         { 
-            var allGroups = await _groupRepository.GetGroups();
+            var allGroups = await _groupsService.GetGroups();
             groups = allGroups.Where(g => !g.IsDeleted).ToList();
 
             if (!groups.Any())
@@ -51,14 +52,14 @@ public class GroupsController
         {
             return new BadRequestResult();
         }
-        await Task.Run(() =>_groupRepository.AddGroup(group));
+        await Task.Run(() => _groupsService.AddGroup(group));
         return new OkResult();
     }
 
     [HttpGet("{guid:guid}")]
     public async Task<ActionResult<Group>> GetGroupAsync(Guid guid)
     {
-        var group = await _groupRepository.GetGroup(guid);
+        var group = await _groupsService.GetGroup(guid);
 
         if (group is null)
         {
@@ -71,27 +72,27 @@ public class GroupsController
     [HttpDelete("{guid:guid}")]
     public async Task<ActionResult<Group>> DeleteGroupAsync(Guid guid)
     {
-        var group = await _groupRepository.GetGroup(guid);
+        var group = await _groupsService.GetGroup(guid);
         if (group is null)
         {
             return new NotFoundResult();
         }
         group.Delete();
-        await _groupRepository.UpdateGroup(group);
+        await _groupsService.UpdateGroup(group);
         return new OkResult();
     }
 
     [HttpPut("{guid:guid}")]
     public async Task<ActionResult<Group>> UpdateGroup(Guid guid,Group group)
     {
-        var groupFound = await _groupRepository.GetGroup(guid);
+        var groupFound = await _groupsService.GetGroup(guid);
         if (groupFound is null)
         {
             return new NotFoundResult();
         }
 
         group.Id = guid;
-        await _groupRepository.UpdateGroup(group);
+        await _groupsService.UpdateGroup(group);
         return new OkObjectResult(group);
     }
 }
