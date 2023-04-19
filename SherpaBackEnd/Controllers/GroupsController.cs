@@ -79,13 +79,15 @@ public class GroupsController
         return new OkResult();
     }
 
-    public async Task<ActionResult<Group>> UpdateGroup(Guid guid)
+    public async Task<ActionResult<Group>> UpdateGroup(Group group)
     {
-        var group = await _groupRepository.GetGroup(guid);
-        if (group is null)
+        var groupFound = await _groupRepository.GetGroup(group.Id);
+        if (groupFound is null)
         {
             return new NotFoundResult();
         }
-        return new OkResult();
+
+        await _groupRepository.UpdateGroup(group);
+        return new OkObjectResult(group);
     }
 }
