@@ -121,4 +121,37 @@ public class GroupsControllerTest
         var actionResult = await _groupsController.DeleteGroup(group.Id);
         Assert.IsType<OkResult>(actionResult.Result);
     }
+    
+    [Fact]
+    public async Task UpdateGroup_GroupDoesNotExist_ExpectedNotFound()
+    {
+        _mockGroupRepository.Setup(repo => repo.GetGroup(It.IsAny<Guid>()))
+            .ReturnsAsync((Group)null);
+        
+        var actionResult = await _groupsController.UpdateGroup(new Group("name"));
+        Assert.IsType<NotFoundResult>(actionResult.Result);
+    }
+
+    [Fact]
+    public async Task UpdateGroup_GroupExists_AssertENtireGroupIsPassed()
+    {
+        var group = new Group("Group A");
+        group.Members = new List<GroupMember>
+        {
+            new GroupMember("Name A", "lastName A", "position A"),
+            new GroupMember("Name B", "lastName B", "position B")
+        };
+        
+        _mockGroupRepository.Setup(repo => repo.GetGroup(It.IsAny<Guid>()))
+            .ReturnsAsync(group);
+
+        List<GroupMember> members = group.Members.ToList();
+        members.Add(new GroupMember("Name C", "Lastname C", "position C"));
+        group.Members = members;
+        
+        await _groupsController.UpdateGroup(group);
+     
+        _mockGroupRepository.Verify(repo => repo.UpdateGroup(It.Is<Group>(updatedGroup => updatedGroup.Members.ToList().Count.Equals(3))));
+    }
+    
 }

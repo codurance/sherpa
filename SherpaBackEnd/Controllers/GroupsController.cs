@@ -78,4 +78,16 @@ public class GroupsController
         _groupRepository.DeleteGroup(group.Id);
         return new OkResult();
     }
+
+    public async Task<ActionResult<Group>> UpdateGroup(Group group)
+    {
+        var groupFound = await _groupRepository.GetGroup(group.Id);
+        if (groupFound is null)
+        {
+            return new NotFoundResult();
+        }
+
+        await _groupRepository.UpdateGroup(group);
+        return new OkObjectResult(group);
+    }
 }

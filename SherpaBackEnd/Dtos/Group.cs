@@ -13,4 +13,5 @@ public class Group
         Id = Guid.NewGuid();
         Name = name;
     }
+    
 }

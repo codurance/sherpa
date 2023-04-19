@@ -50,4 +50,9 @@ public class InMemoryGroupRepository : IGroupRepository
         var group = _dataSet.First(g => g.Key == guid);
         _dataSet.Remove(group.Key);
     }
+
+    public Task<Group?> UpdateGroup(Group group)
+    {
+        throw new NotImplementedException();
+    }
 }

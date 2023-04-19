@@ -9,6 +9,8 @@ public interface IGroupRepository
     Task<IEnumerable<Group>> GetGroups();
 
     Task<Group?> GetGroup(Guid guid);
+
+    Task<Group?> UpdateGroup(Group group);
     void AddGroup(Group group);
-    void DeleteGroup(Guid isAny);
+    void DeleteGroup(Guid guid);
 }
