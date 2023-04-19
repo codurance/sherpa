@@ -42,7 +42,7 @@ public class InMemoryGroupRepository : IGroupRepository
 
     public async void AddGroup(Group group)
     {
-        throw new NotImplementedException();
+        _dataSet.Add(Guid.NewGuid(), group);
     }
     
     
