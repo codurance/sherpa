@@ -26,9 +26,8 @@ public class GroupsController
         IEnumerable<Group> groups;
         try
         { 
-            var allGroups = await _groupsService.GetGroups();
-            groups = allGroups.Where(g => !g.IsDeleted).ToList();
-
+            groups = await _groupsService.GetGroups();
+            
             if (!groups.Any())
             {
                 return new NotFoundResult();

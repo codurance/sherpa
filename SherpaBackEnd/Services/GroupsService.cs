@@ -14,7 +14,8 @@ public class GroupsService : IGroupsService
 
     public async Task<IEnumerable<Group>> GetGroups()
     {
-        return await _groupRepository.GetGroups();
+        var groups = await _groupRepository.GetGroups();
+        return groups.Where(g => !g.IsDeleted).ToList();
     }
 
     public async Task<Group> AddGroup(Group group)
