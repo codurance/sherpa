@@ -21,7 +21,11 @@ public class GroupListTest
     [Fact]
     public void AssertThatListOfGroupsIsRendered()
     {
-        var group = new Group("Group A");
+        var group = new Group
+        {
+            Name = "Group A",
+            Id = Guid.NewGuid()
+        };
         
         _renderedComponent = _testContext.RenderComponent<GroupsList>(
             ComponentParameter.CreateParameter("Groups",new List<Group>{group}));
@@ -32,7 +36,11 @@ public class GroupListTest
     [Fact]
     public async Task GroupAreRenderedAsCheckboxes()
     {
-        var group = new Group("Group A");
+        var group = new Group
+        {
+            Name = "Group A",
+            Id = Guid.NewGuid()
+        };
         _renderedComponent = _testContext.RenderComponent<GroupsList>(
             ComponentParameter.CreateParameter("Groups",new List<Group>{group}));
 

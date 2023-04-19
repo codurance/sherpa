@@ -107,7 +107,7 @@ public class GroupsControllerTest
         _mockGroupRepository.Setup(repo => repo.GetGroup(It.IsAny<Guid>()))
             .ReturnsAsync((Group)null);
         
-        var actionResult = await _groupsController.DeleteGroup(Guid.NewGuid());
+        var actionResult = await _groupsController.DeleteGroupAsync(Guid.NewGuid());
         Assert.IsType<NotFoundResult>(actionResult.Result);
     }
     
@@ -118,8 +118,21 @@ public class GroupsControllerTest
         _mockGroupRepository.Setup(repo => repo.GetGroup(It.IsAny<Guid>()))
             .ReturnsAsync(group);
         
-        var actionResult = await _groupsController.DeleteGroup(group.Id);
+        var actionResult = await _groupsController.DeleteGroupAsync(group.Id);
         Assert.IsType<OkResult>(actionResult.Result);
+    }
+    
+    [Fact]
+    public async Task DeleteGroup_GroupExists_VerifyInteractionWithRepository()
+    {
+        var group = new Group("Deleting Group");
+        _mockGroupRepository.Setup(repo => repo.GetGroup(group.Id))
+            .ReturnsAsync(group);
+        
+        await _groupsController.DeleteGroupAsync(group.Id);
+        _mockGroupRepository.Verify(repo => repo.GetGroup(group.Id));
+        Assert.True(group.IsDeleted);
+        _mockGroupRepository.Verify(repo => repo.UpdateGroup(group));
     }
     
     [Fact]
@@ -133,19 +146,19 @@ public class GroupsControllerTest
     }
 
     [Fact]
-    public async Task UpdateGroup_GroupExists_AssertENtireGroupIsPassed()
+    public async Task UpdateGroup_GroupExists_AssertEntireGroupIsPassed()
     {
         var group = new Group("Group A");
         group.Members = new List<GroupMember>
         {
-            new GroupMember("Name A", "lastName A", "position A"),
-            new GroupMember("Name B", "lastName B", "position B")
+            new ("Name A", "lastName A", "position A"),
+            new ("Name B", "lastName B", "position B")
         };
         
         _mockGroupRepository.Setup(repo => repo.GetGroup(It.IsAny<Guid>()))
             .ReturnsAsync(group);
 
-        List<GroupMember> members = group.Members.ToList();
+        var members = group.Members.ToList();
         members.Add(new GroupMember("Name C", "Lastname C", "position C"));
         group.Members = members;
         
@@ -154,15 +167,14 @@ public class GroupsControllerTest
         _mockGroupRepository.Verify(repo => repo.UpdateGroup(It.Is<Group>(updatedGroup => updatedGroup.Members.ToList().Count.Equals(3))));
     }
     
-    
     [Fact]
     public async Task UpdateGroup_GroupExists_AssertRightIdIsPassed()
     {
         var group = new Group("Group A");
         group.Members = new List<GroupMember>
         {
-            new GroupMember("Name A", "lastName A", "position A"),
-            new GroupMember("Name B", "lastName B", "position B")
+            new ("Name A", "lastName A", "position A"),
+            new ("Name B", "lastName B", "position B")
         };
         
         _mockGroupRepository.Setup(repo => repo.GetGroup(It.IsAny<Guid>()))

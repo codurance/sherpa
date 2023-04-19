@@ -22,10 +22,17 @@ public class GroupsController
     
     public async Task<ActionResult<IEnumerable<Group>>> GetGroupsAsync()
     {
-        IEnumerable<Group> groups = new List<Group>();
+        IEnumerable<Group> groups;
         try
         { 
-            groups = await _groupRepository.GetGroups();
+            var allGroups = await _groupRepository.GetGroups();
+            groups = allGroups.Where(g => !g.IsDeleted).ToList();
+
+            if (!groups.Any())
+            {
+                return new NotFoundResult();
+            }
+            return new OkObjectResult(groups);
         }
         catch(RepositoryException repositoryException)
         {
@@ -35,12 +42,6 @@ public class GroupsController
                 StatusCode = StatusCodes.Status500InternalServerError
             };
         }
-
-        if (!groups.Any())
-        {
-            return new NotFoundResult();
-        }
-        return new OkObjectResult(groups);
     }
 
     [HttpPost()]
@@ -68,14 +69,15 @@ public class GroupsController
     }
 
     [HttpDelete("{guid:guid}")]
-    public async Task<ActionResult<Group>> DeleteGroup(Guid guid)
+    public async Task<ActionResult<Group>> DeleteGroupAsync(Guid guid)
     {
         var group = await _groupRepository.GetGroup(guid);
         if (group is null)
         {
             return new NotFoundResult();
         }
-        _groupRepository.DeleteGroup(group.Id);
+        group.Delete();
+        await _groupRepository.UpdateGroup(group);
         return new OkResult();
     }
 

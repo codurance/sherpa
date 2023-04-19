@@ -65,7 +65,11 @@ public class GroupMembersTest
     {
         var memberOne = new GroupMember("B_name", "B_lastName","B_position");
         var memberTwo = new GroupMember("A_name", "A_lastName", "A_position");
-        var group = new Group("Group A");
+        var group = new Group
+        {
+            Name = "Group A",
+            Id = Guid.NewGuid()
+        };
         group.Members = new List<GroupMember> { memberOne, memberTwo };
 
         

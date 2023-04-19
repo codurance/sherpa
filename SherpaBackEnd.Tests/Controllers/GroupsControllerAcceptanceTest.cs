@@ -30,7 +30,27 @@ public class GroupsControllerAcceptanceTest
         Assert.Equal(firstGroupId, actualSingleByIdGroup.Id);
         Assert.Equal(firstGroupName, actualSingleByIdGroup.Name);
     }
-    
-    
-    
+
+
+    [Fact]
+    public async Task GetGroupsListIsUpdatedAfterDelete()
+    {
+        var inMemoryGroupRepository = new InMemoryGroupRepository();
+        var groupsController = new GroupsController(inMemoryGroupRepository);
+
+        var groupsActionResult = await groupsController.GetGroupsAsync();
+        var groupsObjectResult = Assert.IsType<OkObjectResult>(groupsActionResult.Result);
+        var groups = Assert.IsAssignableFrom<IEnumerable<Group>>(groupsObjectResult.Value).ToList();
+        Assert.Equal(2, groups.Count());
+
+        var groupToDelete = groups.First();
+        await groupsController.DeleteGroupAsync(groupToDelete.Id);
+
+        var groupsAfterDeleteActionResult = await groupsController.GetGroupsAsync();
+        var groupsAfterDeleteObjectResult = Assert.IsType<OkObjectResult>(groupsAfterDeleteActionResult.Result);
+        var groupsAfterDelete = Assert.IsAssignableFrom<IEnumerable<Group>>(groupsAfterDeleteObjectResult.Value).ToList();
+        Assert.Single(groupsAfterDelete);
+
+        Assert.DoesNotContain(groupsAfterDelete, g => g.Id == groupToDelete.Id);
+    }
 }
