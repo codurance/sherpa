@@ -6,10 +6,13 @@
 <div>
     <div class="row">
         <div class="col-3">
-            <GroupsList Groups="@Groups" OnGroupClick="UpdateSelectedGroup" SelectedGroupId="@SelectedGroupId"></GroupsList>
+            <GroupsList Groups="@Groups" 
+                        OnGroupClick="UpdateSelectedGroup"
+                        OnDeleteGroup="groupId => DeleteSelectedGroup()"
+                        SelectedGroupId="@SelectedGroupId"/>
         </div>
         <div class="col-9">
-            <GroupMemberTable GroupMembers="@SelectedGroupMembers"></GroupMemberTable>
+            <GroupMemberTable GroupMembers="@SelectedGroupMembers"/>
         </div>
     </div>
 </div>
@@ -25,7 +28,7 @@
     {
         try
         {
-            var requestedGroups = await GroupDataService.getGroups();
+            var requestedGroups = await GroupDataService.GetGroups();
 
             if (requestedGroups != null)
             {
@@ -47,5 +50,10 @@
         Console.WriteLine(id);
         SelectedGroupMembers = Groups.First(group => group.Id.Equals(id)).Members;
         SelectedGroupId = id;
+    }
+
+    private async Task DeleteSelectedGroup()
+    {
+        await GroupDataService.DeleteGroup(SelectedGroupId);
     }
 }

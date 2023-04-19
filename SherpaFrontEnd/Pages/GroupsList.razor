@@ -25,15 +25,16 @@
             </label>
         </div>
     }
+    <div class="btn-group w-100 mt-5" role="group">
+        <button class="w-50 btn btn-outline-primary btn-sm">Add</button>
+        <button class="w-50 btn btn-outline-danger btn-sm" @onclick="DeleteGroup">Delete</button>
+    </div>
 }
 else
 {
-    <h3>Groups not found</h3>
+    <h3>An error has occured - try again later</h3>
 }
-<div class="btn-group w-100 mt-5" role="group">
-    <button class="w-50 btn btn-outline-primary btn-sm">Add</button>
-    <button class="w-50 btn btn-outline-danger btn-sm">Delete</button>
-</div>
+
 
 @code {
     [Parameter]
@@ -43,11 +44,20 @@ else
     public EventCallback<Guid> OnGroupClick { get; set; }
     
     [Parameter]
+    public EventCallback OnDeleteGroup { get; set; }
+    
+    
+    [Parameter]
     public Guid SelectedGroupId { get; set; }
 
     protected async Task Group_Click(Guid id)
     {
         //SelectedGroupId = id;
         await OnGroupClick.InvokeAsync(id);
+    }
+
+    private async Task DeleteGroup()
+    {
+        await OnDeleteGroup.InvokeAsync();
     }
 }

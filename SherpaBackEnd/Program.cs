@@ -12,8 +12,6 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
-builder.Services.AddDbContext<DataContext>();
-builder.Services.AddSingleton<DataContext>();
 builder.Services.AddSingleton<IGroupRepository, InMemoryGroupRepository>();
 
 
