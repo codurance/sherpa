@@ -67,6 +67,7 @@ public class GroupsController
         return new OkObjectResult(group);
     }
 
+    [HttpDelete("{guid:guid}")]
     public async Task<ActionResult<Group>> DeleteGroup(Guid guid)
     {
         var group = await _groupRepository.GetGroup(guid);

@@ -45,8 +45,9 @@ public class InMemoryGroupRepository : IGroupRepository
         _dataSet.Add(Guid.NewGuid(), group);
     }
 
-    public void DeleteGroup(Guid isAny)
+    public void DeleteGroup(Guid guid)
     {
-        throw new NotImplementedException();
+        var group = _dataSet.First(g => g.Key == guid);
+        _dataSet.Remove(group.Key);
     }
 }
