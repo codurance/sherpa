@@ -1,7 +1,11 @@
 ﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
+@font-face {
+    font-family: proxima-nova;
+    src: url("./fonts/proxima_ssv/ProximaNova-Regular.otf") format("opentype");
+}
 
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'proxima-nova', Helvetica, Arial, sans-serif;
 }
 
 h1:focus {

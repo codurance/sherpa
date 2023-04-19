@@ -3,8 +3,16 @@
 @inject IGroupDataService GroupDataService;
 @page "/groups-page"
 
-<GroupsList Groups="@Groups" OnGroupClick="UpdateSelectedGroup" SelectedGroupId="@SelectedGroupId"></GroupsList>
-<GroupMemberTable GroupMembers="@SelectedGroupMembers"></GroupMemberTable>
+<div>
+    <div class="row">
+        <div class="col-3">
+            <GroupsList Groups="@Groups" OnGroupClick="UpdateSelectedGroup" SelectedGroupId="@SelectedGroupId"></GroupsList>
+        </div>
+        <div class="col-9">
+            <GroupMemberTable GroupMembers="@SelectedGroupMembers"></GroupMemberTable>
+        </div>
+    </div>
+</div>
 
 @code {
     
