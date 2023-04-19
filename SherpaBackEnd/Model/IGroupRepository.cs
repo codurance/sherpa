@@ -10,5 +10,5 @@ public interface IGroupRepository
 
     Task<Group?> GetGroup(Guid guid);
     void AddGroup(Group group);
-    void DeleteGroup(Guid isAny);
+    void DeleteGroup(Guid guid);
 }
