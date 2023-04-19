@@ -91,7 +91,7 @@ public class GroupsControllerTest
         var actionResult = await _groupsController.AddGroup(expectedGroup);
         Assert.IsType<OkResult>(actionResult.Result);
     }
-    
+
     [Fact]
     public async Task AddNewGroupWithoutName_BadRequestResultExpected()
     {
@@ -100,4 +100,15 @@ public class GroupsControllerTest
         var actionResult = await _groupsController.AddGroup(expectedGroup);
         Assert.IsType<BadRequestResult>(actionResult.Result);
     }
+
+    [Fact]
+    public async Task DeleteGroup_GroupDoesNotExist_ExpectedNotFound()
+    {
+        _mockGroupRepository.Setup(repo => repo.GetGroup(It.IsAny<Guid>()))
+            .ReturnsAsync((Group)null);
+        
+        var actionResult = await _groupsController.DeleteGroup(Guid.NewGuid());
+        Assert.IsType<NotFoundResult>(actionResult.Result);
+    }
+    
 }
