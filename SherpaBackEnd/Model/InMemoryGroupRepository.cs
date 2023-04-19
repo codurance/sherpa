@@ -42,7 +42,7 @@ public class InMemoryGroupRepository : IGroupRepository
 
     public async void AddGroup(Group group)
     {
-        _dataSet.Add(Guid.NewGuid(), group);
+        _dataSet.Add(group.Id, group);
     }
 
     public void DeleteGroup(Guid guid)
