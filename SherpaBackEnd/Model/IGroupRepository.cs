@@ -11,6 +11,6 @@ public interface IGroupRepository
     Task<Group?> GetGroup(Guid guid);
 
     Task<Group?> UpdateGroup(Group group);
-    void AddGroup(Group group);
+    Task<Group> AddGroup(Group group);
     void DeleteGroup(Guid guid);
 }

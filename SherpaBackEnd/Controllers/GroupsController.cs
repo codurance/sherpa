@@ -80,14 +80,15 @@ public class GroupsController
     }
 
     [HttpPut("{guid:guid}")]
-    public async Task<ActionResult<Group>> UpdateGroup(Group group)
+    public async Task<ActionResult<Group>> UpdateGroup(Guid guid,Group group)
     {
-        var groupFound = await _groupRepository.GetGroup(group.Id);
+        var groupFound = await _groupRepository.GetGroup(guid);
         if (groupFound is null)
         {
             return new NotFoundResult();
         }
 
+        group.Id = guid;
         await _groupRepository.UpdateGroup(group);
         return new OkObjectResult(group);
     }

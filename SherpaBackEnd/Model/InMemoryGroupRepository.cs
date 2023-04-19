@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using SherpaBackEnd.Dtos;
 using SherpaBackEnd.Helpers;
 
@@ -40,19 +41,21 @@ public class InMemoryGroupRepository : IGroupRepository
         return await Task.FromResult(_dataSet.GetValueOrDefault(guid));
     }
 
-    public async void AddGroup(Group group)
+    public async Task<Group> AddGroup(Group group)
     {
         _dataSet.Add(group.Id, group);
+        return await Task.FromResult(group);
     }
 
     public void DeleteGroup(Guid guid)
     {
         var group = _dataSet.First(g => g.Key == guid);
-        _dataSet.Remove(group.Key);
+        _dataSet.Remove(guid);
     }
 
-    public Task<Group?> UpdateGroup(Group group)
+    public async Task<Group> UpdateGroup(Group group)
     {
-        throw new NotImplementedException();
+        _dataSet[group.Id] = group;
+        return await Task.FromResult(group);
     }
 }

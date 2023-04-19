@@ -128,7 +128,7 @@ public class GroupsControllerTest
         _mockGroupRepository.Setup(repo => repo.GetGroup(It.IsAny<Guid>()))
             .ReturnsAsync((Group)null);
         
-        var actionResult = await _groupsController.UpdateGroup(new Group("name"));
+        var actionResult = await _groupsController.UpdateGroup(Guid.NewGuid(), new Group("name"));
         Assert.IsType<NotFoundResult>(actionResult.Result);
     }
 
@@ -149,9 +149,29 @@ public class GroupsControllerTest
         members.Add(new GroupMember("Name C", "Lastname C", "position C"));
         group.Members = members;
         
-        await _groupsController.UpdateGroup(group);
+        await _groupsController.UpdateGroup(group.Id,group);
      
         _mockGroupRepository.Verify(repo => repo.UpdateGroup(It.Is<Group>(updatedGroup => updatedGroup.Members.ToList().Count.Equals(3))));
     }
     
+    
+    [Fact]
+    public async Task UpdateGroup_GroupExists_AssertRightIdIsPassed()
+    {
+        var group = new Group("Group A");
+        group.Members = new List<GroupMember>
+        {
+            new GroupMember("Name A", "lastName A", "position A"),
+            new GroupMember("Name B", "lastName B", "position B")
+        };
+        
+        _mockGroupRepository.Setup(repo => repo.GetGroup(It.IsAny<Guid>()))
+            .ReturnsAsync(group);
+
+        group.Name = "updated name";
+        
+        await _groupsController.UpdateGroup(group.Id,group);
+     
+        _mockGroupRepository.Verify(repo => repo.UpdateGroup(It.Is<Group>(updatedGroup => updatedGroup.Id.Equals(group.Id))));
+    }
 }
