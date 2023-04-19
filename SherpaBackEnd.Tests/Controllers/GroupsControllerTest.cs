@@ -111,4 +111,14 @@ public class GroupsControllerTest
         Assert.IsType<NotFoundResult>(actionResult.Result);
     }
     
+    [Fact]
+    public async Task DeleteGroup_GroupExists_ExpectedOkResult()
+    {
+        var group = new Group("Deleting Group");
+        _mockGroupRepository.Setup(repo => repo.GetGroup(It.IsAny<Guid>()))
+            .ReturnsAsync(group);
+        
+        var actionResult = await _groupsController.DeleteGroup(group.Id);
+        Assert.IsType<OkResult>(actionResult.Result);
+    }
 }
