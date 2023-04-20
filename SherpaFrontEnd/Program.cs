@@ -1,3 +1,4 @@
+using Blazored.Modal;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using SherpaFrontEnd;
@@ -13,5 +14,7 @@ builder.Services.AddHttpClient("SherpaBackEnd", client =>
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<IGroupMemberService, InMemoryGroupMemberService>();
 builder.Services.AddScoped<IGroupDataService, GroupServiceHttpClient>();
+
+builder.Services.AddBlazoredModal();
 
 await builder.Build().RunAsync();

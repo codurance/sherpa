@@ -25,15 +25,15 @@
             </label>
         </div>
     }
-    <div class="btn-group w-100 mt-5" role="group">
-        <button class="w-50 btn btn-outline-primary btn-sm">Add</button>
-        <button class="w-50 btn btn-outline-danger btn-sm" @onclick="DeleteGroup">Delete</button>
-    </div>
 }
 else
 {
     <h3>An error has occured - try again later</h3>
 }
+    <div class="btn-group w-100 mt-5" role="group">
+        <button class="w-50 btn btn-outline-primary btn-sm">Add</button>
+        <button class="w-50 btn btn-outline-danger btn-sm" @onclick="@(() => Modal.Show<HelloModal>("Hello title"))">Delete</button>
+    </div>
 
 
 @code {
@@ -49,6 +49,9 @@ else
     
     [Parameter]
     public Guid SelectedGroupId { get; set; }
+    
+    [CascadingParameter] 
+    public IModalService Modal { get; set; } = default!;
 
     protected async Task Group_Click(Guid id)
     {
