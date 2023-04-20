@@ -6,7 +6,7 @@
 <td><input type="text" class="form-control" @bind="@GroupMember.Email"/></td>
 <td>
     <button class="w-50 btn btn-outline-primary btn-sm" onclick="@OnSaveMemberClick">Save</button>
-    <button class="w-50 btn btn-outline-danger btn-sm">Delete</button>
+    <button class="w-50 btn btn-outline-danger btn-sm" onclick="@OnDeleteMemberClick">Delete</button>
 </td>
 
 @code {
@@ -14,12 +14,20 @@
     public GroupMember GroupMember { get; set; }
     
     [Parameter]
-    public EventCallback<GroupMember> OnSaveGroupMember { get; set; }
+    public EventCallback<GroupMember> OnSaveMember { get; set; }
+    
+    [Parameter]
+    public EventCallback<string> OnDeleteMember { get; set; }
 
     private async Task OnSaveMemberClick()
     {
         GroupMember.IsEditable = false;
-        await OnSaveGroupMember.InvokeAsync();
+        await OnSaveMember.InvokeAsync();
+    }
+
+    public async Task OnDeleteMemberClick()
+    {
+        await OnDeleteMember.InvokeAsync(GroupMember.Email);
     }
 
 }

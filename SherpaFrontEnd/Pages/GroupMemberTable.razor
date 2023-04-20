@@ -21,11 +21,11 @@
             <tr id="@currentMember.Email">
                 @if (currentMember.IsEditable)
                 {
-                    <EditableGroupMemberRow GroupMember="@currentMember" OnSaveGroupMember="UpdateGroupMember"></EditableGroupMemberRow>
+                    <EditableGroupMemberRow GroupMember="@currentMember" OnSaveMember="UpdateGroupMember" OnDeleteMember="DeleteGroupMember"></EditableGroupMemberRow>
                 }
                 else
                 {
-                    <ReadonlyGroupMemberRow GroupMember="@currentMember" OnEditGroupMember="EditGroupMember"></ReadonlyGroupMemberRow>
+                    <ReadonlyGroupMemberRow GroupMember="@currentMember" OnEditMember="EditGroupMember" OnDeleteMember="DeleteGroupMember"></ReadonlyGroupMemberRow>
                 }
             </tr>
         }
@@ -68,6 +68,12 @@
 
     private void EditGroupMember()
     {
+    }
+
+    private async Task DeleteGroupMember(string memberEmail)
+    {
+        Group?.Members?.Remove(Group.Members.First(m => m.Email == memberEmail));
+        await OnUpdateGroup.InvokeAsync(Group);
     }
 
 }

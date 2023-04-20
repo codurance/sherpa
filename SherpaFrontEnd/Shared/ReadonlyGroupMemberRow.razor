@@ -5,7 +5,7 @@
                     <td>@GroupMember.Email</td>
                     <td>
                         <button class="w-50 btn btn-outline-primary btn-sm" onclick="@OnEditMemberClick">Edit</button>
-                        <button class="w-50 btn btn-outline-danger btn-sm">Delete</button>
+                        <button class="w-50 btn btn-outline-danger btn-sm" onclick="@OnDeleteMemberClick">Delete</button>
                     </td>
 
 
@@ -14,12 +14,19 @@
     public GroupMember GroupMember { get; set; }
     
     [Parameter]
-    public EventCallback<GroupMember> OnEditGroupMember { get; set; }
+    public EventCallback<GroupMember> OnEditMember { get; set; }
     
-    
+    [Parameter]
+    public EventCallback<string> OnDeleteMember { get; set; }
+
     private async Task OnEditMemberClick()
     {
         GroupMember.IsEditable = true;
-        await OnEditGroupMember.InvokeAsync();
+        await OnEditMember.InvokeAsync();
+    }
+    
+    private async Task OnDeleteMemberClick()
+    {
+        await OnDeleteMember.InvokeAsync(GroupMember.Email);
     }
 }
