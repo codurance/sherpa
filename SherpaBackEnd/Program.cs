@@ -1,5 +1,6 @@
 using SherpaBackEnd.Helpers;
 using SherpaBackEnd.Model;
+using SherpaBackEnd.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<IGroupRepository, InMemoryGroupRepository>();
+builder.Services.AddSingleton<IGroupsService, GroupsService>();
 
 
 var app = builder.Build();
