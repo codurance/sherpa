@@ -21,7 +21,7 @@ public class GroupServiceHttpClient : IGroupDataService
 
         response.EnsureSuccessStatusCode();
         var responseString = await response.Content.ReadAsStringAsync();
-        
+
         return JsonSerializer.Deserialize<List<Group>>(
             responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
     }
@@ -38,8 +38,21 @@ public class GroupServiceHttpClient : IGroupDataService
         var groupToUpdate =
             JsonSerializer.Serialize(group, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         var httpClient = _clientFactory.CreateClient(Sherpabackend);
-        var response = await httpClient.PutAsync($"/groups/{group.Id.ToString()}", 
+        var response = await httpClient.PutAsync($"/groups/{group.Id.ToString()}",
             new StringContent(groupToUpdate, System.Text.Encoding.UTF8, "application/json"));
+        response.EnsureSuccessStatusCode();
+    }
+
+    public async Task AddGroup(string groupName)
+    {
+        var groupToAdd =
+            JsonSerializer.Serialize(new Group { Name = groupName, Members = new List<GroupMember>(), Id = Guid.NewGuid()},
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+        var client = _clientFactory.CreateClient(Sherpabackend);
+        Console.WriteLine("httpclient "+groupToAdd);
+        var response = await client.PostAsync("/groups", 
+            new StringContent(groupToAdd, System.Text.Encoding.UTF8, "application/json"));
         response.EnsureSuccessStatusCode();
     }
 }

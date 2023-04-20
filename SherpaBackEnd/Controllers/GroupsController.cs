@@ -1,8 +1,6 @@
-using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using SherpaBackEnd.Dtos;
 using SherpaBackEnd.Exceptions;
-using SherpaBackEnd.Model;
 using SherpaBackEnd.Services;
 
 namespace SherpaBackEnd.Controllers;
@@ -16,7 +14,7 @@ public class GroupsController
 
     public GroupsController(IGroupsService groupsService)
     {
-        this._groupsService = groupsService;
+        _groupsService = groupsService;
     }
 
     [HttpGet()]
@@ -47,7 +45,8 @@ public class GroupsController
     [HttpPost()]
     public async Task<ActionResult<Group>> AddGroup(Group group)
     {
-        if (group.Name is null || group.Name == string.Empty)
+        Console.WriteLine("backend " + group.Name);
+        if (String.IsNullOrEmpty(group.Name))
         {
             return new BadRequestResult();
         }

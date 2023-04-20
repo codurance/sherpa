@@ -8,7 +8,8 @@
         <div class="col-3">
             <GroupsList Groups="@Groups" 
                         OnGroupClick="UpdateSelectedGroup"
-                        OnDeleteGroup="groupId => DeleteSelectedGroup()"
+                        OnAddGroup="AddGroup"
+                        OnDeleteGroup="DeleteSelectedGroup"
                         SelectedGroupId="@SelectedGroupId"/>
         </div>
         <div class="col-9">
@@ -29,6 +30,11 @@
 
     protected override async Task OnInitializedAsync()
     {
+        await GetGroups();
+    }
+
+    private async Task GetGroups()
+    {
         try
         {
             var requestedGroups = await GroupDataService.GetGroups();
@@ -39,18 +45,23 @@
                 SelectedGroupMembers = Groups.First().Members;
                 SelectedGroupId = Groups.First().Id;
             }
-
         }
         catch (HttpRequestException e)
         {
-            // TODO exception component?
+    // TODO exception component?
         }
     }
-    
+
     protected void UpdateSelectedGroup(Guid id)
     {
         SelectedGroupMembers = Groups.First(group => group.Id.Equals(id)).Members;
         SelectedGroupId = id;
+    }
+
+    private async Task AddGroup(string groupName)
+    {
+        await GroupDataService.AddGroup(groupName);
+        await GetGroups();
     }
 
     private async Task DeleteSelectedGroup()

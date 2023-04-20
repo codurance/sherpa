@@ -1,8 +1,9 @@
-﻿<p>Are you sure?</p>
+﻿<p>Choose name for the group:</p>
+<input @bind="_groupName"/>
 
-    <div class="btn-group w-100 mt-5" role="group">
+<div class="btn-group w-100 mt-5" role="group">
         <button class="w-50 btn btn-outline-danger btn-sm" @onclick="Cancel">Cancel</button>
-        <button class="w-50 btn btn-outline-primary btn-sm" @onclick="Delete">Delete</button>
+        <button class="w-50 btn btn-outline-primary btn-sm" @onclick="Add">Add</button>
     </div>
 
 @code {
@@ -10,7 +11,8 @@
     [CascadingParameter] 
     BlazoredModalInstance ModalInstance { get; set; }
 
-
+    string? _groupName;
+    
     void Delete()
     {
         ModalInstance.CloseAsync();
@@ -20,4 +22,10 @@
     {
         ModalInstance.CancelAsync();
     }
+
+    private void Add()
+    {
+        ModalInstance.CloseAsync(ModalResult.Ok(_groupName));
+    }
+
 }

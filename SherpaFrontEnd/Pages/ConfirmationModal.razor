@@ -2,7 +2,7 @@
 
     <div class="btn-group w-100 mt-5" role="group">
         <button class="w-50 btn btn-outline-danger btn-sm" @onclick="Cancel">Cancel</button>
-        <button class="w-50 btn btn-outline-primary btn-sm" @onclick="Delete">Delete</button>
+        <button class="w-50 btn btn-outline-primary btn-sm" @onclick="Accept">Accept</button>
     </div>
 
 @code {
@@ -11,7 +11,7 @@
     BlazoredModalInstance ModalInstance { get; set; }
 
 
-    void Delete()
+    void Accept()
     {
         ModalInstance.CloseAsync();
     }
