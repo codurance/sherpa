@@ -5,8 +5,8 @@
 <td><input type="text" class="form-control" @bind="@GroupMember.Position"/></td>
 <td><input type="text" class="form-control" @bind="@GroupMember.Email"/></td>
 <td>
-    <button class="w-50 btn btn-outline-primary btn-sm" onclick="@OnSaveMemberClick">Save</button>
-    <button class="w-50 btn btn-outline-danger btn-sm" onclick="@OnDeleteMemberClick">Delete</button>
+    <button class="btn btn-primary" onclick="@OnSaveMemberClick"><span class="oi oi-check"></span></button>
+    <button class="btn btn-primary" onclick="@OnDeleteMemberClick"><span class="oi oi-trash"></span></button>
 </td>
 
 @code {
