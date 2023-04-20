@@ -62,7 +62,7 @@ else
 
     private async Task DeleteGroup()
     {
-        var modal = Modal.Show<HelloModal>("Delete group?");
+        var modal = Modal.Show<ConfirmationModal>("Delete group?");
         var modalResult = await modal.Result;
 
         if (!modalResult.Cancelled)

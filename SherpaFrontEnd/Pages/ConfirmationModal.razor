@@ -1,0 +1,23 @@
+﻿<p>Are you sure?</p>
+
+    <div class="btn-group w-100 mt-5" role="group">
+        <button class="w-50 btn btn-outline-danger btn-sm" @onclick="Cancel">Cancel</button>
+        <button class="w-50 btn btn-outline-primary btn-sm" @onclick="Delete">Delete</button>
+    </div>
+
+@code {
+
+    [CascadingParameter] 
+    BlazoredModalInstance ModalInstance { get; set; }
+
+
+    void Delete()
+    {
+        ModalInstance.CloseAsync();
+    }
+    
+    void Cancel()
+    {
+        ModalInstance.CancelAsync();
+    }
+}
