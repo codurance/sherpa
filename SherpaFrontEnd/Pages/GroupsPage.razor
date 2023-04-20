@@ -12,7 +12,10 @@
                         SelectedGroupId="@SelectedGroupId"/>
         </div>
         <div class="col-9">
-            <GroupMemberTable GroupMembers="@SelectedGroupMembers"/>
+            @if (Groups is not null)
+            {
+                <GroupMemberTable Group="@(Groups.FirstOrDefault(g => g.Id == SelectedGroupId))" OnUpdateGroup="SaveGroup"/>
+            }
         </div>
     </div>
 </div>
@@ -46,8 +49,6 @@
     
     protected void UpdateSelectedGroup(Guid id)
     {
-        Console.WriteLine("Callback");
-        Console.WriteLine(id);
         SelectedGroupMembers = Groups.First(group => group.Id.Equals(id)).Members;
         SelectedGroupId = id;
     }
@@ -61,4 +62,10 @@
             SelectedGroupMembers = new List<GroupMember>();
         }
     }
+
+    private async Task SaveGroup(Group group)
+    {
+        await GroupDataService.PutGroup(group);
+    }
+
 }

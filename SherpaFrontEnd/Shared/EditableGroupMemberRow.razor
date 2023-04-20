@@ -1,0 +1,25 @@
+@using SherpaFrontEnd.Model
+
+<td><input type="text" class="form-control" @bind="@GroupMember.Name"/></td>
+<td><input type="text" class="form-control" @bind="@GroupMember.LastName"/></td>
+<td><input type="text" class="form-control" @bind="@GroupMember.Position"/></td>
+<td><input type="text" class="form-control" @bind="@GroupMember.Email"/></td>
+<td>
+    <button class="w-50 btn btn-outline-primary btn-sm" onclick="@OnSaveMemberClick">Save</button>
+    <button class="w-50 btn btn-outline-danger btn-sm">Delete</button>
+</td>
+
+@code {
+    [Parameter]
+    public GroupMember GroupMember { get; set; }
+    
+    [Parameter]
+    public EventCallback<GroupMember> OnSaveGroupMember { get; set; }
+
+    private async Task OnSaveMemberClick()
+    {
+        GroupMember.IsEditable = false;
+        await OnSaveGroupMember.InvokeAsync();
+    }
+
+}

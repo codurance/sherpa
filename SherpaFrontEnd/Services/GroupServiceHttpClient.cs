@@ -32,4 +32,14 @@ public class GroupServiceHttpClient : IGroupDataService
         var response = await httpClient.DeleteAsync($"/groups/{guid.ToString()}");
         response.EnsureSuccessStatusCode();
     }
+
+    public async Task PutGroup(Group group)
+    {
+        var groupToUpdate =
+            JsonSerializer.Serialize(group, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        var httpClient = _clientFactory.CreateClient(Sherpabackend);
+        var response = await httpClient.PutAsync($"/groups/{group.Id.ToString()}", 
+            new StringContent(groupToUpdate, System.Text.Encoding.UTF8, "application/json"));
+        response.EnsureSuccessStatusCode();
+    }
 }

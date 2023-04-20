@@ -1,0 +1,25 @@
+@using SherpaFrontEnd.Model
+<td>@GroupMember.Name</td>
+                    <td>@GroupMember.LastName</td>
+                    <td>@GroupMember.Position</td>
+                    <td>@GroupMember.Email</td>
+                    <td>
+                        <button class="w-50 btn btn-outline-primary btn-sm" onclick="@OnEditMemberClick">Edit</button>
+                        <button class="w-50 btn btn-outline-danger btn-sm">Delete</button>
+                    </td>
+
+
+@code {
+    [Parameter]
+    public GroupMember GroupMember { get; set; }
+    
+    [Parameter]
+    public EventCallback<GroupMember> OnEditGroupMember { get; set; }
+    
+    
+    private async Task OnEditMemberClick()
+    {
+        GroupMember.IsEditable = true;
+        await OnEditGroupMember.InvokeAsync();
+    }
+}

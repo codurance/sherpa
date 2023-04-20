@@ -20,13 +20,17 @@ public class GroupMembersTest
     [Fact]
     public void ElementsOfTheListShowsTheRightValues()
     {
-        var groupMember = new GroupMember("Bob", "Smith", "CEO");
-        
+        var groupMember = new GroupMember("Bob", "Smith", "CEO", "email@mail.com");
+
+        var group = new Group
+        {
+            Members = new List<GroupMember>{groupMember}
+        };
         _renderedComponent = _testContext.RenderComponent<GroupMemberTable>(
             ComponentParameter.CreateParameter(
-                "GroupMembers", new List<GroupMember> { groupMember }));
+                "Group", group));
 
-        Assert.Collection(_renderedComponent.Instance.GroupMembers,
+        Assert.Collection(_renderedComponent.Instance.Group.Members,
             member =>
             {
                 Assert.Equal(groupMember.Name, member.Name);
@@ -39,12 +43,20 @@ public class GroupMembersTest
     [Fact]
     public void MembersAreRenderedAsTable()
     {
-        var groupMember1 = new GroupMember("Tom", "Hardy", "CP");
-        var groupMember2 = new GroupMember("Bob", "Smith", "CEO");
-        
+        var groupMember1 = new GroupMember("Tom", "Hardy", "CP", "email1@mail.com");
+        var groupMember2 = new GroupMember("Bob", "Smith", "CEO", "email2@mail.com");
+
+        var group = new Group
+        {
+            Members = new List<GroupMember>
+            {
+                groupMember1,
+                groupMember2
+            }
+        };
         _renderedComponent = _testContext.RenderComponent<GroupMemberTable>(
             ComponentParameter.CreateParameter(
-                "GroupMembers", new List<GroupMember> { groupMember1, groupMember2 }));
+                "Group", group));
 
         var members = _renderedComponent.FindAll("table>tbody>tr");
         
@@ -63,8 +75,8 @@ public class GroupMembersTest
     [Fact]
     public async Task ListOfMembersAreAlphabeticallySorted()
     {
-        var memberOne = new GroupMember("B_name", "B_lastName","B_position");
-        var memberTwo = new GroupMember("A_name", "A_lastName", "A_position");
+        var memberOne = new GroupMember("B_name", "B_lastName","B_position", "emailB@mail.com");
+        var memberTwo = new GroupMember("A_name", "A_lastName", "A_position", "emailA@mail.com");
         var group = new Group
         {
             Name = "Group A",
@@ -74,9 +86,9 @@ public class GroupMembersTest
 
         
         _renderedComponent = _testContext.RenderComponent<GroupMemberTable>(
-            ComponentParameter.CreateParameter("GroupMembers", group.Members));
+            ComponentParameter.CreateParameter("Group", group));
         
-        Assert.Collection(_renderedComponent.Instance.GroupMembers,
+        Assert.Collection(_renderedComponent.Instance.Group.Members,
             member =>
             {
                 Assert.Equal(memberTwo.LastName, member.LastName);

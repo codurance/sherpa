@@ -1,5 +1,6 @@
 @page "/group-members"
 @using SherpaFrontEnd.Model
+@using Microsoft.AspNetCore.Components
 
 <h3>GroupMemberTable</h3>
 
@@ -12,35 +13,61 @@
         <th scope="col">Email</th>
     </tr>
     </thead>
-    @if (GroupMembers is not null)
+    @if (Group.Members is not null)
     {
         <tbody>
-        @foreach (var currentMember in GroupMembers)
+        @foreach (var currentMember in Group.Members)
         {
-            <tr>
-                <td>@currentMember.Name</td>
-                <td>@currentMember.LastName</td>
-                <td>@currentMember.Position</td>
-                <td>email@email.com</td>
+            <tr id="@currentMember.Email">
+                @if (currentMember.IsEditable)
+                {
+                    <EditableGroupMemberRow GroupMember="@currentMember" OnSaveGroupMember="UpdateGroupMember"></EditableGroupMemberRow>
+                }
+                else
+                {
+                    <ReadonlyGroupMemberRow GroupMember="@currentMember" OnEditGroupMember="EditGroupMember"></ReadonlyGroupMemberRow>
+                }
             </tr>
         }
         </tbody>
     }
 </table>
 
+<div>
+    <button class="w-50 btn btn-outline-primary btn-sm">Add</button>
+</div>
+
 @code {
 
-    private List<GroupMember>? _groupMembers;
+    private Group? _group;
 
     [Parameter]
-    public List<GroupMember>? GroupMembers
+    public Group? Group
     {
-        get => _groupMembers;
+        get => _group;
         set
         {
-            _groupMembers = value;
-            _groupMembers?.Sort((m1, m2) =>
+            if (value is null)
+            {
+                return;
+            }
+            
+            _group = value;
+            _group.Members?.Sort((m1, m2) =>
                     string.Compare(m1.LastName, m2.LastName, StringComparison.Ordinal));
         } 
     }
+    
+    [Parameter]
+    public EventCallback<Group> OnUpdateGroup { get; set; }
+
+    private async Task UpdateGroupMember()
+    {
+        await OnUpdateGroup.InvokeAsync(Group);
+    }
+
+    private void EditGroupMember()
+    {
+    }
+
 }

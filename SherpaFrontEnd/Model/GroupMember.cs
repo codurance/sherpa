@@ -2,14 +2,20 @@ namespace SherpaFrontEnd.Model;
 
 public class GroupMember
 {
-    public String Name { get; set; }
-    public String LastName { get; set; }
-    public String Position { get; set; }
+    
+    public string Name { get; set; }
+    public string LastName { get; set; }
+    public string Position { get; set; }
+    
+    public string Email { get; set; }
 
-    public GroupMember(string name, string lastName, string position)
+    public bool IsEditable { get; set; } = false;
+
+    public GroupMember(string name, string lastName, string position, string email)
     {
         Name = name;
         LastName = lastName;
         Position = position;
+        Email = email;
     }
 }

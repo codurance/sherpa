@@ -8,8 +8,8 @@ public class InMemoryGroupMemberService : IGroupMemberService
     {
         return new List<GroupMember>
         {
-            new("Bob", "Smith", "CEO"),
-            new("Tom", "Hardy", "CP")
+            new("Bob", "Smith", "CEO", "email1@mail.com"),
+            new("Tom", "Hardy", "CP", "email2@mail.com")
         };
     }
 }
