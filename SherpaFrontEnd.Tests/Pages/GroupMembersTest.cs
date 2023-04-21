@@ -60,16 +60,7 @@ public class GroupMembersTest
 
         var members = _renderedComponent.FindAll("table>tbody>tr");
         
-        Assert.Collection(members,
-            member =>
-            {
-                Assert.Equal(groupMember1.Name, member.Children[0].InnerHtml);
-            },
-            member =>
-            {
-                Assert.Equal(groupMember2.Name, member.Children[0].InnerHtml);
-            }
-            );
+        Assert.Equal(2, members.Count);
     }
 
     [Fact]

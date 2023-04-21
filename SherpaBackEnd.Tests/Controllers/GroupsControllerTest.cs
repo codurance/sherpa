@@ -152,15 +152,15 @@ public class GroupsControllerTest
         var group = new Group("Group A");
         group.Members = new List<GroupMember>
         {
-            new ("Name A", "lastName A", "position A"),
-            new ("Name B", "lastName B", "position B")
+            new ("Name A", "lastName A", "position A", "e1@e.com"),
+            new ("Name B", "lastName B", "position B", "e2@e.com")
         };
         
         _mockGroupService.Setup(repo => repo.GetGroup(It.IsAny<Guid>()))
             .ReturnsAsync(group);
 
         var members = group.Members.ToList();
-        members.Add(new GroupMember("Name C", "Lastname C", "position C"));
+        members.Add(new GroupMember("Name C", "Lastname C", "position C", "e3@e.com"));
         group.Members = members;
         
         await _groupsController.UpdateGroup(group.Id,group);
@@ -174,8 +174,8 @@ public class GroupsControllerTest
         var group = new Group("Group A");
         group.Members = new List<GroupMember>
         {
-            new ("Name A", "lastName A", "position A"),
-            new ("Name B", "lastName B", "position B")
+            new ("Name A", "lastName A", "position A", "e1@e.com"),
+            new ("Name B", "lastName B", "position B", "e2@e.com")
         };
         
         _mockGroupService.Setup(repo => repo.GetGroup(It.IsAny<Guid>()))
