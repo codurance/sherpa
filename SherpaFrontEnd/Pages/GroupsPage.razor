@@ -8,7 +8,7 @@
         <div class="col-3">
             <GroupsList Groups="@Groups" 
                         OnGroupClick="UpdateSelectedGroup"
-                        OnAddGroup="AddGroup"
+                        OnAddGroup="groupName => AddGroup(groupName)"
                         OnDeleteGroup="DeleteSelectedGroup"
                         SelectedGroupId="@SelectedGroupId"/>
         </div>
@@ -57,9 +57,9 @@
         SelectedGroupId = id;
     }
 
-    private async Task AddGroup(string groupName)
+    private async Task AddGroup(Group group)
     {
-        await GroupDataService.AddGroup(groupName);
+        await GroupDataService.AddGroup(group);
         await GetGroups();
     }
 

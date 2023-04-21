@@ -43,10 +43,10 @@ public class GroupServiceHttpClient : IGroupDataService
         response.EnsureSuccessStatusCode();
     }
 
-    public async Task AddGroup(string groupName)
+    public async Task AddGroup(Group group)
     {
         var groupToAdd =
-            JsonSerializer.Serialize(new Group { Name = groupName, Members = new List<GroupMember>(), Id = Guid.NewGuid()},
+            JsonSerializer.Serialize(group,
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
         var client = _clientFactory.CreateClient(Sherpabackend);

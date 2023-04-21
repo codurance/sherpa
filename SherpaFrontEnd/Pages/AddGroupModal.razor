@@ -1,23 +1,24 @@
-﻿<p>Choose name for the group:</p>
-<input @bind="_groupName"/>
+﻿@using SherpaFrontEnd.Model
+<p>Choose name for the group:</p>
+<EditForm Model="Group" OnValidSubmit="Add">
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>
 
-<div class="btn-group w-100 mt-5" role="group">
+    <InputText @bind-Value="Group.Name"/>
+
+    <div class="btn-group w-100 mt-5" role="group">
         <button class="w-50 btn btn-outline-danger btn-sm" @onclick="Cancel">Cancel</button>
-        <button class="w-50 btn btn-outline-primary btn-sm" @onclick="Add">Add</button>
+        <button type="submit" class="w-50 btn btn-outline-primary btn-sm">Add</button>
     </div>
+</EditForm>
 
 @code {
 
-    [CascadingParameter] 
+    [CascadingParameter]
     BlazoredModalInstance ModalInstance { get; set; }
 
-    string? _groupName;
-    
-    void Delete()
-    {
-        ModalInstance.CloseAsync();
-    }
-    
+    public Group Group { get; set; } = new();
+
     void Cancel()
     {
         ModalInstance.CancelAsync();
@@ -25,7 +26,7 @@
 
     private void Add()
     {
-        ModalInstance.CloseAsync(ModalResult.Ok(_groupName));
+        ModalInstance.CloseAsync(ModalResult.Ok(Group));
     }
 
 }
