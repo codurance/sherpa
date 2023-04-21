@@ -35,7 +35,7 @@
 </table>
 
 <div>
-    <button class="w-50 btn btn-outline-primary btn-sm">Add</button>
+    <button class="w-50 btn btn-outline-primary btn-sm" @onclick="AddGroupMember">Add</button>
 </div>
 
 @code {
@@ -52,15 +52,18 @@
             {
                 return;
             }
-            
+
             _group = value;
             _group.Members?.Sort((m1, m2) =>
-                    string.Compare(m1.LastName, m2.LastName, StringComparison.Ordinal));
-        } 
+                string.Compare(m1.LastName, m2.LastName, StringComparison.Ordinal));
+        }
     }
-    
+
     [Parameter]
     public EventCallback<Group> OnUpdateGroup { get; set; }
+    
+    [CascadingParameter]
+    public IModalService Modal { get; set; } = default!;
 
     private async Task UpdateGroupMember()
     {
@@ -75,6 +78,20 @@
     {
         Group?.Members?.Remove(Group.Members.First(m => m.Email == memberEmail));
         await OnUpdateGroup.InvokeAsync(Group);
+    }
+
+
+    private void AddGroupMember()
+    {
+        if (Group.Members.Any(member => String.IsNullOrEmpty(member.Email)))
+        {
+            Modal.Show<WarningModal>("You have unsaved members");
+            Console.WriteLine("You have unsaved members");
+        }
+        else
+        {
+            Group.Members.Add(new GroupMember { IsEditable = true });
+        }
     }
 
 }
