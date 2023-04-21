@@ -1,12 +1,16 @@
 @using SherpaFrontEnd.Model
-<td>@GroupMember.Name</td>
-                    <td>@GroupMember.LastName</td>
-                    <td>@GroupMember.Position</td>
-                    <td>@GroupMember.Email</td>
-                    <td>
-                        <button class="btn btn-primary" onclick="@OnEditMemberClick"><span class="oi oi-pencil"></span></button>
-                        <button class="btn btn-primary" onclick="@OnDeleteMemberClick"><span class="oi oi-trash"></span></button>
-                    </td>
+@using SherpaFrontEnd.Pages
+
+<td><input type="text" class="form-control groups-members_input_readonly" value="@GroupMember.Name" readonly/></td>
+<td><input type="text" class="form-control groups-members_input_readonly" value="@GroupMember.LastName" readonly/></td>
+<td><input type="text" class="form-control groups-members_input_readonly" value="@GroupMember.Position" readonly/></td>
+<td><input type="text" class="form-control groups-members_input_readonly" value="@GroupMember.Email" readonly/></td>
+<td>
+    <div class="btn-group">
+        <button class="btn btn-edit" onclick="@OnEditMemberClick"><span class="oi oi-pencil"></span></button>
+        <button class="btn btn-remove" onclick="@OnDeleteMemberClick"><span class="oi oi-trash"></span></button>
+    </div>
+</td>
 
 
 @code {
@@ -18,6 +22,10 @@
     
     [Parameter]
     public EventCallback<string> OnDeleteMember { get; set; }
+    
+    
+    [CascadingParameter]
+    public IModalService Modal { get; set; } = default!;
 
     private async Task OnEditMemberClick()
     {
@@ -27,6 +35,13 @@
     
     private async Task OnDeleteMemberClick()
     {
-        await OnDeleteMember.InvokeAsync(GroupMember.Email);
+        
+        var modal = Modal.Show<ConfirmationModal>($"Delete {GroupMember.Name} {GroupMember.LastName}?");
+        var modalResult = await modal.Result;
+
+        if (!modalResult.Cancelled)
+        {
+            await OnDeleteMember.InvokeAsync(GroupMember.Email);
+        }
     }
 }

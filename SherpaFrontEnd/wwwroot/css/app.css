@@ -66,3 +66,22 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+
+.form-control.groups-members_input_readonly {
+    background-color: transparent;
+    border: transparent;
+}
+
+.btn.btn-edit,
+.btn.btn-save,
+.btn.btn-remove
+{
+    color: #d7d7d7;
+}
+
+.btn.btn-edit:hover,
+.btn.btn-save:hover,
+.btn.btn-remove:hover {
+    color: #1a1e21;
+}

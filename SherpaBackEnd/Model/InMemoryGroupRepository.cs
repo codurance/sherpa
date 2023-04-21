@@ -15,16 +15,16 @@ public class InMemoryGroupRepository : IGroupRepository
         var anotherGroupWithMembers = new Group("Group B");
         anotherGroupWithMembers.Members = new List<GroupMember>
         {
-            new ("Bob", "Ross", "Painter"),
+            new ("Bob", "Ross", "Painter", "bob@gmail.com"),
         };
         
         
         var groupWithMembers = new Group("Group A");
         groupWithMembers.Members = new List<GroupMember>
         {
-            new ("Mary", "Anne", "QA"),
-            new ("Bobby", "Smith", "CEO"),
-            new ("Bobber", "Hardy", "CP")
+            new ("Mary", "Anne", "QA", "mary@gmail.com"),
+            new ("Bobby", "Smith", "CEO", "bobby@gmail.com"),
+            new ("Bobber", "Hardy", "CP", "bobber@gmail.com")
         };
 
         _dataSet.Add(groupWithMembers.Id, groupWithMembers);

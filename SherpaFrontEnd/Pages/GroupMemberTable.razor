@@ -11,9 +11,10 @@
         <th scope="col">Last Name</th>
         <th scope="col">Position</th>
         <th scope="col">Email</th>
+        <th scope="col"></th>
     </tr>
     </thead>
-    @if (Group.Members is not null)
+    @if (Group.Members is not null || Group.Members.Any())
     {
         <tbody>
         @foreach (var currentMember in Group.Members)

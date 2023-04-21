@@ -69,7 +69,18 @@
         {
             await GroupDataService.DeleteGroup(SelectedGroupId);
             Groups.Remove(Groups.First(group => group.Id.Equals(SelectedGroupId)));
-            SelectedGroupMembers = new List<GroupMember>();
+
+            var selectedGroup = Groups.FirstOrDefault();
+            if (selectedGroup is not null)
+            {
+                SelectedGroupId = selectedGroup.Id;
+                SelectedGroupMembers = selectedGroup.Members;
+            }
+            else
+            {
+                SelectedGroupId = Guid.Empty;
+                SelectedGroupMembers = new List<GroupMember>();
+            }
         }
     }
 

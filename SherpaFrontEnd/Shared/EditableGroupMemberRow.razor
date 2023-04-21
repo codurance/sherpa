@@ -1,12 +1,15 @@
 @using SherpaFrontEnd.Model
+@using SherpaFrontEnd.Pages
 
 <td><input type="text" class="form-control" @bind="@GroupMember.Name"/></td>
 <td><input type="text" class="form-control" @bind="@GroupMember.LastName"/></td>
 <td><input type="text" class="form-control" @bind="@GroupMember.Position"/></td>
 <td><input type="text" class="form-control" @bind="@GroupMember.Email"/></td>
 <td>
-    <button class="btn btn-primary" onclick="@OnSaveMemberClick"><span class="oi oi-check"></span></button>
-    <button class="btn btn-primary" onclick="@OnDeleteMemberClick"><span class="oi oi-trash"></span></button>
+    <div class="btn-group">
+        <button class="btn btn-save" onclick="@OnSaveMemberClick"><span class="oi oi-check"></span></button>
+        <button class="btn btn-remove" onclick="@OnDeleteMemberClick"><span class="oi oi-trash"></span></button>
+    </div>
 </td>
 
 @code {
@@ -18,6 +21,9 @@
     
     [Parameter]
     public EventCallback<string> OnDeleteMember { get; set; }
+    
+    [CascadingParameter]
+    public IModalService Modal { get; set; } = default!;
 
     private async Task OnSaveMemberClick()
     {
@@ -25,9 +31,15 @@
         await OnSaveMember.InvokeAsync();
     }
 
-    public async Task OnDeleteMemberClick()
+    private async Task OnDeleteMemberClick()
     {
-        await OnDeleteMember.InvokeAsync(GroupMember.Email);
+        var modal = Modal.Show<ConfirmationModal>($"Delete {GroupMember.Name} {GroupMember.LastName}?");
+        var modalResult = await modal.Result;
+
+        if (!modalResult.Cancelled)
+        {
+            await OnDeleteMember.InvokeAsync(GroupMember.Email);
+        }
     }
 
 }
