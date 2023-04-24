@@ -18,4 +18,9 @@
       <Folder Include="wwwroot\css\fonts" />
     </ItemGroup>
 
+    <ItemGroup>
+      <AdditionalFiles Include="Shared\Modals\AddGroupModal.razor" />
+      <AdditionalFiles Include="Shared\Modals\ConfirmationModal.razor" />
+    </ItemGroup>
+
 </Project>

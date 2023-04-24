@@ -1,5 +1,6 @@
 @using SherpaFrontEnd.Model
 @using SherpaFrontEnd.Services
+@using SherpaFrontEnd.Shared.Modals
 
 
 <h3>GroupsList</h3>
@@ -58,7 +59,7 @@ else
     [CascadingParameter]
     public IModalService Modal { get; set; } = default!;
 
-    protected async Task Group_Click(Guid id)
+    private async Task Group_Click(Guid id)
     {
     //SelectedGroupId = id;
         await OnGroupClick.InvokeAsync(id);
