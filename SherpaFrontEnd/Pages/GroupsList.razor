@@ -72,11 +72,20 @@ else
 
         var group = (Group)modalResult.Data;
 
-        Console.WriteLine(group);
-        await OnAddGroup.InvokeAsync(group);
+
+        if (Groups is not null)
+        {
+            if (Groups.Any(g => g.Name == group.Name))
+            {
+                Modal.Show<WarningModal>("Group name must be unique");
+                return;
+            }
+            Console.WriteLine(group);
+            await OnAddGroup.InvokeAsync(group);
+        }
     }
-    
-    
+
+
     private async Task DeleteGroup()
     {
         var modal = Modal.Show<ConfirmationModal>("Delete group?");
@@ -87,4 +96,5 @@ else
             await OnDeleteGroup.InvokeAsync();
         }
     }
+
 }
