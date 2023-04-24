@@ -84,8 +84,15 @@
         if (!modalResult.Cancelled)
         {
             var groupMemberToAdd = (EditGroupMember)modalResult.Data;
+
             if (_group is not null)
             {
+                if (_group.Members.Any(m => m.Email == groupMemberToAdd.Email))
+                {
+                    Modal.Show<WarningModal>("Email should be unique");
+                    return;
+                }
+
                 _group.Members.Add(new GroupMember
                 {
                     Name = groupMemberToAdd.Name,
