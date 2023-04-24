@@ -1,6 +1,8 @@
 @page "/group-members"
 @using SherpaFrontEnd.Model
 @using Microsoft.AspNetCore.Components
+@using SherpaFrontEnd.Shared.Modals
+@using SherpaFrontEnd.ViewModel
 
 <h3>GroupMemberTable</h3>
 
@@ -61,7 +63,7 @@
 
     [Parameter]
     public EventCallback<Group> OnUpdateGroup { get; set; }
-    
+
     [CascadingParameter]
     public IModalService Modal { get; set; } = default!;
 
@@ -78,16 +80,28 @@
     }
 
 
-    private void AddGroupMember()
+    private async Task AddGroupMember()
     {
-        if (Group.Members.Any(member => String.IsNullOrEmpty(member.Email)))
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(EditMemberModal.GroupMember), new GroupMember());
+
+        var modal = Modal.Show<EditMemberModal>($"Add member", parameters);
+        var modalResult = await modal.Result;
+
+        if (!modalResult.Cancelled)
         {
-            Modal.Show<WarningModal>("You have unsaved members");
-            Console.WriteLine("You have unsaved members");
-        }
-        else
-        {
-            Group.Members.Add(new GroupMember { IsEditable = true });
+            var groupMemberToAdd = (EditGroupMember)modalResult.Data;
+            if (_group is not null)
+            {
+                _group.Members.Add(new GroupMember
+                {
+                    Name = groupMemberToAdd.Name,
+                    LastName = groupMemberToAdd.LastName,
+                    Position = groupMemberToAdd.Position,
+                    Email = groupMemberToAdd.Email
+                });
+                await OnUpdateGroup.InvokeAsync(Group);
+            }
         }
     }
 

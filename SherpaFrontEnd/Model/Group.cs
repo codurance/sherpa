@@ -10,7 +10,7 @@ public class Group
     
     public Guid Id { get; set; }
     
-    public List<GroupMember>? Members { get; set; }
+    public List<GroupMember> Members { get; set; }
     
 public Group()
     {
