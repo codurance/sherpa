@@ -6,9 +6,9 @@ public class Group
 {
     [Required]
     [MinLength(2)]
-    public String Name { get; set; }
+    public string? Name { get; set; }
     
-    public Guid Id { get; set; }
+    public Guid Id { get; init; }
     
     public List<GroupMember> Members { get; set; }
     

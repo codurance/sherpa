@@ -22,11 +22,11 @@ public class EditGroupMember
     public string? Email { get; set; }
 
 
-    public EditGroupMember(GroupMember member)
+    public EditGroupMember(GroupMember? member)
     {
-        Name = member.Name;
-        LastName = member.LastName;
-        Position = member.Position;
-        Email = member.Email;
+        Name = member?.Name;
+        LastName = member?.LastName;
+        Position = member?.Position;
+        Email = member?.Email;
     }
 }

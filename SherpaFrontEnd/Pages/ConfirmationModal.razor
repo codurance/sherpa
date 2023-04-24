@@ -8,16 +8,16 @@
 @code {
 
     [CascadingParameter] 
-    BlazoredModalInstance ModalInstance { get; set; }
+    BlazoredModalInstance? ModalInstance { get; set; }
 
 
     void Accept()
     {
-        ModalInstance.CloseAsync();
+        ModalInstance?.CloseAsync();
     }
     
     void Cancel()
     {
-        ModalInstance.CancelAsync();
+        ModalInstance?.CancelAsync();
     }
 }

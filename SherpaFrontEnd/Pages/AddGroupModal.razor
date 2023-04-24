@@ -15,18 +15,18 @@
 @code {
 
     [CascadingParameter]
-    BlazoredModalInstance ModalInstance { get; set; }
+    BlazoredModalInstance? ModalInstance { get; set; }
 
-    public Group Group { get; set; } = new();
+    private Group Group { get; } = new();
 
     void Cancel()
     {
-        ModalInstance.CancelAsync();
+        ModalInstance?.CancelAsync();
     }
 
     private void Add()
     {
-        ModalInstance.CloseAsync(ModalResult.Ok(Group));
+        ModalInstance?.CloseAsync(ModalResult.Ok(Group));
     }
 
 }

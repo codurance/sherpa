@@ -6,9 +6,9 @@
 <div>
     <div class="row">
         <div class="col-3">
-            <GroupsList Groups="@Groups" 
+            <GroupsList Groups="@Groups"
                         OnGroupClick="UpdateSelectedGroup"
-                        OnAddGroup="groupName => AddGroup(groupName)"
+                        OnAddGroup="AddGroup"
                         OnDeleteGroup="DeleteSelectedGroup"
                         SelectedGroupId="@SelectedGroupId"/>
         </div>
@@ -22,10 +22,11 @@
 </div>
 
 @code {
-    public List<Group>? Groups { get; private set; }
+    private List<Group>? Groups { get; set; }
 
-    public Guid SelectedGroupId {  get; private set; }
-    public List<GroupMember>? SelectedGroupMembers { get; private set; }
+    private Guid SelectedGroupId { get; set; }
+
+    private List<GroupMember>? SelectedGroupMembers { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -51,10 +52,13 @@
         }
     }
 
-    protected void UpdateSelectedGroup(Guid id)
+    private void UpdateSelectedGroup(Guid id)
     {
-        SelectedGroupMembers = Groups.First(group => group.Id.Equals(id)).Members;
-        SelectedGroupId = id;
+        if (Groups is not null)
+        {
+            SelectedGroupMembers = Groups.First(group => group.Id.Equals(id)).Members;
+            SelectedGroupId = id;
+        }
     }
 
     private async Task AddGroup(Group group)
@@ -65,7 +69,7 @@
 
     private async Task DeleteSelectedGroup()
     {
-        if (Groups.Any(g => g.Id == SelectedGroupId))
+        if (Groups is not null && Groups.Any(g => g.Id == SelectedGroupId))
         {
             await GroupDataService.DeleteGroup(SelectedGroupId);
             Groups.Remove(Groups.First(group => group.Id.Equals(SelectedGroupId)));

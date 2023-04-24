@@ -1,5 +1,4 @@
 @using SherpaFrontEnd.Model
-@using SherpaFrontEnd.Services
 @using SherpaFrontEnd.ViewModel
 <EditForm Model="_editGroupMember" OnValidSubmit="Save">
     <DataAnnotationsValidator/>
@@ -42,12 +41,12 @@
 
 @code {
     [CascadingParameter]
-    BlazoredModalInstance ModalInstance { get; set; }
+    BlazoredModalInstance? ModalInstance { get; set; }
 
-    private EditGroupMember _editGroupMember;
+    private EditGroupMember _editGroupMember = null!;
 
     [Parameter] 
-    public GroupMember GroupMember { get; set; }
+    public GroupMember? GroupMember { get; set; }
 
     protected override void OnInitialized()
     {
@@ -56,11 +55,11 @@
     
     private void Cancel()
     {
-        ModalInstance.CancelAsync();
+        ModalInstance?.CancelAsync();
     }
 
     private void Save()
     {
-        ModalInstance.CloseAsync(ModalResult.Ok(_editGroupMember));
+        ModalInstance?.CloseAsync(ModalResult.Ok(_editGroupMember));
     }
 }

@@ -16,20 +16,13 @@
         <th scope="col"></th>
     </tr>
     </thead>
-    @if (Group.Members is not null || Group.Members.Any())
+    @if (Group is not null && Group.Members.Any())
     {
         <tbody>
         @foreach (var currentMember in Group.Members)
         {
             <tr id="@currentMember.Email">
-                @if (currentMember.IsEditable)
-                {
-                    <EditableGroupMemberRow GroupMember="@currentMember" OnSaveMember="UpdateGroupMember" OnDeleteMember="DeleteGroupMember"></EditableGroupMemberRow>
-                }
-                else
-                {
-                    <ReadonlyGroupMemberRow GroupMember="@currentMember" OnSaveMember="UpdateGroupMember" OnDeleteMember="DeleteGroupMember"></ReadonlyGroupMemberRow>
-                }
+                <ReadonlyGroupMemberRow GroupMember="@currentMember" OnSaveMember="UpdateGroupMember" OnDeleteMember="DeleteGroupMember"></ReadonlyGroupMemberRow>
             </tr>
         }
         </tbody>
@@ -56,7 +49,7 @@
             }
 
             _group = value;
-            _group.Members?.Sort((m1, m2) =>
+            _group.Members.Sort((m1, m2) =>
                 string.Compare(m1.LastName, m2.LastName, StringComparison.Ordinal));
         }
     }
@@ -69,13 +62,13 @@
 
     private async Task UpdateGroupMember()
     {
-        Console.WriteLine(Group.Members);
+        Console.WriteLine(Group?.Members);
         await OnUpdateGroup.InvokeAsync(Group);
     }
 
     private async Task DeleteGroupMember(string memberEmail)
     {
-        Group?.Members?.Remove(Group.Members.First(m => m.Email == memberEmail));
+        Group?.Members.Remove(Group.Members.First(m => m.Email == memberEmail));
         await OnUpdateGroup.InvokeAsync(Group);
     }
 
@@ -85,7 +78,7 @@
         var parameters = new ModalParameters();
         parameters.Add(nameof(EditMemberModal.GroupMember), new GroupMember());
 
-        var modal = Modal.Show<EditMemberModal>($"Add member", parameters);
+        var modal = Modal.Show<EditMemberModal>("Add member", parameters);
         var modalResult = await modal.Result;
 
         if (!modalResult.Cancelled)
