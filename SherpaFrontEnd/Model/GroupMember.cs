@@ -1,10 +1,13 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace SherpaFrontEnd.Model;
 
 public class GroupMember
 {
-    
     public string? Name { get; set; }
+    
     public string? LastName { get; set; }
+    
     public string? Position { get; set; }
     
     public string? Email { get; set; }
@@ -22,5 +25,14 @@ public class GroupMember
     public GroupMember()
     {
         
+    }
+
+    public GroupMember(GroupMember memberToCopy)
+    {
+        Name = memberToCopy.Name;
+        LastName = memberToCopy.LastName;
+        Position = memberToCopy.Position;
+        Email = memberToCopy.Email;
+        IsEditable = memberToCopy.IsEditable;
     }
 }

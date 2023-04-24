@@ -26,7 +26,7 @@
                 }
                 else
                 {
-                    <ReadonlyGroupMemberRow GroupMember="@currentMember" OnEditMember="EditGroupMember" OnDeleteMember="DeleteGroupMember"></ReadonlyGroupMemberRow>
+                    <ReadonlyGroupMemberRow GroupMember="@currentMember" OnSaveMember="UpdateGroupMember" OnDeleteMember="DeleteGroupMember"></ReadonlyGroupMemberRow>
                 }
             </tr>
         }
@@ -67,11 +67,8 @@
 
     private async Task UpdateGroupMember()
     {
+        Console.WriteLine(Group.Members);
         await OnUpdateGroup.InvokeAsync(Group);
-    }
-
-    private void EditGroupMember()
-    {
     }
 
     private async Task DeleteGroupMember(string memberEmail)

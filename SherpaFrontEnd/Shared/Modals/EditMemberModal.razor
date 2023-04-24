@@ -1,0 +1,66 @@
+@using SherpaFrontEnd.Model
+@using SherpaFrontEnd.Services
+@using SherpaFrontEnd.ViewModel
+<EditForm Model="_editGroupMember" OnValidSubmit="Save">
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>
+
+    <p>
+        <label>
+            Name:
+            <InputText @bind-Value="_editGroupMember.Name"/>
+        </label>
+    </p>
+    
+    <p>
+        <label>
+            Last Name:
+            <InputText @bind-Value="_editGroupMember.LastName"/>
+        </label>
+    </p>
+    
+    <p>
+        <label>
+            Position:
+            <InputText @bind-Value="_editGroupMember.Position"/>
+        </label>
+    </p>
+    
+    <p>
+        <label>
+            Email:
+            <InputText type="email" @bind-Value="_editGroupMember.Email"/>
+        </label>
+    </p>
+    
+
+    <div class="btn-group w-100 mt-5" role="group">
+        <button class="w-50 btn btn-outline-danger btn-sm" @onclick="Cancel">Cancel</button>
+        <button type="submit" class="w-50 btn btn-outline-primary btn-sm">Save</button>
+    </div>
+</EditForm>
+
+@code {
+    [CascadingParameter]
+    BlazoredModalInstance ModalInstance { get; set; }
+
+    private EditGroupMember _editGroupMember;
+
+    [Parameter] 
+    public GroupMember GroupMember { get; set; }
+
+    protected override void OnInitialized()
+    {
+        _editGroupMember = new EditGroupMember(GroupMember);
+    }
+    
+    private void Cancel()
+    {
+        ModalInstance.CancelAsync();
+    }
+
+    private void Save()
+    {
+        ModalInstance.CloseAsync(ModalResult.Ok(_editGroupMember));
+    }
+}
