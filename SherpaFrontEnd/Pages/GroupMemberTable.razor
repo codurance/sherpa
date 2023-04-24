@@ -22,7 +22,28 @@
         @foreach (var currentMember in Group.Members)
         {
             <tr id="@currentMember.Email">
-                <ReadonlyGroupMemberRow GroupMember="@currentMember" OnSaveMember="UpdateGroupMember" OnDeleteMember="DeleteGroupMember"></ReadonlyGroupMemberRow>
+                <td>
+                    <input type="text" class="form-control groups-members_input_readonly" value="@currentMember.Name" readonly/>
+                </td>
+                <td>
+                    <input type="text" class="form-control groups-members_input_readonly" value="@currentMember.LastName" readonly/>
+                </td>
+                <td>
+                    <input type="text" class="form-control groups-members_input_readonly" value="@currentMember.Position" readonly/>
+                </td>
+                <td>
+                    <input type="text" class="form-control groups-members_input_readonly" value="@currentMember.Email" readonly/>
+                </td>
+                <td>
+                    <div class="btn-group">
+                        <button class="btn btn-edit" onclick="@(() => OnEditMemberClick(currentMember))">
+                            <span class="oi oi-pencil"></span>
+                        </button>
+                        <button class="btn btn-remove" onclick="@(() => OnDeleteMemberClick(currentMember))">
+                            <span class="oi oi-trash"></span>
+                        </button>
+                    </div>
+                </td>
             </tr>
         }
         </tbody>
@@ -66,7 +87,7 @@
         await OnUpdateGroup.InvokeAsync(Group);
     }
 
-    private async Task DeleteGroupMember(string memberEmail)
+    private async Task DeleteGroupMember(string? memberEmail)
     {
         Group?.Members.Remove(Group.Members.First(m => m.Email == memberEmail));
         await OnUpdateGroup.InvokeAsync(Group);
@@ -102,6 +123,44 @@
                 });
                 await OnUpdateGroup.InvokeAsync(Group);
             }
+        }
+    }
+
+
+    private async Task OnEditMemberClick(GroupMember? currentMember)
+    {
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(EditMemberModal.GroupMember), currentMember);
+        var membersEmails = _group?.Members
+            .FindAll(m => m.Email != currentMember?.Email)
+            .Select(m => m.Email).ToList();
+        parameters.Add(nameof(EditMemberModal.MembersEmails), membersEmails);
+
+        var modal = Modal.Show<EditMemberModal>($"Edit {currentMember?.Name} {currentMember?.LastName}", parameters);
+        var modalResult = await modal.Result;
+
+        if (!modalResult.Cancelled)
+        {
+            var updatesGroup = (EditGroupMember)modalResult.Data;
+            if (currentMember is not null)
+            {
+                currentMember.Name = updatesGroup.Name;
+                currentMember.LastName = updatesGroup.LastName;
+                currentMember.Position = updatesGroup.Position;
+                currentMember.Email = updatesGroup.Email;
+                await UpdateGroupMember();
+            }
+        }
+    }
+
+    private async Task OnDeleteMemberClick(GroupMember? currentMember)
+    {
+        var modal = Modal.Show<ConfirmationModal>($"Delete {currentMember?.Name} {currentMember?.LastName}?");
+        var modalResult = await modal.Result;
+
+        if (!modalResult.Cancelled)
+        {
+            await DeleteGroupMember(currentMember?.Email);
         }
     }
 

@@ -34,7 +34,7 @@
             }
             else
             {
-                <InputText type="email" @bind-Value="_editGroupMember.Email" readonly/>
+                <InputText type="email" @bind-Value="_editGroupMember.Email"/>
             }
         </label>
     </p>
@@ -51,13 +51,17 @@
     BlazoredModalInstance? ModalInstance { get; set; }
 
     private EditGroupMember _editGroupMember = null!;
+    
+    [Parameter] 
+    public List<string>? MembersEmails { get; set; }
 
     [Parameter] 
     public GroupMember? GroupMember { get; set; }
+    
 
     protected override void OnInitialized()
     {
-        _editGroupMember = new EditGroupMember(GroupMember);
+        _editGroupMember = new EditGroupMember(GroupMember, MembersEmails);
     }
     
     private void Cancel()
