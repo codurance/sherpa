@@ -5,11 +5,12 @@ namespace SherpaBackEnd.Helpers;
 
 public class DataContext : DbContext
 {
-    protected readonly IConfiguration Configuration;
+    private readonly IConfiguration _configuration;
+    public DbSet<Group> Groups { get; set; }
 
     public DataContext(IConfiguration configuration)
     {
-        Configuration = configuration;
+        _configuration = configuration;
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
@@ -24,5 +25,4 @@ public class DataContext : DbContext
             new Group("Group A"), new Group("Group B"));
     }
 
-    public DbSet<Group> Groups { get; set; }
 }

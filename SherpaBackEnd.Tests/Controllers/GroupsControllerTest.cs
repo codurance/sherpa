@@ -1,11 +1,9 @@
-using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using SherpaBackEnd.Controllers;
 using SherpaBackEnd.Dtos;
 using SherpaBackEnd.Exceptions;
-using SherpaBackEnd.Model;
 using SherpaBackEnd.Services;
 
 namespace SherpaBackEnd.Tests.Controllers;

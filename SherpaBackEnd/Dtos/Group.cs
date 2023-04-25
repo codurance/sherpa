@@ -1,5 +1,3 @@
-using System.Collections;
-
 namespace SherpaBackEnd.Dtos;
 
 public class Group

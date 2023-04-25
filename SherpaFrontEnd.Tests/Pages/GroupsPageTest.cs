@@ -1,7 +1,6 @@
 using Bunit;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using SherpaFrontEnd.Model;
 using SherpaFrontEnd.Pages;
 using SherpaFrontEnd.Services;
 

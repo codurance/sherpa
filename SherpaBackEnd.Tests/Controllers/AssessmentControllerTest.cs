@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Moq;
 using SherpaBackEnd.Controllers;
 using SherpaBackEnd.Dtos;
