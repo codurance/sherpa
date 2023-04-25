@@ -6,14 +6,22 @@ namespace SherpaBackEnd.Controllers;
 
 public class AssessmentController
 {
+    private readonly ISurveyService _surveyService;
+
     public AssessmentController(ISurveyService surveyService)
     {
-        throw new NotImplementedException();
+        _surveyService = surveyService;
     }
 
     public async Task<ActionResult<IEnumerable<SurveyTemplate>>> GetTemplates()
     {
-        throw new NotImplementedException();
+        var templates = await _surveyService.GetTemplates();
+        if (templates.Any())
+        {
+            return new OkObjectResult(templates);
+        }
+
+        return new NotFoundResult();
     }
 
     public async Task<ActionResult<Assessment>> AddAssessment(Guid groupId, Guid templateId)

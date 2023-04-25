@@ -25,7 +25,7 @@ public class GroupsControllerTest
     [Fact]
     public async Task GetGroups_RepoReturnsEmptyList_NotFoundExpected()
     {
-        _mockGroupService.Setup(repo => repo.GetGroups())
+        _mockGroupService.Setup(service => service.GetGroups())
             .ReturnsAsync(new List<Group>());
 
         var actionResult = await _groupsController.GetGroupsAsync();
