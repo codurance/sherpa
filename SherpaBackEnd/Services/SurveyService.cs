@@ -15,4 +15,9 @@ public class SurveyService : ISurveyService
     {
         return await _surveyRepository.GetTemplates();
     }
+
+    public async Task<bool> IsTemplateExist(Guid templateId)
+    {
+        return await _surveyRepository.IsTemplateExist(templateId);
+    }
 }

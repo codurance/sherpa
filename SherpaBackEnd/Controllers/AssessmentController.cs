@@ -26,6 +26,11 @@ public class AssessmentController
 
     public async Task<ActionResult<Assessment>> AddAssessment(Guid groupId, Guid templateId)
     {
-        throw new NotImplementedException();
+        if (await _surveyService.IsTemplateExist(templateId))
+        {
+            return new OkObjectResult(new Assessment(groupId, templateId));
+        }
+
+        return new BadRequestResult();
     }
 }

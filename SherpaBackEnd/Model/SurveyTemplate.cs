@@ -7,6 +7,7 @@ public class SurveyTemplate
     public SurveyTemplate(string name)
     {
         Name = name;
+        Id = Guid.NewGuid();
     }
 
     public Guid Id { get; set; }

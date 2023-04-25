@@ -37,4 +37,12 @@ public class SurveyServiceTest
         var templates = await _service.GetTemplates();
         _mockRepository.Verify(m => m.GetTemplates());
     }
+
+    [Fact]
+    public async Task IsTemplateExist_Invoked()
+    {
+        var templateId = Guid.NewGuid();
+        await _service.IsTemplateExist(templateId);
+        _mockRepository.Verify(m => m.IsTemplateExist(templateId));
+    }
 }
