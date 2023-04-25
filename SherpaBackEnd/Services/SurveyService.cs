@@ -13,7 +13,6 @@ public class SurveyService : ISurveyService
 
     public async Task<IEnumerable<SurveyTemplate>> GetTemplates()
     {
-        // var templates = _surveyRepository.GetTemplates(TODO);
-        return new List<SurveyTemplate>{new("hackman")};
+        return await _surveyRepository.GetTemplates();
     }
 }

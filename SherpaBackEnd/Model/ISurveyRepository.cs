@@ -2,5 +2,5 @@ namespace SherpaBackEnd.Model;
 
 public interface ISurveyRepository
 {
-    void GetTemplates();
+    Task<IEnumerable<SurveyTemplate>> GetTemplates();
 }

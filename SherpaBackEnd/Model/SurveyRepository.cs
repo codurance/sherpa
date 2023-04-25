@@ -2,7 +2,7 @@ namespace SherpaBackEnd.Model;
 
 public class SurveyRepository : ISurveyRepository
 {
-    public void GetTemplates()
+    public Task<IEnumerable<SurveyTemplate>> GetTemplates()
     {
         throw new NotImplementedException();
     }

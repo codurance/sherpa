@@ -28,7 +28,5 @@ public class AssessmentControllerAcceptanceTest
         Assert.Equal(groupId, actualAssessment.GroupId);
         Assert.Equal(templateId, actualAssessment.TemplateId);
         Assert.Empty(actualAssessment.Surveys);
-
-
     }
 }
