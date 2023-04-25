@@ -1,5 +1,43 @@
+@using SherpaFrontEnd.Model
 <h3>AssessmentsTable</h3>
 
-@code {
+@if (Assessments is not null)
+{
+    @foreach (var assessment in Assessments)
+    {
+        <h4>@assessment.assessmentName</h4>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Members</th>
+                <th scope="col">Completed</th>
+            </tr>
+            </thead>
+            @foreach (var survey in assessment.surveys)
+            {
+                <tr>
+                    <td>@survey.date</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>
+                        <div class="btn-group">
+                            <button class="btn btn-edit">
+                                <span class="oi oi-pencil"></span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </table>
+    }
     
+}
+
+
+@code {
+
+    [Parameter]
+    public List<OngoingAssessment> Assessments { get; set; }
+
 }
