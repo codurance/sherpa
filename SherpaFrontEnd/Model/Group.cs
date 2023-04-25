@@ -17,4 +17,10 @@ public Group()
         Id = Guid.NewGuid();
         Members = new List<GroupMember>();
     }
+
+public Group(Guid id, string name)
+{
+    Id = id;
+    Name = name;
+}
 }

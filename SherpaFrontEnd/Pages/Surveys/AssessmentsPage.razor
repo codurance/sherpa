@@ -1,0 +1,50 @@
+@using SherpaFrontEnd.Model
+@using SherpaFrontEnd.Services
+@inject IAssessmentsDataService AssessmentsDataService;
+@page "/assessments-page"
+<h3>AssessmentsPage</h3>
+
+<div>
+    <div class="row">
+        <div class="col-3">
+            <AssessmentsGroupsList Groups="@Groups" SelectedGroupId="@SelectedGroupId"></AssessmentsGroupsList>
+        </div>
+        <div class="col-9">
+            @if (Groups is not null)
+            {
+                <AssessmentsTable></AssessmentsTable>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    public List<Group>? Groups { get; private set; }
+    public List<OngoingAssessment>? Assesments { get; set; }
+    public Guid SelectedGroupId { get; private set; }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        Console.WriteLine("Get async assessments");
+        await GetAssessments();
+    }
+
+    private async Task GetAssessments()
+    {
+        Console.WriteLine("Get assessments");
+        var assessments = await AssessmentsDataService.GetAssessments();
+        Console.WriteLine(assessments.Count());
+        if (assessments != null)
+        {
+            Assesments = assessments;
+            Groups = assessments.GroupBy(assessment => assessment.groupId)
+                .Select(byGroup => new Group(byGroup.Key, byGroup.First().groupName)).ToList();
+            if (Groups is not null)
+            {
+                SelectedGroupId = Groups[0].Id;
+            }
+            Console.WriteLine(Groups.Count);
+        }
+
+    } 
+}
