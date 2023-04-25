@@ -22,6 +22,8 @@ public class SurveyServiceTest
     {
         var template = new SurveyTemplate("hackman");
 
+        _mockRepository.Setup(m => m.GetTemplates())
+            .ReturnsAsync(new List<SurveyTemplate> { template });
         var actualTemplates = await _service.GetTemplates();
         var templatesList = actualTemplates.ToList();
 
@@ -32,7 +34,7 @@ public class SurveyServiceTest
     [Fact]
     public async Task GetTemplates_InvokesRepository()
     {
-        // _mockRepository.Verify(m => m.GetTemplates(TODO));
+        var templates = await _service.GetTemplates();
+        _mockRepository.Verify(m => m.GetTemplates());
     }
-    
 }
