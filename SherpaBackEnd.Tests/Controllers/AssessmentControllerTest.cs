@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using SherpaBackEnd.Controllers;
+using SherpaBackEnd.Dtos;
 using SherpaBackEnd.Model;
 using SherpaBackEnd.Services;
 
@@ -9,13 +10,13 @@ namespace SherpaBackEnd.Tests.Controllers;
 
 public class AssessmentControllerTest
 {
-    private readonly AssessmentController _controller;
+    private readonly AssessmentsController _controller;
     private Mock<ISurveyService> _mockService;
 
     public AssessmentControllerTest()
     {
         _mockService = new();
-        _controller = new AssessmentController(_mockService.Object);
+        _controller = new AssessmentsController(_mockService.Object);
     }
 
     [Fact]

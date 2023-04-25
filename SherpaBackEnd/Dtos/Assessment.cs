@@ -1,12 +1,12 @@
 using SherpaBackEnd.Model;
 
-namespace SherpaBackEnd.Controllers;
+namespace SherpaBackEnd.Dtos;
 
 public class Assessment
 {
-    public Guid GroupId;
-    public Guid TemplateId;
-    public IEnumerable<Survey> Surveys;
+    public Guid GroupId { get; }
+    public Guid TemplateId { get; }
+    public IEnumerable<Survey> Surveys{ get; }
 
     public Assessment(Guid groupId, Guid templateId)
     {

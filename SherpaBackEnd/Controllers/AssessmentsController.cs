@@ -1,18 +1,23 @@
 using Microsoft.AspNetCore.Mvc;
+using SherpaBackEnd.Dtos;
 using SherpaBackEnd.Model;
 using SherpaBackEnd.Services;
 
 namespace SherpaBackEnd.Controllers;
 
-public class AssessmentController
+
+[ApiController]
+[Route("[controller]")]
+public class AssessmentsController
 {
     private readonly ISurveyService _surveyService;
 
-    public AssessmentController(ISurveyService surveyService)
+    public AssessmentsController(ISurveyService surveyService)
     {
         _surveyService = surveyService;
     }
 
+    [HttpGet]
     public async Task<ActionResult<IEnumerable<SurveyTemplate>>> GetTemplates()
     {
         var templates = await _surveyService.GetTemplates();
@@ -24,6 +29,8 @@ public class AssessmentController
         return new NotFoundResult();
     }
 
+    
+    [HttpPost]
     public async Task<ActionResult<Assessment>> AddAssessment(Guid groupId, Guid templateId)
     {
         if (await _surveyService.IsTemplateExist(templateId))

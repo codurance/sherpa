@@ -17,7 +17,7 @@ public class GroupsController
         _groupsService = groupsService;
     }
 
-    [HttpGet()]
+    [HttpGet]
     
     public async Task<ActionResult<IEnumerable<Group>>> GetGroupsAsync()
     {
@@ -42,7 +42,7 @@ public class GroupsController
         }
     }
 
-    [HttpPost()]
+    [HttpPost]
     public async Task<ActionResult<Group>> AddGroup(Group group)
     {
         Console.WriteLine("backend " + group.Name);
