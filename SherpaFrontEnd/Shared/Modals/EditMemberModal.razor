@@ -28,14 +28,7 @@
     <p>
         <label>
             Email:
-            @if (string.IsNullOrEmpty(GroupMember?.Email))
-            {
-                <InputText type="email" @bind-Value="_editGroupMember.Email"/>
-            }
-            else
-            {
-                <InputText type="email" @bind-Value="_editGroupMember.Email"/>
-            }
+            <InputText type="email" @bind-Value="_editGroupMember.Email"/>
         </label>
     </p>
     

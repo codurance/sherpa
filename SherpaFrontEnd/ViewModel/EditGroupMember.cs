@@ -22,16 +22,16 @@ public class EditGroupMember
     [EmailAddress]
     public string? Email { get; set; }
     
-    private static List<string> forbiddenEmails { get; set; }
+    private static List<string>? ForbiddenEmails { get; set; }
 
 
 
-    public EditGroupMember(GroupMember? groupMember, List<string> membersEmails)
+    public EditGroupMember(GroupMember? groupMember, List<string>? membersEmails)
     {
         Name = groupMember?.Name;
         LastName = groupMember?.LastName;
         Position = groupMember?.Position;
         Email = groupMember?.Email;
-        forbiddenEmails = membersEmails;
+        ForbiddenEmails = membersEmails;
     }
 }
