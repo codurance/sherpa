@@ -1,6 +1,7 @@
 @using SherpaFrontEnd.Model
 @using SherpaFrontEnd.Services
 @inject IAssessmentsDataService AssessmentsDataService;
+@inject IGroupDataService GroupDataService;
 @page "/assessments-page"
 <h3>AssessmentsPage</h3>
 
@@ -35,25 +36,35 @@
     private async Task GetAssessments()
     {
         var assessments = await AssessmentsDataService.GetAssessments();
+        var groups = await GroupDataService.GetGroups();
+        
+        if (groups is {Count: > 0})
+        {
+            Groups = groups;
+            SelectedGroupId = Groups[0].Id;
+            SelectedGroupAssessments = new List<Assessment>();
+        }
         if (assessments is {Count: > 0 })
         {
             Assessments = assessments;
             var groupedAssessments = Assessments.GroupBy(assessment => assessment.GroupId);
-            Groups = groupedAssessments.Select(byGroup => new Group(byGroup.Key, byGroup.First().Name)).ToList();
-            SelectedGroupId = Groups[0].Id;
             SelectedGroupAssessments = groupedAssessments.First(a => a.Key.Equals(SelectedGroupId)).ToList();
         }
+        
     }
     
     private void UpdateSelectedGroup(Guid id)
     {
         if (Groups is not null)
         {
-            //todo: refactor to remove duplication with code on GetAssessments
-            var groupedAssessments = Assessments.GroupBy(assessment => assessment.GroupId);
-            Groups = groupedAssessments.Select(byGroup => new Group(byGroup.Key, byGroup.First().Name)).ToList();
             SelectedGroupId = id;
-            SelectedGroupAssessments = groupedAssessments.First(a => a.Key.Equals(SelectedGroupId)).ToList();
+            SelectedGroupAssessments = new List<Assessment>();
+            
+            if (Assessments is {Count: > 0 })
+            {
+                var groupedAssessments = Assessments.GroupBy(assessment => assessment.GroupId);
+                SelectedGroupAssessments = groupedAssessments.First(a => a.Key.Equals(SelectedGroupId)).ToList();
+            }
         }
     }
 }
