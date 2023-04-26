@@ -20,11 +20,11 @@ public class SurveyService : ISurveyService
         return await _surveyRepository.GetTemplates();
     }
 
-    public Assessment? AddAssessment(Guid groupId, Guid templateId)
+    public Assessment? AddAssessment(Guid groupId, Guid templateId, string name)
     {
         if (_surveyRepository.IsTemplateExist(templateId))
         {
-            var newAssessment = new Assessment(groupId, templateId);
+            var newAssessment = new Assessment(groupId, templateId, name);
             _assessmentRepository.AddAssessment(newAssessment);
 
             return _assessmentRepository.GetAssessment(groupId, templateId);

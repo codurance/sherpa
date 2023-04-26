@@ -6,7 +6,7 @@ namespace SherpaBackEnd.Services;
 public interface ISurveyService
 {
     Task<IEnumerable<SurveyTemplate>> GetTemplates();
-    Assessment? AddAssessment(Guid groupId, Guid templateId);
+    Assessment? AddAssessment(Guid groupId, Guid templateId, string name);
 
     IEnumerable<Assessment> GetAssessments();
 }

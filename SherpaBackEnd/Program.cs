@@ -15,6 +15,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<IGroupRepository, InMemoryGroupRepository>();
 builder.Services.AddSingleton<IGroupsService, GroupsService>();
 builder.Services.AddSingleton<ISurveyRepository, InMemorySurveyRepository>();
+builder.Services.AddSingleton<IAssessmentRepository, InMemoryAssessmentRepository>();
 builder.Services.AddSingleton<ISurveyService, SurveyService>();
 
 

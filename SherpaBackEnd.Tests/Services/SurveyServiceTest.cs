@@ -44,14 +44,15 @@ public class SurveyServiceTest
     {
         var templateId = Guid.NewGuid();
         var groupId = Guid.NewGuid();
+        const string name = "Assessment A";
 
-        var assessment = new Assessment(groupId, templateId);
+        var assessment = new Assessment(groupId, templateId, name);
         _mockAssessmentRepository.Setup(m => m.GetAssessment(groupId, templateId))
             .Returns(assessment);
         _mockSurveyRepository.Setup(m => m.IsTemplateExist(templateId))
             .Returns(true);
         
-        var actualAssessment = _service.AddAssessment(groupId, templateId);
+        var actualAssessment = _service.AddAssessment(groupId, templateId, name);
         
         Assert.Equal(groupId, actualAssessment.GroupId);
         Assert.Equal(templateId, actualAssessment.TemplateId);

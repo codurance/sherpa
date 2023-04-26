@@ -48,16 +48,18 @@ public class AssessmentControllerTest
     {
         var groupId = Guid.NewGuid();
         var templateId = Guid.NewGuid();
+        const string assessmentName = "Assessment A";
 
-        _mockService.Setup(m => m.AddAssessment(groupId, templateId))
-            .Returns(new Assessment(groupId, templateId));
+        _mockService.Setup(m => m.AddAssessment(groupId, templateId, assessmentName))
+            .Returns(new Assessment(groupId, templateId, assessmentName));
 
-        var assessmentRequest = await _controller.AddAssessment(groupId, templateId);
+        var assessmentRequest = await _controller.AddAssessment(groupId, templateId, assessmentName);
         var assessmentResult = Assert.IsType<OkObjectResult>(assessmentRequest.Result);
         var actualAssessment = Assert.IsAssignableFrom<Assessment>(assessmentResult.Value);
         
         Assert.Equal(groupId, actualAssessment.GroupId);
         Assert.Equal(templateId, actualAssessment.TemplateId);
+        Assert.Equal(assessmentName, actualAssessment.Name);
         Assert.Empty(actualAssessment.Surveys);
     }
     
@@ -69,7 +71,7 @@ public class AssessmentControllerTest
             new ("Template A")
         });
         
-        var assessmentRequest = await _controller.AddAssessment(Guid.NewGuid(), Guid.Empty);
+        var assessmentRequest = await _controller.AddAssessment(Guid.NewGuid(), Guid.Empty, "Assessment A");
         Assert.IsType<BadRequestResult>(assessmentRequest.Result);
         
     }
