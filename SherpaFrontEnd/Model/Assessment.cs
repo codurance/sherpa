@@ -2,12 +2,12 @@ namespace SherpaFrontEnd.Model;
 
 public class Assessment
 {
-    public string Name;
+    public string Name { get; set; }
+
+    public Guid GroupId { get; set; }
     
-    public Guid GroupId;
-    
-    public Guid TemplateId;
-    public IEnumerable<Survey> Surveys;
+    public Guid TemplateId { get; set; }
+    public IEnumerable<Survey> Surveys { get; set; }
 
     public Assessment(string name, Guid groupId, Guid templateId,
         IEnumerable<Survey> surveys)

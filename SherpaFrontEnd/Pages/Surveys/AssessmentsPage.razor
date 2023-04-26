@@ -34,9 +34,10 @@
 
     private async Task GetAssessments()
     {
-        Assesments = await AssessmentsDataService.GetAssessments();
-        if (Assesments != null)
+        var assessments = await AssessmentsDataService.GetAssessments();
+        if (assessments is {Count: > 0 })
         {
+            Assesments = assessments;
             var groupedAssessments = Assesments.GroupBy(assessment => assessment.GroupId);
             Groups = groupedAssessments.Select(byGroup => new Group(byGroup.Key, byGroup.First().Name)).ToList();
             SelectedGroupId = Groups[0].Id;

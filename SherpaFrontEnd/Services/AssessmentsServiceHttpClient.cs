@@ -1,3 +1,4 @@
+using System.Net;
 using System.Text.Json;
 using SherpaFrontEnd.Model;
 
@@ -18,11 +19,17 @@ public class AssessmentsServiceHttpClient : IAssessmentsDataService
         var client = _clientFactory.CreateClient(Sherpabackend);
         var request = new HttpRequestMessage(HttpMethod.Get, "/assessments");
         var response = await client.SendAsync(request);
+        
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            var responseString = await response.Content.ReadAsStringAsync();
+            
+            Console.WriteLine("raw response: " + responseString);
 
-        response.EnsureSuccessStatusCode();
-        var responseString = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<List<Assessment>>(
+                responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });    
+        }
 
-        return JsonSerializer.Deserialize<List<Assessment>>(
-            responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        return new List<Assessment>();
     }
 }

@@ -14,7 +14,7 @@ builder.Services.AddHttpClient("SherpaBackEnd", client =>
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<IGroupMemberService, InMemoryGroupMemberService>();
 builder.Services.AddScoped<IGroupDataService, GroupServiceHttpClient>();
-builder.Services.AddScoped<IAssessmentsDataService, MockAssessmentDataService>();
+builder.Services.AddScoped<IAssessmentsDataService, AssessmentsServiceHttpClient>();
 
 builder.Services.AddBlazoredModal();
 
