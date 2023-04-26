@@ -16,9 +16,9 @@ public class InMemoryAssessmentRepository : IAssessmentRepository
         _assessments.Add(assessment);
     }
 
-    public IEnumerable<Assessment> GetAssessments()
+    public async Task<IEnumerable<Assessment>> GetAssessments()
     {
-        throw new NotImplementedException();
+        return await Task.FromResult(_assessments);
     }
 
     public Assessment? GetAssessment(Guid groupId, Guid templateId)

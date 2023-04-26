@@ -23,8 +23,8 @@
 
 @code {
     public List<Group>? Groups { get; private set; }
-    public List<OngoingAssessment>? Assesments { get; set; }
-    public List<OngoingAssessment>? SelectedGroupAssessments { get; set; }
+    public List<Assessment>? Assesments { get; set; }
+    public List<Assessment>? SelectedGroupAssessments { get; set; }
     public Guid SelectedGroupId { get; private set; }
     
     protected override async Task OnInitializedAsync()
@@ -37,8 +37,8 @@
         Assesments = await AssessmentsDataService.GetAssessments();
         if (Assesments != null)
         {
-            var groupedAssessments = Assesments.GroupBy(assessment => assessment.groupId);
-            Groups = groupedAssessments.Select(byGroup => new Group(byGroup.Key, byGroup.First().groupName)).ToList();
+            var groupedAssessments = Assesments.GroupBy(assessment => assessment.GroupId);
+            Groups = groupedAssessments.Select(byGroup => new Group(byGroup.Key, byGroup.First().Name)).ToList();
             SelectedGroupId = Groups[0].Id;
             SelectedGroupAssessments = groupedAssessments.First(a => a.Key.Equals(SelectedGroupId)).ToList();
         }
@@ -49,8 +49,8 @@
         if (Groups is not null)
         {
             //todo: refactor to remove duplication with code on GetAssessments
-            var groupedAssessments = Assesments.GroupBy(assessment => assessment.groupId);
-            Groups = groupedAssessments.Select(byGroup => new Group(byGroup.Key, byGroup.First().groupName)).ToList();
+            var groupedAssessments = Assesments.GroupBy(assessment => assessment.GroupId);
+            Groups = groupedAssessments.Select(byGroup => new Group(byGroup.Key, byGroup.First().Name)).ToList();
             SelectedGroupId = id;
             SelectedGroupAssessments = groupedAssessments.First(a => a.Key.Equals(SelectedGroupId)).ToList();
         }

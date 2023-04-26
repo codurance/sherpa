@@ -33,8 +33,8 @@ public class SurveyService : ISurveyService
         return null;
     }
 
-    public IEnumerable<Assessment> GetAssessments()
+    public async Task<IEnumerable<Assessment>> GetAssessments()
     {
-        throw new NotImplementedException();
+        return await _assessmentRepository.GetAssessments();
     }
 }

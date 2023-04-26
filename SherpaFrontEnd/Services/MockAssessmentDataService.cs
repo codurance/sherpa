@@ -4,36 +4,36 @@ namespace SherpaFrontEnd.Services;
 
 public class MockAssessmentDataService : IAssessmentsDataService
 {
-    public Task<List<OngoingAssessment>> GetAssessments()
+    public Task<List<Assessment>> GetAssessments()
     {
         Guid groupAId = Guid.NewGuid();
         Guid groupBId = Guid.NewGuid();
 
-        return Task.FromResult(new List<OngoingAssessment>
+        return Task.FromResult(new List<Assessment>
         {
-            new OngoingAssessment(Guid.NewGuid(), "Hackman Assessment",
-                groupAId, "Group A",
+            new ("Hackman Assessment",
+                groupAId,
                 Guid.NewGuid(),
                 new List<Survey>
                 {
-                    new Survey(DateOnly.Parse("2023-01-01")),
-                    new Survey(DateOnly.FromDateTime(DateTime.Now))
+                    new (DateOnly.Parse("2023-01-01")),
+                    new (DateOnly.FromDateTime(DateTime.Now))
                 }),
-            new OngoingAssessment(Guid.NewGuid(), "Skillset Assessment",
-                groupAId, "Group A",
+            new ("Skillset Assessment",
+                groupAId, 
                 Guid.NewGuid(),
                 new List<Survey>
                 {
-                    new Survey(DateOnly.Parse("2023-01-01")),
-                    new Survey(DateOnly.FromDateTime(DateTime.Now))
+                    new (DateOnly.Parse("2023-01-01")),
+                    new (DateOnly.FromDateTime(DateTime.Now))
                 }),
-            new OngoingAssessment(Guid.NewGuid(), "Hackman Assessment",
-                groupBId, "Group B",
+            new ("Hackman Assessment",
+                groupBId, 
                 Guid.NewGuid(),
                 new List<Survey>
                 {
-                    new Survey(DateOnly.Parse("2023-01-01")),
-                    new Survey(DateOnly.FromDateTime(DateTime.Now))
+                    new (DateOnly.Parse("2023-01-01")),
+                    new (DateOnly.FromDateTime(DateTime.Now))
                 })
         });
     }

@@ -4,5 +4,5 @@ namespace SherpaFrontEnd.Services;
 
 public interface IAssessmentsDataService
 {
-    public Task<List<OngoingAssessment>?> GetAssessments();
+    public Task<List<Assessment>?> GetAssessments();
 }

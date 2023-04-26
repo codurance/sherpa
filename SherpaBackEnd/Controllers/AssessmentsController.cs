@@ -16,8 +16,20 @@ public class AssessmentsController
     {
         _surveyService = surveyService;
     }
-
+    
     [HttpGet]
+    public async Task<ActionResult<IEnumerable<Assessment>>> GetAssessments()
+    {
+        var assessments = await _surveyService.GetAssessments();
+        if (assessments.Any())
+        {
+            return new OkObjectResult(assessments);
+        }
+
+        return new NotFoundResult();
+    }
+
+    [HttpGet("templates")]
     public async Task<ActionResult<IEnumerable<SurveyTemplate>>> GetTemplates()
     {
         var templates = await _surveyService.GetTemplates();

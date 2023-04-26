@@ -5,7 +5,7 @@
 {
     @foreach (var assessment in Assessments)
     {
-        <h4>@assessment.assessmentName</h4>
+        <h4>@assessment.Name</h4>
         <table class="table table-striped">
             <thead>
             <tr>
@@ -14,7 +14,7 @@
                 <th scope="col">Completed</th>
             </tr>
             </thead>
-            @foreach (var survey in assessment.surveys)
+            @foreach (var survey in assessment.Surveys)
             {
                 <tr>
                     <td>@survey.date</td>
@@ -38,6 +38,6 @@
 @code {
 
     [Parameter]
-    public List<OngoingAssessment> Assessments { get; set; }
+    public List<Assessment> Assessments { get; set; }
 
 }
