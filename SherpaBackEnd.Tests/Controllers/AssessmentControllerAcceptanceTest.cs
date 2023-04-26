@@ -29,16 +29,14 @@ public class AssessmentControllerAcceptanceTest
         var templatesResult = Assert.IsType<OkObjectResult>(templates.Result);
         var actualTemplates = Assert.IsAssignableFrom<IEnumerable<SurveyTemplate>>(templatesResult.Value);
 
-        var groupId = Guid.NewGuid();
-        var templateId = actualTemplates.First().Id;
-        const string name = "Assessment A";
-        var assessment = await  _assessmentsController.AddAssessment(groupId, templateId, name);
+        var assessment = new Assessment(Guid.NewGuid(), actualTemplates.First().Id, "Assessment A");
+        var assessmentRequest = await  _assessmentsController.AddAssessment(assessment);
         
-        var assessmentResult = Assert.IsType<OkObjectResult>(assessment.Result);
+        var assessmentResult = Assert.IsType<OkObjectResult>(assessmentRequest.Result);
         var actualAssessment = Assert.IsAssignableFrom<Assessment>(assessmentResult.Value);
-        Assert.Equal(groupId, actualAssessment.GroupId);
-        Assert.Equal(templateId, actualAssessment.TemplateId);
-        Assert.Equal(name, actualAssessment.Name);
+        Assert.Equal(assessment.GroupId, actualAssessment.GroupId);
+        Assert.Equal(assessment.TemplateId, actualAssessment.TemplateId);
+        Assert.Equal(assessment.Name, actualAssessment.Name);
         Assert.Empty(actualAssessment.Surveys);
     }
     
@@ -50,7 +48,7 @@ public class AssessmentControllerAcceptanceTest
         var templatesResult = Assert.IsType<OkObjectResult>(templates.Result);
         Assert.IsAssignableFrom<IEnumerable<SurveyTemplate>>(templatesResult.Value);
 
-        var assessment = await  _assessmentsController.AddAssessment(Guid.NewGuid(), Guid.NewGuid(), "Assessment A");
+        var assessment = await  _assessmentsController.AddAssessment(new Assessment(Guid.NewGuid(), Guid.NewGuid(), "Assessment A"));
         
         Assert.IsType<BadRequestResult>(assessment.Result);
     }

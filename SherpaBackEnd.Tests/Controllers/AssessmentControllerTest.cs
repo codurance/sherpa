@@ -46,20 +46,18 @@ public class AssessmentControllerTest
     [Fact]
     public async Task AddAssessment_ReturnNewAssessment_OkResultExpected()
     {
-        var groupId = Guid.NewGuid();
-        var templateId = Guid.NewGuid();
-        const string assessmentName = "Assessment A";
+        var assessment = new Assessment(Guid.NewGuid(), Guid.NewGuid(), "Assessment A");
+        
+        _mockService.Setup(m => m.AddAssessment(assessment.GroupId, assessment.TemplateId, assessment.Name))
+            .Returns(new Assessment(assessment.GroupId, assessment.TemplateId, assessment.Name));
 
-        _mockService.Setup(m => m.AddAssessment(groupId, templateId, assessmentName))
-            .Returns(new Assessment(groupId, templateId, assessmentName));
-
-        var assessmentRequest = await _controller.AddAssessment(groupId, templateId, assessmentName);
+        var assessmentRequest = await _controller.AddAssessment(assessment);
         var assessmentResult = Assert.IsType<OkObjectResult>(assessmentRequest.Result);
         var actualAssessment = Assert.IsAssignableFrom<Assessment>(assessmentResult.Value);
         
-        Assert.Equal(groupId, actualAssessment.GroupId);
-        Assert.Equal(templateId, actualAssessment.TemplateId);
-        Assert.Equal(assessmentName, actualAssessment.Name);
+        Assert.Equal(assessment.GroupId, actualAssessment.GroupId);
+        Assert.Equal(assessment.TemplateId, actualAssessment.TemplateId);
+        Assert.Equal(assessment.Name, actualAssessment.Name);
         Assert.Empty(actualAssessment.Surveys);
     }
     
@@ -71,7 +69,7 @@ public class AssessmentControllerTest
             new ("Template A")
         });
         
-        var assessmentRequest = await _controller.AddAssessment(Guid.NewGuid(), Guid.Empty, "Assessment A");
+        var assessmentRequest = await _controller.AddAssessment(new Assessment(Guid.Empty, Guid.NewGuid(), "Assessment A"));
         Assert.IsType<BadRequestResult>(assessmentRequest.Result);
         
     }

@@ -43,9 +43,10 @@ public class AssessmentsController
 
     
     [HttpPost]
-    public async Task<ActionResult<Assessment>> AddAssessment(Guid groupId, Guid templateId, string name)
+    public async Task<ActionResult<Assessment>> AddAssessment(Assessment assessmentDto)
     {
-        var assessment = _surveyService.AddAssessment(groupId, templateId, name);
+        var assessment = _surveyService
+            .AddAssessment(assessmentDto.GroupId, assessmentDto.TemplateId, assessmentDto.Name);
         
         if (assessment is not null)
         {

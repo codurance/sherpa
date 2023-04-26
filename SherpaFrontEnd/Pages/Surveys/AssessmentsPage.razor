@@ -23,7 +23,7 @@
 
 @code {
     public List<Group>? Groups { get; private set; }
-    public List<Assessment>? Assesments { get; set; }
+    public List<Assessment>? Assessments { get; set; }
     public List<Assessment>? SelectedGroupAssessments { get; set; }
     public Guid SelectedGroupId { get; private set; }
     
@@ -37,8 +37,8 @@
         var assessments = await AssessmentsDataService.GetAssessments();
         if (assessments is {Count: > 0 })
         {
-            Assesments = assessments;
-            var groupedAssessments = Assesments.GroupBy(assessment => assessment.GroupId);
+            Assessments = assessments;
+            var groupedAssessments = Assessments.GroupBy(assessment => assessment.GroupId);
             Groups = groupedAssessments.Select(byGroup => new Group(byGroup.Key, byGroup.First().Name)).ToList();
             SelectedGroupId = Groups[0].Id;
             SelectedGroupAssessments = groupedAssessments.First(a => a.Key.Equals(SelectedGroupId)).ToList();
@@ -50,7 +50,7 @@
         if (Groups is not null)
         {
             //todo: refactor to remove duplication with code on GetAssessments
-            var groupedAssessments = Assesments.GroupBy(assessment => assessment.GroupId);
+            var groupedAssessments = Assessments.GroupBy(assessment => assessment.GroupId);
             Groups = groupedAssessments.Select(byGroup => new Group(byGroup.Key, byGroup.First().Name)).ToList();
             SelectedGroupId = id;
             SelectedGroupAssessments = groupedAssessments.First(a => a.Key.Equals(SelectedGroupId)).ToList();
