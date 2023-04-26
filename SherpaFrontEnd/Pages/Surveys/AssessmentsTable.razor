@@ -14,7 +14,7 @@
                 <th scope="col">Completed</th>
             </tr>
             </thead>
-            @if (assessment.Surveys.ToList().Count > 0)
+            @if (assessment.Surveys is not null && assessment.Surveys.ToList().Count > 0)
             {
                 @foreach (var survey in assessment.Surveys)
                 {
