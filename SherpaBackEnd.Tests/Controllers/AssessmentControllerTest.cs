@@ -49,7 +49,9 @@ public class AssessmentControllerTest
         var groupId = Guid.NewGuid();
         var templateId = Guid.NewGuid();
 
-        _mockService.Setup(m => m.IsTemplateExist(templateId)).ReturnsAsync(true);
+        _mockService.Setup(m => m.AddAssessment(groupId, templateId))
+            .Returns(new Assessment(groupId, templateId));
+
         var assessmentRequest = await _controller.AddAssessment(groupId, templateId);
         var assessmentResult = Assert.IsType<OkObjectResult>(assessmentRequest.Result);
         var actualAssessment = Assert.IsAssignableFrom<Assessment>(assessmentResult.Value);
@@ -57,7 +59,6 @@ public class AssessmentControllerTest
         Assert.Equal(groupId, actualAssessment.GroupId);
         Assert.Equal(templateId, actualAssessment.TemplateId);
         Assert.Empty(actualAssessment.Surveys);
-        
     }
     
     [Fact]

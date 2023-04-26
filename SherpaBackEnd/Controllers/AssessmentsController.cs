@@ -33,9 +33,11 @@ public class AssessmentsController
     [HttpPost]
     public async Task<ActionResult<Assessment>> AddAssessment(Guid groupId, Guid templateId)
     {
-        if (await _surveyService.IsTemplateExist(templateId))
+        var assessment = _surveyService.AddAssessment(groupId, templateId);
+        
+        if (assessment is not null)
         {
-            return new OkObjectResult(new Assessment(groupId, templateId));
+            return new OkObjectResult(assessment);
         }
 
         return new BadRequestResult();

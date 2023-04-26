@@ -1,10 +1,10 @@
 namespace SherpaBackEnd.Model;
 
-public class SurveyRepository : ISurveyRepository
+public class InMemorySurveyRepository : ISurveyRepository
 {
     private Dictionary<Guid, SurveyTemplate> _templates;
 
-    public SurveyRepository()
+    public InMemorySurveyRepository()
     {
         _templates = new Dictionary<Guid, SurveyTemplate>();
 
@@ -18,8 +18,8 @@ public class SurveyRepository : ISurveyRepository
         return await Task.FromResult<IEnumerable<SurveyTemplate>>(_templates.Values);
     }
 
-    public async Task<bool> IsTemplateExist(Guid templateId)
+    public bool IsTemplateExist(Guid templateId)
     {
-        return await Task.FromResult(_templates.ContainsKey(templateId));
+        return _templates.ContainsKey(templateId);
     }
 }

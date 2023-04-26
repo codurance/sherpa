@@ -8,14 +8,16 @@ namespace SherpaBackEnd.Tests.Controllers;
 
 public class AssessmentControllerAcceptanceTest
 {
-    private readonly SurveyRepository _surveyRepository;
+    private readonly InMemorySurveyRepository _inMemorySurveyRepository;
+    private readonly InMemoryAssessmentRepository _inMemoryAssessmentRepository;
     private readonly SurveyService _surveyService;
     private readonly AssessmentsController _assessmentsController;
 
     public AssessmentControllerAcceptanceTest()
     {
-        _surveyRepository = new SurveyRepository();
-        _surveyService = new SurveyService(_surveyRepository);
+        _inMemorySurveyRepository = new InMemorySurveyRepository();
+        _inMemoryAssessmentRepository = new InMemoryAssessmentRepository();
+        _surveyService = new SurveyService(_inMemorySurveyRepository, _inMemoryAssessmentRepository);
         _assessmentsController = new AssessmentsController(_surveyService);
     }
 

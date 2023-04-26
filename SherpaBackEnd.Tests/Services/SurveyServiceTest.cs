@@ -1,4 +1,5 @@
 ﻿using Moq;
+using SherpaBackEnd.Dtos;
 using SherpaBackEnd.Model;
 using SherpaBackEnd.Services;
 
@@ -6,13 +7,15 @@ namespace SherpaBackEnd.Tests.Services;
 
 public class SurveyServiceTest
 {
-    private readonly Mock<ISurveyRepository> _mockRepository;
+    private readonly Mock<ISurveyRepository> _mockSurveyRepository;
+    private readonly Mock<IAssessmentRepository> _mockAssessmentRepository;
     private readonly SurveyService _service;
 
     public SurveyServiceTest()
     {
-        _mockRepository = new Mock<ISurveyRepository>();
-        _service = new SurveyService(_mockRepository.Object);
+        _mockSurveyRepository = new Mock<ISurveyRepository>();
+        _mockAssessmentRepository = new Mock<IAssessmentRepository>();
+        _service = new SurveyService(_mockSurveyRepository.Object, _mockAssessmentRepository.Object);
     }
 
     [Fact]
@@ -20,7 +23,7 @@ public class SurveyServiceTest
     {
         var template = new SurveyTemplate("hackman");
 
-        _mockRepository.Setup(m => m.GetTemplates())
+        _mockSurveyRepository.Setup(m => m.GetTemplates())
             .ReturnsAsync(new List<SurveyTemplate> { template });
         var actualTemplates = await _service.GetTemplates();
         var templatesList = actualTemplates.ToList();
@@ -33,14 +36,25 @@ public class SurveyServiceTest
     public async Task GetTemplates_InvokesRepository()
     {
         var templates = await _service.GetTemplates();
-        _mockRepository.Verify(m => m.GetTemplates());
+        _mockSurveyRepository.Verify(m => m.GetTemplates());
     }
 
     [Fact]
-    public async Task IsTemplateExist_Invoked()
+    public void AddNewAssessment_ReturnsNewAssessment()
     {
         var templateId = Guid.NewGuid();
-        await _service.IsTemplateExist(templateId);
-        _mockRepository.Verify(m => m.IsTemplateExist(templateId));
+        var groupId = Guid.NewGuid();
+
+        var assessment = new Assessment(groupId, templateId);
+        _mockAssessmentRepository.Setup(m => m.GetAssessment(groupId, templateId))
+            .Returns(assessment);
+        _mockSurveyRepository.Setup(m => m.IsTemplateExist(templateId))
+            .Returns(true);
+        
+        var actualAssessment = _service.AddAssessment(groupId, templateId);
+        
+        Assert.Equal(groupId, actualAssessment.GroupId);
+        Assert.Equal(templateId, actualAssessment.TemplateId);
+        Assert.Empty(actualAssessment.Surveys);
     }
 }
