@@ -16,7 +16,7 @@ builder.Services.AddSingleton<IGroupRepository, InMemoryGroupRepository>();
 builder.Services.AddSingleton<IGroupsService, GroupsService>();
 builder.Services.AddSingleton<ISurveyRepository, InMemorySurveyRepository>();
 builder.Services.AddSingleton<IAssessmentRepository, InMemoryAssessmentRepository>();
-builder.Services.AddSingleton<ISurveyService, SurveyService>();
+builder.Services.AddSingleton<IAssessmentService, AssessmentService>();
 
 
 var app = builder.Build();

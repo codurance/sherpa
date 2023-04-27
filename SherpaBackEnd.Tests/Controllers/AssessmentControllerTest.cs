@@ -10,7 +10,7 @@ namespace SherpaBackEnd.Tests.Controllers;
 public class AssessmentControllerTest
 {
     private readonly AssessmentsController _controller;
-    private Mock<ISurveyService> _mockService;
+    private Mock<IAssessmentService> _mockService;
 
     public AssessmentControllerTest()
     {

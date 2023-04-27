@@ -4,12 +4,12 @@ using SherpaBackEnd.Model;
 
 namespace SherpaBackEnd.Services;
 
-public class SurveyService : ISurveyService
+public class AssessmentService : IAssessmentService
 {
     private readonly ISurveyRepository _surveyRepository;
     private readonly IAssessmentRepository _assessmentRepository;
 
-    public SurveyService(ISurveyRepository surveyRepository, IAssessmentRepository assessmentRepository)
+    public AssessmentService(ISurveyRepository surveyRepository, IAssessmentRepository assessmentRepository)
     {
         _surveyRepository = surveyRepository;
         _assessmentRepository = assessmentRepository;
@@ -36,5 +36,10 @@ public class SurveyService : ISurveyService
     public async Task<IEnumerable<Assessment>> GetAssessments()
     {
         return await _assessmentRepository.GetAssessments();
+    }
+
+    public Task<Assessment?> GetAssessment(Guid groupId, Guid templateId)
+    {
+        throw new NotImplementedException();
     }
 }

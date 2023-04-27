@@ -9,13 +9,13 @@ public class SurveyServiceTest
 {
     private readonly Mock<ISurveyRepository> _mockSurveyRepository;
     private readonly Mock<IAssessmentRepository> _mockAssessmentRepository;
-    private readonly SurveyService _service;
+    private readonly AssessmentService _service;
 
     public SurveyServiceTest()
     {
         _mockSurveyRepository = new Mock<ISurveyRepository>();
         _mockAssessmentRepository = new Mock<IAssessmentRepository>();
-        _service = new SurveyService(_mockSurveyRepository.Object, _mockAssessmentRepository.Object);
+        _service = new AssessmentService(_mockSurveyRepository.Object, _mockAssessmentRepository.Object);
     }
 
     [Fact]

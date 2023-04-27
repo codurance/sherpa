@@ -83,6 +83,8 @@ public class GroupsController
     [HttpPut("{guid:guid}")]
     public async Task<ActionResult<Group>> UpdateGroupAsync(Guid guid,Group group)
     {
+        
+        // TODO use (Group group) signature to not expose too much
         var groupFound = await _groupsService.GetGroup(guid);
         if (groupFound is null)
         {

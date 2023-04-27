@@ -10,24 +10,24 @@ namespace SherpaBackEnd.Controllers;
 [Route("[controller]")]
 public class AssessmentsController
 {
-    private readonly ISurveyService _surveyService;
+    private readonly IAssessmentService _assessmentService;
 
-    public AssessmentsController(ISurveyService surveyService)
+    public AssessmentsController(IAssessmentService assessmentService)
     {
-        _surveyService = surveyService;
+        _assessmentService = assessmentService;
     }
     
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Assessment>>> GetAssessmentsAsync()
     {
-        var assessments = await _surveyService.GetAssessments();
+        var assessments = await _assessmentService.GetAssessments();
         return new OkObjectResult(assessments);
     }
 
     [HttpGet("templates")]
     public async Task<ActionResult<IEnumerable<SurveyTemplate>>> GetTemplatesAsync()
     {
-        var templates = await _surveyService.GetTemplates();
+        var templates = await _assessmentService.GetTemplates();
         if (templates.Any())
         {
             return new OkObjectResult(templates);
@@ -40,7 +40,7 @@ public class AssessmentsController
     [HttpPost]
     public async Task<ActionResult<Assessment>> AddAssessmentAsync(Assessment assessmentDto)
     {
-        var assessment = _surveyService
+        var assessment = _assessmentService
             .AddAssessment(assessmentDto.GroupId, assessmentDto.TemplateId, assessmentDto.Name);
         
         if (assessment is not null)
@@ -49,5 +49,17 @@ public class AssessmentsController
         }
 
         return new BadRequestResult();
+    }
+
+
+    public async Task<ActionResult<Assessment>> UpdateAssessmentAsync(Assessment assessmentToUpdate)
+    {
+        var assessment = await _assessmentService.GetAssessment(assessmentToUpdate.GroupId, assessmentToUpdate.TemplateId);
+        if (assessment is null)
+        {
+            return new NotFoundResult();
+        }
+
+        throw new NotImplementedException();
     }
 }

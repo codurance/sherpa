@@ -10,15 +10,15 @@ public class AssessmentControllerAcceptanceTest
 {
     private readonly InMemorySurveyRepository _inMemorySurveyRepository;
     private readonly InMemoryAssessmentRepository _inMemoryAssessmentRepository;
-    private readonly SurveyService _surveyService;
+    private readonly AssessmentService _assessmentService;
     private readonly AssessmentsController _assessmentsController;
 
     public AssessmentControllerAcceptanceTest()
     {
         _inMemorySurveyRepository = new InMemorySurveyRepository();
         _inMemoryAssessmentRepository = new InMemoryAssessmentRepository();
-        _surveyService = new SurveyService(_inMemorySurveyRepository, _inMemoryAssessmentRepository);
-        _assessmentsController = new AssessmentsController(_surveyService);
+        _assessmentService = new AssessmentService(_inMemorySurveyRepository, _inMemoryAssessmentRepository);
+        _assessmentsController = new AssessmentsController(_assessmentService);
     }
 
     [Fact]
@@ -51,5 +51,18 @@ public class AssessmentControllerAcceptanceTest
         var assessment = await  _assessmentsController.AddAssessmentAsync(new Assessment(Guid.NewGuid(), Guid.NewGuid(), "Assessment A"));
         
         Assert.IsType<BadRequestResult>(assessment.Result);
+    }
+
+    [Fact]
+    public async Task AddNewSurveyToNonExistingAssessment_NotFoundExpected()
+    {
+        var groupId = Guid.NewGuid();
+        var templateId = Guid.NewGuid();
+        var assessmentToUpdate = new Assessment(groupId, templateId, "test assessment");
+        // _inMemoryAssessmentRepository.AddAssessment(assessmentToUpdate);
+
+        var updateAssessment = await _assessmentsController.UpdateAssessmentAsync(assessmentToUpdate);
+
+        Assert.IsType<NotFoundResult>(updateAssessment.Result);
     }
 }
