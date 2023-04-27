@@ -26,7 +26,11 @@
         <div class="col-9">
             @if (Groups is not null)
             {
-                <AssessmentsTable Assessments="@SelectedGroupAssessments"></AssessmentsTable>
+                var email = Groups.First(g => g.Id == SelectedGroupId).Members.Select(m => m.Email).ToList();
+                <AssessmentsTable 
+                    Assessments="@SelectedGroupAssessments" 
+                    Emails="email" 
+                    OnCreateSurvey="OnUpdateAssessment"></AssessmentsTable>
             }
         </div>
     </div>
@@ -111,5 +115,12 @@
         }
 
         SelectedGroupAssessments = new List<Assessment>();
+    }
+
+    
+    
+    private async Task OnUpdateAssessment(Assessment assessment)
+    {
+        await AssessmentsDataService.PutAssessment(assessment);
     }
 }

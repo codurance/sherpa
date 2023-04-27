@@ -65,4 +65,27 @@ public class AssessmentControllerAcceptanceTest
 
         Assert.IsType<NotFoundResult>(updateAssessment.Result);
     }
+    
+    [Fact]
+    public async Task AddNewSurveyWithExistingAssessment_OkResultExpected()
+    {
+        var groupId = Guid.NewGuid();
+        var templateId = Guid.NewGuid();
+        var assessmentToUpdate = new Assessment(groupId, templateId, "test assessment");
+        _inMemoryAssessmentRepository.AddAssessment(assessmentToUpdate);
+
+
+        var survey = new Survey(DateOnly.FromDateTime(DateTime.Now), new List<string>());
+        var surveysList = new List<Survey> { survey };
+        assessmentToUpdate.Surveys = surveysList;
+
+        var updateAssessmentRequest = await _assessmentsController.UpdateAssessmentAsync(assessmentToUpdate);
+        
+        var updatedAssessmentResult = Assert.IsType<OkObjectResult>(updateAssessmentRequest.Result);
+        var actualUpdatedAssessment = Assert.IsAssignableFrom<Assessment>(updatedAssessmentResult.Value);
+        
+        Assert.NotEmpty(actualUpdatedAssessment.Surveys);
+        Assert.Single(actualUpdatedAssessment.Surveys);
+
+    }
 }

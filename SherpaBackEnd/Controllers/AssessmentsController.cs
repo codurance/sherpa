@@ -40,7 +40,7 @@ public class AssessmentsController
     [HttpPost]
     public async Task<ActionResult<Assessment>> AddAssessmentAsync(Assessment assessmentDto)
     {
-        var assessment = _assessmentService
+        var assessment = await _assessmentService
             .AddAssessment(assessmentDto.GroupId, assessmentDto.TemplateId, assessmentDto.Name);
         
         if (assessment is not null)
@@ -51,7 +51,7 @@ public class AssessmentsController
         return new BadRequestResult();
     }
 
-
+    [HttpPut]
     public async Task<ActionResult<Assessment>> UpdateAssessmentAsync(Assessment assessmentToUpdate)
     {
         var assessment = await _assessmentService.GetAssessment(assessmentToUpdate.GroupId, assessmentToUpdate.TemplateId);
@@ -60,6 +60,7 @@ public class AssessmentsController
             return new NotFoundResult();
         }
 
-        throw new NotImplementedException();
+        var updateAssessment = await _assessmentService.UpdateAssessment(assessmentToUpdate);
+        return new OkObjectResult(assessment);
     }
 }

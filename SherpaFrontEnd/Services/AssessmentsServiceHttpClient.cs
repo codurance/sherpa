@@ -9,17 +9,18 @@ public class AssessmentsServiceHttpClient : IAssessmentsDataService
 {
     private const string Sherpabackend = "SherpaBackEnd";
     private readonly IHttpClientFactory _clientFactory;
+    private readonly HttpClient _httpClient;
 
     public AssessmentsServiceHttpClient(IHttpClientFactory clientFactory)
     {
         _clientFactory = clientFactory;
+        _httpClient = _clientFactory.CreateClient(Sherpabackend);
     }
 
     public async Task<List<Assessment>?> GetAssessments()
     {
-        var client = _clientFactory.CreateClient(Sherpabackend);
         var request = new HttpRequestMessage(HttpMethod.Get, "/assessments");
-        var response = await client.SendAsync(request);
+        var response = await _httpClient.SendAsync(request);
         
         if (response.StatusCode == HttpStatusCode.OK)
         {
@@ -36,9 +37,8 @@ public class AssessmentsServiceHttpClient : IAssessmentsDataService
 
     public async Task<List<SurveyTemplate>?> GetTemplates()
     {
-        var client = _clientFactory.CreateClient(Sherpabackend);
         var request = new HttpRequestMessage(HttpMethod.Get, "/assessments/templates");
-        var response = await client.SendAsync(request);
+        var response = await _httpClient.SendAsync(request);
 
         if (response.StatusCode == HttpStatusCode.OK)
         {
@@ -60,8 +60,7 @@ public class AssessmentsServiceHttpClient : IAssessmentsDataService
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         
         
-        var client = _clientFactory.CreateClient(Sherpabackend);
-        var response = await client.PostAsync("/assessments", 
+        var response = await _httpClient.PostAsync("/assessments", 
             new StringContent(assessmentToAdd, System.Text.Encoding.UTF8, "application/json"));
         
         if (response.StatusCode == HttpStatusCode.OK)
@@ -73,5 +72,16 @@ public class AssessmentsServiceHttpClient : IAssessmentsDataService
         }
 
         return null;
+    }
+
+    public async Task PutAssessment(Assessment assessment)
+    {
+        var assessmentToUpdate = JsonSerializer.Serialize(assessment, 
+            new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        
+        var client = _clientFactory.CreateClient(Sherpabackend);
+        var response = await(client.PutAsync($"/assessments",
+            new StringContent(assessmentToUpdate, System.Text.Encoding.UTF8, "application/json")));
+        response.EnsureSuccessStatusCode();
     }
 }

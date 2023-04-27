@@ -40,7 +40,7 @@ public class SurveyServiceTest
     }
 
     [Fact]
-    public void AddNewAssessment_ReturnsNewAssessment()
+    public async Task AddNewAssessment_ReturnsNewAssessment()
     {
         var templateId = Guid.NewGuid();
         var groupId = Guid.NewGuid();
@@ -48,14 +48,37 @@ public class SurveyServiceTest
 
         var assessment = new Assessment(groupId, templateId, name);
         _mockAssessmentRepository.Setup(m => m.GetAssessment(groupId, templateId))
-            .Returns(assessment);
+            .ReturnsAsync(assessment);
         _mockSurveyRepository.Setup(m => m.IsTemplateExist(templateId))
             .Returns(true);
         
-        var actualAssessment = _service.AddAssessment(groupId, templateId, name);
+        var actualAssessment = await _service.AddAssessment(groupId, templateId, name);
         
         Assert.Equal(groupId, actualAssessment.GroupId);
         Assert.Equal(templateId, actualAssessment.TemplateId);
         Assert.Empty(actualAssessment.Surveys);
+    }
+
+    [Fact]
+    public async Task UpdateAssessment_ReturnsUpdatedAssessment()
+    {
+        var templateId = Guid.NewGuid();
+        var groupId = Guid.NewGuid();
+        const string name = "Assessment A";
+
+        var assessment = new Assessment(groupId, templateId, name);
+        _mockAssessmentRepository.Setup(m => m.GetAssessment(groupId, templateId))
+            .ReturnsAsync(assessment);
+
+        var survey = new Survey(DateOnly.FromDateTime(DateTime.Now), new List<string>());
+        var surveys = new List<Survey> { survey };
+        assessment.Surveys = surveys;
+
+        _mockAssessmentRepository.Setup(m => m.UpdateAssessment(assessment))
+            .ReturnsAsync(assessment);
+
+        var updatedAssessment = await _service.UpdateAssessment(assessment);
+        Assert.NotEmpty(updatedAssessment.Surveys);
+        Assert.Single(updatedAssessment.Surveys);
     }
 }

@@ -20,14 +20,14 @@ public class AssessmentService : IAssessmentService
         return await _surveyRepository.GetTemplates();
     }
 
-    public Assessment? AddAssessment(Guid groupId, Guid templateId, string name)
+    public async Task<Assessment?> AddAssessment(Guid groupId, Guid templateId, string name)
     {
         if (_surveyRepository.IsTemplateExist(templateId))
         {
             var newAssessment = new Assessment(groupId, templateId, name);
             _assessmentRepository.AddAssessment(newAssessment);
 
-            return _assessmentRepository.GetAssessment(groupId, templateId);
+            return await _assessmentRepository.GetAssessment(groupId, templateId);
         }
 
         return null;
@@ -38,8 +38,13 @@ public class AssessmentService : IAssessmentService
         return await _assessmentRepository.GetAssessments();
     }
 
-    public Task<Assessment?> GetAssessment(Guid groupId, Guid templateId)
+    public async Task<Assessment?> GetAssessment(Guid groupId, Guid templateId)
     {
-        throw new NotImplementedException();
+        return await _assessmentRepository.GetAssessment(groupId, templateId);
+    }
+
+    public async Task<Assessment> UpdateAssessment(Assessment assessmentToUpdate)
+    {
+        return await _assessmentRepository.UpdateAssessment(assessmentToUpdate);
     }
 }

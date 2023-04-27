@@ -21,8 +21,18 @@ public class InMemoryAssessmentRepository : IAssessmentRepository
         return await Task.FromResult(_assessments);
     }
 
-    public Assessment? GetAssessment(Guid groupId, Guid templateId)
+    public async Task<Assessment?> GetAssessment(Guid groupId, Guid templateId)
     {
-        return _assessments.FirstOrDefault(a => a.GroupId == groupId && a.TemplateId == templateId);
+        return await Task.FromResult(_assessments.FirstOrDefault(a => a.GroupId == groupId && a.TemplateId == templateId));
+    }
+
+    public async Task<Assessment> UpdateAssessment(Assessment assessmentToUpdate)
+    {
+        var assessmentIndex = _assessments
+            .FindIndex(a => a.GroupId == assessmentToUpdate.GroupId && a.TemplateId == assessmentToUpdate.TemplateId);
+
+        _assessments[assessmentIndex] = assessmentToUpdate;
+
+        return _assessments[assessmentIndex];
     }
 }

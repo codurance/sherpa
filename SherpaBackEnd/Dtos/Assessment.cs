@@ -8,7 +8,7 @@ public class Assessment
     public Guid TemplateId { get; }
     
     public string Name { get; }
-    public IEnumerable<Survey> Surveys{ get; }
+    public IEnumerable<Survey> Surveys{ get; set; }
 
     public Assessment(Guid groupId, Guid templateId, string name)
     {

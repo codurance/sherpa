@@ -49,7 +49,7 @@ public class AssessmentControllerTest
         var assessment = new Assessment(Guid.NewGuid(), Guid.NewGuid(), "Assessment A");
         
         _mockService.Setup(m => m.AddAssessment(assessment.GroupId, assessment.TemplateId, assessment.Name))
-            .Returns(new Assessment(assessment.GroupId, assessment.TemplateId, assessment.Name));
+            .ReturnsAsync(new Assessment(assessment.GroupId, assessment.TemplateId, assessment.Name));
 
         var assessmentRequest = await _controller.AddAssessmentAsync(assessment);
         var assessmentResult = Assert.IsType<OkObjectResult>(assessmentRequest.Result);

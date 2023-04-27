@@ -20,7 +20,7 @@
                 @foreach (var survey in assessment.Surveys)
                 {
                     <tr>
-                        <td>@survey.date</td>
+                        <td>@survey.Date</td>
                         <td>-</td>
                         <td>-</td>
                         <td>
@@ -45,10 +45,24 @@
 
     [Parameter]
     public List<Assessment> Assessments { get; set; }
+    
+    [Parameter]
+    public List<string> Emails { get; set; }
+
+    [Parameter]
+    public EventCallback<Assessment> OnCreateSurvey { get; set; }
+    
 
 
-    public void AddNewSurvey(Assessment assessment)
+    public async Task AddNewSurvey(Assessment assessment)
     {
+
+        var survey = new Survey(DateOnly.FromDateTime(DateTime.Now), Emails);
         
+        var surveysList = assessment.Surveys.ToList();
+        surveysList.Add(survey);
+        assessment.Surveys = surveysList;
+
+        await OnCreateSurvey.InvokeAsync(assessment);
     }
 }

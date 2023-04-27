@@ -2,10 +2,15 @@ namespace SherpaFrontEnd.Model;
 
 public class Survey
 {
-    public DateOnly date;
+    public DateOnly Date;
+    
+    public List<string> Emails { get; set; }
 
-    public Survey(DateOnly date)
+    public int Completed = 0;
+
+    public Survey(DateOnly date, List<string> emails)
     {
-        this.date = date;
+        Date = date;
+        Emails = emails;
     }
 }
