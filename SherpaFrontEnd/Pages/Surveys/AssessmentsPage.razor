@@ -69,8 +69,7 @@
         if (assessments is {Count: > 0 })
         {
             Assessments = assessments;
-            var groupedAssessments = Assessments.GroupBy(assessment => assessment.GroupId);
-            SelectedGroupAssessments = groupedAssessments.First(a => a.Key.Equals(SelectedGroupId)).ToList();
+            SetAssessmentsForSelectedGroup();
         }
         
     }
@@ -84,8 +83,7 @@
             
             if (Assessments is {Count: > 0 })
             {
-                var groupedAssessments = Assessments.GroupBy(assessment => assessment.GroupId);
-                SelectedGroupAssessments = groupedAssessments.First(a => a.Key.Equals(SelectedGroupId)).ToList();
+                SetAssessmentsForSelectedGroup();
             }
         }
     }
@@ -98,9 +96,20 @@
         if (assessment is not null)
         {
             Assessments.Add(assessment);
-            var groupedAssessments = Assessments.GroupBy(assessment => assessment.GroupId);
-            SelectedGroupAssessments = groupedAssessments.First(a => a.Key.Equals(SelectedGroupId)).ToList();
+            SetAssessmentsForSelectedGroup();
         }
     }
 
+    private void SetAssessmentsForSelectedGroup()
+    {
+        var groupedAssessments = Assessments.GroupBy(assessment => assessment.GroupId);
+
+        if (groupedAssessments.Any(a => a.Key == SelectedGroupId))
+        {
+            SelectedGroupAssessments = groupedAssessments.First(a => a.Key.Equals(SelectedGroupId)).ToList();
+            return;
+        }
+
+        SelectedGroupAssessments = new List<Assessment>();
+    }
 }
