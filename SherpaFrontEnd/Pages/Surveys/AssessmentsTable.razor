@@ -1,17 +1,18 @@
 @using SherpaFrontEnd.Model
-<h3>AssessmentsTable</h3>
+<h3>Assessments</h3>
 
 @if (Assessments is not null)
 {
     @foreach (var assessment in Assessments)
     {
-        <h4>@assessment.Name</h4>
+        <h4>@assessment.Name Table</h4>
         <table class="table table-striped">
             <thead>
             <tr>
                 <th scope="col">Date</th>
                 <th scope="col">Members</th>
                 <th scope="col">Completed</th>
+                <th></th>
             </tr>
             </thead>
             @if (assessment.Surveys is not null && assessment.Surveys.ToList().Count > 0)
@@ -29,10 +30,12 @@
                                 </button>
                             </div>
                         </td>
+                        <td><button class="btn btn-outline-primary btn-sm">Send reminder</button></td>
                     </tr>
                 }
             }
         </table>
+        <button class="btn btn-outline-primary btn-sm" @onclick="() => AddNewSurvey(assessment)">New evaluation</button>
     }
     
 }
@@ -43,4 +46,9 @@
     [Parameter]
     public List<Assessment> Assessments { get; set; }
 
+
+    public void AddNewSurvey(Assessment assessment)
+    {
+        
+    }
 }
