@@ -37,4 +37,14 @@ public class MockAssessmentDataService : IAssessmentsDataService
                 })
         });
     }
+
+    public Task<List<SurveyTemplate>?> GetTemplates()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<Assessment?> AddAssessment(Guid groupId, Guid templateId, string name)
+    {
+        throw new NotImplementedException();
+    }
 }

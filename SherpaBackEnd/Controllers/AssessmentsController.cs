@@ -21,12 +21,7 @@ public class AssessmentsController
     public async Task<ActionResult<IEnumerable<Assessment>>> GetAssessments()
     {
         var assessments = await _surveyService.GetAssessments();
-        if (assessments.Any())
-        {
-            return new OkObjectResult(assessments);
-        }
-
-        return new NotFoundResult();
+        return new OkObjectResult(assessments);
     }
 
     [HttpGet("templates")]

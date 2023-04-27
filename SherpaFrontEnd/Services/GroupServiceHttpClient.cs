@@ -50,7 +50,6 @@ public class GroupServiceHttpClient : IGroupDataService
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
         var client = _clientFactory.CreateClient(Sherpabackend);
-        Console.WriteLine("httpclient "+groupToAdd);
         var response = await client.PostAsync("/groups", 
             new StringContent(groupToAdd, System.Text.Encoding.UTF8, "application/json"));
         response.EnsureSuccessStatusCode();

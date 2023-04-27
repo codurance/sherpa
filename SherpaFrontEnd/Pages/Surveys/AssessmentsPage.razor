@@ -5,6 +5,16 @@
 @page "/assessments-page"
 <h3>AssessmentsPage</h3>
 
+
+<div>
+    <!-- TODO: populate dropdown */ -->
+    <label>Select template:
+        <select class="form-select" aria-label="Template select">
+            <option value="Hackman analysis" disabled selected>Hackman analysis</option>
+        </select>
+    </label>
+    <button class="btn btn-outline-primary btn-sm" @onclick="AddSurveyClick">Add survey</button>
+</div>
 <div>
     <div class="row">
         <div class="col-3">
@@ -24,13 +34,25 @@
 
 @code {
     public List<Group>? Groups { get; private set; }
-    public List<Assessment>? Assessments { get; set; }
+    public List<Assessment>? Assessments { get; set; } = new ();
     public List<Assessment>? SelectedGroupAssessments { get; set; }
     public Guid SelectedGroupId { get; private set; }
-    
+    public SurveyTemplate SelectedSurveyTemplate { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         await GetAssessments();
+        await GetTemplates();
+    }
+
+    private async Task GetTemplates()
+    {
+        var templates = await AssessmentsDataService.GetTemplates();
+
+        if (templates is {Count: >0})
+        {
+            SelectedSurveyTemplate = templates.First();
+        }
     }
 
     private async Task GetAssessments()
@@ -67,4 +89,18 @@
             }
         }
     }
+
+    private async Task AddSurveyClick()
+    {
+        var assessmentName = $"{SelectedSurveyTemplate.Name} {DateTime.Now}";
+        var assessment = await AssessmentsDataService.AddAssessment(SelectedGroupId, SelectedSurveyTemplate.Id, assessmentName);
+
+        if (assessment is not null)
+        {
+            Assessments.Add(assessment);
+            var groupedAssessments = Assessments.GroupBy(assessment => assessment.GroupId);
+            SelectedGroupAssessments = groupedAssessments.First(a => a.Key.Equals(SelectedGroupId)).ToList();
+        }
+    }
+
 }
