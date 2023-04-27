@@ -74,7 +74,7 @@ public class AssessmentsServiceHttpClient : IAssessmentsDataService
         return null;
     }
 
-    public async Task PutAssessment(Assessment assessment)
+    public async Task<Assessment?> PutAssessment(Assessment assessment)
     {
         var assessmentToUpdate = JsonSerializer.Serialize(assessment, 
             new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
@@ -82,6 +82,15 @@ public class AssessmentsServiceHttpClient : IAssessmentsDataService
         var client = _clientFactory.CreateClient(Sherpabackend);
         var response = await(client.PutAsync($"/assessments",
             new StringContent(assessmentToUpdate, System.Text.Encoding.UTF8, "application/json")));
-        response.EnsureSuccessStatusCode();
+        
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            var responseString = await response.Content.ReadAsStringAsync();
+
+            return JsonSerializer.Deserialize<Assessment>(
+                responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });    
+        }
+
+        return null;
     }
 }

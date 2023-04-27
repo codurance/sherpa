@@ -45,24 +45,22 @@
 
     [Parameter]
     public List<Assessment> Assessments { get; set; }
-    
+
     [Parameter]
-    public List<string> Emails { get; set; }
+    public List<string> Emails { get; set; } = new();
 
     [Parameter]
     public EventCallback<Assessment> OnCreateSurvey { get; set; }
-    
 
 
-    public async Task AddNewSurvey(Assessment assessment)
+    private async Task AddNewSurvey(Assessment assessment)
     {
-
         var survey = new Survey(DateOnly.FromDateTime(DateTime.Now), Emails);
         
         var surveysList = assessment.Surveys.ToList();
         surveysList.Add(survey);
         assessment.Surveys = surveysList;
-
+        
         await OnCreateSurvey.InvokeAsync(assessment);
     }
 }
