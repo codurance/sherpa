@@ -43,7 +43,7 @@ public class GroupsController
     }
 
     [HttpPost]
-    public async Task<ActionResult<Group>> AddGroup(Group group)
+    public async Task<ActionResult<Group>> AddGroupAsync(Group group)
     {
         Console.WriteLine("backend " + group.Name);
         if (String.IsNullOrEmpty(group.Name))
@@ -81,7 +81,7 @@ public class GroupsController
     }
 
     [HttpPut("{guid:guid}")]
-    public async Task<ActionResult<Group>> UpdateGroup(Guid guid,Group group)
+    public async Task<ActionResult<Group>> UpdateGroupAsync(Guid guid,Group group)
     {
         var groupFound = await _groupsService.GetGroup(guid);
         if (groupFound is null)

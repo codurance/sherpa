@@ -27,7 +27,7 @@ public class AssessmentControllerTest
                 new("hackman")
             });
         
-        var templatesRequest = await _controller.GetTemplates();
+        var templatesRequest = await _controller.GetTemplatesAsync();
         var templatesResult = Assert.IsType<OkObjectResult>(templatesRequest.Result);
         var actualTemplates = Assert.IsAssignableFrom<IEnumerable<SurveyTemplate>>(templatesResult.Value);
         Assert.NotEmpty(actualTemplates);
@@ -39,7 +39,7 @@ public class AssessmentControllerTest
         _mockService.Setup(service => service.GetTemplates())
             .ReturnsAsync(new List<SurveyTemplate>());
         
-        var templatesRequest = await _controller.GetTemplates();
+        var templatesRequest = await _controller.GetTemplatesAsync();
         Assert.IsType<NotFoundResult>(templatesRequest.Result);
     }
 
@@ -51,7 +51,7 @@ public class AssessmentControllerTest
         _mockService.Setup(m => m.AddAssessment(assessment.GroupId, assessment.TemplateId, assessment.Name))
             .Returns(new Assessment(assessment.GroupId, assessment.TemplateId, assessment.Name));
 
-        var assessmentRequest = await _controller.AddAssessment(assessment);
+        var assessmentRequest = await _controller.AddAssessmentAsync(assessment);
         var assessmentResult = Assert.IsType<OkObjectResult>(assessmentRequest.Result);
         var actualAssessment = Assert.IsAssignableFrom<Assessment>(assessmentResult.Value);
         
@@ -69,7 +69,7 @@ public class AssessmentControllerTest
             new ("Template A")
         });
         
-        var assessmentRequest = await _controller.AddAssessment(new Assessment(Guid.Empty, Guid.NewGuid(), "Assessment A"));
+        var assessmentRequest = await _controller.AddAssessmentAsync(new Assessment(Guid.Empty, Guid.NewGuid(), "Assessment A"));
         Assert.IsType<BadRequestResult>(assessmentRequest.Result);
         
     }

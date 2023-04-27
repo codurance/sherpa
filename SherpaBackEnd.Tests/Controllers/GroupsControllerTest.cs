@@ -87,7 +87,7 @@ public class GroupsControllerTest
 
         _mockGroupService.Setup(m => m.AddGroup(It.IsAny<Group>()));
 
-        var actionResult = await _groupsController.AddGroup(expectedGroup);
+        var actionResult = await _groupsController.AddGroupAsync(expectedGroup);
         Assert.IsType<OkResult>(actionResult.Result);
     }
 
@@ -96,7 +96,7 @@ public class GroupsControllerTest
     {
         var expectedGroup = new Group("");
 
-        var actionResult = await _groupsController.AddGroup(expectedGroup);
+        var actionResult = await _groupsController.AddGroupAsync(expectedGroup);
         Assert.IsType<BadRequestResult>(actionResult.Result);
     }
 
@@ -140,7 +140,7 @@ public class GroupsControllerTest
         _mockGroupService.Setup(repo => repo.GetGroup(It.IsAny<Guid>()))
             .ReturnsAsync((Group)null);
         
-        var actionResult = await _groupsController.UpdateGroup(Guid.NewGuid(), new Group("name"));
+        var actionResult = await _groupsController.UpdateGroupAsync(Guid.NewGuid(), new Group("name"));
         Assert.IsType<NotFoundResult>(actionResult.Result);
     }
 
@@ -161,7 +161,7 @@ public class GroupsControllerTest
         members.Add(new GroupMember("Name C", "Lastname C", "position C", "e3@e.com"));
         group.Members = members;
         
-        await _groupsController.UpdateGroup(group.Id,group);
+        await _groupsController.UpdateGroupAsync(group.Id,group);
      
         _mockGroupService.Verify(repo => repo.UpdateGroup(It.Is<Group>(updatedGroup => updatedGroup.Members.ToList().Count.Equals(3))));
     }
@@ -181,7 +181,7 @@ public class GroupsControllerTest
 
         group.Name = "updated name";
         
-        await _groupsController.UpdateGroup(group.Id,group);
+        await _groupsController.UpdateGroupAsync(group.Id,group);
      
         _mockGroupService.Verify(repo => repo.UpdateGroup(It.Is<Group>(updatedGroup => updatedGroup.Id.Equals(group.Id))));
     }

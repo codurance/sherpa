@@ -18,14 +18,14 @@ public class AssessmentsController
     }
     
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Assessment>>> GetAssessments()
+    public async Task<ActionResult<IEnumerable<Assessment>>> GetAssessmentsAsync()
     {
         var assessments = await _surveyService.GetAssessments();
         return new OkObjectResult(assessments);
     }
 
     [HttpGet("templates")]
-    public async Task<ActionResult<IEnumerable<SurveyTemplate>>> GetTemplates()
+    public async Task<ActionResult<IEnumerable<SurveyTemplate>>> GetTemplatesAsync()
     {
         var templates = await _surveyService.GetTemplates();
         if (templates.Any())
@@ -38,7 +38,7 @@ public class AssessmentsController
 
     
     [HttpPost]
-    public async Task<ActionResult<Assessment>> AddAssessment(Assessment assessmentDto)
+    public async Task<ActionResult<Assessment>> AddAssessmentAsync(Assessment assessmentDto)
     {
         var assessment = _surveyService
             .AddAssessment(assessmentDto.GroupId, assessmentDto.TemplateId, assessmentDto.Name);

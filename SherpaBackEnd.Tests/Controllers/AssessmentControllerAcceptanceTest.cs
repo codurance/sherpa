@@ -25,12 +25,12 @@ public class AssessmentControllerAcceptanceTest
     public async Task AddNewAssessmentWithExistingTemplate_OkResultExpected()
     {
         
-        var templates = await _assessmentsController.GetTemplates();
+        var templates = await _assessmentsController.GetTemplatesAsync();
         var templatesResult = Assert.IsType<OkObjectResult>(templates.Result);
         var actualTemplates = Assert.IsAssignableFrom<IEnumerable<SurveyTemplate>>(templatesResult.Value);
 
         var assessment = new Assessment(Guid.NewGuid(), actualTemplates.First().Id, "Assessment A");
-        var assessmentRequest = await  _assessmentsController.AddAssessment(assessment);
+        var assessmentRequest = await  _assessmentsController.AddAssessmentAsync(assessment);
         
         var assessmentResult = Assert.IsType<OkObjectResult>(assessmentRequest.Result);
         var actualAssessment = Assert.IsAssignableFrom<Assessment>(assessmentResult.Value);
@@ -44,11 +44,11 @@ public class AssessmentControllerAcceptanceTest
     public async Task AddNewAssessmentWithNonExistingTemplate_BadRequestExpected()
     {
         
-        var templates = await _assessmentsController.GetTemplates();
+        var templates = await _assessmentsController.GetTemplatesAsync();
         var templatesResult = Assert.IsType<OkObjectResult>(templates.Result);
         Assert.IsAssignableFrom<IEnumerable<SurveyTemplate>>(templatesResult.Value);
 
-        var assessment = await  _assessmentsController.AddAssessment(new Assessment(Guid.NewGuid(), Guid.NewGuid(), "Assessment A"));
+        var assessment = await  _assessmentsController.AddAssessmentAsync(new Assessment(Guid.NewGuid(), Guid.NewGuid(), "Assessment A"));
         
         Assert.IsType<BadRequestResult>(assessment.Result);
     }
