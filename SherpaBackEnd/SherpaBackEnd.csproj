@@ -7,6 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="AWSSDK.Core" Version="3.7.106.28" />
+        <PackageReference Include="AWSSDK.SimpleEmail" Version="3.7.100.121" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.15" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.16" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />

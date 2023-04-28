@@ -73,4 +73,13 @@ public class AssessmentControllerTest
         Assert.IsType<BadRequestResult>(assessmentRequest.Result);
         
     }
+
+    [Fact]
+    public async Task AddSurveySendsEmialToNoneSentSurveys()
+    {
+        Assessment assessment = new Assessment(Guid.NewGuid(), Guid.NewGuid(), "assessment");
+        _mockService.Setup(m => m.GetAssessment(It.IsAny<Guid>(), It.IsAny<Guid>()))
+            .ReturnsAsync(assessment);
+        
+    }
 }

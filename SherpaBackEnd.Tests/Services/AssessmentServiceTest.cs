@@ -2,7 +2,7 @@ using Moq;
 using SherpaBackEnd.Dtos;
 using SherpaBackEnd.Model;
 using SherpaBackEnd.Services;
-using SherpaFrontEnd.Services.Email;
+using SherpaBackEnd.Services.Email;
 
 namespace SherpaBackEnd.Tests.Services;
 

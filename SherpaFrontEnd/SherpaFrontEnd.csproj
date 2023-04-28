@@ -15,6 +15,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Services\Email" />
       <Folder Include="wwwroot\css\fonts" />
     </ItemGroup>
 

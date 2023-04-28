@@ -50,7 +50,7 @@ public class AssessmentsController
 
         return new BadRequestResult();
     }
-
+    
     [HttpPut]
     public async Task<ActionResult<Assessment>> UpdateAssessmentAsync(Assessment assessmentToUpdate)
     {

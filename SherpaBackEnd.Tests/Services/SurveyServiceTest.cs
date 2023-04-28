@@ -2,6 +2,7 @@
 using SherpaBackEnd.Dtos;
 using SherpaBackEnd.Model;
 using SherpaBackEnd.Services;
+using SherpaBackEnd.Services.Email;
 
 namespace SherpaBackEnd.Tests.Services;
 
@@ -9,13 +10,15 @@ public class SurveyServiceTest
 {
     private readonly Mock<ISurveyRepository> _mockSurveyRepository;
     private readonly Mock<IAssessmentRepository> _mockAssessmentRepository;
+    private readonly Mock<IEmailService> _emailService;
     private readonly AssessmentService _service;
 
     public SurveyServiceTest()
     {
         _mockSurveyRepository = new Mock<ISurveyRepository>();
         _mockAssessmentRepository = new Mock<IAssessmentRepository>();
-        _service = new AssessmentService(_mockSurveyRepository.Object, _mockAssessmentRepository.Object);
+        _emailService = new Mock<IEmailService>();
+        _service = new AssessmentService(_mockSurveyRepository.Object, _mockAssessmentRepository.Object, _emailService.Object);
     }
 
     [Fact]

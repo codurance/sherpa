@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
+using Moq;
 using SherpaBackEnd.Controllers;
 using SherpaBackEnd.Dtos;
 using SherpaBackEnd.Model;
 using SherpaBackEnd.Services;
+using SherpaBackEnd.Services.Email;
 
 namespace SherpaBackEnd.Tests.Controllers;
 
@@ -10,6 +12,7 @@ public class AssessmentControllerAcceptanceTest
 {
     private readonly InMemorySurveyRepository _inMemorySurveyRepository;
     private readonly InMemoryAssessmentRepository _inMemoryAssessmentRepository;
+    private readonly Mock<IEmailService> _emailService;
     private readonly AssessmentService _assessmentService;
     private readonly AssessmentsController _assessmentsController;
 
@@ -17,7 +20,8 @@ public class AssessmentControllerAcceptanceTest
     {
         _inMemorySurveyRepository = new InMemorySurveyRepository();
         _inMemoryAssessmentRepository = new InMemoryAssessmentRepository();
-        _assessmentService = new AssessmentService(_inMemorySurveyRepository, _inMemoryAssessmentRepository);
+        _emailService = new Mock<IEmailService>();
+        _assessmentService = new AssessmentService(_inMemorySurveyRepository, _inMemoryAssessmentRepository,_emailService.Object);
         _assessmentsController = new AssessmentsController(_assessmentService);
     }
 

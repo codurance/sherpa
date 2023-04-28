@@ -3,7 +3,7 @@ using Amazon.Runtime;
 using Amazon.SimpleEmail;
 using Amazon.SimpleEmail.Model;
 
-namespace SherpaFrontEnd.Services.Email;
+namespace SherpaBackEnd.Services.Email;
 
 public class SesEmailService : IEmailService
 {

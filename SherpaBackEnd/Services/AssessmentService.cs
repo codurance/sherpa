@@ -1,7 +1,7 @@
 using SherpaBackEnd.Controllers;
 using SherpaBackEnd.Dtos;
 using SherpaBackEnd.Model;
-using SherpaFrontEnd.Services.Email;
+using SherpaBackEnd.Services.Email;
 
 namespace SherpaBackEnd.Services;
 

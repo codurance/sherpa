@@ -1,4 +1,4 @@
-namespace SherpaFrontEnd.Services.Email;
+namespace SherpaBackEnd.Services.Email;
 
 public interface IEmailService
 {

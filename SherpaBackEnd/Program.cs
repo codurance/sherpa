@@ -1,6 +1,7 @@
 using SherpaBackEnd.Model;
 using SherpaBackEnd.Serializers;
 using SherpaBackEnd.Services;
+using SherpaBackEnd.Services.Email;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +22,8 @@ builder.Services.AddSingleton<IGroupRepository, InMemoryGroupRepository>();
 builder.Services.AddSingleton<IGroupsService, GroupsService>();
 builder.Services.AddSingleton<ISurveyRepository, InMemorySurveyRepository>();
 builder.Services.AddSingleton<IAssessmentRepository, InMemoryAssessmentRepository>();
-builder.Services.AddSingleton<IAssessmentService, AssessmentService>();
+builder.Services.AddScoped<IAssessmentService, AssessmentService>();
+builder.Services.AddScoped<IEmailService, SesEmailService>();
 
 
 var app = builder.Build();
