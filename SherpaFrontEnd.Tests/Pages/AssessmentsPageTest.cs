@@ -49,8 +49,26 @@ public class AssessmentsPageTest
         _mockGroupDataService.Setup(ds => ds.GetGroups())
             .Returns(Task.FromResult(new List<Group>
             {
-                new Group(groupA_id, "Group A"),
-                new Group(groupB_id, "Group B")
+                new Group
+                {
+                    Id = groupA_id,
+                    Name = "Group A",
+                    Members = new List<GroupMember>
+                    {
+                        new GroupMember("Name 1", "LastName 1", "Position 1", "email1@gmail.com"),
+                        new GroupMember("Name 2", "LastName 2", "Position 2", "email2@gmail.com")
+                    }
+                },
+                new Group
+                {
+                    Id = groupB_id,
+                    Name = "Group B",
+                    Members = new List<GroupMember>
+                    {
+                        new GroupMember("Name 1", "LastName 1", "Position 1", "email1@gmail.com"),
+                        new GroupMember("Name 2", "LastName 2", "Position 2", "email2@gmail.com")
+                    }
+                }
             })!);
 
         _renderedComponent = _testContext.RenderComponent<AssessmentsPage>();

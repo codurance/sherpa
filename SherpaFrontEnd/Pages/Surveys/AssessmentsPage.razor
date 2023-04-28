@@ -26,7 +26,7 @@
         <div class="col-9">
             @if (Groups is not null)
             {
-                var email = Groups.First(g => g.Id == SelectedGroupId).Members.Select(m => m.Email).ToList();
+                var email = Groups.First(g => g.Id.Equals(SelectedGroupId)).Members.Select(m => m.Email).ToList();
                 <AssessmentsTable 
                     Assessments="@SelectedGroupAssessments" 
                     Emails="email" 

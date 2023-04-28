@@ -1,6 +1,7 @@
 using System.Net;
 using System.Text.Json;
 using SherpaFrontEnd.Model;
+using SherpaFrontEnd.Serializers;
 using SherpaFrontEnd.ViewModel;
 
 namespace SherpaFrontEnd.Services;
@@ -10,10 +11,19 @@ public class AssessmentsServiceHttpClient : IAssessmentsDataService
     private const string Sherpabackend = "SherpaBackEnd";
     private readonly IHttpClientFactory _clientFactory;
     private readonly HttpClient _httpClient;
+    private readonly JsonSerializerOptions _jsonSerializerOptions;
 
     public AssessmentsServiceHttpClient(IHttpClientFactory clientFactory)
     {
         _clientFactory = clientFactory;
+        _jsonSerializerOptions = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true,
+            Converters =
+            {
+                new DateOnlyJsonConverter()
+            }
+        };
         _httpClient = _clientFactory.CreateClient(Sherpabackend);
     }
 
@@ -29,7 +39,7 @@ public class AssessmentsServiceHttpClient : IAssessmentsDataService
             Console.WriteLine("raw response: " + responseString);
 
             return JsonSerializer.Deserialize<List<Assessment>>(
-                responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });    
+                responseString, _jsonSerializerOptions);    
         }
 
         return new List<Assessment>();
@@ -45,7 +55,7 @@ public class AssessmentsServiceHttpClient : IAssessmentsDataService
             var responseString = await response.Content.ReadAsStringAsync();
 
             return JsonSerializer.Deserialize<List<SurveyTemplate>>(
-                responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });    
+                responseString, _jsonSerializerOptions);    
         }
 
         return new List<SurveyTemplate>();
@@ -57,7 +67,7 @@ public class AssessmentsServiceHttpClient : IAssessmentsDataService
         
         var assessmentToAdd =
             JsonSerializer.Serialize(assessment,
-                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                _jsonSerializerOptions);
         
         
         var response = await _httpClient.PostAsync("/assessments", 
@@ -68,7 +78,7 @@ public class AssessmentsServiceHttpClient : IAssessmentsDataService
             var responseString = await response.Content.ReadAsStringAsync();
 
             return JsonSerializer.Deserialize<Assessment>(
-                responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });    
+                responseString, _jsonSerializerOptions);    
         }
 
         return null;
@@ -77,7 +87,7 @@ public class AssessmentsServiceHttpClient : IAssessmentsDataService
     public async Task<Assessment?> PutAssessment(Assessment assessment)
     {
         var assessmentToUpdate = JsonSerializer.Serialize(assessment, 
-            new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            _jsonSerializerOptions);
         
         var client = _clientFactory.CreateClient(Sherpabackend);
         var response = await(client.PutAsync($"/assessments",
@@ -88,7 +98,7 @@ public class AssessmentsServiceHttpClient : IAssessmentsDataService
             var responseString = await response.Content.ReadAsStringAsync();
 
             return JsonSerializer.Deserialize<Assessment>(
-                responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });    
+                responseString, _jsonSerializerOptions);    
         }
 
         return null;
