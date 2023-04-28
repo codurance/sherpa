@@ -49,7 +49,7 @@ public class AssessmentService : IAssessmentService
     public async Task<Assessment> UpdateAssessment(Assessment assessmentToUpdate)
     {
         var updatedAssessment = await _assessmentRepository.UpdateAssessment(assessmentToUpdate);
-        await _emailService.sendEmail("", updatedAssessment.GetLastSurveyEmails());
+        // await _emailService.sendEmail("", updatedAssessment.GetLastSurveyEmails());
         return updatedAssessment;
     }
 }

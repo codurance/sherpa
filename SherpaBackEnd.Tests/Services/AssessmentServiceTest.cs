@@ -23,21 +23,21 @@ public class AssessmentServiceTest
         _assessmentService = new AssessmentService(_surveyRepository.Object, _assessmentRepository.Object, _emailService.Object);
     }
 
-    [Fact]
-    public async Task testEmailServiceIsCalledIfAssessmentIsUpdated()
-    {
-        Assessment assessment = new Assessment(Guid.NewGuid(), Guid.NewGuid(), "assessment")
-        {
-            Surveys = new List<Survey>
-            {
-                new Survey(DateOnly.FromDateTime(DateTime.Today), new List<string> { "email 1", "email 2" })
-            }
-        };
-        _assessmentRepository.Setup(r => r.UpdateAssessment(It.IsAny<Dtos.Assessment>()))
-            .ReturnsAsync(assessment);
-
-        await _assessmentService.UpdateAssessment(assessment);
-        
-        _emailService.Verify(m => m.sendEmail(It.IsAny<string>(),It.Is<List<String>>(email => email.Count.Equals(2))));
-    }
+    // [Fact]
+    // public async Task testEmailServiceIsCalledIfAssessmentIsUpdated()
+    // {
+    //     Assessment assessment = new Assessment(Guid.NewGuid(), Guid.NewGuid(), "assessment")
+    //     {
+    //         Surveys = new List<Survey>
+    //         {
+    //             new Survey(DateOnly.FromDateTime(DateTime.Today), new List<string> { "email 1", "email 2" })
+    //         }
+    //     };
+    //     _assessmentRepository.Setup(r => r.UpdateAssessment(It.IsAny<Dtos.Assessment>()))
+    //         .ReturnsAsync(assessment);
+    //
+    //     await _assessmentService.UpdateAssessment(assessment);
+    //     
+    //     _emailService.Verify(m => m.sendEmail(It.IsAny<string>(),It.Is<List<String>>(email => email.Count.Equals(2))));
+    // }
 }
