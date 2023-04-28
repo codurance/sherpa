@@ -1,6 +1,7 @@
 using SherpaBackEnd.Controllers;
 using SherpaBackEnd.Dtos;
 using SherpaBackEnd.Model;
+using SherpaFrontEnd.Services.Email;
 
 namespace SherpaBackEnd.Services;
 
@@ -8,11 +9,13 @@ public class AssessmentService : IAssessmentService
 {
     private readonly ISurveyRepository _surveyRepository;
     private readonly IAssessmentRepository _assessmentRepository;
+    private readonly IEmailService _emailService;
 
-    public AssessmentService(ISurveyRepository surveyRepository, IAssessmentRepository assessmentRepository)
+    public AssessmentService(ISurveyRepository surveyRepository, IAssessmentRepository assessmentRepository, IEmailService emailService)
     {
         _surveyRepository = surveyRepository;
         _assessmentRepository = assessmentRepository;
+        _emailService = emailService;
     }
 
     public async Task<IEnumerable<SurveyTemplate>> GetTemplates()
@@ -45,6 +48,8 @@ public class AssessmentService : IAssessmentService
 
     public async Task<Assessment> UpdateAssessment(Assessment assessmentToUpdate)
     {
-        return await _assessmentRepository.UpdateAssessment(assessmentToUpdate);
+        var updatedAssessment = await _assessmentRepository.UpdateAssessment(assessmentToUpdate);
+        await _emailService.sendEmail("", updatedAssessment.GetLastSurveyEmails());
+        return updatedAssessment;
     }
 }
