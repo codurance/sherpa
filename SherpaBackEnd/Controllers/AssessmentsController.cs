@@ -61,6 +61,6 @@ public class AssessmentsController
         }
 
         var updateAssessment = await _assessmentService.UpdateAssessment(assessmentToUpdate);
-        return new OkObjectResult(assessment);
+        return new OkObjectResult(updateAssessment);
     }
 }
