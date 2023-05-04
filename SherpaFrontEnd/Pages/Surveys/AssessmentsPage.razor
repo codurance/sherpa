@@ -27,10 +27,12 @@
             @if (Groups is not null)
             {
                 var email = Groups.First(g => g.Id.Equals(SelectedGroupId)).Members.Select(m => m.Email).ToList();
-                <AssessmentsTable 
-                    Assessments="@SelectedGroupAssessments" 
-                    Emails="email" 
-                    OnCreateSurvey="OnUpdateAssessment"></AssessmentsTable>
+                <AssessmentsTable
+                    Assessments="@SelectedGroupAssessments"
+                    Emails="email"
+                    OnCreateSurvey="OnUpdateAssessment"
+                    OnDeleteSurvey="OnUpdateAssessment">
+                </AssessmentsTable>
             }
         </div>
     </div>
@@ -116,8 +118,6 @@
 
         SelectedGroupAssessments = new List<Assessment>();
     }
-
-    
     
     private async Task OnUpdateAssessment(Assessment assessment)
     {

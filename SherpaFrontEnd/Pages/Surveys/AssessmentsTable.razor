@@ -21,12 +21,12 @@
                 {
                     <tr>
                         <td>@survey.Date</td>
-                        <td>-</td>
+                        <td>@survey.MembersCount</td>
                         <td>-</td>
                         <td>
                             <div class="btn-group">
-                                <button class="btn btn-edit">
-                                    <span class="oi oi-pencil"></span>
+                                <button class="btn btn-remove" @onclick="() => DeleteSurvey(assessment, survey)">
+                                    <span class="oi oi-trash"></span>
                                 </button>
                             </div>
                         </td>
@@ -52,6 +52,8 @@
     [Parameter]
     public EventCallback<Assessment> OnCreateSurvey { get; set; }
 
+    [Parameter]
+    public EventCallback<Assessment> OnDeleteSurvey { get; set; }
 
     private async Task AddNewSurvey(Assessment assessment)
     {
@@ -62,5 +64,16 @@
         assessment.Surveys = surveysList;
         
         await OnCreateSurvey.InvokeAsync(assessment);
+    }
+
+    private async Task DeleteSurvey(Assessment assessment, Survey survey)
+    {
+        var surveysList = assessment.Surveys.ToList();
+        var wasDeleted = surveysList.Remove(survey);
+        if (wasDeleted)
+        {
+            assessment.Surveys = surveysList;
+            await OnDeleteSurvey.InvokeAsync(assessment);
+        }
     }
 }

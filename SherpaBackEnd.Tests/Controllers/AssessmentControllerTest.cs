@@ -75,11 +75,63 @@ public class AssessmentControllerTest
     }
 
     [Fact]
-    public async Task AddSurveySendsEmialToNoneSentSurveys()
+    public async Task AddSurveySendsEmailToNoneSentSurveys()
     {
-        Assessment assessment = new Assessment(Guid.NewGuid(), Guid.NewGuid(), "assessment");
+        var assessment = new Assessment(Guid.NewGuid(), Guid.NewGuid(), "assessment");
+        _mockService.Setup(m => m.GetAssessment(It.IsAny<Guid>(), It.IsAny<Guid>()))
+            .ReturnsAsync(assessment);
+    }
+
+    [Fact]
+    public async Task AddSurveyForGroupWithMembers_OkResultExpected()
+    {
+        var group = new Group("Group");
+        group.Members = new List<GroupMember>
+        {
+            new ("Name A", "LastName A", "Position A", "emaila@mail.com"),
+            new ("Name B", "LastName B", "Position B", "emailb@mail.com")
+        };
+        var assessment = new Assessment(group.Id, Guid.NewGuid(), "assessment");
+
         _mockService.Setup(m => m.GetAssessment(It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(assessment);
         
+        var emails = group.Members.Select(m => m.Email).ToList();
+        var survey = new Survey(DateOnly.FromDateTime(DateTime.Now), emails);
+        var surveysList = new List<Survey> { survey };
+        assessment.Surveys = surveysList;
+
+        _mockService.Setup(m => m.UpdateAssessment(assessment)).ReturnsAsync(assessment);
+            
+        var updatedAssessmentRequest = await _controller.UpdateAssessmentAsync(assessment);
+        
+        var updateAssessmentResult = Assert.IsType<OkObjectResult>(updatedAssessmentRequest.Result);
+        var actualUpdatedAssessmentAssessment = Assert.IsAssignableFrom<Assessment>(updateAssessmentResult.Value);
+        
+        Assert.Equal(assessment.GroupId, actualUpdatedAssessmentAssessment.GroupId);
+        Assert.Equal(assessment.TemplateId, actualUpdatedAssessmentAssessment.TemplateId);
+        Assert.Equal(assessment.Name, actualUpdatedAssessmentAssessment.Name);
+        Assert.NotEmpty(actualUpdatedAssessmentAssessment.Surveys);
+
+        var addedSurvey = actualUpdatedAssessmentAssessment.Surveys.First();
+        Assert.Equal(group.Members.Count(), addedSurvey.MembersCount);
+    }
+    
+    [Fact]
+    public async Task DeleteSurveyFromExistingAssessment_OkResultExpected()
+    {
+        var group = new Group("Group");
+        var assessment = new Assessment(group.Id, Guid.NewGuid(), "assessment");
+
+        var survey = new Survey(DateOnly.FromDateTime(DateTime.Now), new List<string>());
+        assessment.Surveys = new List<Survey> { survey };
+
+        _mockService.Setup(m => m.GetAssessment(It.IsAny<Guid>(), It.IsAny<Guid>()))
+            .ReturnsAsync(assessment);
+            
+        var updatedAssessmentRequest = await _controller.UpdateAssessmentAsync(assessment);
+        
+        Assert.IsType<OkObjectResult>(updatedAssessmentRequest.Result);
+        _mockService.Verify(m => m.UpdateAssessment(assessment));
     }
 }

@@ -1,4 +1,3 @@
-using System.Reflection;
 using Bunit;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -39,13 +38,13 @@ public class AssessmentsPageTest
     [Fact]
     public void AssessmentsPage_OnLoadReturnsAssessmentList_ExpectSelectedAssessmentToMatchSelectedGroup()
     {
-        Guid groupA_id = Guid.NewGuid();
-        Guid groupB_id = Guid.NewGuid();
+        var groupA_id = Guid.NewGuid();
+        var groupB_id = Guid.NewGuid();
         _mockAssessmentDataService.Setup(ds => ds.GetAssessments())
             .Returns(Task.FromResult(new List<Assessment>{
-                new Assessment("assessment group A",groupA_id,Guid.NewGuid(),null),
-                new Assessment("assessment group B",groupB_id,Guid.NewGuid(),null)
-            }));
+                new ("assessment group A", groupA_id,Guid.NewGuid()),
+                new ("assessment group B", groupB_id,Guid.NewGuid())
+            })!);
         _mockGroupDataService.Setup(ds => ds.GetGroups())
             .Returns(Task.FromResult(new List<Group>
             {
@@ -55,8 +54,8 @@ public class AssessmentsPageTest
                     Name = "Group A",
                     Members = new List<GroupMember>
                     {
-                        new GroupMember("Name 1", "LastName 1", "Position 1", "email1@gmail.com"),
-                        new GroupMember("Name 2", "LastName 2", "Position 2", "email2@gmail.com")
+                        new ("Name 1", "LastName 1", "Position 1", "email1@gmail.com"),
+                        new ("Name 2", "LastName 2", "Position 2", "email2@gmail.com")
                     }
                 },
                 new Group
@@ -65,8 +64,8 @@ public class AssessmentsPageTest
                     Name = "Group B",
                     Members = new List<GroupMember>
                     {
-                        new GroupMember("Name 1", "LastName 1", "Position 1", "email1@gmail.com"),
-                        new GroupMember("Name 2", "LastName 2", "Position 2", "email2@gmail.com")
+                        new ("Name 1", "LastName 1", "Position 1", "email1@gmail.com"),
+                        new ("Name 2", "LastName 2", "Position 2", "email2@gmail.com")
                     }
                 }
             })!);

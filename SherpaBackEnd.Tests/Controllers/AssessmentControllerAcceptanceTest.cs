@@ -90,6 +90,34 @@ public class AssessmentControllerAcceptanceTest
         
         Assert.NotEmpty(actualUpdatedAssessment.Surveys);
         Assert.Single(actualUpdatedAssessment.Surveys);
+    }
 
+    [Fact]
+    public async Task AddNewAssessmentAndNewSurveyForExistingGroupWithMembers_OkResultExpected()
+    {
+        var group = new Group("Group");
+        group.Members = new List<GroupMember>
+        {
+            new ("Name A", "LastName A", "Position A", "emaila@mail.com"),
+            new ("Name B", "LastName B", "Position B", "emailb@mail.com")
+        };
+
+        var templateId = Guid.NewGuid();
+        var assessmentToUpdate = new Assessment(group.Id, templateId, "test assessment");
+        _inMemoryAssessmentRepository.AddAssessment(assessmentToUpdate);
+
+        var emails = group.Members.Select(m => m.Email).ToList();
+        
+        var survey = new Survey(DateOnly.FromDateTime(DateTime.Now), emails);
+        var surveysList = new List<Survey> { survey };
+        assessmentToUpdate.Surveys = surveysList;
+
+        var updateAssessmentRequest = await _assessmentsController.UpdateAssessmentAsync(assessmentToUpdate);
+        var updatedAssessmentResult = Assert.IsType<OkObjectResult>(updateAssessmentRequest.Result);
+        var actualUpdatedAssessment = Assert.IsAssignableFrom<Assessment>(updatedAssessmentResult.Value);
+        
+        Assert.NotEmpty(actualUpdatedAssessment.Surveys);
+        Assert.Single(actualUpdatedAssessment.Surveys);
+        Assert.Equal(group.Members.Count(), actualUpdatedAssessment.Surveys.First().MembersCount);
     }
 }
