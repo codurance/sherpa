@@ -94,8 +94,7 @@
             await OnAddGroup.InvokeAsync(group);
         }
     }
-
-
+    
     private async Task DeleteGroup()
     {
         var modal = Modal.Show<ConfirmationModal>("Delete group?");

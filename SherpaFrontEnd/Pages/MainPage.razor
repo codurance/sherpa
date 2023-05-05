@@ -1,6 +1,7 @@
 @using SherpaFrontEnd.Services
 @using SherpaFrontEnd.Model
 @inject IGroupDataService GroupDataService;
+@inject IAssessmentsDataService AssessmentsDataService;
 
 @page "/main-page"
 
@@ -13,23 +14,40 @@
                     SelectedGroupId="@SelectedGroupId"/>
     </div>
     <div class="col-9">
-        <GroupContent></GroupContent>
+        @if (Groups is not null)
+        {
+            var emails = Groups.First(g => g.Id.Equals(SelectedGroupId)).Members.Select(m => m.Email).ToList();
+            <GroupContent Group="@Groups.FirstOrDefault(g => g.Id == SelectedGroupId)"
+                          OnUpdateGroup="SaveGroup"
+                          Assessments="@SelectedGroupAssessments"
+                          SurveyTemplates="@SurveyTemplates"
+                          Emails="@emails"
+                          OnAddSurvey = "OnAddSurvey"
+                          OnCreateEvaluation="OnUpdateAssessment"
+                          OnDeleteEvaluation="OnUpdateAssessment">
+                >
+            </GroupContent>
+        }
     </div>
 </div>
 
 @code {
     private List<Group>? Groups { get; set; }
-
     private Guid SelectedGroupId { get; set; }
-
     private List<GroupMember>? SelectedGroupMembers { get; set; }
+    
+    private List<Assessment>? Assessments { get; set; } = new ();
+    private List<Assessment> SelectedGroupAssessments { get; set; }
+    private List<SurveyTemplate> SurveyTemplates { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         Console.WriteLine("Hi");
         await GetGroups();
+        await GetAssessments();
+        await GetTemplates();
     }
-    
+
     private async Task GetGroups()
     {
         try
@@ -48,7 +66,6 @@
         // TODO exception component?
         }
     }
-    
     
     private void UpdateSelectedGroup(Guid id)
     {
@@ -90,5 +107,55 @@
     {
         await GroupDataService.PutGroup(group);
     }
+    
+    private async Task GetTemplates()
+    {
+        SurveyTemplates = await AssessmentsDataService.GetTemplates();
+    }
+
+    private async Task GetAssessments()
+    {
+        var assessments = await AssessmentsDataService.GetAssessments();
+
+        SelectedGroupAssessments = new List<Assessment>();
+        
+        if (assessments is {Count: > 0 })
+        {
+            Assessments = assessments;
+            SetAssessmentsForSelectedGroup();
+        }
+    }
+
+    private void SetAssessmentsForSelectedGroup()
+    {
+        var groupedAssessments = Assessments.GroupBy(assessment => assessment.GroupId);
+
+        if (groupedAssessments.Any(a => a.Key == SelectedGroupId))
+        {
+            SelectedGroupAssessments = groupedAssessments.First(a => a.Key.Equals(SelectedGroupId)).ToList();
+            return;
+        }
+
+        SelectedGroupAssessments = new List<Assessment>();
+    }
+    
+    private async Task OnAddSurvey(SurveyTemplate template)
+    {
+        Console.WriteLine("OnAdd");
+        var assessmentName = $"{template.Name} {DateTime.Now}";
+        var assessment = await AssessmentsDataService.AddAssessment(SelectedGroupId, template.Id, assessmentName);
+
+        if (assessment is not null)
+        {
+            Assessments.Add(assessment);
+            SetAssessmentsForSelectedGroup();
+        }
+    }
+
+    private async Task OnUpdateAssessment(Assessment assessment)
+    {
+        await AssessmentsDataService.PutAssessment(assessment);
+    }
+
     
 }

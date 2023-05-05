@@ -1,0 +1,177 @@
+@using SherpaFrontEnd.Model
+@using Microsoft.AspNetCore.Components
+@using SherpaFrontEnd.Shared.Modals
+@using SherpaFrontEnd.ViewModel
+@using System.Xml
+@using System.ComponentModel
+
+@ChildContent
+
+<h3>GroupMemberTable</h3>
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Last Name</th>
+        <th scope="col">Position</th>
+        <th scope="col">Email</th>
+        <th scope="col"></th>
+    </tr>
+    </thead>
+    
+    @if (_group is not null && _group.Members.Any())
+    {
+        <tbody>
+        @if (_group.Members.Count > 0)
+        {
+            Console.WriteLine("qwerty");
+            Console.WriteLine(_group.Members.Count);
+        }
+        @foreach (var currentMember in _group.Members)
+        {
+            <tr id="@currentMember.Email">
+                <td>
+                    <input type="text" class="form-control groups-members_input_readonly" value="@currentMember.Name" readonly/>
+                </td>
+                <td>
+                    <input type="text" class="form-control groups-members_input_readonly" value="@currentMember.LastName" readonly/>
+                </td>
+                <td>
+                    <input type="text" class="form-control groups-members_input_readonly" value="@currentMember.Position" readonly/>
+                </td>
+                <td>
+                    <input type="text" class="form-control groups-members_input_readonly" value="@currentMember.Email" readonly/>
+                </td>
+                <td>
+                    <div class="btn-group">
+                        <button class="btn btn-edit" onclick="@(() => OnEditMemberClick(currentMember))">
+                            <span class="oi oi-pencil"></span>
+                        </button>
+                        <button class="btn btn-remove" onclick="@(() => OnDeleteMemberClick(currentMember))">
+                            <span class="oi oi-trash"></span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        }
+        </tbody>
+    }
+</table>
+
+<div>
+    <button class="w-50 btn btn-outline-primary btn-sm" @onclick="AddGroupMember">Add</button>
+</div>
+
+@code {
+
+    public RenderFragment ChildContent { get; set; }
+    
+    private Group? _group;
+    [Parameter]
+    public Group? Group
+    {
+        get => _group;
+        set
+        {
+            Console.WriteLine("Group setter");
+            if (value is null)
+            {
+                return;
+            }
+
+            _group = value;
+            _group.Members.Sort((m1, m2) =>
+                string.Compare(m1.LastName, m2.LastName, StringComparison.Ordinal));
+            
+            Console.WriteLine(value.Name);
+        }
+    }
+    
+    [Parameter]
+    public EventCallback<Group> OnUpdateGroup { get; set; }
+
+    [CascadingParameter]
+    public IModalService Modal { get; set; } = default!;
+
+    private async Task UpdateGroupMember()
+    {
+        Console.WriteLine(_group?.Members);
+        await OnUpdateGroup.InvokeAsync(_group);
+    }
+
+    private async Task DeleteGroupMember(string? memberEmail)
+    {
+        _group?.Members.Remove(_group.Members.First(m => m.Email == memberEmail));
+        await OnUpdateGroup.InvokeAsync(_group);
+    }
+    
+    private async Task AddGroupMember()
+    {
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(EditMemberModal.GroupMember), new GroupMember());
+
+        var modal = Modal.Show<EditMemberModal>("Add member", parameters);
+        var modalResult = await modal.Result;
+
+        if (!modalResult.Cancelled)
+        {
+            var groupMemberToAdd = (EditGroupMember)modalResult.Data;
+
+            if (_group is not null)
+            {
+                if (_group.Members.Any(m => m.Email == groupMemberToAdd.Email))
+                {
+                    Modal.Show<WarningModal>("Email should be unique");
+                    return;
+                }
+
+                _group.Members.Add(new GroupMember
+                {
+                    Name = groupMemberToAdd.Name,
+                    LastName = groupMemberToAdd.LastName,
+                    Position = groupMemberToAdd.Position,
+                    Email = groupMemberToAdd.Email
+                });
+                await OnUpdateGroup.InvokeAsync(_group);
+            }
+        }
+    }
+
+    private async Task OnEditMemberClick(GroupMember? currentMember)
+    {
+        var parameters = new ModalParameters();
+        parameters.Add(nameof(EditMemberModal.GroupMember), currentMember);
+        var membersEmails = _group?.Members
+            .FindAll(m => m.Email != currentMember?.Email)
+            .Select(m => m.Email).ToList();
+        parameters.Add(nameof(EditMemberModal.MembersEmails), membersEmails);
+
+        var modal = Modal.Show<EditMemberModal>($"Edit {currentMember?.Name} {currentMember?.LastName}", parameters);
+        var modalResult = await modal.Result;
+
+        if (!modalResult.Cancelled)
+        {
+            var updatesGroup = (EditGroupMember)modalResult.Data;
+            if (currentMember is not null)
+            {
+                currentMember.Name = updatesGroup.Name;
+                currentMember.LastName = updatesGroup.LastName;
+                currentMember.Position = updatesGroup.Position;
+                currentMember.Email = updatesGroup.Email;
+                await UpdateGroupMember();
+            }
+        }
+    }
+
+    private async Task OnDeleteMemberClick(GroupMember? currentMember)
+    {
+        var modal = Modal.Show<ConfirmationModal>($"Delete {currentMember?.Name} {currentMember?.LastName}?");
+        var modalResult = await modal.Result;
+
+        if (!modalResult.Cancelled)
+        {
+            await DeleteGroupMember(currentMember?.Email);
+        }
+    }
+}

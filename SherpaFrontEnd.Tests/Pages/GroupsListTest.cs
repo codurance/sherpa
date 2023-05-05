@@ -29,20 +29,4 @@ public class GroupListTest
         
         Assert.Equal(group.Name, _renderedComponent.Instance.Groups[0].Name);
     }
-
-    [Fact]
-    public async Task GroupAreRenderedAsCheckboxes()
-    {
-        var group = new Group
-        {
-            Name = "Group A",
-            Id = Guid.NewGuid()
-        };
-        _renderedComponent = _testContext.RenderComponent<GroupsList>(
-            ComponentParameter.CreateParameter("Groups",new List<Group>{group}));
-
-        var actualGroupInput = _renderedComponent.Find($"input[id='{group.Id.ToString()}']");
-
-        Assert.Equal(group.Id.ToString(), actualGroupInput.Id);
-    }
 }

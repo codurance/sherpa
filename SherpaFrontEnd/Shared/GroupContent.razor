@@ -1,0 +1,106 @@
+
+@using SherpaFrontEnd.Model
+@using Microsoft.AspNetCore.Components.Rendering
+@using Microsoft.AspNetCore.Components.RenderTree
+<h3>GroupContent</h3>
+
+<div class="btn-group">
+    @foreach (var item in TabTypes)
+    {
+        if (TabTypes.FindIndex(i => i == item) == SelectedTab)
+        {
+            <button class="btn btn-primary">@item.Name</button>
+        }
+        else
+        {
+            <button class="btn btn-secondary"
+                    @onclick="@(() => SelectedTab = TabTypes.FindIndex(i => i == item))">
+                @item.Name
+            </button>
+        }
+    }
+</div>
+
+@GetRenderedTab(TabTypes[SelectedTab])
+
+@code {
+    private RenderFragment GetRenderedTab(Type type)
+    {
+        RenderFragment renderFragment = renderTreeBuilder =>
+        {
+            renderTreeBuilder.OpenComponent(0, type);
+            renderTreeBuilder.CloseComponent();
+        };
+
+        return renderFragment;
+    }
+
+    private int SelectedTab { get; set; }
+    private List<ComponentBase> Tabs { get; set; }
+    private List<Type> TabTypes { get; set; }
+    
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+    
+    [Parameter]
+    public Group? Group { get; set; }
+    
+    [Parameter]
+    public EventCallback<Group> OnUpdateGroup { get; set; }
+    
+    [Parameter]
+    public List<Assessment>? Assessments { get; set; }
+    
+    [Parameter]
+    public List<SurveyTemplate>? SurveyTemplates { get; set; }
+
+    [Parameter]
+    public List<string>? Emails { get; set; }
+    
+    [Parameter]
+    public EventCallback<Assessment> OnCreateEvaluation { get; set; }
+    
+    [Parameter]
+    public EventCallback<Assessment> OnDeleteEvaluation { get; set; }
+    
+    [Parameter]
+    public EventCallback<SurveyTemplate> OnAddSurvey { get; set; }
+
+    private Members _membersTab;
+
+    public GroupContent()
+    {
+        _membersTab = new Members
+        {
+            Group = Group,
+            OnUpdateGroup = OnUpdateGroup
+        };
+
+        var selectedGroup = Group?.Id;
+        
+        var surveyTab = new Surveys
+        {
+            SurveyTemplates = SurveyTemplates,
+            SelectedGroupAssessments = Assessments,
+            SelectedGroupId = selectedGroup,
+            Emails = Emails,
+            OnAddSurvey = OnAddSurvey,
+            OnCreateEvaluation = OnCreateEvaluation,
+            OnDeleteEvaluation = OnDeleteEvaluation
+        };
+
+        Tabs = new List<ComponentBase>
+        {
+            _membersTab,
+            surveyTab
+        };
+
+        TabTypes = Tabs.Select(t => t.GetType()).ToList();
+    }
+    
+    protected override Task OnParametersSetAsync()
+    {
+        _membersTab.Group = Group;
+        return base.OnParametersSetAsync();
+    }
+}

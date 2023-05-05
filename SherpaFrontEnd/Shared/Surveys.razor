@@ -1,0 +1,48 @@
+@using SherpaFrontEnd.Model
+
+<h3>AssessmentsPage</h3>
+
+<div>
+    <!-- TODO: populate dropdown */ -->
+    <label>Select template:
+        <select class="form-select" aria-label="Template select">
+            <option value="Hackman analysis" disabled selected>Hackman analysis</option>
+        </select>
+    </label>
+    <button class="btn btn-outline-primary btn-sm" @onclick="AddSurveyClick">Add survey</button>
+</div>
+<div>
+    <AssessmentsTable
+        Assessments="@SelectedGroupAssessments"
+        Emails="@Emails"
+        OnCreateSurvey="@OnCreateEvaluation"
+        OnDeleteSurvey="@OnDeleteEvaluation">
+    </AssessmentsTable>
+</div>
+
+@code {
+    public List<Assessment>? SelectedGroupAssessments { get; set; }
+    public Guid? SelectedGroupId { get; set; }
+    public List<string>? Emails { get; set; }
+    public List<SurveyTemplate>? SurveyTemplates { get; set; }
+    public EventCallback<SurveyTemplate> OnAddSurvey { get; set; }
+    public EventCallback<Assessment> OnCreateEvaluation { get; set; }
+    public EventCallback<Assessment> OnDeleteEvaluation { get; set; }
+    
+    private SurveyTemplate SelectedSurveyTemplate { get; set; }
+
+    protected override Task OnParametersSetAsync()
+    {
+        if (SurveyTemplates is not null)
+        {
+            SelectedSurveyTemplate = SurveyTemplates.First();
+        }
+
+        return base.OnParametersSetAsync();
+    }
+
+    private async Task AddSurveyClick()
+    {
+        await OnAddSurvey.InvokeAsync(SelectedSurveyTemplate);
+    }
+}
