@@ -1,0 +1,94 @@
+@using SherpaFrontEnd.Services
+@using SherpaFrontEnd.Model
+@inject IGroupDataService GroupDataService;
+
+@page "/main-page"
+
+<div class="row">
+    <div class="col-3">
+        <GroupsList Groups="@Groups"
+                    OnGroupClick="UpdateSelectedGroup"
+                    OnAddGroup="AddGroup"
+                    OnDeleteGroup="DeleteSelectedGroup"
+                    SelectedGroupId="@SelectedGroupId"/>
+    </div>
+    <div class="col-9">
+        <GroupContent></GroupContent>
+    </div>
+</div>
+
+@code {
+    private List<Group>? Groups { get; set; }
+
+    private Guid SelectedGroupId { get; set; }
+
+    private List<GroupMember>? SelectedGroupMembers { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Console.WriteLine("Hi");
+        await GetGroups();
+    }
+    
+    private async Task GetGroups()
+    {
+        try
+        {
+            var requestedGroups = await GroupDataService.GetGroups();
+
+            if (requestedGroups != null)
+            {
+                Groups = requestedGroups;
+                SelectedGroupMembers = Groups.First().Members;
+                SelectedGroupId = Groups.First().Id;
+            }
+        }
+        catch (HttpRequestException e)
+        {
+        // TODO exception component?
+        }
+    }
+    
+    
+    private void UpdateSelectedGroup(Guid id)
+    {
+        if (Groups is not null)
+        {
+            SelectedGroupMembers = Groups.First(group => group.Id.Equals(id)).Members;
+            SelectedGroupId = id;
+        }
+    }
+
+    private async Task AddGroup(Group group)
+    {
+        await GroupDataService.AddGroup(group);
+        await GetGroups();
+    }
+
+    private async Task DeleteSelectedGroup()
+    {
+        if (Groups is not null && Groups.Any(g => g.Id == SelectedGroupId))
+        {
+            await GroupDataService.DeleteGroup(SelectedGroupId);
+            Groups.Remove(Groups.First(group => group.Id.Equals(SelectedGroupId)));
+
+            var selectedGroup = Groups.FirstOrDefault();
+            if (selectedGroup is not null)
+            {
+                SelectedGroupId = selectedGroup.Id;
+                SelectedGroupMembers = selectedGroup.Members;
+            }
+            else
+            {
+                SelectedGroupId = Guid.Empty;
+                SelectedGroupMembers = new List<GroupMember>();
+            }
+        }
+    }
+
+    private async Task SaveGroup(Group group)
+    {
+        await GroupDataService.PutGroup(group);
+    }
+    
+}

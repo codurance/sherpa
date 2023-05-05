@@ -1,42 +1,47 @@
 @using SherpaFrontEnd.Model
 @using SherpaFrontEnd.Services
 @using SherpaFrontEnd.Shared.Modals
-
-
-<h3>GroupsList</h3>
-
-@if (Groups is not null)
-{
-    @foreach (var group in Groups)
+<div class="codurance-light-gray groups-list">
+    @if (Groups is not null)
     {
-        <div class="form-check">
-            @if (group.Id == SelectedGroupId)
+        <div class="groups-box">
+            <ul>
+            @foreach (var group in Groups)
             {
-                <input class="form-check-input" type="radio"
-                       name="flexRadioDefault" @onclick="@(() => Group_Click(group.Id))"
-                       id="@group.Id" checked="checked">
+                    @if (group.Id == SelectedGroupId)
+                    {
+                        <li class="selected" @onclick="@(() => Group_Click(group.Id))">
+                            @group.Name
+                        </li>
+                    }
+                    else
+                    {
+                        <li @onclick="@(() => Group_Click(group.Id))">
+                            @group.Name
+                        </li>
+                    }
             }
-            else
-            {
-                <input class="form-check-input" type="radio"
-                       name="flexRadioDefault" @onclick="@(() => Group_Click(group.Id))"
-                       id="@group.Id">
-            }
-            <label class="form-check-label" for="@group.Id">
-                @group.Name
-            </label>
+            </ul>
         </div>
     }
-}
-else
-{
-    <h3>An error has occured - try again later</h3>
-}
-<div class="btn-group w-100 mt-5" role="group">
-    <button class="w-50 btn btn-outline-primary btn-sm" @onclick="AddGroup">Add</button>
-    <button class="w-50 btn btn-outline-danger btn-sm" @onclick="DeleteGroup">Delete</button>
-</div>
+    else
+    {
+        <h3>An error has occured - try again later</h3>
+    }
+    
+    <div class="btn-group-vertical">
+        <button class="btn btn-edit" @onclick="AddGroup">
+            <span class="oi oi-plus"></span>
+            <span>Add Group</span>
+        </button>
+        <button class="btn btn-remove" @onclick="DeleteGroup">
+            <span class="oi oi-trash"></span>
+            <span>Delete Group
+            </span>
+        </button>
+    </div>
 
+</div>
 
 @code {
 
@@ -70,6 +75,11 @@ else
         var modal = Modal.Show<AddGroupModal>("Add group");
         var modalResult = await modal.Result;
 
+        if (modalResult.Cancelled)
+        {
+            return;
+        }
+        
         var group = (Group)modalResult.Data;
 
 
@@ -80,7 +90,7 @@ else
                 Modal.Show<WarningModal>("Group name must be unique");
                 return;
             }
-            Console.WriteLine(group);
+            
             await OnAddGroup.InvokeAsync(group);
         }
     }

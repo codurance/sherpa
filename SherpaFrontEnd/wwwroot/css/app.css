@@ -6,6 +6,7 @@
 
 html, body {
     font-family: 'proxima-nova', Helvetica, Arial, sans-serif;
+    color: #62626a;
 }
 
 h1:focus {
@@ -77,11 +78,18 @@ a, .btn-link {
 .btn.btn-save,
 .btn.btn-remove
 {
-    color: #d7d7d7;
+    color: #62626a;
 }
 
 .btn.btn-edit:hover,
 .btn.btn-save:hover,
 .btn.btn-remove:hover {
     color: #1a1e21;
+}
+.btn-group-vertical > button > span {
+    float: left;
+}
+
+.btn-group-vertical > button > span.oi {
+    margin-right: 0.7em;
 }
