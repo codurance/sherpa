@@ -1,6 +1,7 @@
 @using SherpaFrontEnd.Model
+@using SherpaFrontEnd.Shared
 
-<h3>AssessmentsPage</h3>
+<h3>Surveys</h3>
 
 <div>
     <!-- TODO: populate dropdown */ -->
@@ -12,21 +13,34 @@
     <button class="btn btn-outline-primary btn-sm" @onclick="AddSurveyClick">Add survey</button>
 </div>
 <div>
-    <AssessmentsTable
+    <SurveysTable
         Assessments="@SelectedGroupAssessments"
         Emails="@Emails"
         OnCreateSurvey="@OnCreateEvaluation"
         OnDeleteSurvey="@OnDeleteEvaluation">
-    </AssessmentsTable>
+    </SurveysTable>
 </div>
 
 @code {
+    [Parameter]
     public List<Assessment>? SelectedGroupAssessments { get; set; }
+    
+    [Parameter]
     public Guid? SelectedGroupId { get; set; }
+    
+    [Parameter]
     public List<string>? Emails { get; set; }
+    
+    [Parameter]
     public List<SurveyTemplate>? SurveyTemplates { get; set; }
+    
+    [Parameter]
     public EventCallback<SurveyTemplate> OnAddSurvey { get; set; }
+    
+    [Parameter]
     public EventCallback<Assessment> OnCreateEvaluation { get; set; }
+    
+    [Parameter]
     public EventCallback<Assessment> OnDeleteEvaluation { get; set; }
     
     private SurveyTemplate SelectedSurveyTemplate { get; set; }
@@ -43,6 +57,7 @@
 
     private async Task AddSurveyClick()
     {
+        Console.WriteLine("AddSurveyClick");
         await OnAddSurvey.InvokeAsync(SelectedSurveyTemplate);
     }
 }

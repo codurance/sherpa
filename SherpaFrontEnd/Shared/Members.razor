@@ -5,8 +5,6 @@
 @using System.Xml
 @using System.ComponentModel
 
-@ChildContent
-
 <h3>GroupMemberTable</h3>
 
 <table class="table table-striped">
@@ -23,11 +21,6 @@
     @if (_group is not null && _group.Members.Any())
     {
         <tbody>
-        @if (_group.Members.Count > 0)
-        {
-            Console.WriteLine("qwerty");
-            Console.WriteLine(_group.Members.Count);
-        }
         @foreach (var currentMember in _group.Members)
         {
             <tr id="@currentMember.Email">
@@ -64,9 +57,6 @@
 </div>
 
 @code {
-
-    public RenderFragment ChildContent { get; set; }
-    
     private Group? _group;
     [Parameter]
     public Group? Group
@@ -83,8 +73,6 @@
             _group = value;
             _group.Members.Sort((m1, m2) =>
                 string.Compare(m1.LastName, m2.LastName, StringComparison.Ordinal));
-            
-            Console.WriteLine(value.Name);
         }
     }
     

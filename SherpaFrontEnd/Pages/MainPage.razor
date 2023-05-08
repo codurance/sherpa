@@ -19,10 +19,10 @@
             var emails = Groups.First(g => g.Id.Equals(SelectedGroupId)).Members.Select(m => m.Email).ToList();
             <GroupContent Group="@Groups.FirstOrDefault(g => g.Id == SelectedGroupId)"
                           OnUpdateGroup="SaveGroup"
-                          Assessments="@SelectedGroupAssessments"
+                          SelectedGroupAssessments="@SelectedGroupAssessments"
                           SurveyTemplates="@SurveyTemplates"
                           Emails="@emails"
-                          OnAddSurvey = "OnAddSurvey"
+                          OnAddSurvey = "@OnAddSurvey"
                           OnCreateEvaluation="OnUpdateAssessment"
                           OnDeleteEvaluation="OnUpdateAssessment">
                 >
@@ -37,12 +37,11 @@
     private List<GroupMember>? SelectedGroupMembers { get; set; }
     
     private List<Assessment>? Assessments { get; set; } = new ();
-    private List<Assessment> SelectedGroupAssessments { get; set; }
+    private List<Assessment>? SelectedGroupAssessments { get; set; }
     private List<SurveyTemplate> SurveyTemplates { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        Console.WriteLine("Hi");
         await GetGroups();
         await GetAssessments();
         await GetTemplates();
@@ -73,6 +72,7 @@
         {
             SelectedGroupMembers = Groups.First(group => group.Id.Equals(id)).Members;
             SelectedGroupId = id;
+            SetAssessmentsForSelectedGroup();
         }
     }
 
@@ -129,10 +129,11 @@
     private void SetAssessmentsForSelectedGroup()
     {
         var groupedAssessments = Assessments.GroupBy(assessment => assessment.GroupId);
-
+        
         if (groupedAssessments.Any(a => a.Key == SelectedGroupId))
         {
             SelectedGroupAssessments = groupedAssessments.First(a => a.Key.Equals(SelectedGroupId)).ToList();
+            Console.WriteLine(SelectedGroupAssessments.Count);
             return;
         }
 
@@ -156,6 +157,4 @@
     {
         await AssessmentsDataService.PutAssessment(assessment);
     }
-
-    
 }
