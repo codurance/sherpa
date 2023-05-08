@@ -1,13 +1,22 @@
 ﻿@inherits LayoutComponentBase
 <section class="codurance-dark">
-    <a href="">
-        <img src="img/Codurance-logo-negative.png" alt="codurance logo"/>
-    </a>
+    <nav class="main-nav">
+        <NavLink class="nav-link codurance-dark" href="">
+            <img class="main-nav-logo" src="img/Codurance-logo-negative.png" alt="codurance logo"/>
+        </NavLink>
+        <NavLink class="nav-link codurance-dark" href="" Match="NavLinkMatch.All">
+            <span class="oi oi-home" aria-hidden="true"></span> Home
+        </NavLink>
+        <NavLink class="nav-link codurance-dark" href="main-page">
+            <span class="oi oi-list-rich" aria-hidden="true"></span> Groups
+        </NavLink>
+
+    </nav>
 </section>
 <div>
     @Body
-</div>    
-    
+</div>
+
 <!--
 <div class="sidebar">
     <NavMenu/>

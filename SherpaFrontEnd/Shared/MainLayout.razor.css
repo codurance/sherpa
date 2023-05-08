@@ -8,6 +8,16 @@ main {
     flex: 1;
 }
 
+.main-nav-logo{
+
+    height: 1.7rem;
+}
+
+.main-nav{
+    display: flex;
+    flex-direction: row;
+}
+
 .sidebar {
     background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
 }
