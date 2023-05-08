@@ -2,20 +2,20 @@ using Bunit;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using SherpaFrontEnd.Model;
-using SherpaFrontEnd.Pages.Surveys;
+using SherpaFrontEnd.Pages;
 using SherpaFrontEnd.Services;
 
 namespace BlazorApp.Tests.Pages;
 
-public class AssessmentsPageTest
+public class MainPageTest
 {
     private readonly TestContext _testContext;
     private Mock<IAssessmentsDataService> _mockAssessmentDataService;
     private Mock<IGroupDataService> _mockGroupDataService;
-    private IRenderedComponent<AssessmentsPage> _renderedComponent;
-    private AssessmentsPage AssessmentsPage;
+    private IRenderedComponent<MainPage> _renderedComponent;
+    private MainPage MainPage;
 
-    public AssessmentsPageTest()
+    public MainPageTest()
     {
         _testContext = new TestContext();
         _mockAssessmentDataService = new Mock<IAssessmentsDataService>();
@@ -25,18 +25,18 @@ public class AssessmentsPageTest
     }
 
     [Fact]
-    public void AssessmentPage_OnLoadDoesNotReturnAssessments_ExpectSelectedAssessmentsToBeAnEmptyLisy()
+    public void MainPage_OnLoadDoesNotReturnAssessments_ExpectSelectedAssessmentsToBeAnEmptyLisy()
     {
         _mockAssessmentDataService.Setup(ds => ds.GetAssessments())
             .Returns(Task.FromResult(new List<Assessment>())!);
 
-        _renderedComponent = _testContext.RenderComponent<AssessmentsPage>();
+        _renderedComponent = _testContext.RenderComponent<MainPage>();
 
         if (_renderedComponent.Instance.Assessments != null) Assert.Empty(_renderedComponent.Instance.Assessments);
     }
 
     [Fact]
-    public void AssessmentsPage_OnLoadReturnsAssessmentList_ExpectSelectedAssessmentToMatchSelectedGroup()
+    public void MainPage_OnLoadReturnsAssessmentList_ExpectSelectedAssessmentToMatchSelectedGroup()
     {
         var groupA_id = Guid.NewGuid();
         var groupB_id = Guid.NewGuid();
@@ -70,7 +70,7 @@ public class AssessmentsPageTest
                 }
             })!);
 
-        _renderedComponent = _testContext.RenderComponent<AssessmentsPage>();
+        _renderedComponent = _testContext.RenderComponent<MainPage>();
 
         if (_renderedComponent.Instance.SelectedGroupAssessments != null)
             Assert.Equal(groupA_id, _renderedComponent.Instance.SelectedGroupAssessments[0].GroupId);

@@ -36,8 +36,8 @@
     private Guid SelectedGroupId { get; set; }
     private List<GroupMember>? SelectedGroupMembers { get; set; }
     
-    private List<Assessment>? Assessments { get; set; } = new ();
-    private List<Assessment>? SelectedGroupAssessments { get; set; }
+    public List<Assessment>? Assessments { get; set; } = new ();
+    public List<Assessment>? SelectedGroupAssessments { get; set; }
     private List<SurveyTemplate> SurveyTemplates { get; set; }
 
     protected override async Task OnInitializedAsync()
