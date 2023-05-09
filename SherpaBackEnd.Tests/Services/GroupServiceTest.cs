@@ -34,4 +34,5 @@ public class GroupServiceTest
         var expectedGroupList = await _groupService.GetGroups();
         Assert.DoesNotContain(deletedGroup, expectedGroupList);
     }
+    
 }

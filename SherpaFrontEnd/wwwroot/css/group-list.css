@@ -12,6 +12,10 @@
     padding-left: 1em;
 }
 
+.groups-list .card:hover {
+    cursor: pointer;
+}
+
 .groups-box {
     text-align: center;
 }

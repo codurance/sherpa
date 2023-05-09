@@ -1,5 +1,9 @@
 @using SherpaFrontEnd.Model
+@using SherpaFrontEnd.Services
 @using SherpaFrontEnd.Shared.Tabs
+@inject IGroupDataService GroupDataService;
+
+@page "/group/{GroupId:Guid?}"
 
 <TabControl>
     <TabPage Text="Members">
@@ -22,6 +26,18 @@
 </TabControl>
 
 @code {
+
+    [Parameter]
+    public Guid GroupId { get; set; } = Guid.Empty;
+
+    private Group SelectedGroup;
+
+
+    /*protected override Task OnInitializedAsync()
+    {
+        
+    }*/
+
     [Parameter]
     public RenderFragment ChildContent { get; set; }
     

@@ -1,74 +1,51 @@
 @using SherpaFrontEnd.Model
 @using SherpaFrontEnd.Services
 @using SherpaFrontEnd.Shared.Modals
+@inject IGroupDataService GroupDataService;
+
+@inject NavigationManager _nav
+
+@page "/groups-list-page"
+
 <div class="codurance-light-gray groups-list">
+    
+    @if (Groups is not null && Groups.Count == 0)
+    {
+        <div class="text-center">
+            <h3>You have no teams!</h3>
+            <h3>Do you want to start creating one?</h3>
+            <button class="btn-outline-primary" @onclick="AddGroup">New team!</button>
+        </div>
+    }
+    
     @if (Groups is not null)
     {
-        <div class="groups-box">
-            <ul>
-            @foreach (var group in Groups)
-            {
-                    @if (group.Id == SelectedGroupId)
-                    {
-                        <li class="selected" @onclick="@(() => Group_Click(group.Id))">
-                            @group.Name
-                        </li>
-                    }
-                    else
-                    {
-                        <li @onclick="@(() => Group_Click(group.Id))">
-                            @group.Name
-                        </li>
-                    }
-            }
-            </ul>
-        </div>
+        <h3>Your teams!</h3>
+    
+        <button class="btn-outline-primary" @onclick="AddGroup">Add new team</button>
+    
+        foreach (var group in Groups)
+        {
+            <div class="card" style="width: 18rem;" @onclick="@(() => _nav.NavigateTo($"/group/{group.Id}"))">
+                <div class="card-body">
+                    <h5 class="card-title">@group.Name</h5>
+                    <p class="card-text">Overall scoring in analysis</p>
+                </div>
+            </div>
+        }
     }
     else
     {
         <h3>An error has occured - try again later</h3>
     }
-    
-    <div class="btn-group-vertical">
-        <button class="btn btn-edit" @onclick="AddGroup">
-            <span class="oi oi-plus"></span>
-            <span>Add Group</span>
-        </button>
-        <button class="btn btn-remove" @onclick="DeleteGroup">
-            <span class="oi oi-trash"></span>
-            <span>Delete Group
-            </span>
-        </button>
-    </div>
-
 </div>
 
 @code {
 
-    [Parameter]
     public List<Group>? Groups { get; set; }
-
-    [Parameter]
-    public EventCallback<Guid> OnGroupClick { get; set; }
-
-    [Parameter]
-    public EventCallback<Group> OnAddGroup { get; set; }
-
-    [Parameter]
-    public EventCallback OnDeleteGroup { get; set; }
-
-
-    [Parameter]
-    public Guid SelectedGroupId { get; set; }
 
     [CascadingParameter]
     public IModalService Modal { get; set; } = default!;
-
-    private async Task Group_Click(Guid id)
-    {
-    //SelectedGroupId = id;
-        await OnGroupClick.InvokeAsync(id);
-    }
 
     private async Task AddGroup()
     {
@@ -88,22 +65,13 @@
             if (Groups.Any(g => g.Name == group.Name))
             {
                 Modal.Show<WarningModal>("Group name must be unique");
-                return;
             }
-            
-            await OnAddGroup.InvokeAsync(group);
         }
     }
-    
-    private async Task DeleteGroup()
-    {
-        var modal = Modal.Show<ConfirmationModal>("Delete group?");
-        var modalResult = await modal.Result;
 
-        if (!modalResult.Cancelled)
-        {
-            await OnDeleteGroup.InvokeAsync();
-        }
+    protected override async Task OnInitializedAsync()
+    {
+        Groups = await GroupDataService.GetGroups();
     }
 
 }
