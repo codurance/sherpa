@@ -26,6 +26,19 @@ public class GroupServiceHttpClient : IGroupDataService
             responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
     }
 
+    public async Task<Group?> GetGroup(Guid guid)
+    {
+        var client = _clientFactory.CreateClient(Sherpabackend);
+        var request = new HttpRequestMessage(HttpMethod.Get, $"/groups/{guid}");
+        var response = await client.SendAsync(request);
+
+        response.EnsureSuccessStatusCode();
+        var responseString = await response.Content.ReadAsStringAsync();
+
+        return JsonSerializer.Deserialize<Group>(
+            responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+    }
+
     public async Task DeleteGroup(Guid guid)
     {
         var httpClient = _clientFactory.CreateClient(Sherpabackend);

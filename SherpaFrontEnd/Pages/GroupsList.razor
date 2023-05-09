@@ -26,7 +26,7 @@
     
         foreach (var group in Groups)
         {
-            <div class="card" style="width: 18rem;" @onclick="@(() => _nav.NavigateTo($"/group/{group.Id}"))">
+            <div class="card" style="width: 18rem;" @onclick="@(() => _nav.NavigateTo($"/groups/{group.Id}"))">
                 <div class="card-body">
                     <h5 class="card-title">@group.Name</h5>
                     <p class="card-text">Overall scoring in analysis</p>

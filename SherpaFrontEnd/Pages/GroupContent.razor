@@ -2,8 +2,11 @@
 @using SherpaFrontEnd.Services
 @using SherpaFrontEnd.Shared.Tabs
 @inject IGroupDataService GroupDataService;
+@* @inject IAssessmentsDataService AssessmentsDataService; *@
 
-@page "/group/{GroupId:Guid?}"
+@page "/groups/{GroupId:guid?}"
+
+<h3>@Group?.Name</h3>
 
 <TabControl>
     <TabPage Text="Members">
@@ -30,13 +33,12 @@
     [Parameter]
     public Guid GroupId { get; set; } = Guid.Empty;
 
-    private Group SelectedGroup;
 
-
-    /*protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
-        
-    }*/
+        Group = await GroupDataService.GetGroup(GroupId);
+
+    }
 
     [Parameter]
     public RenderFragment ChildContent { get; set; }
