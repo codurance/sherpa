@@ -5,30 +5,21 @@
 
 @page "/main-page"
 
-<div class="row">
-    <div class="col-3">
-        <GroupsList Groups="@Groups"
-                    OnGroupClick="UpdateSelectedGroup"
-                    OnAddGroup="AddGroup"
-                    OnDeleteGroup="DeleteSelectedGroup"
-                    SelectedGroupId="@SelectedGroupId"/>
-    </div>
-    <div class="col-9">
-        @if (Groups is not null)
-        {
-            var emails = Groups.First(g => g.Id.Equals(SelectedGroupId)).Members.Select(m => m.Email).ToList();
-            <GroupContent Group="@Groups.FirstOrDefault(g => g.Id == SelectedGroupId)"
-                          OnUpdateGroup="SaveGroup"
-                          SelectedGroupAssessments="@SelectedGroupAssessments"
-                          SurveyTemplates="@SurveyTemplates"
-                          Emails="@emails"
-                          OnAddSurvey = "@OnAddSurvey"
-                          OnCreateEvaluation="OnUpdateAssessment"
-                          OnDeleteEvaluation="OnUpdateAssessment">
-                >
-            </GroupContent>
-        }
-    </div>
+<div>
+    @if (Groups is not null)
+    {
+        var emails = Groups.First(g => g.Id.Equals(SelectedGroupId)).Members.Select(m => m.Email).ToList();
+        <GroupContent Group="@Groups.FirstOrDefault(g => g.Id == SelectedGroupId)"
+                      OnUpdateGroup="SaveGroup"
+                      SelectedGroupAssessments="@SelectedGroupAssessments"
+                      SurveyTemplates="@SurveyTemplates"
+                      Emails="@emails"
+                      OnAddSurvey = "@OnAddSurvey"
+                      OnCreateEvaluation="OnUpdateAssessment"
+                      OnDeleteEvaluation="OnUpdateAssessment">
+            >
+        </GroupContent>
+    }
 </div>
 
 @code {
