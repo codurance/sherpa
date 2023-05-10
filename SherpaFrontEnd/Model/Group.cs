@@ -9,14 +9,13 @@ public class Group
     public string? Name { get; set; }
     
     public Guid Id { get; init; }
-    
-    public List<GroupMember> Members { get; set; }
+
+    public List<GroupMember> Members { get; set; } = new();
     
 public Group()
-    {
-        Id = Guid.NewGuid();
-        Members = new List<GroupMember>();
-    }
+{
+    Id = Guid.NewGuid();
+}
 
 public Group(Guid id, string name)
 {

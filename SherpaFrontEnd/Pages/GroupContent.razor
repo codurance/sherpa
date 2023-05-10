@@ -77,13 +77,13 @@
 
         if (assessment is not null)
         {
-            Assessments.Add(assessment);
+            Assessments!.Add(assessment);
         }
     }
 
     private async void DeleteGroup()
     {
-        var modal = Modal.Show<ConfirmationModal>($"Delete {Group.Name}?");
+        var modal = Modal.Show<ConfirmationModal>($"Delete {Group!.Name}?");
         var modalResult = await modal.Result;
 
         if (!modalResult.Cancelled)
