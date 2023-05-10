@@ -1,15 +1,17 @@
 <CascadingValue Value="this">
-    <div class="btn-group" role="group">
+    <ul class="nav nav-tabs my-4">
       
         @foreach (TabPage tabPage in Pages)
         {
-            <button type="button"
-                    class="btn @GetButtonClass(tabPage)"
+            <li class="nav-item">
+                <a
+                    class="nav-link @GetButtonClass(tabPage)"
                     @onclick=@( () => ActivatePage(tabPage) )>
-                @tabPage.Text
-            </button>
+                    @tabPage.Text
+                </a>
+            </li>
         }
-    </div>
+    </ul>
     
     @ChildContent
     
@@ -25,7 +27,7 @@
     
     string GetButtonClass(TabPage page)
     {
-        return page == ActivePage ? "btn-primary" : "btn-secondary";
+        return page == ActivePage ? "active" : "";
     }
 
     void ActivatePage(TabPage page)

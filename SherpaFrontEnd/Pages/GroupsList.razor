@@ -7,14 +7,14 @@
 
 @page "/groups-list-page"
 
-<div class="codurance-light-gray groups-list">
+<div>
     
     @if (Groups is not null && Groups.Count == 0)
     {
         <div class="text-center">
             <h3>You have no teams!</h3>
             <h3>Do you want to start creating one?</h3>
-            <button class="btn-outline-primary" @onclick="AddGroup">New team!</button>
+            <button class="w-25 btn btn-outline-primary" @onclick="AddGroup">New team!</button>
         </div>
     }
     
@@ -22,11 +22,11 @@
     {
         <h3>Your teams!</h3>
     
-        <button class="btn-outline-primary" @onclick="AddGroup">Add new team</button>
+        <button class="w-25 btn btn-outline-primary" @onclick="AddGroup">Add new team</button>
     
         foreach (var group in Groups)
         {
-            <div class="card" style="width: 18rem;" @onclick="@(() => _nav.NavigateTo($"/groups/{group.Id}"))">
+            <div class="card my-2" style="width: 18rem;" @onclick="@(() => _nav.NavigateTo($"/group-content/{group.Id}"))">
                 <div class="card-body">
                     <h5 class="card-title">@group.Name</h5>
                     <p class="card-text">Overall scoring in analysis</p>

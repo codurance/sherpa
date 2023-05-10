@@ -22,17 +22,17 @@
         @foreach (var currentMember in _group.Members)
         {
             <tr id="@currentMember.Email">
-                <td>
-                    <input type="text" class="form-control groups-members_input_readonly" value="@currentMember.Name" readonly/>
+                <td class="align-middle">
+                    @currentMember.Name
                 </td>
-                <td>
-                    <input type="text" class="form-control groups-members_input_readonly" value="@currentMember.LastName" readonly/>
+                <td class="align-middle">
+                    @currentMember.LastName
                 </td>
-                <td>
-                    <input type="text" class="form-control groups-members_input_readonly" value="@currentMember.Position" readonly/>
+                <td class="align-middle">
+                    @currentMember.Position
                 </td>
-                <td>
-                    <input type="text" class="form-control groups-members_input_readonly" value="@currentMember.Email" readonly/>
+                <td class="align-middle">
+                    @currentMember.Email
                 </td>
                 <td>
                     <div class="btn-group">
@@ -51,7 +51,7 @@
 </table>
 
 <div>
-    <button class="w-50 btn btn-outline-primary btn-sm" @onclick="AddGroupMember">Add</button>
+    <button class="w-25 btn btn-outline-primary" @onclick="AddGroupMember">Add</button>
 </div>
 
 @code {
