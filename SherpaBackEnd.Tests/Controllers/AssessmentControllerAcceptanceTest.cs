@@ -167,7 +167,10 @@ public class AssessmentControllerAcceptanceTest
 
         Assert.Contains(actualAssessment, a => a.GroupId == group.Id);
 
-        var notFoundAssessment = await _assessmentsController.GetAssessmentsAsync(Guid.Empty);
-        Assert.IsType<NotFoundResult>(notFoundAssessment.Result);
+        var emptyAssessment = await _assessmentsController.GetAssessmentsAsync(Guid.Empty);
+        var emptyAssessmentResult = Assert.IsType<OkObjectResult>(emptyAssessment.Result);
+        var actualEmptyAssessment = Assert.IsAssignableFrom<IEnumerable<Assessment>>(emptyAssessmentResult.Value);
+        
+        Assert.Empty(actualEmptyAssessment);
     }
 }

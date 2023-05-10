@@ -12,12 +12,15 @@ public class GroupContentTest
     private TestContext _testContext;
     private IRenderedComponent<GroupContent> _renderedComponent;
     private Mock<IGroupDataService> _mockGroupService;
+    private Mock<IAssessmentsDataService> _mockAssessmentService;
 
     public GroupContentTest()
     {
         _testContext = new TestContext();
         _mockGroupService = new Mock<IGroupDataService>();
+        _mockAssessmentService = new Mock<IAssessmentsDataService>();
         _testContext.Services.AddScoped(s => _mockGroupService.Object);
+        _testContext.Services.AddScoped(s => _mockAssessmentService.Object);
     }
 
     [Fact]

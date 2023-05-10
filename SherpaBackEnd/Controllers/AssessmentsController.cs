@@ -28,7 +28,7 @@ public class AssessmentsController
     public async Task<ActionResult<IEnumerable<Assessment>>> GetAssessmentsAsync(Guid groupId)
     {
         var assessments = await _assessmentService.GetAssessments(groupId);
-        if (assessments.Any())
+        if (assessments is not null)
         {
             return new OkObjectResult(assessments);
         }

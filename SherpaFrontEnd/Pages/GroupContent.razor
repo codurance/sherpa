@@ -2,7 +2,7 @@
 @using SherpaFrontEnd.Services
 @using SherpaFrontEnd.Shared.Tabs
 @inject IGroupDataService GroupDataService;
-@* @inject IAssessmentsDataService AssessmentsDataService; *@
+@inject IAssessmentsDataService AssessmentsDataService;
 
 @page "/groups/{GroupId:guid?}"
 
@@ -18,52 +18,57 @@
     <TabPage Text="Surveys">
         <Surveys
             SurveyTemplates="@SurveyTemplates"
-            SelectedGroupAssessments="@SelectedGroupAssessments"
+            SelectedGroupAssessments="@Assessments"
             SelectedGroupId="@Group?.Id"
             Emails="@Emails"
             OnAddSurvey="@OnAddSurvey"
-            OnCreateEvaluation="@OnCreateEvaluation"
-            OnDeleteEvaluation="@OnDeleteEvaluation">
+            OnCreateEvaluation="@OnUpdateAssessment"
+            OnDeleteEvaluation="@OnUpdateAssessment">
         </Surveys>
     </TabPage>
 </TabControl>
 
 @code {
-
-    [Parameter]
-    public Guid GroupId { get; set; } = Guid.Empty;
-
-
-    protected override async Task OnInitializedAsync()
-    {
-        Group = await GroupDataService.GetGroup(GroupId);
-
-    }
-
     [Parameter]
     public RenderFragment ChildContent { get; set; }
     
     [Parameter]
+    public Guid GroupId { get; set; } = Guid.Empty;
+    
     public Group? Group { get; set; }
 
-    [Parameter]
-    public EventCallback<Group> OnUpdateGroup { get; set; }
+    private List<string?> Emails { get; set; } = new();
+    
+    private List<SurveyTemplate>? SurveyTemplates { get; set; }
+    
+    private List<Assessment>? Assessments { get; set; }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        Group = await GroupDataService.GetGroup(GroupId);
+        Emails = Group!.Members.Select(m => m.Email).ToList();
+        SurveyTemplates = await AssessmentsDataService.GetTemplates();
+        Assessments = await AssessmentsDataService.GetAssessments(GroupId);
+    }
+    
+    private async Task OnUpdateGroup(Group group)
+    {
+        await GroupDataService.PutGroup(group);
+    }
+    
+    private async Task OnUpdateAssessment(Assessment assessment)
+    {
+        await AssessmentsDataService.PutAssessment(assessment);
+    }
+    
+    private async Task OnAddSurvey(SurveyTemplate template)
+    {
+        var assessmentName = $"{template.Name} {DateTime.Now}";
+        var assessment = await AssessmentsDataService.AddAssessment(GroupId, template.Id, assessmentName);
 
-    [Parameter]
-    public List<Assessment>? SelectedGroupAssessments { get; set; }
-
-    [Parameter]
-    public List<SurveyTemplate>? SurveyTemplates { get; set; }
-
-    [Parameter]
-    public List<string>? Emails { get; set; }
-
-    [Parameter]
-    public EventCallback<Assessment> OnCreateEvaluation { get; set; }
-
-    [Parameter]
-    public EventCallback<Assessment> OnDeleteEvaluation { get; set; }
-
-    [Parameter]
-    public EventCallback<SurveyTemplate> OnAddSurvey { get; set; }
+        if (assessment is not null)
+        {
+            Assessments.Add(assessment);
+        }
+    }
 }

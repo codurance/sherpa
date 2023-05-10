@@ -45,6 +45,24 @@ public class AssessmentsServiceHttpClient : IAssessmentsDataService
         return new List<Assessment>();
     }
 
+    public async Task<List<Assessment>?> GetAssessments(Guid groupId)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get, $"/assessments/group-assessments/{groupId.ToString()}");
+        var response = await _httpClient.SendAsync(request);
+        
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            var responseString = await response.Content.ReadAsStringAsync();
+            
+            Console.WriteLine("raw response: " + responseString);
+
+            return JsonSerializer.Deserialize<List<Assessment>>(
+                responseString, _jsonSerializerOptions);    
+        }
+
+        return new List<Assessment>();
+    }
+
     public async Task<List<SurveyTemplate>?> GetTemplates()
     {
         var request = new HttpRequestMessage(HttpMethod.Get, "/assessments/templates");
