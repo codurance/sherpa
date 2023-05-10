@@ -94,4 +94,13 @@ public class AssessmentServiceTest
         await _assessmentService.UpdateAssessment(assessment);
         _assessmentRepository.Verify(m => m.UpdateAssessment(assessment));
     }
+
+    [Fact]
+    public async Task GetAssessmentsByGroupId_IsUsingRepository()
+    {
+        var groupId = Guid.NewGuid();
+        await _assessmentService.GetAssessments(groupId);
+        _assessmentRepository.Verify(m => m.GetAssessments(groupId));
+    }
+        
 }

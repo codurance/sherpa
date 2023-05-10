@@ -21,6 +21,11 @@ public class InMemoryAssessmentRepository : IAssessmentRepository
         return await Task.FromResult(_assessments);
     }
 
+    public async Task<IEnumerable<Assessment>> GetAssessments(Guid groupId)
+    {
+        return await Task.FromResult(_assessments.FindAll(a => a.GroupId == groupId));
+    }
+
     public async Task<Assessment?> GetAssessment(Guid groupId, Guid templateId)
     {
         return await Task.FromResult(_assessments.FirstOrDefault(a => a.GroupId == groupId && a.TemplateId == templateId));

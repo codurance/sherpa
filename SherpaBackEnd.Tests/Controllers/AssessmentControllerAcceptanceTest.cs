@@ -120,4 +120,54 @@ public class AssessmentControllerAcceptanceTest
         Assert.Single(actualUpdatedAssessment.Surveys);
         Assert.Equal(group.Members.Count(), actualUpdatedAssessment.Surveys.First().MembersCount);
     }
+
+
+    [Fact]
+    public async Task GetAssessmentsFromSingleGroup_OkResultExpected()
+    {
+        
+        var group = new Group("Group");
+        group.Members = new List<GroupMember>
+        {
+            new ("Name A", "LastName A", "Position A", "emaila@mail.com"),
+            new ("Name B", "LastName B", "Position B", "emailb@mail.com")
+        };
+        var anotherGroup = new Group("another Group");
+        anotherGroup.Members = new List<GroupMember>
+        {
+            new ("Name C", "LastName C", "Position C", "emailc@mail.com"),
+            new ("Name D", "LastName D", "Position D", "emaild@mail.com")
+        };
+        
+        var emails = group.Members.Select(m => m.Email).ToList();
+        var anotherEmails = anotherGroup.Members.Select(m => m.Email).ToList();
+
+        var templateId = Guid.NewGuid();
+        var assessmentToGet = new Assessment(group.Id, templateId, "test assessment");
+        var anotherAssessmentToGet = new Assessment(anotherGroup.Id, templateId, "another test assessment");
+
+        assessmentToGet.Surveys = new List<Survey> { new (DateOnly.FromDateTime(DateTime.Now), emails) };
+        anotherAssessmentToGet.Surveys = new List<Survey> { new (DateOnly.FromDateTime(DateTime.Now), anotherEmails) };
+        
+        _inMemoryAssessmentRepository.AddAssessment(assessmentToGet);
+        _inMemoryAssessmentRepository.AddAssessment(anotherAssessmentToGet);
+
+        var getAssessmentsRequest = await _assessmentsController.GetAssessmentsAsync();
+        var getAssessmentsResult = Assert.IsType<OkObjectResult>(getAssessmentsRequest.Result);
+        var actualAssessments = Assert.IsAssignableFrom<IEnumerable<Assessment>>(getAssessmentsResult.Value);
+        
+        
+        Assert.NotEmpty(actualAssessments);
+        Assert.Equal(2, actualAssessments.Count());
+        
+        var getAssessmentRequest = await _assessmentsController.GetAssessmentsAsync(group.Id);
+        var getAssessmentResult = Assert.IsType<OkObjectResult>(getAssessmentRequest.Result);
+        var actualAssessment = Assert.IsAssignableFrom<IEnumerable<Assessment>>(getAssessmentResult.Value);
+
+
+        Assert.Contains(actualAssessment, a => a.GroupId == group.Id);
+
+        var notFoundAssessment = await _assessmentsController.GetAssessmentsAsync(Guid.Empty);
+        Assert.IsType<NotFoundResult>(notFoundAssessment.Result);
+    }
 }

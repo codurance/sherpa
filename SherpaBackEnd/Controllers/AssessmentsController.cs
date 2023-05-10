@@ -23,6 +23,18 @@ public class AssessmentsController
         var assessments = await _assessmentService.GetAssessments();
         return new OkObjectResult(assessments);
     }
+    
+    [HttpGet("group-assessments/{groupId:guid}")]
+    public async Task<ActionResult<IEnumerable<Assessment>>> GetAssessmentsAsync(Guid groupId)
+    {
+        var assessments = await _assessmentService.GetAssessments(groupId);
+        if (assessments.Any())
+        {
+            return new OkObjectResult(assessments);
+        }
+
+        return new NotFoundResult();
+    }
 
     [HttpGet("templates")]
     public async Task<ActionResult<IEnumerable<SurveyTemplate>>> GetTemplatesAsync()
@@ -63,4 +75,5 @@ public class AssessmentsController
         var updateAssessment = await _assessmentService.UpdateAssessment(assessmentToUpdate);
         return new OkObjectResult(updateAssessment);
     }
+
 }

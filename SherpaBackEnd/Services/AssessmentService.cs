@@ -41,6 +41,11 @@ public class AssessmentService : IAssessmentService
         return await _assessmentRepository.GetAssessments();
     }
 
+    public async Task<IEnumerable<Assessment>> GetAssessments(Guid groupId)
+    {
+        return await _assessmentRepository.GetAssessments(groupId);
+    }
+
     public async Task<Assessment?> GetAssessment(Guid groupId, Guid templateId)
     {
         return await _assessmentRepository.GetAssessment(groupId, templateId);
