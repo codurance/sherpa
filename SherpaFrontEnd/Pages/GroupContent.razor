@@ -1,12 +1,18 @@
 @using SherpaFrontEnd.Model
 @using SherpaFrontEnd.Services
+@using SherpaFrontEnd.Shared.Modals
 @using SherpaFrontEnd.Shared.Tabs
-@inject IGroupDataService GroupDataService;
-@inject IAssessmentsDataService AssessmentsDataService;
+@using System.Net
+@inject NavigationManager Nav
+@inject IGroupDataService GroupDataService
+@inject IAssessmentsDataService AssessmentsDataService
 
 @page "/group-content/{GroupId:guid?}"
 
-<h3>@Group?.Name</h3>
+    <h3>@Group?.Name
+        <button class="btn btn-remove" title="Delete group" @onclick="DeleteGroup"><span class="oi oi-trash"></span></button>
+    </h3>
+
 
 <TabControl>
     <TabPage Text="Members">
@@ -15,8 +21,8 @@
             OnUpdateGroup="@OnUpdateGroup">
         </Members>
     </TabPage>
-    <TabPage Text="Surveys">
-        <Surveys
+    <TabPage Text="Assessments">
+        <Assessments
             SurveyTemplates="@SurveyTemplates"
             SelectedGroupAssessments="@Assessments"
             SelectedGroupId="@Group?.Id"
@@ -24,7 +30,7 @@
             OnAddSurvey="@OnAddSurvey"
             OnCreateEvaluation="@OnUpdateAssessment"
             OnDeleteEvaluation="@OnUpdateAssessment">
-        </Surveys>
+        </Assessments>
     </TabPage>
 </TabControl>
 
@@ -43,6 +49,9 @@
     
     private List<Assessment>? Assessments { get; set; }
     
+    [CascadingParameter]
+    public IModalService Modal { get; set; } = default!;
+
     protected override async Task OnInitializedAsync()
     {
         Group = await GroupDataService.GetGroup(GroupId);
@@ -70,5 +79,24 @@
         {
             Assessments.Add(assessment);
         }
+    }
+
+    private async void DeleteGroup()
+    {
+        var modal = Modal.Show<ConfirmationModal>($"Delete {Group.Name}?");
+        var modalResult = await modal.Result;
+
+        if (!modalResult.Cancelled)
+        {
+            var deleteStatus = await GroupDataService.DeleteGroup(GroupId);
+            if (deleteStatus == HttpStatusCode.OK)
+            {
+                Nav.NavigateTo("/groups-list-page");
+                //TODO alert (on groups page) successfully deleted
+            }
+            //TODO alert (on this page) group wasn't deleted
+        }
+
+
     }
 }

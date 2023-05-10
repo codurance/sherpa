@@ -1,3 +1,4 @@
+using System.Net;
 using System.Text.Json;
 using SherpaFrontEnd.Model;
 
@@ -39,11 +40,12 @@ public class GroupServiceHttpClient : IGroupDataService
             responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
     }
 
-    public async Task DeleteGroup(Guid guid)
+    public async Task<HttpStatusCode> DeleteGroup(Guid guid)
     {
         var httpClient = _clientFactory.CreateClient(Sherpabackend);
         var response = await httpClient.DeleteAsync($"/groups/{guid.ToString()}");
         response.EnsureSuccessStatusCode();
+        return response.StatusCode;
     }
 
     public async Task PutGroup(Group group)
