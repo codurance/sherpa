@@ -57,7 +57,7 @@ public class SurveyServiceTest
         
         var actualAssessment = await _service.AddAssessment(groupId, templateId, name);
         
-        Assert.Equal(groupId, actualAssessment.GroupId);
+        Assert.Equal(groupId, actualAssessment!.GroupId);
         Assert.Equal(templateId, actualAssessment.TemplateId);
         Assert.Empty(actualAssessment.Surveys);
     }

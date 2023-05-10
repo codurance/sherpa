@@ -7,7 +7,6 @@ public class DataContext : DbContext
 {
     private readonly IConfiguration _configuration;
     public DbSet<Group> Groups { get; set; }
-
     public DataContext(IConfiguration configuration)
     {
         _configuration = configuration;

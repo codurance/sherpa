@@ -33,15 +33,15 @@
     public List<SurveyTemplate>? SurveyTemplates { get; set; }
     
     [Parameter]
-    public EventCallback<SurveyTemplate> OnAddSurvey { get; set; }
+    public EventCallback<SurveyTemplate?> OnAddSurvey { get; set; }
     
     [Parameter]
     public EventCallback<Assessment> OnCreateEvaluation { get; set; }
     
     [Parameter]
     public EventCallback<Assessment> OnDeleteEvaluation { get; set; }
-    
-    private SurveyTemplate SelectedSurveyTemplate { get; set; }
+
+    private SurveyTemplate? SelectedSurveyTemplate { get; set; } = null;
 
     protected override Task OnParametersSetAsync()
     {

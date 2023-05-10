@@ -31,13 +31,13 @@ public class InMemoryAssessmentRepository : IAssessmentRepository
         return await Task.FromResult(_assessments.FirstOrDefault(a => a.GroupId == groupId && a.TemplateId == templateId));
     }
 
-    public async Task<Assessment> UpdateAssessment(Assessment assessmentToUpdate)
+    public Task<Assessment> UpdateAssessment(Assessment assessmentToUpdate)
     {
         var assessmentIndex = _assessments
             .FindIndex(a => a.GroupId == assessmentToUpdate.GroupId && a.TemplateId == assessmentToUpdate.TemplateId);
 
         _assessments[assessmentIndex] = assessmentToUpdate;
 
-        return _assessments[assessmentIndex];
+        return Task.FromResult(_assessments[assessmentIndex]);
     }
 }

@@ -33,6 +33,6 @@ public class GroupListTest
         _mockGroupService.Setup(m => m.GetGroups()).ReturnsAsync(new List<Group>{group});
         _renderedComponent = _testContext.RenderComponent<GroupsList>();
         
-        Assert.Equal(group.Name, _renderedComponent.Instance.Groups[0].Name);
+        Assert.Equal(group.Name, _renderedComponent.Instance.Groups![0].Name);
     }
 }

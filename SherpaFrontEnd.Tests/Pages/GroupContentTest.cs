@@ -24,7 +24,7 @@ public class GroupContentTest
     }
 
     [Fact]
-    public async Task SingleGroupIsRendered()
+    public void SingleGroupIsRendered()
     {
         var group = new Group
         {
@@ -35,6 +35,6 @@ public class GroupContentTest
         _mockGroupService.Setup(m => m.GetGroup(It.IsAny<Guid>())).ReturnsAsync(group);
         _renderedComponent = _testContext.RenderComponent<GroupContent>();
 
-        Assert.Equal(group.Name, _renderedComponent.Instance.Group.Name);
+        Assert.Equal(group.Name, _renderedComponent.Instance.Group!.Name);
     }
 }
