@@ -23,7 +23,17 @@ builder.Services.AddSingleton<IGroupsService, GroupsService>();
 builder.Services.AddSingleton<ISurveyRepository, InMemorySurveyRepository>();
 builder.Services.AddSingleton<IAssessmentRepository, InMemoryAssessmentRepository>();
 builder.Services.AddScoped<IAssessmentService, AssessmentService>();
-builder.Services.AddScoped<IEmailService, SesEmailService>();
+builder.Services.AddScoped<IEmailService, SesEmailService>(provider =>
+{
+    if (!builder.Environment.IsDevelopment())
+    {
+        return new SesEmailService();
+    }
+    
+    var accessKey = Environment.GetEnvironmentVariable("AWS_SES_ACCESS_KEY");
+    var secretKey = Environment.GetEnvironmentVariable("AWS_SES_SECRET_KEY");
+    return new SesEmailService(accessKey!, secretKey!);
+});
 
 
 var app = builder.Build();

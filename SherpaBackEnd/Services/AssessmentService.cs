@@ -54,7 +54,10 @@ public class AssessmentService : IAssessmentService
     public async Task<Assessment> UpdateAssessment(Assessment assessmentToUpdate)
     {
         var updatedAssessment = await _assessmentRepository.UpdateAssessment(assessmentToUpdate);
-        // await _emailService.sendEmail("", updatedAssessment.GetLastSurveyEmails());
+        if (updatedAssessment is not null && updatedAssessment.Surveys.Any())
+        {
+            await _emailService.SendEmail("Test Email", updatedAssessment.GetLastSurveyEmails());
+        }
         return updatedAssessment;
     }
 }

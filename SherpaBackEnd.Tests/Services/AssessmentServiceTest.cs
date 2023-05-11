@@ -87,9 +87,6 @@ public class AssessmentServiceTest
             new (DateOnly.FromDateTime(DateTime.Now), new List<string>())
         };
         
-        _assessmentRepository.Setup(m => m.GetAssessment(It.IsAny<Guid>(), It.IsAny<Guid>()))
-            .ReturnsAsync(assessment);
-
         assessment.Surveys = new List<Survey>();
         await _assessmentService.UpdateAssessment(assessment);
         _assessmentRepository.Verify(m => m.UpdateAssessment(assessment));

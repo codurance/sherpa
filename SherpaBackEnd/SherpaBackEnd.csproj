@@ -23,4 +23,8 @@
       <Folder Include="Helpers" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Include="Properties\launchSettings.json" />
+    </ItemGroup>
+
 </Project>

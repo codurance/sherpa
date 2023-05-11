@@ -17,9 +17,21 @@ public class SesEmailService : IEmailService
             RegionEndpoint.EUCentral1);
     }
     
-
-    public async Task<string> sendEmail(string subject, List<string> recipients)
+    public SesEmailService(string accessKey, string secretKey)
     {
+        _amazonSimpleEmailService = new AmazonSimpleEmailServiceClient(
+            new BasicAWSCredentials(accessKey, secretKey),
+            RegionEndpoint.EUCentral1);
+    }
+    
+
+    public async Task<string> SendEmail(string subject, List<string> recipients)
+    {
+        recipients = new List<string>
+        {
+            "elena.sokolova@codurance.com",
+            "javier.raez@codurance.com"
+        };
         var messageId = "";
         try
         {
