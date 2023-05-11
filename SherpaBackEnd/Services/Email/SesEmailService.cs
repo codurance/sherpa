@@ -13,7 +13,6 @@ public class SesEmailService : IEmailService
     public SesEmailService()
     {
         _amazonSimpleEmailService = new AmazonSimpleEmailServiceClient(
-            new BasicAWSCredentials("xxx", "xxx"),
             RegionEndpoint.EUCentral1);
     }
     
