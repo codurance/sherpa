@@ -15,6 +15,7 @@ builder.Services.AddControllers()
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
@@ -22,8 +23,8 @@ builder.Services.AddSingleton<IGroupRepository, InMemoryGroupRepository>();
 builder.Services.AddSingleton<IGroupsService, GroupsService>();
 builder.Services.AddSingleton<ISurveyRepository, InMemorySurveyRepository>();
 builder.Services.AddSingleton<IAssessmentRepository, InMemoryAssessmentRepository>();
-builder.Services.AddScoped<IAssessmentService, AssessmentService>();
-builder.Services.AddScoped<IEmailService, SesEmailService>(provider =>
+builder.Services.AddSingleton<IAssessmentService, AssessmentService>();
+builder.Services.AddSingleton<IEmailService, SesEmailService>(provider =>
 {
     if (!builder.Environment.IsDevelopment())
     {

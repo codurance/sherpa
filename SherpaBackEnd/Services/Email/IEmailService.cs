@@ -1,6 +1,8 @@
+using System.Net;
+
 namespace SherpaBackEnd.Services.Email;
 
 public interface IEmailService
 {
-    Task<string> SendEmail(string subject, List<string> recipients);
+    Task<HttpStatusCode> SendEmail(string subject, List<string> recipients);
 }
