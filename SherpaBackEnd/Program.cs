@@ -28,12 +28,12 @@ builder.Services.AddSingleton<IEmailService, SesEmailService>(provider =>
 {
     if (!builder.Environment.IsDevelopment())
     {
-        return new SesEmailService();
+        return new SesEmailService(provider.GetService<IHttpContextAccessor>()!);
     }
     
     var accessKey = Environment.GetEnvironmentVariable("AWS_SES_ACCESS_KEY");
     var secretKey = Environment.GetEnvironmentVariable("AWS_SES_SECRET_KEY");
-    return new SesEmailService(accessKey!, secretKey!);
+    return new SesEmailService(provider.GetService<IHttpContextAccessor>()!, accessKey!, secretKey!);
 });
 
 

@@ -1,31 +1,31 @@
 using System.Net;
-using System.Text.Json;
 using Amazon;
 using Amazon.Runtime;
 using Amazon.SimpleEmail;
-using Amazon.SimpleEmail.Model;
 
 namespace SherpaBackEnd.Services.Email;
 
 public class SesEmailService : IEmailService
 {
-    public const string PendingSurveyTemplate = "pending_survey_template";
+    private const string PendingSurveyTemplate = "pending_survey_template";
     private readonly AmazonSimpleEmailServiceClient _amazonSimpleEmailService;
-    
-    public SesEmailService()
+    private readonly EmailServiceRequestFactory _emailServiceRequestFactory;
+
+    public SesEmailService(IHttpContextAccessor httpContextAccessor)
     {
         _amazonSimpleEmailService = new AmazonSimpleEmailServiceClient(
             RegionEndpoint.EUCentral1);
+        _emailServiceRequestFactory = new EmailServiceRequestFactory(httpContextAccessor);
     }
 
-    public SesEmailService(string accessKey, string secretKey)
+    public SesEmailService(IHttpContextAccessor httpContextAccessor, string accessKey, string secretKey)
     {
         _amazonSimpleEmailService = new AmazonSimpleEmailServiceClient(
             new BasicAWSCredentials(accessKey, secretKey),
             RegionEndpoint.EUCentral1);
+        _emailServiceRequestFactory = new EmailServiceRequestFactory(httpContextAccessor);
     }
-
-
+    
     public async Task<HttpStatusCode> SendEmail(string subject, List<string> recipients)
     {
         var httpStatusCode = HttpStatusCode.BadRequest;
@@ -34,7 +34,8 @@ public class SesEmailService : IEmailService
         {
             await GetTemplate(PendingSurveyTemplate);
         
-            var sendBulkTemplatedEmailRequest = CreateBulkTemplatedEmailRequest();
+            var sendBulkTemplatedEmailRequest = _emailServiceRequestFactory
+                                                .CreateBulkTemplatedEmailRequest(PendingSurveyTemplate);
         
             var response = await _amazonSimpleEmailService.SendBulkTemplatedEmailAsync(
                 sendBulkTemplatedEmailRequest);
@@ -49,60 +50,13 @@ public class SesEmailService : IEmailService
         return httpStatusCode;
     }
 
-    private SendBulkTemplatedEmailRequest CreateBulkTemplatedEmailRequest()
-    {
-        List<string> recipients = new()
-        {
-            "elena.sokolova@codurance.com",
-            "javier.raez@codurance.com"
-        };
-        var bulkEmailDestinations = recipients.ConvertAll(email => new BulkEmailDestination
-        {
-            Destination = new Destination
-            {
-                ToAddresses = new List<string> { email }
-            },
-            ReplacementTemplateData = $"{{\"personal-link\":\"{GetPersonalLink(email)}\"}}"
-        });
-
-
-        var sendBulkTemplatedEmailRequest = new SendBulkTemplatedEmailRequest
-        {
-            Destinations = bulkEmailDestinations,
-            Source = "javier.raez@codurance.com",
-            Template = PendingSurveyTemplate,
-            DefaultTemplateData = "{\"personal-link\":\"default@email.com\"}"
-        };
-        return sendBulkTemplatedEmailRequest;
-    }
-
-    private string GetPersonalLink(string email)
-    {
-        return email;
-    }
 
     private async Task CreatePendingSurveyTemplate()
     {
         try
         {
-            await _amazonSimpleEmailService.CreateTemplateAsync(new CreateTemplateRequest
-            {
-                Template = new Template
-                {
-                    TemplateName = PendingSurveyTemplate,
-                    SubjectPart = "Hey you have pending survey",
-                    HtmlPart = @"
-<p>
-    In order to access the survey click the following link:
-</p>
-<a href=""{{personal-link}}"">{{personal-link}}</a>
-",
-                    TextPart = @"
-In order to access the survey click the following link:
-{{personal-link}}
-"
-                }
-            });
+            var templateRequest = _emailServiceRequestFactory.CreateTemplateRequest(PendingSurveyTemplate);
+            await _amazonSimpleEmailService.CreateTemplateAsync(templateRequest);
         }
         catch (Exception e)
         {
@@ -111,14 +65,12 @@ In order to access the survey click the following link:
         }
     }
 
-    private async Task GetTemplate(string template)
+    private async Task GetTemplate(string templateName)
     {
         try
         {
-            await _amazonSimpleEmailService.GetTemplateAsync(new GetTemplateRequest
-            {
-                TemplateName = template
-            });
+            var templateRequest = _emailServiceRequestFactory.GetTemplateRequest(templateName);
+            await _amazonSimpleEmailService.GetTemplateAsync(templateRequest);
 
         }
         catch (Exception e)
@@ -127,5 +79,4 @@ In order to access the survey click the following link:
             await CreatePendingSurveyTemplate();
         }
     }
-
 }
