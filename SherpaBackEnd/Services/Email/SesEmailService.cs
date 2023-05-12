@@ -71,7 +71,7 @@ public class SesEmailService : IEmailService
             Destinations = bulkEmailDestinations,
             Source = "javier.raez@codurance.com",
             Template = PendingSurveyTemplate,
-            DefaultTemplateData = "default@email.com"
+            DefaultTemplateData = "{\"personal-link\":\"default@email.com\"}"
         };
         return sendBulkTemplatedEmailRequest;
     }
