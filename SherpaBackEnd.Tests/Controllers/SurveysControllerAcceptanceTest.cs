@@ -31,11 +31,11 @@ public class SurveysControllerAcceptanceTest
     }
 
     [Fact]
-    public async Task Test()
+    public async Task GetListOfQuestionsForSelectedTemplate()
     {
         var templatesRequest = await _assessmentsController.GetTemplatesAsync();
         var templatesResult = Assert.IsType<OkObjectResult>(templatesRequest.Result);
-        var actualTemplates = Assert.IsAssignableFrom<List<SurveyTemplate>>(templatesResult.Value);
+        var actualTemplates = Assert.IsAssignableFrom<IEnumerable<SurveyTemplate>>(templatesResult.Value);
         
         var actualQuestionsRequest = await _surveysController.GetQuestions(actualTemplates.First().Id);
         var actualQuestionsResult = Assert.IsType<OkObjectResult>(actualQuestionsRequest.Result);

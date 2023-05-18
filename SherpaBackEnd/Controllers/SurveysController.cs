@@ -14,6 +14,10 @@ public class SurveysController
 
     public async Task<ActionResult<List<QuestionContent>>> GetQuestions(Guid templateId)
     {
-        throw new NotImplementedException();
+        var questions = new List<QuestionContent>
+        {
+            new QuestionContent()
+        };
+        return new OkObjectResult(questions);
     }
 }
