@@ -487,4 +487,4 @@ fabric.properties
 
 # End of https://www.toptal.com/developers/gitignore/api/csharp,rider
 
-**/launchSettings.json
+SherpaBackEnd/Properties/launchSettings.json
