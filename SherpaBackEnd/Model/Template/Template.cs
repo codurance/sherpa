@@ -2,9 +2,9 @@ namespace SherpaBackEnd.Model.Template;
 
 public class Template
 {
-    public string Name;
-    public int MinutesToComplete;
-    public Question[] Questions;
+    public string Name{get;}
+    public int MinutesToComplete{get;}
+    public Question[] Questions{get;}
 
     public Template(string name, Question[] questions, int minutesToComplete)
     {

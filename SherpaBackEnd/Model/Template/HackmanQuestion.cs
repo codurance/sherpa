@@ -2,12 +2,12 @@ namespace SherpaBackEnd.Model.Template;
 
 public class HackmanQuestion : Question
 {
-    public readonly string[] Responses;
-    public readonly bool Reverse;
-    public readonly string Component;
-    public readonly string Subcategory;
-    public readonly string? Subcomponent;
-    public readonly int Position;
+    public string[] Responses{get;}
+    public bool Reverse{get;}
+    public string Component{get;}
+    public string Subcategory{get;}
+    public string? Subcomponent{get;}
+    public int Position{get;}
     
     public HackmanQuestion(Dictionary<string, string> statement, string[] responses, bool reverse, string component, string subcategory, string? subcomponent, int position) : base(statement)
     {

@@ -4,6 +4,8 @@ using SherpaBackEnd.Services;
 
 namespace SherpaBackEnd.Controllers;
 
+[ApiController]
+[Route("[controller]")]
 public class TemplateController
 {
     private readonly ITemplateService _templateService;
@@ -13,6 +15,7 @@ public class TemplateController
         _templateService = templateService;
     }
 
+    [HttpGet]
     public async Task<ActionResult<IEnumerable<Template>>> GetAllTemplates()
     {
         // try

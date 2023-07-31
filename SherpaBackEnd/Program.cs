@@ -10,10 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers()
-    .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
-    });
+    .AddJsonOptions(options => { options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter()); })
+    .AddJsonOptions(
+        options => options.JsonSerializerOptions.Converters.Add(new QuestionConverter()));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -23,7 +22,8 @@ builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<IGroupRepository, InMemoryGroupRepository>();
 builder.Services.AddSingleton<IGroupsService, GroupsService>();
-builder.Services.AddSingleton<ITemplateRepository, InMemoryFilesTemplateRepository>(_ => new InMemoryFilesTemplateRepository("templates"));
+builder.Services.AddSingleton<ITemplateRepository, InMemoryFilesTemplateRepository>(_ =>
+    new InMemoryFilesTemplateRepository("templates"));
 builder.Services.AddSingleton<ITemplateService, TemplateService>();
 builder.Services.AddSingleton<ISurveyRepository, InMemorySurveyRepository>();
 builder.Services.AddSingleton<IAssessmentRepository, InMemoryAssessmentRepository>();
@@ -34,7 +34,7 @@ builder.Services.AddSingleton<IEmailService, SesEmailService>(provider =>
     {
         return new SesEmailService(provider.GetService<IHttpContextAccessor>()!);
     }
-    
+
     var accessKey = Environment.GetEnvironmentVariable("AWS_SES_ACCESS_KEY");
     var secretKey = Environment.GetEnvironmentVariable("AWS_SES_SECRET_KEY");
     return new SesEmailService(provider.GetService<IHttpContextAccessor>()!, accessKey!, secretKey!);
