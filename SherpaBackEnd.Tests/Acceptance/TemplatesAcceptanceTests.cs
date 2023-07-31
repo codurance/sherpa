@@ -21,7 +21,7 @@ public class TemplatesAcceptanceTests : IDisposable
     }
 
     [Fact]
-    public async Task controller_returns_templates_list_with_hackman_inside()
+    public async Task controller_returns_templates_list_with_hackman_template_inside()
     {
         // GIVEN a frontend that uses the template controller
         var questions = new Question[]
@@ -72,11 +72,11 @@ public class TemplatesAcceptanceTests : IDisposable
         var templateService = new TemplateService(templateRepository);
         var templateController = new TemplateController(templateService);
 
-        // WHEN get all templates endpoint is requested
+        // WHEN get all templates endpoint is requested but there is an error
         var actualResponse = await templateController.GetAllTemplates();
 
         var templatesResult = Assert.IsType<StatusCodeResult>(actualResponse.Result);
-
+        // THEN it should receive a 500 status code
         Assert.Equal(StatusCodes.Status500InternalServerError, templatesResult.StatusCode);
     }
 

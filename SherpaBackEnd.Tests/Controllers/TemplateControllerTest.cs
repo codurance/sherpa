@@ -9,7 +9,7 @@ namespace SherpaBackEnd.Tests.Controllers;
 public class TemplateControllerTest
 {
     [Fact]
-    public async void Should_call_service_and_return_service_returned_object()
+    public async void Should_return_templates_returned_by_the_service()
     {
         var template = new Template("test", Array.Empty<Question>(), 10);
         var arrayWithTemplate = new[] { template };
