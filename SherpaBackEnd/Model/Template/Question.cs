@@ -2,11 +2,11 @@ namespace SherpaBackEnd.Model.Template;
 
 public class Question
 {
-    private readonly Dictionary<string, string> _statement;
+    public readonly Dictionary<string, string> Statement;
     
 
     public Question(Dictionary<string,string> statement)
     {
-        _statement = statement;
+        Statement = statement;
     }
 }

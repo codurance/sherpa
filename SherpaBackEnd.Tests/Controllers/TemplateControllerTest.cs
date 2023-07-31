@@ -11,7 +11,7 @@ public class TemplateControllerTest
     [Fact]
     public async void Should_call_service_and_return_service_returned_object()
     {
-        var template = new Template(Guid.NewGuid(), "test", Array.Empty<Question>(), 10);
+        var template = new Template("test", Array.Empty<Question>(), 10);
         var arrayWithTemplate = new[] { template };
 
         var templateService = new Mock<ITemplateService>();

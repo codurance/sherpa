@@ -9,9 +9,9 @@ public class TemplateServiceTest
     [Fact]
     public async void Should_return_templates_returned_from_repository()
     {
-        var actualResponse = new Template[]
+        var actualResponse = new[]
         {
-            new Template(Guid.NewGuid(), "test", Array.Empty<Question>(), 1)
+            new Template("test", Array.Empty<Question>(), 1)
         };
         var repository = new Mock<ITemplateRepository>();
         repository.Setup(templateRepository => templateRepository.GetAllTemplates()).ReturnsAsync(actualResponse);

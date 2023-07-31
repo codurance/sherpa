@@ -2,21 +2,21 @@ namespace SherpaBackEnd.Model.Template;
 
 public class HackmanQuestion : Question
 {
-    private readonly string[] _responses;
-    private readonly bool _reverse;
-    private readonly string _component;
-    private readonly string _subcategory;
-    private readonly string? _subcomponent;
-    private readonly int _position;
+    public readonly string[] Responses;
+    public readonly bool Reverse;
+    public readonly string Component;
+    public readonly string Subcategory;
+    public readonly string? Subcomponent;
+    public readonly int Position;
     
     public HackmanQuestion(Dictionary<string, string> statement, string[] responses, bool reverse, string component, string subcategory, string? subcomponent, int position) : base(statement)
     {
-        _responses = responses;
-        _reverse = reverse;
-        _component = component;
-        _subcategory = subcategory;
-        _subcomponent = subcomponent;
-        _position = position;
+        Responses = responses;
+        Reverse = reverse;
+        Component = component;
+        Subcategory = subcategory;
+        Subcomponent = subcomponent;
+        Position = position;
     }
 }
 
