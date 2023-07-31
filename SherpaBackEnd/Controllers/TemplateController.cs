@@ -18,15 +18,15 @@ public class TemplateController
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Template>>> GetAllTemplates()
     {
-        // try
-        // {
+        try
+        {
             var allTemplates = await _templateService.GetAllTemplates();
             return new OkObjectResult(allTemplates);
-        // }
-        // catch (Exception e)
-        // {
-        //     Console.WriteLine(e);
-        //     return new StatusCodeResult(StatusCodes.Status500InternalServerError);
-        // }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+        }
     }
 }
