@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using FileHelpers;
 
 namespace SherpaBackEnd.Model.Template;
@@ -36,6 +37,17 @@ public class InMemoryFilesTemplateRepository : ITemplateRepository
         return allTemplates.ToArray();
     }
 
+    private static void ParseRecordAndAddToQuestions(ICollection<Question> questions, CsvHackmanQuestion csvHackmanQuestion)
+    {
+        questions.Add(new HackmanQuestion(new Dictionary<string, string>
+            {
+                { Languages.SPANISH, csvHackmanQuestion.QuestionSpanish },
+                { Languages.ENGLISH, csvHackmanQuestion.QuestionEnglish }
+            }, csvHackmanQuestion.Responses.Split(" | "), csvHackmanQuestion.Reverse,
+            csvHackmanQuestion.Component,
+            csvHackmanQuestion.Subcategory, csvHackmanQuestion.Subcomponent, csvHackmanQuestion.Position));
+    }
+
     private void ParseTemplateFile(string templateName, FileHelperEngine<CsvHackmanQuestion> engine, List<Template> allTemplates)
     {
         var fileName = $"{_folder}/{_templatesFileName[templateName]}";
@@ -47,17 +59,6 @@ public class InMemoryFilesTemplateRepository : ITemplateRepository
         }
 
         allTemplates.Add(new Template(templateName, questions.ToArray(), _templatesDuration[templateName]));
-    }
-
-    private static void ParseRecordAndAddToQuestions(ICollection<Question> questions, CsvHackmanQuestion csvHackmanQuestion)
-    {
-        questions.Add(new HackmanQuestion(new Dictionary<string, string>
-            {
-                { Languages.SPANISH, csvHackmanQuestion.QuestionSpanish },
-                { Languages.ENGLISH, csvHackmanQuestion.QuestionEnglish }
-            }, csvHackmanQuestion.Responses.Split(" | "), csvHackmanQuestion.Reverse,
-            csvHackmanQuestion.Component,
-            csvHackmanQuestion.Subcategory, csvHackmanQuestion.Subcomponent, csvHackmanQuestion.Position));
     }
 }
 

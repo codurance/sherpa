@@ -28,4 +28,10 @@
       <Content Include="Properties\launchSettings.json" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="Templates\hackman.csv">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

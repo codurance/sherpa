@@ -1,0 +1,3 @@
+position,responses,question_english,question_spanish,reverse,component,subcategory,subcomponent
+1,1 | 2 | 3,Question in english,Question in spanish,false,Interpersonal Peer Coaching,Delimited,Sense Of Urgency
+2,First option | Second option | Third option,Some question in english,Some question in spanish,true,Interpersonal Peer Coaching,Delimited,Sense Of Urgency
