@@ -1,17 +1,20 @@
+using System.Net.Http.Json;
+
 namespace SherpaFrontEnd.Services;
 
 public class TemplateService: ITemplateService
 {
     private readonly HttpClient _httpClient;
 
-    public TemplateService(HttpClient httpClient)
+    public TemplateService(IHttpClientFactory httpClientFactory)
     {
-        _httpClient = httpClient;
+        const string SherpaBackend = "SherpaBackEnd";
+        _httpClient = httpClientFactory.CreateClient(SherpaBackend);
     }
 
 
-    public Task GetAllTemplates()
+    public Task<TemplateWithNameAndTime[]?> GetAllTemplates()
     {
-        throw new NotImplementedException();
+        return _httpClient.GetFromJsonAsync<TemplateWithNameAndTime[]>("/template");
     }
 }

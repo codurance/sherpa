@@ -32,7 +32,7 @@ public class TemplatesAcceptanceTests
         
         var handlerMock = new Mock<HttpMessageHandler>();
 
-        var templates = new[] { new TemplateWithNameAndTime("hackman", 30) };
+        var templates = new[] { new TemplateWithNameAndTime("Hackman Model", 30) };
         var templatesJson = await JsonContent.Create(templates).ReadAsStringAsync();
         
         var responseWithTemplates = new HttpResponseMessage
@@ -46,13 +46,16 @@ public class TemplatesAcceptanceTests
             .SetupSequence<Task<HttpResponseMessage>>(
                 "SendAsync",
                 ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get) && m.RequestUri!.AbsoluteUri.Contains("templates")),
+                    m => m.Method.Equals(HttpMethod.Get) && m.RequestUri!.AbsoluteUri.Contains("template")),
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(responseWithTemplates);
         
         var httpClient = new HttpClient(handlerMock.Object, false) { BaseAddress = new Uri("http://host") };
         
-        ctx.Services.AddSingleton<ITemplateService>(new TemplateService(httpClient));
+        var httpClientFactory = new Mock<IHttpClientFactory>();
+        httpClientFactory.Setup(factory => factory.CreateClient("SherpaBackEnd")).Returns(httpClient);
+        ITemplateService templateService = new SherpaFrontEnd.Services.TemplateService(httpClientFactory.Object);
+        ctx.Services.AddSingleton<ITemplateService>(templateService);
         
         var nav = ctx.Services.GetRequiredService<FakeNavigationManager>();
         var component = ctx.RenderComponent<App>();

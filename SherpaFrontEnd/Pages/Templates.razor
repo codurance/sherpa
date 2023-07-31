@@ -1,0 +1,25 @@
+@page "/templates"
+@using SherpaFrontEnd.Services
+@inject ITemplateService TemplateService
+<h3>Templates</h3>
+<ul>
+    @foreach (var template in _templates)
+    {
+      <li>
+          <div>
+              <h2>@template.Name</h2>
+              <p>@template.MinutesToComplete min</p>
+          </div>
+      </li>
+    }
+</ul>
+
+@code {
+    private TemplateWithNameAndTime[] _templates;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _templates = await TemplateService.GetAllTemplates();
+    }
+
+}
