@@ -14,7 +14,7 @@ public class TemplatesAcceptanceTests: IDisposable
     {
         Directory.CreateDirectory(TestFolder);
         File.WriteAllText($"{TestFolder}/hackman.csv", $@"position,responses,question_english,question_spanish,reverse,component,subcategory,subcomponent
-1,""1, 2, 3"",Question in english,Question in spanish,false,{HackmanComponent.INTERPERSONAL_PEER_COACHING},{HackmanSubcategory.DELIMITED},{HackmanSubcomponent.SENSE_OF_URGENCY}
+1,""1 | 2 | 3"",Question in english,Question in spanish,false,{HackmanComponent.INTERPERSONAL_PEER_COACHING},{HackmanSubcategory.DELIMITED},{HackmanSubcomponent.SENSE_OF_URGENCY}
 ");
     }
     
@@ -37,7 +37,7 @@ public class TemplatesAcceptanceTests: IDisposable
         var templateController = new TemplateController(templateService);
         
         // WHEN get all templates endpoint is requested
-        var actualResponse = templateController.GetAllTemplates();
+        var actualResponse = await templateController.GetAllTemplates();
         
         // THEN it should receive a list containing the hackman template
         var expectedResponse = new OkObjectResult(new[] { hackmanTemplate });

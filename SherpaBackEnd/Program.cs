@@ -1,4 +1,6 @@
+using System.Collections.Immutable;
 using SherpaBackEnd.Model;
+using SherpaBackEnd.Model.Template;
 using SherpaBackEnd.Serializers;
 using SherpaBackEnd.Services;
 using SherpaBackEnd.Services.Email;
@@ -21,6 +23,8 @@ builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<IGroupRepository, InMemoryGroupRepository>();
 builder.Services.AddSingleton<IGroupsService, GroupsService>();
+builder.Services.AddSingleton<ITemplateRepository, InMemoryFilesTemplateRepository>(_ => new InMemoryFilesTemplateRepository("templates"));
+builder.Services.AddSingleton<ITemplateService, TemplateService>();
 builder.Services.AddSingleton<ISurveyRepository, InMemorySurveyRepository>();
 builder.Services.AddSingleton<IAssessmentRepository, InMemoryAssessmentRepository>();
 builder.Services.AddSingleton<IAssessmentService, AssessmentService>();

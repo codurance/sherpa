@@ -1,19 +1,21 @@
 using Microsoft.AspNetCore.Mvc;
+using SherpaBackEnd.Model.Template;
 using SherpaBackEnd.Services;
 
 namespace SherpaBackEnd.Controllers;
 
 public class TemplateController
 {
-    private readonly TemplateService _templateService;
+    private readonly ITemplateService _templateService;
 
-    public TemplateController(TemplateService templateService)
+    public TemplateController(ITemplateService templateService)
     {
         _templateService = templateService;
     }
 
-    public OkObjectResult GetAllTemplates()
+    public async Task<ActionResult<IEnumerable<Template>>> GetAllTemplates()
     {
-        throw new NotImplementedException();
+        var allTemplates = await _templateService.GetAllTemplates();
+        return new OkObjectResult(allTemplates);
     }
 }
