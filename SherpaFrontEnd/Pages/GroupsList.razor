@@ -17,13 +17,13 @@
             <button class="w-25 btn btn-outline-primary" @onclick="AddGroup">New team!</button>
         </div>
     }
-    
+
     @if (Groups is not null)
     {
         <h3>Your teams!</h3>
-    
-        <button class="w-25 btn btn-outline-primary" @onclick="AddGroup">Add new team</button>
-    
+
+        <button id="create-team" class="w-25 btn btn-outline-primary" @onclick="AddGroup">Add new team</button>
+
         foreach (var group in Groups)
         {
             <div class="card my-2" style="width: 18rem;" @onclick="@(() => _nav.NavigateTo($"/group-content/{group.Id}"))">
