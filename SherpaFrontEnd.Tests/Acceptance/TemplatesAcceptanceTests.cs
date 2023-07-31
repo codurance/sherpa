@@ -1,27 +1,18 @@
 using System.Net;
 using System.Net.Http.Json;
 using Blazored.Modal;
-using Blazored.Modal.Services;
 using Bunit;
 using Bunit.TestDoubles;
-using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Moq.Protected;
 using SherpaFrontEnd;
 using SherpaFrontEnd.Services;
-using Xunit.Abstractions;
 
 namespace BlazorApp.Tests.Acceptance;
 
 public class TemplatesAcceptanceTests
 {
-    private ITestOutputHelper _outputHelper;
-        
-    public TemplatesAcceptanceTests(ITestOutputHelper outputHelper)
-    {
-        _outputHelper = outputHelper;
-    }
 
     [Fact]
     public async void The_user_can_navigate_to_template_page_and_see_the_hackman_template()
