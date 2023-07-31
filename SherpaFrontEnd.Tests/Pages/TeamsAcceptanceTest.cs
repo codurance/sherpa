@@ -8,6 +8,7 @@ using Moq;
 using Moq.Protected;
 using SherpaFrontEnd.Model;
 using SherpaFrontEnd.Pages;
+using SherpaFrontEnd.Services;
 
 namespace BlazorApp.Tests.Pages;
 
@@ -16,19 +17,22 @@ public class TeamsAcceptanceTest
     [Fact]
     async Task should_be_able_to_create_team()
     {
-        var testCtx = new TestContext();
-        var teamName = "Test Team";
-
-        var handlerMock = new Mock<HttpMessageHandler>();
-
-        var testTeamId = new Guid();
-        var testTeam = new Group(testTeamId, "Team test name");
-        var testTeamJson = await JsonContent.Create(testTeam).ReadAsStringAsync();
+        var teamId = new Guid();
+        const string teamName = "Test Team";
+        var team = new Group(teamId, teamName);
         
-        var createdTeamResponse = new HttpResponseMessage()
-        {
-            StatusCode = HttpStatusCode.Created,
-        };
+        var testCtx = new TestContext();
+        var httpHandlerMock = new Mock<HttpMessageHandler>();
+        var mockGroupService = new Mock<IGroupDataService>().Setup(m => m.GetGroups())
+            .ReturnsAsync(new List<Group> { team });
+
+        var httpClient2 = new Mock<IHttpClientFactory>();
+        
+        var httpClient = new HttpClient(httpHandlerMock.Object, false) { BaseAddress = new Uri("http://host") };
+ 
+        var teamsService = new GroupServiceHttpClient(httpClient2.Object);
+        
+        var teamsPage = testCtx.RenderComponent<GroupsList>();
 
         var emptyTeamsList = new List<Group>();
         var emptyTeamListJson = await JsonContent.Create(emptyTeamsList).ReadAsStringAsync();
@@ -37,7 +41,8 @@ public class TeamsAcceptanceTest
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(emptyTeamListJson)
         };
-        handlerMock
+        
+        httpHandlerMock
             .Protected()
             .SetupSequence<Task<HttpResponseMessage>>(
                 "SendAsync",
@@ -46,25 +51,6 @@ public class TeamsAcceptanceTest
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(responseEmpty);
         
-        handlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Post)),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(createdTeamResponse);
-        
-        
-
-        var httpClient = new HttpClient(handlerMock.Object, false) { BaseAddress = new Uri("http://host") };
-        
-        
-
-        var teamsPage = testCtx.RenderComponent<GroupsList>(
-            parameters => parameters.Add(p => p.GoToUrl, httpClient.BaseAddress + "/teams/:id"));
-
-
         var createTeamButton = teamsPage.Find("#create-team");
         createTeamButton.Click();
 
@@ -74,10 +60,21 @@ public class TeamsAcceptanceTest
         var confirmTeamCreationButton = teamsPage.Find("#create-team-confirm");
         confirmTeamCreationButton.Click();
 
-        var actualTeamName = teamsPage.FindAll("h3").FirstOrDefault(title => title.InnerHtml.Contains(teamName));
-        Assert.NotNull(actualTeamName);
+        var teamJson = await JsonContent.Create(team).ReadAsStringAsync();
+        var createdTeamResponse = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.Created,
+        };
+        httpHandlerMock
+            .Protected()
+            .SetupSequence<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.Is<HttpRequestMessage>(
+                    m => m.Content != null && m.Method.Equals(HttpMethod.Post) && m.Content.Equals(teamJson)),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(createdTeamResponse);
 
         var navMan = testCtx.Services.GetRequiredService<FakeNavigationManager>();
-        Assert.Equal("http://localhost/foo", navMan.Uri);
+        Assert.Equal(httpClient.BaseAddress + $"/teams/{teamId}", navMan.Uri);
     }
 }
