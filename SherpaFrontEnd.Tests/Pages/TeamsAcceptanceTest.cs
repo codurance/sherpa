@@ -20,7 +20,7 @@ public class TeamsAcceptanceTest
     [Fact]
     async Task should_be_able_to_create_team()
     {
-        var teamId = new Guid();
+        var teamId = Guid.NewGuid();
         const string teamName = "Test Team";
         var team = new Group(teamId, teamName);
 
@@ -28,10 +28,13 @@ public class TeamsAcceptanceTest
         var httpHandlerMock = new Mock<HttpMessageHandler>();
 
         var factoryHttpClient = new Mock<IHttpClientFactory>();
-        var httpClient = new HttpClient(httpHandlerMock.Object, false) { BaseAddress = new Uri("http://host") };
+        var teamsService = new GroupServiceHttpClient(factoryHttpClient.Object);
+        testCtx.Services.AddSingleton<IGroupDataService>(teamsService);
+        
+        var httpClient = new HttpClient(httpHandlerMock.Object, false) { BaseAddress = new Uri("http://localhost") };
         factoryHttpClient.Setup(_ => _.CreateClient("SherpaBackEnd")).Returns(httpClient);
 
-        var emptyTeamsList = new List<Group>();
+        var emptyTeamsList = new List<Group>(){new Group(teamId, "monda")};
         var emptyTeamListJson = await JsonContent.Create(emptyTeamsList).ReadAsStringAsync();
         var responseEmpty = new HttpResponseMessage()
         {
@@ -48,8 +51,6 @@ public class TeamsAcceptanceTest
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(responseEmpty);
 
-        var teamsService = new GroupServiceHttpClient(factoryHttpClient.Object);
-        testCtx.Services.AddSingleton<IGroupDataService>(teamsService);
 
         var teamsPage = testCtx.RenderComponent<GroupsList>();
 
@@ -77,6 +78,6 @@ public class TeamsAcceptanceTest
             .ReturnsAsync(createdTeamResponse);
 
         var navMan = testCtx.Services.GetRequiredService<FakeNavigationManager>();
-        Assert.Equal(httpClient.BaseAddress + $"/teams/{teamId}", navMan.Uri);
+        Assert.Equal(httpClient.BaseAddress + $"group-content/{teamId}", navMan.Uri);
     }
 }

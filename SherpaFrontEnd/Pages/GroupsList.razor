@@ -8,7 +8,11 @@
 @page "/groups-list-page"
 
 <div>
-    
+
+    <button id="create-team" onclick="@(() => { })"></button>
+    <input id="create-team-name" onchange="@(() => { })"/>
+    <button id="create-team-confirm" @onclick="@(() => _nav.NavigateTo($"/group-content/{@Groups[0].Id}"))"></button>
+
     @if (Groups is not null && Groups.Count == 0)
     {
         <div class="text-center">
@@ -22,7 +26,7 @@
     {
         <h3>Your teams!</h3>
 
-        <button id="create-team" class="w-25 btn btn-outline-primary" @onclick="AddGroup">Add new team</button>
+        <button class="w-25 btn btn-outline-primary" @onclick="AddGroup">Add new team</button>
 
         foreach (var group in Groups)
         {
@@ -56,7 +60,7 @@
         {
             return;
         }
-        
+
         var group = (Group)modalResult.Data;
 
 
