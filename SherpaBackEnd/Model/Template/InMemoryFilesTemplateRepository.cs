@@ -1,6 +1,4 @@
-using SherpaBackEnd.Model.Template;
-
-namespace SherpaBackEnd.Model;
+namespace SherpaBackEnd.Model.Template;
 
 public class InMemoryFilesTemplateRepository : ITemplateRepository
 {
@@ -9,5 +7,10 @@ public class InMemoryFilesTemplateRepository : ITemplateRepository
     public InMemoryFilesTemplateRepository(string folder)
     {
         _folder = folder;
+    }
+
+    public Task<Template[]> GetAllTemplates()
+    {
+        throw new NotImplementedException();
     }
 }
