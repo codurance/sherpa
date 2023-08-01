@@ -33,6 +33,11 @@ public class InMemoryGroupRepository : IGroupRepository
         _dataSet.Add(anotherGroupWithMembers.Id, anotherGroupWithMembers);
     }
 
+    public InMemoryGroupRepository(List<Group> emptyGroupList)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<IEnumerable<Group>> GetGroups()
     {
         return await Task.FromResult(_dataSet.Values.ToList());
