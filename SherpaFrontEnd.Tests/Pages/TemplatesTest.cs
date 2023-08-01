@@ -24,8 +24,10 @@ public class TemplatesTest
         ctx.Services.AddSingleton<ITemplateService>(_mockService.Object);
         var component = ctx.RenderComponent<Templates>();
         
-        var elementWithText = component.FindAll("h2").FirstOrDefault(element => element.InnerHtml.Contains("Hackman Model"));
+        var titleElement = component.FindAll("h2").FirstOrDefault(element => element.InnerHtml.Contains("Hackman Model"));
+        var timeElement = component.FindAll("p").FirstOrDefault(element => element.InnerHtml.Contains("30 min"));
         
-        Assert.NotNull(elementWithText);
+        Assert.NotNull(titleElement);
+        Assert.NotNull(timeElement);
     }
 }
