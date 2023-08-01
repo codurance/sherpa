@@ -9,6 +9,7 @@ namespace SherpaBackEnd.Tests.Acceptance;
 
 public class TemplatesAcceptanceTests : IDisposable
 {
+    private readonly Template _hackmanTemplate;
     private const string TestFolder = "test/acceptance";
 
     public TemplatesAcceptanceTests()
@@ -18,12 +19,7 @@ public class TemplatesAcceptanceTests : IDisposable
             $@"position,responses,question_english,question_spanish,reverse,component,subcategory,subcomponent
 1,1 | 2 | 3,Question in english,Question in spanish,false,{HackmanComponent.INTERPERSONAL_PEER_COACHING},{HackmanSubcategory.DELIMITED},{HackmanSubcomponent.SENSE_OF_URGENCY}
 ");
-    }
-
-    [Fact]
-    public async Task controller_returns_templates_list_with_hackman_template_inside()
-    {
-        // GIVEN a frontend that uses the template controller
+        
         var questions = new IQuestion[]
         {
             new HackmanQuestion(new Dictionary<string, string>()
@@ -33,8 +29,14 @@ public class TemplatesAcceptanceTests : IDisposable
                 }, new string[] { "1", "2", "3" }, false, HackmanComponent.INTERPERSONAL_PEER_COACHING,
                 HackmanSubcategory.DELIMITED, HackmanSubcomponent.SENSE_OF_URGENCY, 1)
         };
-        var hackmanTemplate = new Template("Hackman Model", questions, 30);
+        _hackmanTemplate = new Template("Hackman Model", questions, 30);
+    }
 
+    [Fact]
+    public async Task controller_returns_templates_list_with_hackman_template_inside()
+    {
+        // GIVEN a frontend that uses the template controller
+        
         ITemplateRepository templateRepository = new InMemoryFilesTemplateRepository(TestFolder);
         var templateService = new TemplateService(templateRepository);
         var templateController = new TemplateController(templateService);
@@ -48,7 +50,7 @@ public class TemplatesAcceptanceTests : IDisposable
         
         Assert.Equal(
             JsonConvert.SerializeObject(new[]{
-                hackmanTemplate
+                _hackmanTemplate
             })
             , JsonConvert.SerializeObject(actualTemplates));
     }
@@ -57,16 +59,6 @@ public class TemplatesAcceptanceTests : IDisposable
     public async Task controller_returns_status_code_500_if_there_is_an_error()
     {
         // GIVEN a frontend that uses the template controller
-        var questions = new IQuestion[]
-        {
-            new HackmanQuestion(new Dictionary<string, string>()
-                {
-                    { Languages.SPANISH, "Question in spanish" },
-                    { Languages.ENGLISH, "Question in english" },
-                }, new string[] { "1", "2", "3" }, false, HackmanComponent.INTERPERSONAL_PEER_COACHING,
-                HackmanSubcategory.DELIMITED, HackmanSubcomponent.SENSE_OF_URGENCY, 1)
-        };
-        var hackmanTemplate = new Template("Hackman Model", questions, 30);
 
         ITemplateRepository templateRepository = new InMemoryFilesTemplateRepository("folder_that_doesnt_exist");
         var templateService = new TemplateService(templateRepository);

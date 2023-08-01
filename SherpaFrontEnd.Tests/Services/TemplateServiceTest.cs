@@ -9,13 +9,20 @@ namespace BlazorApp.Tests.Services;
 
 public class TemplateServiceTest
 {
+    private readonly Mock<HttpMessageHandler> _handlerMock;
+    private readonly Mock<IHttpClientFactory> _httpClientFactory;
+
+    public TemplateServiceTest()
+    {
+        _handlerMock = new Mock<HttpMessageHandler>();
+        var httpClient = new HttpClient(_handlerMock.Object, false) { BaseAddress = new Uri("http://host") };
+        _httpClientFactory = new Mock<IHttpClientFactory>();
+        _httpClientFactory.Setup(factory => factory.CreateClient("SherpaBackEnd")).Returns(httpClient);
+    }
 
     [Fact]
     public async Task Should_return_templates_returned_by_httpClient()
     {
-        
-        var handlerMock = new Mock<HttpMessageHandler>();
-
         var templates = new[] { new TemplateWithNameAndTime("Test", 0) };
         var templatesJson = await JsonContent.Create(templates).ReadAsStringAsync();
         
@@ -25,7 +32,7 @@ public class TemplateServiceTest
             Content = new StringContent(templatesJson),
         };
         
-        handlerMock
+        _handlerMock
             .Protected()
             .SetupSequence<Task<HttpResponseMessage>>(
                 "SendAsync",
@@ -34,11 +41,8 @@ public class TemplateServiceTest
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(responseWithTemplates);
         
-        var httpClient = new HttpClient(handlerMock.Object, false) { BaseAddress = new Uri("http://host") };
 
-        var httpClientFactory = new Mock<IHttpClientFactory>();
-        httpClientFactory.Setup(factory => factory.CreateClient("SherpaBackEnd")).Returns(httpClient);
-        ITemplateService templateService = new SherpaFrontEnd.Services.TemplateService(httpClientFactory.Object);
+        ITemplateService templateService = new TemplateService(_httpClientFactory.Object);
         
         var actualResponse = await templateService.GetAllTemplates();
         
