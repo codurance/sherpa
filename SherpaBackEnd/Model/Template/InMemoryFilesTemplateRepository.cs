@@ -7,16 +7,18 @@ public class InMemoryFilesTemplateRepository : ITemplateRepository
 {
     private readonly string _folder;
 
-    private readonly string[] _templateNames = { "hackman" };
+    private const string HackmanModel = "Hackman Model";
+
+    private readonly string[] _templateNames = { HackmanModel };
 
     private readonly Dictionary<string, string> _templatesFileName = new()
     {
-        { "hackman", "hackman.csv" }
+        { HackmanModel, "hackman.csv" }
     };
 
     private readonly Dictionary<string, int> _templatesDuration = new()
     {
-        { "hackman", 30 }
+        { HackmanModel, 30 }
     };
 
     public InMemoryFilesTemplateRepository(string folder)

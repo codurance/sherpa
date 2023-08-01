@@ -5,13 +5,12 @@ namespace SherpaFrontEnd.Services;
 public class TemplateService: ITemplateService
 {
     private readonly HttpClient _httpClient;
+    private const string SherpaBackend = "SherpaBackEnd";
 
     public TemplateService(IHttpClientFactory httpClientFactory)
     {
-        const string SherpaBackend = "SherpaBackEnd";
         _httpClient = httpClientFactory.CreateClient(SherpaBackend);
     }
-
 
     public Task<TemplateWithNameAndTime[]?> GetAllTemplates()
     {

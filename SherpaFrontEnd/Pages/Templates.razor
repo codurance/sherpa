@@ -3,23 +3,41 @@
 @inject ITemplateService TemplateService
 <h3>Templates</h3>
 <ul>
+
     @foreach (var template in _templates)
     {
-      <li>
-          <div>
-              <h2>@template.Name</h2>
-              <p>@template.MinutesToComplete min</p>
-          </div>
-      </li>
+        <li>
+            <div>
+                <h2>@template.Name</h2>
+                <p>@template.MinutesToComplete min</p>
+            </div>
+        </li>
+    }
+    @if (_errorFetchingTemplates)
+    {
+        <p>There has been an error loading the templates</p>
     }
 </ul>
 
 @code {
-    private TemplateWithNameAndTime[] _templates;
+    private TemplateWithNameAndTime[] _templates = { };
+    private bool _errorFetchingTemplates = false;
 
     protected override async Task OnInitializedAsync()
     {
-        _templates = await TemplateService.GetAllTemplates();
+        try
+        {
+            _errorFetchingTemplates = false;
+            var templates = await TemplateService.GetAllTemplates();
+            if (templates != null)
+            {
+                _templates = templates;
+            }
+        }
+        catch (Exception e)
+        {
+            _errorFetchingTemplates = true;
+        }
     }
 
 }
