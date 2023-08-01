@@ -46,5 +46,12 @@ public class GroupServiceTest
         
         groupRepository.Verify(_ => _.AddTeamAsync(newGroup), Times.Once());
     }
-    
+
+    [Fact]
+    public async Task ShouldCallGetAllTeamsMethodFromRepository()
+    {
+        await _groupService.GetAllTeamsAsync();
+        
+        _mockGroupRepository.Verify(_ => _.GetAllTeamsAsync(), Times.Once());
+    }
 }

@@ -38,8 +38,8 @@ public class GroupsService : IGroupsService
         await _groupRepository.AddTeamAsync(newGroup);
     }
 
-    public Task<IEnumerable<Group>> GetAllTeamsAsync()
+    public async Task<IEnumerable<Group>> GetAllTeamsAsync()
     {
-        throw new NotImplementedException();
+        return await _groupRepository.GetAllTeamsAsync();
     }
 }

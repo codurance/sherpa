@@ -13,4 +13,5 @@ public interface IGroupRepository
     Task<Group> AddGroup(Group group);
 
     Task AddTeamAsync(Group group);
+    Task<IEnumerable<Group>> GetAllTeamsAsync();
 }

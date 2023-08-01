@@ -66,7 +66,7 @@ public class InMemoryGroupRepository : IGroupRepository
         _teams.Add(newTeam);
     }
 
-    public async Task<List<Group>> GetAllTeamsAsync()
+    public async Task<IEnumerable<Group>> GetAllTeamsAsync()
     {
         return await Task.FromResult(_teams);
     }
