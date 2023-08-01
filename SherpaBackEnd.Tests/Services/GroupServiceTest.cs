@@ -36,7 +36,7 @@ public class GroupServiceTest
     }
 
     [Fact]
-    public async Task ShouldBeAbleToAddATeam()
+    public async Task ShouldCallAddTeamMethodFromRepository()
     {
         var groupRepository = new Mock<IGroupRepository>();
         var groupService = new GroupsService(groupRepository.Object);

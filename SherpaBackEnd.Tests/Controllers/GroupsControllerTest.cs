@@ -185,4 +185,15 @@ public class GroupsControllerTest
      
         _mockGroupService.Verify(repo => repo.UpdateGroup(It.Is<Group>(updatedGroup => updatedGroup.Id.Equals(group.Id))));
     }
+
+    [Fact]
+    public async Task ShouldCallAddTeamMethodFromService()
+    {
+        const string teamName = "Team name";
+        var newTeam = new Group(teamName);
+
+        await _groupsController.AddTeamAsync(newTeam);
+        
+        _mockGroupService.Verify(_ => _.AddTeamAsync(newTeam), Times.Once());
+    }
 }

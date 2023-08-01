@@ -18,7 +18,7 @@ public class TeamsAcceptanceTest
         const string groupName = "New group";
         var newGroup = new Group(groupName);
 
-        await groupsController.AddGroupAsync(newGroup);
+        await groupsController.AddTeamAsync(newGroup);
 
         var actualGroups = await groupsController.GetGroupsAsync();
         Assert.Equal(emptyGroupList, actualGroups);

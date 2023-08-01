@@ -95,4 +95,9 @@ public class GroupsController
         await _groupsService.UpdateGroup(group);
         return new OkObjectResult(group);
     }
+
+    public async Task AddTeamAsync(Group newTeam)
+    {
+        await _groupsService.AddTeamAsync(newTeam);
+    }
 }
