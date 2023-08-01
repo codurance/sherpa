@@ -24,7 +24,7 @@ public class TemplatesAcceptanceTests : IDisposable
     public async Task controller_returns_templates_list_with_hackman_template_inside()
     {
         // GIVEN a frontend that uses the template controller
-        var questions = new Question[]
+        var questions = new IQuestion[]
         {
             new HackmanQuestion(new Dictionary<string, string>()
                 {
@@ -33,7 +33,7 @@ public class TemplatesAcceptanceTests : IDisposable
                 }, new string[] { "1", "2", "3" }, false, HackmanComponent.INTERPERSONAL_PEER_COACHING,
                 HackmanSubcategory.DELIMITED, HackmanSubcomponent.SENSE_OF_URGENCY, 1)
         };
-        var hackmanTemplate = new Template("hackman", questions, 30);
+        var hackmanTemplate = new Template("Hackman Model", questions, 30);
 
         ITemplateRepository templateRepository = new InMemoryFilesTemplateRepository(TestFolder);
         var templateService = new TemplateService(templateRepository);
@@ -57,7 +57,7 @@ public class TemplatesAcceptanceTests : IDisposable
     public async Task controller_returns_status_code_500_if_there_is_an_error()
     {
         // GIVEN a frontend that uses the template controller
-        var questions = new Question[]
+        var questions = new IQuestion[]
         {
             new HackmanQuestion(new Dictionary<string, string>()
                 {
@@ -66,7 +66,7 @@ public class TemplatesAcceptanceTests : IDisposable
                 }, new string[] { "1", "2", "3" }, false, HackmanComponent.INTERPERSONAL_PEER_COACHING,
                 HackmanSubcategory.DELIMITED, HackmanSubcomponent.SENSE_OF_URGENCY, 1)
         };
-        var hackmanTemplate = new Template("hackman", questions, 30);
+        var hackmanTemplate = new Template("Hackman Model", questions, 30);
 
         ITemplateRepository templateRepository = new InMemoryFilesTemplateRepository("folder_that_doesnt_exist");
         var templateService = new TemplateService(templateRepository);

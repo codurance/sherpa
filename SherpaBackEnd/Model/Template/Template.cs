@@ -4,9 +4,9 @@ public class Template
 {
     public string Name{get;}
     public int MinutesToComplete{get;}
-    public Question[] Questions{get;}
+    public IQuestion[] Questions{get;}
 
-    public Template(string name, Question[] questions, int minutesToComplete)
+    public Template(string name, IQuestion[] questions, int minutesToComplete)
     {
         Name = name;
         Questions = questions;

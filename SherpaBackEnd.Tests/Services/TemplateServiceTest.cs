@@ -11,7 +11,7 @@ public class TemplateServiceTest
     {
         var actualResponse = new[]
         {
-            new Template("test", Array.Empty<Question>(), 1)
+            new Template("test", Array.Empty<IQuestion>(), 1)
         };
         var repository = new Mock<ITemplateRepository>();
         repository.Setup(templateRepository => templateRepository.GetAllTemplates()).ReturnsAsync(actualResponse);

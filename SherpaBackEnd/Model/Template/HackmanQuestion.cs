@@ -1,16 +1,18 @@
 namespace SherpaBackEnd.Model.Template;
 
-public class HackmanQuestion : Question
+public class HackmanQuestion : IQuestion
 {
+    public Dictionary<string, string> Statement { get; }
     public string[] Responses{get;}
     public bool Reverse{get;}
     public string Component{get;}
     public string Subcategory{get;}
     public string? Subcomponent{get;}
     public int Position{get;}
-    
-    public HackmanQuestion(Dictionary<string, string> statement, string[] responses, bool reverse, string component, string subcategory, string? subcomponent, int position) : base(statement)
+
+    public HackmanQuestion(Dictionary<string, string> statement, string[] responses, bool reverse, string component, string subcategory, string? subcomponent, int position)
     {
+        Statement = statement;
         Responses = responses;
         Reverse = reverse;
         Component = component;

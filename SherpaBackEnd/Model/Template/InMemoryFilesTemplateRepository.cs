@@ -39,7 +39,7 @@ public class InMemoryFilesTemplateRepository : ITemplateRepository
         return allTemplates.ToArray();
     }
 
-    private static void ParseRecordAndAddToQuestions(ICollection<Question> questions, CsvHackmanQuestion csvHackmanQuestion)
+    private static void ParseRecordAndAddToQuestions(ICollection<IQuestion> questions, CsvHackmanQuestion csvHackmanQuestion)
     {
         questions.Add(new HackmanQuestion(new Dictionary<string, string>
             {
@@ -54,7 +54,7 @@ public class InMemoryFilesTemplateRepository : ITemplateRepository
     {
         var fileName = $"{_folder}/{_templatesFileName[templateName]}";
         var records = engine.ReadFile(fileName);
-        var questions = new List<Question>();
+        var questions = new List<IQuestion>();
         foreach (var record in records)
         {
             ParseRecordAndAddToQuestions(questions, record);

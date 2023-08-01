@@ -23,7 +23,7 @@ public class InMemoryFilesTemplateRepositoryTest : IDisposable
     [Fact]
     public async void Should_parse_csv_files_and_return_templates_with_questions()
     {
-        var questions = new Question[]
+        var questions = new IQuestion[]
         {
             new HackmanQuestion(new Dictionary<string, string>()
                 {
@@ -33,7 +33,7 @@ public class InMemoryFilesTemplateRepositoryTest : IDisposable
                 HackmanSubcategory.DELIMITED, HackmanSubcomponent.SENSE_OF_URGENCY, 1)
         };
 
-        var template = new SherpaBackEnd.Model.Template.Template("hackman", questions, 30);
+        var template = new SherpaBackEnd.Model.Template.Template("Hackman Model", questions, 30);
 
         var templateRepository = new InMemoryFilesTemplateRepository(TestFolder);
         var actualResult = await templateRepository.GetAllTemplates();

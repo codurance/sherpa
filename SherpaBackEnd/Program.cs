@@ -1,5 +1,3 @@
-using System.Collections.Immutable;
-using SherpaBackEnd.Controllers.Parsers;
 using SherpaBackEnd.Model;
 using SherpaBackEnd.Model.Template;
 using SherpaBackEnd.Serializers;
@@ -12,8 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers()
     .AddJsonOptions(options => { options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter()); })
-    .AddJsonOptions(
-        options => options.JsonSerializerOptions.Converters.Add(new QuestionConverter()));
+    .AddNewtonsoftJson();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

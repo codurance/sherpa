@@ -13,7 +13,6 @@ namespace BlazorApp.Tests.Acceptance;
 
 public class TemplatesAcceptanceTests
 {
-    // TODO: Unhappy path, service go boom
     // TODO: Three dots menu
 
     [Fact]
