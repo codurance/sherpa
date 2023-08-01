@@ -4,6 +4,7 @@ namespace SherpaBackEnd.Model;
 
 public class InMemoryGroupRepository : IGroupRepository
 {
+    private readonly List<Group> _emptyGroupList;
     private readonly Dictionary<Guid, Group> _dataSet;
 
     public InMemoryGroupRepository()
@@ -35,9 +36,9 @@ public class InMemoryGroupRepository : IGroupRepository
 
     public InMemoryGroupRepository(List<Group> emptyGroupList)
     {
-        throw new NotImplementedException();
+        _emptyGroupList = emptyGroupList;
     }
-
+    
     public async Task<IEnumerable<Group>> GetGroups()
     {
         return await Task.FromResult(_dataSet.Values.ToList());
@@ -58,5 +59,10 @@ public class InMemoryGroupRepository : IGroupRepository
     {
         _dataSet[group.Id] = group;
         return await Task.FromResult(group);
+    }
+
+    public void AddTeam(Group newTeam)
+    {
+        _emptyGroupList.Add(newTeam);
     }
 }
