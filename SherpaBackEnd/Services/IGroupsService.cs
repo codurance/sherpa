@@ -9,4 +9,6 @@ public interface IGroupsService
     Task<Group> AddGroup(Group group);
     Task<Group?> GetGroup(Guid guid);
     Task<Group?> UpdateGroup(Group group);
+
+    Task AddTeamAsync(Group newGroup);
 }

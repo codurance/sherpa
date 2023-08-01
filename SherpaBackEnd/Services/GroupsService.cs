@@ -33,8 +33,8 @@ public class GroupsService : IGroupsService
         return await _groupRepository.UpdateGroup(group);
     }
 
-    public void AddTeam(Group newGroup)
+    public async Task AddTeamAsync(Group newGroup)
     {
-        _groupRepository.AddTeam(newGroup);
+        await _groupRepository.AddTeamAsync(newGroup);
     }
 }

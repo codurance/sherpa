@@ -36,15 +36,15 @@ public class GroupServiceTest
     }
 
     [Fact]
-    public void ShouldBeAbleToAddATeam()
+    public async Task ShouldBeAbleToAddATeam()
     {
         var groupRepository = new Mock<IGroupRepository>();
         var groupService = new GroupsService(groupRepository.Object);
 
         var newGroup = new Group("Team name");
-        groupService.AddTeam(newGroup);
+        await groupService.AddTeamAsync(newGroup);
         
-        groupRepository.Verify(_ => _.AddTeam(newGroup), Times.Once());
+        groupRepository.Verify(_ => _.AddTeamAsync(newGroup), Times.Once());
     }
     
 }

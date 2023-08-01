@@ -12,5 +12,5 @@ public interface IGroupRepository
     Task<Group> UpdateGroup(Group group);
     Task<Group> AddGroup(Group group);
 
-    void AddTeam(Group group);
+    Task AddTeamAsync(Group group);
 }

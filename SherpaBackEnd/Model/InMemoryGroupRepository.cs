@@ -61,13 +61,13 @@ public class InMemoryGroupRepository : IGroupRepository
         return await Task.FromResult(group);
     }
 
-    public void AddTeam(Group newTeam)
+    public async Task AddTeamAsync(Group newTeam)
     {
         _teams.Add(newTeam);
     }
 
-    public List<Group> GetAllTeams()
+    public async Task<List<Group>> GetAllTeamsAsync()
     {
-        return _teams;
+        return await Task.FromResult(_teams);
     }
 }
