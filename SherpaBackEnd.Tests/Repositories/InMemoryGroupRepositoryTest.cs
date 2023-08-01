@@ -21,17 +21,18 @@ public class InMemoryGroupRepositoryTest
     }
     
     [Fact]
-    public void ShouldBeAbleToGetANewGroup()
+    public void ShouldBeAbleToGetAllGroups()
     {
-        const string teamName = "Test Name";
-        var existingTeam = new Group(teamName);
+        const string teamName1 = "Team 1";
+        var existingTeam1 = new Group(teamName1);
+        const string teamName2 = "Team 2";
+        var existingTeam2 = new Group(teamName2);
         
-        var initialList = new List<Group>();
-        initialList.Add(existingTeam);
+        var initialList = new List<Group>(){existingTeam1, existingTeam2};
         var inMemoryGroupRepository = new InMemoryGroupRepository(initialList);
 
-        var retrievedTeam = inMemoryGroupRepository.GetAllTeams();
+        var retrievedTeams = inMemoryGroupRepository.GetAllTeams();
         
-        Assert.Equal(retrievedTeam, retrievedTeam);
+        Assert.Equal(new List<Group>(){existingTeam1, existingTeam2}, retrievedTeams);
     }
 }
