@@ -34,5 +34,17 @@ public class GroupServiceTest
         var expectedGroupList = await _groupService.GetGroups();
         Assert.DoesNotContain(deletedGroup, expectedGroupList);
     }
+
+    [Fact]
+    public void ShouldBeAbleToAddATeam()
+    {
+        var groupRepository = new Mock<IGroupRepository>();
+        var groupService = new GroupsService(groupRepository.Object);
+
+        var newGroup = new Group("Team name");
+        groupService.AddTeam(newGroup);
+        
+        groupRepository.Verify(_ => _.AddTeam(newGroup), Times.Once());
+    }
     
 }

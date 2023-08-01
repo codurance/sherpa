@@ -6,7 +6,6 @@ namespace SherpaBackEnd.Tests.Repositories;
 public class InMemoryGroupRepositoryTest
 {
     [Fact]
-
     public void ShouldBeAbleToAddNewGroup()
     {
         var initialList = new List<Group>();
