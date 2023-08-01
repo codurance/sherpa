@@ -2,15 +2,15 @@
 @using SherpaFrontEnd.Services
 @inject ITemplateService TemplateService
 <h3>Templates</h3>
-<ul>
+<ul class="template-box-list">
 
     @foreach (var template in _templates)
     {
         <li>
-            <div>
-                <h2>@template.Name</h2>
-                <p>@template.MinutesToComplete min</p>
-                <button><span><i class="las la-ellipsis-v"></i></span><span>Open contextual menu for @template.Name</span></button>
+            <div class="template-box">
+                <h2 class="template-box__title">@template.Name</h2>
+                <p class="template-box__time"><i class="las la-clock"></i> @template.MinutesToComplete min</p>
+                <button class="template-box__button"><span><i class="las la-ellipsis-v"></i></span><span class="visually-hidden">Open contextual menu for @template.Name</span></button>
             </div>
         </li>
     }
