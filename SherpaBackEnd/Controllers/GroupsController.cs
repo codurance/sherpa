@@ -100,4 +100,9 @@ public class GroupsController
     {
         await _groupsService.AddTeamAsync(newTeam);
     }
+
+    public async Task<IEnumerable<Group>> GetAllTeamsAsync()
+    {
+        return await _groupsService.GetAllTeamsAsync();
+    }
 }

@@ -196,4 +196,12 @@ public class GroupsControllerTest
         
         _mockGroupService.Verify(_ => _.AddTeamAsync(newTeam), Times.Once());
     }
+
+    [Fact]
+    public async Task ShouldCallGetAllTeamsMethodFromService()
+    {
+        await _groupsController.GetAllTeamsAsync();
+        
+        _mockGroupService.Verify(_ => _.GetAllTeamsAsync(), Times.Once());
+    }
 }

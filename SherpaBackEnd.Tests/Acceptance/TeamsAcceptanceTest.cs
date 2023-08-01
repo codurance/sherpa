@@ -20,7 +20,7 @@ public class TeamsAcceptanceTest
 
         await groupsController.AddTeamAsync(newGroup);
 
-        var actualGroups = await groupsController.GetGroupsAsync();
+        var actualGroups = await groupsController.GetAllTeamsAsync();
         Assert.Equal(emptyGroupList, actualGroups);
     }
 }

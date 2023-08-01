@@ -11,4 +11,5 @@ public interface IGroupsService
     Task<Group?> UpdateGroup(Group group);
 
     Task AddTeamAsync(Group newGroup);
+    Task<IEnumerable<Group>> GetAllTeamsAsync();
 }
