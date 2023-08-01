@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Model.Template;
 using SherpaBackEnd.Services;
 
@@ -9,10 +10,12 @@ namespace SherpaBackEnd.Controllers;
 public class TemplateController
 {
     private readonly ITemplateService _templateService;
+    private readonly ILogger _logger;
 
-    public TemplateController(ITemplateService templateService)
+    public TemplateController(ITemplateService templateService, ILogger<TemplateController> logger)
     {
         _templateService = templateService;
+        _logger = logger;
     }
 
     [HttpGet]
@@ -25,7 +28,7 @@ public class TemplateController
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            _logger.LogError(default(EventId), e, "Internal Server Error");
             return new StatusCodeResult(StatusCodes.Status500InternalServerError);
         }
     }

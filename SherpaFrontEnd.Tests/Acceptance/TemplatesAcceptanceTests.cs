@@ -34,7 +34,7 @@ public class TemplatesAcceptanceTests
     }
 
     [Fact]
-    public async void The_user_can_navigate_to_template_page_and_see_the_hackman_template()
+    public async Task The_user_can_navigate_to_template_page_and_see_the_hackman_template()
     {
         // GIVEN that an Org coach have a menu on the left
         var ctx = new TestContext();
@@ -84,7 +84,7 @@ public class TemplatesAcceptanceTests
     }
 
     [Fact]
-    public async void The_user_will_see_an_error_message_if_there_is_an_error_fetching_the_templates()
+    public async Task The_user_will_see_an_error_message_if_there_is_an_error_fetching_the_templates()
     {
         // GIVEN that an Org coach have a menu on the left
         var ctx = new TestContext();

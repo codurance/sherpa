@@ -1,17 +1,14 @@
 @page "/templates"
 @using SherpaFrontEnd.Services
 @inject ITemplateService TemplateService
+
 <h3>Templates</h3>
 <ul class="template-box-list">
 
     @foreach (var template in _templates)
     {
         <li>
-            <div class="template-box">
-                <h2 class="template-box__title">@template.Name</h2>
-                <p class="template-box__time"><i class="las la-clock"></i> @template.MinutesToComplete min</p>
-                <button class="template-box__button"><span><i class="las la-ellipsis-v"></i></span><span class="visually-hidden">Open contextual menu for @template.Name</span></button>
-            </div>
+            <TemplateBox Name="@template.Name" MinutesToComplete="@template.MinutesToComplete"/>
         </li>
     }
     @if (_errorFetchingTemplates)
@@ -26,6 +23,11 @@
 
     protected override async Task OnInitializedAsync()
     {
+        await FetchTemplates();
+    }
+
+    private async Task FetchTemplates()
+    {
         try
         {
             _errorFetchingTemplates = false;
@@ -35,7 +37,7 @@
                 _templates = templates;
             }
         }
-        catch (Exception e)
+        catch
         {
             _errorFetchingTemplates = true;
         }

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using SherpaBackEnd.Controllers;
 using SherpaBackEnd.Model.Template;
@@ -14,11 +15,12 @@ public class TemplateControllerTest
     public TemplateControllerTest()
     {
         _templateService = new Mock<ITemplateService>();
-        _templateController = new TemplateController(_templateService.Object);
+        var logger = Mock.Of<ILogger<TemplateController>>();
+        _templateController = new TemplateController(_templateService.Object, logger);
     }
 
     [Fact]
-    public async void Should_return_templates_returned_by_the_service()
+    public async Task Should_return_templates_returned_by_the_service()
     {
         var template = new Template("test", Array.Empty<IQuestion>(), 10);
         var arrayWithTemplate = new[] { template };
@@ -32,7 +34,7 @@ public class TemplateControllerTest
     }
 
     [Fact]
-    public async void Should_return_status_code_500_if_some_error_is_thrown()
+    public async Task Should_return_status_code_500_if_some_error_is_thrown()
     {
         _templateService.Setup(service => service.GetAllTemplates()).ThrowsAsync(new Exception());
     

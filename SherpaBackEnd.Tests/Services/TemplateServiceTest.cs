@@ -14,7 +14,7 @@ public class TemplateServiceTest
     }
 
     [Fact]
-    public async void Should_return_templates_returned_by_the_repository()
+    public async Task Should_return_templates_returned_by_the_repository()
     {
         var actualResponse = new[]
         {

@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Moq;
 using Newtonsoft.Json;
 using SherpaBackEnd.Controllers;
 using SherpaBackEnd.Model.Template;
@@ -10,26 +12,37 @@ namespace SherpaBackEnd.Tests.Acceptance;
 public class TemplatesAcceptanceTests : IDisposable
 {
     private readonly Template _hackmanTemplate;
+    private readonly ILogger<TemplateController> _logger;
     private const string TestFolder = "test/acceptance";
+    private const string QuestionInSpanish = "Question in spanish";
+    private const string QuestionInEnglish = "Question in english";
+    private const string Response1 = "1";
+    private const string Response2 = "2";
+    private const string Response3 = "3";
+    private const int Position = 1;
+    private const bool Reverse = false;
 
     public TemplatesAcceptanceTests()
     {
         Directory.CreateDirectory(TestFolder);
-        File.WriteAllText($"{TestFolder}/hackman.csv",
+        var contents =
             $@"position,responses,question_english,question_spanish,reverse,component,subcategory,subcomponent
-1,1 | 2 | 3,Question in english,Question in spanish,false,{HackmanComponent.INTERPERSONAL_PEER_COACHING},{HackmanSubcategory.DELIMITED},{HackmanSubcomponent.SENSE_OF_URGENCY}
-");
+{Position},{Response1} | {Response2} | {Response3},{QuestionInEnglish},{QuestionInSpanish},{Reverse.ToString()},{HackmanComponent.INTERPERSONAL_PEER_COACHING},{HackmanSubcategory.DELIMITED},{HackmanSubcomponent.SENSE_OF_URGENCY}
+";
+        File.WriteAllText($"{TestFolder}/hackman.csv", contents);
         
         var questions = new IQuestion[]
         {
             new HackmanQuestion(new Dictionary<string, string>()
                 {
-                    { Languages.SPANISH, "Question in spanish" },
-                    { Languages.ENGLISH, "Question in english" },
-                }, new string[] { "1", "2", "3" }, false, HackmanComponent.INTERPERSONAL_PEER_COACHING,
-                HackmanSubcategory.DELIMITED, HackmanSubcomponent.SENSE_OF_URGENCY, 1)
+                    { Languages.SPANISH, QuestionInSpanish },
+                    { Languages.ENGLISH, QuestionInEnglish },
+                }, new string[] { Response1, Response2, Response3 }, Reverse,
+                HackmanComponent.INTERPERSONAL_PEER_COACHING,
+                HackmanSubcategory.DELIMITED, HackmanSubcomponent.SENSE_OF_URGENCY, Position)
         };
         _hackmanTemplate = new Template("Hackman Model", questions, 30);
+        _logger = Mock.Of<ILogger<TemplateController>>();
     }
 
     [Fact]
@@ -39,7 +52,7 @@ public class TemplatesAcceptanceTests : IDisposable
         
         ITemplateRepository templateRepository = new InMemoryFilesTemplateRepository(TestFolder);
         var templateService = new TemplateService(templateRepository);
-        var templateController = new TemplateController(templateService);
+        var templateController = new TemplateController(templateService, _logger);
 
         // WHEN get all templates endpoint is requested
         var actualResponse = await templateController.GetAllTemplates();
@@ -62,7 +75,7 @@ public class TemplatesAcceptanceTests : IDisposable
 
         ITemplateRepository templateRepository = new InMemoryFilesTemplateRepository("folder_that_doesnt_exist");
         var templateService = new TemplateService(templateRepository);
-        var templateController = new TemplateController(templateService);
+        var templateController = new TemplateController(templateService, _logger);
 
         // WHEN get all templates endpoint is requested but there is an error
         var actualResponse = await templateController.GetAllTemplates();

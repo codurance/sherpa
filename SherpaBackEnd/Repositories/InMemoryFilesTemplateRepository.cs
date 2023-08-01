@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using FileHelpers;
+using SherpaBackEnd.Exceptions;
 
 namespace SherpaBackEnd.Model.Template;
 
@@ -39,20 +40,11 @@ public class InMemoryFilesTemplateRepository : ITemplateRepository
         return allTemplates.ToArray();
     }
 
-    private static void ParseRecordAndAddToQuestions(ICollection<IQuestion> questions, CsvHackmanQuestion csvHackmanQuestion)
-    {
-        questions.Add(new HackmanQuestion(new Dictionary<string, string>
-            {
-                { Languages.SPANISH, csvHackmanQuestion.QuestionSpanish },
-                { Languages.ENGLISH, csvHackmanQuestion.QuestionEnglish }
-            }, csvHackmanQuestion.Responses.Split(" | "), csvHackmanQuestion.Reverse,
-            csvHackmanQuestion.Component,
-            csvHackmanQuestion.Subcategory, csvHackmanQuestion.Subcomponent, csvHackmanQuestion.Position));
-    }
-
-    private void ParseTemplateFile(string templateName, FileHelperEngine<CsvHackmanQuestion> engine, List<Template> allTemplates)
+    private void ParseTemplateFile(string templateName, IFileHelperEngine<CsvHackmanQuestion> engine,
+        ICollection<Template> allTemplates)
     {
         var fileName = $"{_folder}/{_templatesFileName[templateName]}";
+
         var records = engine.ReadFile(fileName);
         var questions = new List<IQuestion>();
         foreach (var record in records)
@@ -61,6 +53,17 @@ public class InMemoryFilesTemplateRepository : ITemplateRepository
         }
 
         allTemplates.Add(new Template(templateName, questions.ToArray(), _templatesDuration[templateName]));
+    }
+
+    private static void ParseRecordAndAddToQuestions(ICollection<IQuestion> questions,
+        CsvHackmanQuestion csvHackmanQuestion)
+    {
+        questions.Add(new HackmanQuestion(new Dictionary<string, string>
+            {
+                { Languages.SPANISH, csvHackmanQuestion.QuestionSpanish },
+                { Languages.ENGLISH, csvHackmanQuestion.QuestionEnglish }
+            }, csvHackmanQuestion.Responses.Split(" | "), csvHackmanQuestion.Reverse, csvHackmanQuestion.Component,
+            csvHackmanQuestion.Subcategory, csvHackmanQuestion.Subcomponent, csvHackmanQuestion.Position));
     }
 }
 

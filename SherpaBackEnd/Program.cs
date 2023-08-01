@@ -8,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+// TODO: Fill the csv template
+
 builder.Services.AddControllers()
     .AddJsonOptions(options => { options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter()); })
     .AddNewtonsoftJson();
@@ -22,7 +24,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<IGroupRepository, InMemoryGroupRepository>();
 builder.Services.AddSingleton<IGroupsService, GroupsService>();
 builder.Services.AddSingleton<ITemplateRepository, InMemoryFilesTemplateRepository>(_ =>
-    new InMemoryFilesTemplateRepository("templates"));
+    new InMemoryFilesTemplateRepository("Templates"));
 builder.Services.AddSingleton<ITemplateService, TemplateService>();
 builder.Services.AddSingleton<ISurveyRepository, InMemorySurveyRepository>();
 builder.Services.AddSingleton<IAssessmentRepository, InMemoryAssessmentRepository>();
@@ -38,6 +40,9 @@ builder.Services.AddSingleton<IEmailService, SesEmailService>(provider =>
     var secretKey = Environment.GetEnvironmentVariable("AWS_SES_SECRET_KEY");
     return new SesEmailService(provider.GetService<IHttpContextAccessor>()!, accessKey!, secretKey!);
 });
+
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
 
 
 var app = builder.Build();
