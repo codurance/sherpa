@@ -198,6 +198,27 @@ public class GroupsControllerTest
     }
 
     [Fact]
+    public async Task ShouldRetrieveOkWhenNoProblemsFoundWhileAdding()
+    {
+        var newTeam = new Group("New Team");
+        Assert.IsType<OkResult>(await _groupsController.AddTeamAsync(newTeam));
+    }
+    
+    [Fact]
+    public async Task ShouldRetrieveErrorIfTeamCannotBeAdded()
+    {
+        var newTeam = new Group("New Team");
+        var notSuccessfulAdding = new RepositoryException("Cannot perform add team function.");
+        _mockGroupService.Setup(_ => _.AddTeamAsync(newTeam))
+            .ThrowsAsync(notSuccessfulAdding);
+            
+        var addingResult = await _groupsController.AddTeamAsync(newTeam);
+
+        var resultObject = Assert.IsType<ObjectResult>(addingResult);
+        Assert.Equal(StatusCodes.Status500InternalServerError, resultObject.StatusCode);
+    }
+
+    [Fact]
     public async Task ShouldCallGetAllTeamsMethodFromService()
     {
         await _groupsController.GetAllTeamsAsync();
