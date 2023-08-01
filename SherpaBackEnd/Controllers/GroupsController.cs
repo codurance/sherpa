@@ -18,21 +18,21 @@ public class GroupsController
     }
 
     [HttpGet]
-    
     public async Task<ActionResult<IEnumerable<Group>>> GetGroupsAsync()
     {
         IEnumerable<Group> groups;
         try
-        { 
+        {
             groups = await _groupsService.GetGroups();
-            
+
             if (!groups.Any())
             {
                 return new NotFoundResult();
             }
+
             return new OkObjectResult(groups);
         }
-        catch(RepositoryException repositoryException)
+        catch (RepositoryException repositoryException)
         {
             var error = new { message = "Internal server error. Try again later" };
             return new ObjectResult(error)
@@ -50,6 +50,7 @@ public class GroupsController
         {
             return new BadRequestResult();
         }
+
         await Task.Run(() => _groupsService.AddGroup(group));
         return new OkResult();
     }
@@ -63,7 +64,7 @@ public class GroupsController
         {
             return new NotFoundResult();
         }
-            
+
         return new OkObjectResult(group);
     }
 
@@ -75,15 +76,15 @@ public class GroupsController
         {
             return new NotFoundResult();
         }
+
         group.Delete();
         await _groupsService.UpdateGroup(group);
         return new OkResult();
     }
 
     [HttpPut("{guid:guid}")]
-    public async Task<ActionResult<Group>> UpdateGroupAsync(Guid guid,Group group)
+    public async Task<ActionResult<Group>> UpdateGroupAsync(Guid guid, Group group)
     {
-        
         // TODO use (Group group) signature to not expose too much
         var groupFound = await _groupsService.GetGroup(guid);
         if (groupFound is null)
@@ -96,9 +97,20 @@ public class GroupsController
         return new OkObjectResult(group);
     }
 
-    public async Task AddTeamAsync(Group newTeam)
+    public async Task<ActionResult> AddTeamAsync(Group newTeam)
     {
-        await _groupsService.AddTeamAsync(newTeam);
+        try
+        {
+            await _groupsService.AddTeamAsync(newTeam);
+            return new OkResult();
+        }
+        catch (RepositoryException error)
+        {
+            return new ObjectResult(error)
+            {
+                StatusCode = StatusCodes.Status500InternalServerError
+            };
+        }
     }
 
     public async Task<IEnumerable<Group>> GetAllTeamsAsync()
