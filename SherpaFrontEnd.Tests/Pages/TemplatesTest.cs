@@ -26,8 +26,12 @@ public class TemplatesTest
         
         var titleElement = component.FindAll("h2").FirstOrDefault(element => element.InnerHtml.Contains("Hackman Model"));
         var timeElement = component.FindAll("p").FirstOrDefault(element => element.InnerHtml.Contains("30 min"));
+        var threeDotsButton = component.FindAll("button")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Open contextual menu for Hackman Model"));;
+
         
         Assert.NotNull(titleElement);
         Assert.NotNull(timeElement);
+        Assert.NotNull(threeDotsButton);
     }
 }
