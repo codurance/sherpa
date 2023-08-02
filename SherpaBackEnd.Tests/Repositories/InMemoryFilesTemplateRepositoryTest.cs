@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Model.Template;
 
 namespace SherpaBackEnd.Tests.Repositories;
@@ -60,6 +61,16 @@ public class InMemoryFilesTemplateRepositoryTest : IDisposable
                 template
             })
             , JsonConvert.SerializeObject(actualResult));
+    }
+    
+    [Fact]
+    public async Task Should_throw_a_CSVParsingException_if_there_is_any_error_parsing_the_csv_file()
+    {
+        var templateRepository = new InMemoryFilesTemplateRepository("folder_that_does_not_exist");
+
+        var csvParsingException = await Assert.ThrowsAnyAsync<CSVParsingException>(async () => await templateRepository.GetAllTemplates());
+        
+        Assert.Equal("Error while parsing the .csv files", csvParsingException.Message);
     }
 
     public void Dispose()

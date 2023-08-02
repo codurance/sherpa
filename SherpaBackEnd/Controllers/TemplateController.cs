@@ -28,7 +28,7 @@ public class TemplateController
         }
         catch (Exception e)
         {
-            _logger.LogError(default(EventId), e, "Internal Server Error");
+            _logger.LogError(default(EventId), e, e.Message);
             return new StatusCodeResult(StatusCodes.Status500InternalServerError);
         }
     }

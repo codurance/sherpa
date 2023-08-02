@@ -45,14 +45,21 @@ public class InMemoryFilesTemplateRepository : ITemplateRepository
     {
         var fileName = $"{_folder}/{_templatesFileName[templateName]}";
 
-        var records = engine.ReadFile(fileName);
-        var questions = new List<IQuestion>();
-        foreach (var record in records)
+        try
         {
-            ParseRecordAndAddToQuestions(questions, record);
-        }
+            var records = engine.ReadFile(fileName);
+            var questions = new List<IQuestion>();
+            foreach (var record in records)
+            {
+                ParseRecordAndAddToQuestions(questions, record);
+            }
 
-        allTemplates.Add(new Template(templateName, questions.ToArray(), _templatesDuration[templateName]));
+            allTemplates.Add(new Template(templateName, questions.ToArray(), _templatesDuration[templateName]));
+        }
+        catch (Exception e)
+        {
+            throw new CSVParsingException("Error while parsing the .csv files", e);
+        }
     }
 
     private static void ParseRecordAndAddToQuestions(ICollection<IQuestion> questions,
