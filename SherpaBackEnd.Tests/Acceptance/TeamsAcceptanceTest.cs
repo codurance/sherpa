@@ -1,4 +1,5 @@
-﻿using SherpaBackEnd.Controllers;
+﻿using Microsoft.AspNetCore.Mvc;
+using SherpaBackEnd.Controllers;
 using SherpaBackEnd.Dtos;
 using SherpaBackEnd.Model;
 using SherpaBackEnd.Services;
@@ -21,6 +22,7 @@ public class TeamsAcceptanceTest
         await groupsController.AddTeamAsync(newGroup);
 
         var actualGroups = await groupsController.GetAllTeamsAsync();
-        Assert.Equal(emptyGroupList, actualGroups);
+        var okObjectResult = Assert.IsType<OkObjectResult>(actualGroups.Result);
+        Assert.Equal(emptyGroupList, okObjectResult.Value);
     }
 }
