@@ -19,11 +19,11 @@ public class TemplateController
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Template>>> GetAllTemplates()
+    public async Task<ActionResult<IEnumerable<Template>>> GetAllTemplatesAsync()
     {
         try
         {
-            var allTemplates = await _templateService.GetAllTemplates();
+            var allTemplates = await _templateService.GetAllTemplatesAsync();
             return new OkObjectResult(allTemplates);
         }
         catch (Exception e)

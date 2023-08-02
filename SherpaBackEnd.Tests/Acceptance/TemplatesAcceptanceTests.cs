@@ -66,7 +66,7 @@ public class TemplatesAcceptanceTests : IDisposable
         var templateController = new TemplateController(templateService, _logger);
 
         // WHEN get all templates endpoint is requested
-        var actualResponse = await templateController.GetAllTemplates();
+        var actualResponse = await templateController.GetAllTemplatesAsync();
 
         // THEN it should receive a list containing the hackman template
         var templatesResult = Assert.IsType<OkObjectResult>(actualResponse.Result);
@@ -90,7 +90,7 @@ public class TemplatesAcceptanceTests : IDisposable
         var templateController = new TemplateController(templateService, _logger);
 
         // WHEN get all templates endpoint is requested but there is an error
-        var actualResponse = await templateController.GetAllTemplates();
+        var actualResponse = await templateController.GetAllTemplatesAsync();
 
         var templatesResult = Assert.IsType<StatusCodeResult>(actualResponse.Result);
         // THEN it should receive a 500 status code

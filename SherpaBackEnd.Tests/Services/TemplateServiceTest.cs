@@ -21,10 +21,10 @@ public class TemplateServiceTest
             new Template("test", Array.Empty<IQuestion>(), 1)
         };
         
-        _repository.Setup(templateRepository => templateRepository.GetAllTemplates()).ReturnsAsync(actualResponse);
+        _repository.Setup(templateRepository => templateRepository.GetAllTemplatesAsync()).ReturnsAsync(actualResponse);
         var templateService = new TemplateService(_repository.Object);
 
-        var expectedResponse = await templateService.GetAllTemplates();
+        var expectedResponse = await templateService.GetAllTemplatesAsync();
         
         Assert.Equal(expectedResponse, actualResponse);
     }

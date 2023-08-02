@@ -4,5 +4,5 @@ namespace SherpaBackEnd.Services;
 
 public interface ITemplateService
 {
-    public Task<Template[]> GetAllTemplates();
+    public Task<Template[]> GetAllTemplatesAsync();
 }

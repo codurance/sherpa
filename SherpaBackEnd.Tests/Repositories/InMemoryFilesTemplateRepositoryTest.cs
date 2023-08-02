@@ -53,7 +53,7 @@ public class InMemoryFilesTemplateRepositoryTest : IDisposable
         var template = new Template("Hackman Model", questions, 30);
 
         var templateRepository = new InMemoryFilesTemplateRepository(TestFolder);
-        var actualResult = await templateRepository.GetAllTemplates();
+        var actualResult = await templateRepository.GetAllTemplatesAsync();
 
         Assert.Equal(
             JsonConvert.SerializeObject(new[]
@@ -68,7 +68,7 @@ public class InMemoryFilesTemplateRepositoryTest : IDisposable
     {
         var templateRepository = new InMemoryFilesTemplateRepository("folder_that_does_not_exist");
 
-        var csvParsingException = await Assert.ThrowsAnyAsync<CSVParsingException>(async () => await templateRepository.GetAllTemplates());
+        var csvParsingException = await Assert.ThrowsAnyAsync<CSVParsingException>(async () => await templateRepository.GetAllTemplatesAsync());
         
         Assert.Equal("Error while parsing the .csv files", csvParsingException.Message);
     }

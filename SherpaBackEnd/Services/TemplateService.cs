@@ -11,8 +11,8 @@ public class TemplateService: ITemplateService
         _templateRepository = templateRepository;
     }
 
-    public async Task<Template[]> GetAllTemplates()
+    public async Task<Template[]> GetAllTemplatesAsync()
     {
-        return await _templateRepository.GetAllTemplates();
+        return await _templateRepository.GetAllTemplatesAsync();
     }
 }

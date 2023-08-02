@@ -27,7 +27,7 @@ public class InMemoryFilesTemplateRepository : ITemplateRepository
         _folder = folder;
     }
 
-    public async Task<Template[]> GetAllTemplates()
+    public async Task<Template[]> GetAllTemplatesAsync()
     {
         var allTemplates = new List<Template>();
         var engine = new FileHelperEngine<CsvHackmanQuestion>();
