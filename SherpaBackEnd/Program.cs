@@ -8,8 +8,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-// TODO: Fill the csv template
-
 builder.Services.AddControllers()
     .AddJsonOptions(options => { options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter()); })
     .AddNewtonsoftJson();

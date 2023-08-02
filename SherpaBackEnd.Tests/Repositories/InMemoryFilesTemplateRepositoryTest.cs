@@ -8,9 +8,12 @@ public class InMemoryFilesTemplateRepositoryTest : IDisposable
     private const string TestFolder = "test/unit";
     private const string QuestionInSpanish = "Question in spanish";
     private const string QuestionInEnglish = "Question in english";
-    private const string Response1 = "1";
-    private const string Response2 = "2";
-    private const string Response3 = "3";
+    private const string ResponseSpanish1 = "SPA_1";
+    private const string ResponseSpanish2 = "SPA_2";
+    private const string ResponseSpanish3 = "SPA_3";
+    private const string ResponseEnglish1 = "ENG_1";
+    private const string ResponseEnglish2 = "ENG_2";
+    private const string ResponseEnglish3 = "ENG_3";
     private const int Position = 1;
     private const bool Reverse = false;
 
@@ -18,8 +21,8 @@ public class InMemoryFilesTemplateRepositoryTest : IDisposable
     {
         Directory.CreateDirectory(TestFolder);
         var contents =
-            $@"position,responses,question_english,question_spanish,reverse,component,subcategory,subcomponent
-{Position},{Response1} | {Response2} | {Response3},{QuestionInEnglish},{QuestionInSpanish},{Reverse.ToString()},{HackmanComponent.INTERPERSONAL_PEER_COACHING},{HackmanSubcategory.DELIMITED},{HackmanSubcomponent.SENSE_OF_URGENCY}
+                $@"position|responses_english|responses_spanish|question_english|question_spanish|reverse|component|subcategory|subcomponent
+{Position}|{ResponseEnglish1} // {ResponseEnglish2} // {ResponseEnglish3}|{ResponseSpanish1} // {ResponseSpanish2} // {ResponseSpanish3}|{QuestionInEnglish}|{QuestionInSpanish}|{Reverse.ToString()}|{HackmanComponent.INTERPERSONAL_PEER_COACHING}|{HackmanSubcategory.DELIMITED}|{HackmanSubcomponent.SENSE_OF_URGENCY}
 ";
         File.WriteAllText($"{TestFolder}/hackman.csv", contents);
     }
@@ -33,12 +36,20 @@ public class InMemoryFilesTemplateRepositoryTest : IDisposable
                 {
                     { Languages.SPANISH, QuestionInSpanish },
                     { Languages.ENGLISH, QuestionInEnglish },
-                }, new string[] { Response1, Response2, Response3 }, Reverse,
+                }, new Dictionary<string, string[]>()
+                {
+                    {
+                        Languages.SPANISH, new[] { ResponseSpanish1, ResponseSpanish2, ResponseSpanish3 }
+                    },
+                    {
+                        Languages.ENGLISH, new[] { ResponseEnglish1, ResponseEnglish2, ResponseEnglish3 }
+                    }
+                }, Reverse,
                 HackmanComponent.INTERPERSONAL_PEER_COACHING,
                 HackmanSubcategory.DELIMITED, HackmanSubcomponent.SENSE_OF_URGENCY, Position)
         };
 
-        var template = new SherpaBackEnd.Model.Template.Template("Hackman Model", questions, 30);
+        var template = new Template("Hackman Model", questions, 30);
 
         var templateRepository = new InMemoryFilesTemplateRepository(TestFolder);
         var actualResult = await templateRepository.GetAllTemplates();

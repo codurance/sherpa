@@ -1,31 +1,9 @@
 namespace SherpaBackEnd.Model.Template;
 
-public class InClassName
-{
-    public InClassName(Dictionary<string, string> statement, string[] responses, bool reverse, string component, string subcategory, string? subcomponent, int position)
-    {
-        Statement = statement;
-        Responses = responses;
-        Reverse = reverse;
-        Component = component;
-        Subcategory = subcategory;
-        Subcomponent = subcomponent;
-        Position = position;
-    }
-
-    public Dictionary<string, string> Statement { get; private set; }
-    public string[] Responses { get; private set; }
-    public bool Reverse { get; private set; }
-    public string Component { get; private set; }
-    public string Subcategory { get; private set; }
-    public string? Subcomponent { get; private set; }
-    public int Position { get; private set; }
-}
-
 public class HackmanQuestion : IQuestion
 {
     public Dictionary<string, string> Statement { get; }
-    public string[] Responses{get;}
+    public Dictionary<string, string[]> Responses{get;}
     public bool Reverse{get;}
     public string Component{get;}
     public string Subcategory{get;}
@@ -33,7 +11,7 @@ public class HackmanQuestion : IQuestion
     public int Position{get;}
 
 
-    public HackmanQuestion(Dictionary<string, string> statement, string[] responses, bool reverse, string component, string subcategory, string? subcomponent, int position)
+    public HackmanQuestion(Dictionary<string, string> statement, Dictionary<string, string[]> responses, bool reverse, string component, string subcategory, string? subcomponent, int position)
     {
         Statement = statement;
         Responses = responses;

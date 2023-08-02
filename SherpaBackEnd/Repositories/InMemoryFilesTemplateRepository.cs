@@ -62,17 +62,28 @@ public class InMemoryFilesTemplateRepository : ITemplateRepository
             {
                 { Languages.SPANISH, csvHackmanQuestion.QuestionSpanish },
                 { Languages.ENGLISH, csvHackmanQuestion.QuestionEnglish }
-            }, csvHackmanQuestion.Responses.Split(" | "), csvHackmanQuestion.Reverse, csvHackmanQuestion.Component,
+            }, new Dictionary<string, string[]>
+            {
+                {
+                    Languages.SPANISH, csvHackmanQuestion
+                        .ResponsesSpanish.Split(" // ")
+                },
+                {
+                    Languages.ENGLISH, csvHackmanQuestion
+                        .ResponsesEnglish.Split(" // ")
+                }
+            }, csvHackmanQuestion.Reverse, csvHackmanQuestion.Component,
             csvHackmanQuestion.Subcategory, csvHackmanQuestion.Subcomponent, csvHackmanQuestion.Position));
     }
 }
 
-[DelimitedRecord(",")]
+[DelimitedRecord("|")]
 [IgnoreFirst]
 public class CsvHackmanQuestion
 {
     public int Position { get; set; }
-    public string Responses { get; set; }
+    public string ResponsesEnglish { get; set; }
+    public string ResponsesSpanish { get; set; }
     public string QuestionEnglish { get; set; }
     public string QuestionSpanish { get; set; }
     public bool Reverse { get; set; }
