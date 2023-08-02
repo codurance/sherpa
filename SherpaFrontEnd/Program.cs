@@ -23,6 +23,7 @@ builder.Services.Configure<JsonSerializerOptions>(options =>
 builder.Services.AddScoped<IGroupMemberService, InMemoryGroupMemberService>();
 builder.Services.AddScoped<IGroupDataService, GroupServiceHttpClient>();
 builder.Services.AddScoped<IAssessmentsDataService, AssessmentsServiceHttpClient>();
+builder.Services.AddScoped<ITemplateService, TemplateService>();
 
 builder.Services.AddBlazoredModal();
 

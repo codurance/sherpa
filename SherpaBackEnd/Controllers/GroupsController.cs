@@ -89,7 +89,7 @@ public class GroupsController
         if (groupFound is null)
         {
             return new NotFoundResult();
-        }
+        };
 
         group.Id = guid;
         await _groupsService.UpdateGroup(group);
