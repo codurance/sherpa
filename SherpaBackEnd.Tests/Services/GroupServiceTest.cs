@@ -38,13 +38,10 @@ public class GroupServiceTest
     [Fact]
     public async Task ShouldCallAddTeamMethodFromRepository()
     {
-        var groupRepository = new Mock<IGroupRepository>();
-        var groupService = new GroupsService(groupRepository.Object);
-
         var newGroup = new Group("Team name");
-        await groupService.AddTeamAsync(newGroup);
+        await _groupService.AddTeamAsync(newGroup);
         
-        groupRepository.Verify(_ => _.AddTeamAsync(newGroup), Times.Once());
+        _mockGroupRepository.Verify(_ => _.AddTeamAsync(newGroup), Times.Once());
     }
 
     [Fact]
