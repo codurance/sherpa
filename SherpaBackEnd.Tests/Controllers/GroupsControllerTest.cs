@@ -45,7 +45,7 @@ public class GroupsControllerTest
     [Fact]
     public async Task GetGroups_RepoThrowsError_ServerErrorExpected()
     {
-        var dbException = new RepositoryException("Couldn't connect to the database");
+        var dbException = new ConnectionToRepositoryUnsuccessfulException("Couldn't connect to the database");
         _mockGroupService.Setup(repo => repo.GetGroups())
             .ThrowsAsync(dbException);
         var actionResult = await _groupsController.GetGroupsAsync();
@@ -208,7 +208,7 @@ public class GroupsControllerTest
     public async Task ShouldRetrieveErrorIfTeamCannotBeAdded()
     {
         var newTeam = new Group("New Team");
-        var notSuccessfulAdding = new RepositoryException("Cannot perform add team function.");
+        var notSuccessfulAdding = new ConnectionToRepositoryUnsuccessfulException("Cannot perform add team function.");
         _mockGroupService.Setup(_ => _.AddTeamAsync(newTeam))
             .ThrowsAsync(notSuccessfulAdding);
             
@@ -255,7 +255,7 @@ public class GroupsControllerTest
     [Fact]
     public async Task ShouldReturnErrorIfAllTeamCannotBeRetrieved()
     {
-        var notSuccessfulGettingAllTeams = new RepositoryException("Cannot perform get all teams function.");
+        var notSuccessfulGettingAllTeams = new ConnectionToRepositoryUnsuccessfulException("Cannot perform get all teams function.");
         _mockGroupService.Setup(_ => _.GetAllTeamsAsync())
             .ThrowsAsync(notSuccessfulGettingAllTeams);
 

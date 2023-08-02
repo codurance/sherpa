@@ -42,7 +42,7 @@ public class GroupsService : IGroupsService
         }
         catch (Exception error)
         {
-            throw new RepositoryException(error.Message, error);
+            throw new ConnectionToRepositoryUnsuccessfulException(error.Message, error);
         }
     }
 
@@ -54,7 +54,7 @@ public class GroupsService : IGroupsService
         }
         catch (Exception error)
         {
-            throw new RepositoryException(error.Message, error);
+            throw new ConnectionToRepositoryUnsuccessfulException(error.Message, error);
         }
     }
 }

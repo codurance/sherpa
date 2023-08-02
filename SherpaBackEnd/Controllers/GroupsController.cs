@@ -33,7 +33,7 @@ public class GroupsController
 
             return new OkObjectResult(groups);
         }
-        catch (RepositoryException repositoryException)
+        catch (ConnectionToRepositoryUnsuccessfulException repositoryException)
         {
             var error = new { message = "Internal server error. Try again later" };
             return new ObjectResult(error)

@@ -59,8 +59,8 @@ public class GroupServiceTest
         var newGroup = new Group("New Group");
         _mockGroupRepository.Setup(_ => _.AddTeamAsync(newGroup)).ThrowsAsync(new Exception());
 
-        var exceptionThrown = await Assert.ThrowsAsync<RepositoryException>(async () => await _groupService.AddTeamAsync(newGroup));
-        Assert.IsType<RepositoryException>(exceptionThrown);
+        var exceptionThrown = await Assert.ThrowsAsync<ConnectionToRepositoryUnsuccessfulException>(async () => await _groupService.AddTeamAsync(newGroup));
+        Assert.IsType<ConnectionToRepositoryUnsuccessfulException>(exceptionThrown);
     }
     
     [Fact]
@@ -68,7 +68,7 @@ public class GroupServiceTest
     {
         _mockGroupRepository.Setup(_ => _.GetAllTeamsAsync()).ThrowsAsync(new Exception());
 
-        var exceptionThrown = await Assert.ThrowsAsync<RepositoryException>(async () => await _groupService.GetAllTeamsAsync());
-        Assert.IsType<RepositoryException>(exceptionThrown);
+        var exceptionThrown = await Assert.ThrowsAsync<ConnectionToRepositoryUnsuccessfulException>(async () => await _groupService.GetAllTeamsAsync());
+        Assert.IsType<ConnectionToRepositoryUnsuccessfulException>(exceptionThrown);
     }
 }
