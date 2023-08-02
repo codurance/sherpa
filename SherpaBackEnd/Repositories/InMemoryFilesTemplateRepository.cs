@@ -73,7 +73,9 @@ public class InMemoryFilesTemplateRepository : ITemplateRepository
                         .ResponsesEnglish.Split(" // ")
                 }
             }, csvHackmanQuestion.Reverse, csvHackmanQuestion.Component,
-            csvHackmanQuestion.Subcategory, csvHackmanQuestion.Subcomponent, csvHackmanQuestion.Position));
+            csvHackmanQuestion.Subcategory,
+            string.IsNullOrEmpty(csvHackmanQuestion.Subcomponent) ? null : csvHackmanQuestion.Subcomponent,
+            csvHackmanQuestion.Position));
     }
 }
 
@@ -89,7 +91,7 @@ public class CsvHackmanQuestion
     public bool Reverse { get; set; }
     public string Component { get; set; }
     public string Subcategory { get; set; }
-    public string Subcomponent { get; set; }
+    public string? Subcomponent { get; set; }
 
     public CsvHackmanQuestion()
     {
