@@ -1,5 +1,6 @@
 using Moq;
 using SherpaBackEnd.Dtos;
+using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Model;
 using SherpaBackEnd.Services;
 
@@ -23,14 +24,14 @@ public class GroupServiceTest
         var deletedGroup = new Group("DeletedGroup");
 
         deletedGroup.Delete();
-        
+
         _mockGroupRepository.Setup(repo => repo.GetGroups())
             .ReturnsAsync(new List<Group>
             {
                 existingGroup,
                 deletedGroup
             });
-        
+
         var expectedGroupList = await _groupService.GetGroups();
         Assert.DoesNotContain(deletedGroup, expectedGroupList);
     }
@@ -40,7 +41,7 @@ public class GroupServiceTest
     {
         var newGroup = new Group("Team name");
         await _groupService.AddTeamAsync(newGroup);
-        
+
         _mockGroupRepository.Verify(_ => _.AddTeamAsync(newGroup), Times.Once());
     }
 
@@ -48,7 +49,17 @@ public class GroupServiceTest
     public async Task ShouldCallGetAllTeamsMethodFromRepository()
     {
         await _groupService.GetAllTeamsAsync();
-        
+
         _mockGroupRepository.Verify(_ => _.GetAllTeamsAsync(), Times.Once());
+    }
+
+    [Fact]
+    public async Task ShouldThrowErrorIfConnectionWithRepositoryFailsWhileAdding()
+    {
+        var newGroup = new Group("New Group");
+        _mockGroupRepository.Setup(_ => _.AddTeamAsync(newGroup)).ThrowsAsync(new Exception());
+
+        var exceptionThrown = await Assert.ThrowsAsync<RepositoryException>(async () => await _groupService.AddTeamAsync(newGroup));
+        Assert.IsType<RepositoryException>(exceptionThrown);
     }
 }

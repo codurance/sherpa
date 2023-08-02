@@ -1,4 +1,5 @@
 ﻿using SherpaBackEnd.Dtos;
+using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Model;
 
 namespace SherpaBackEnd.Services;
@@ -35,7 +36,14 @@ public class GroupsService : IGroupsService
 
     public async Task AddTeamAsync(Group newGroup)
     {
-        await _groupRepository.AddTeamAsync(newGroup);
+        try
+        {
+            await _groupRepository.AddTeamAsync(newGroup);
+        }
+        catch (Exception error)
+        {
+            throw new RepositoryException(error.Message, error);
+        }
     }
 
     public async Task<IEnumerable<Group>> GetAllTeamsAsync()
