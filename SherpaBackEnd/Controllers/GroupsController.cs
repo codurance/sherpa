@@ -105,7 +105,7 @@ public class GroupsController
             await _groupsService.AddTeamAsync(newTeam);
             return new OkResult();
         }
-        catch (RepositoryException error)
+        catch (Exception error)
         {
             return new ObjectResult(error)
             {
@@ -122,7 +122,7 @@ public class GroupsController
             return new OkObjectResult(allTeamsAsync);
 
         }
-        catch (RepositoryException error)
+        catch (Exception error)
         {
             return new ObjectResult(error)
             {
