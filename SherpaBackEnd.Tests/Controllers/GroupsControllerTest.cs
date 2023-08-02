@@ -225,4 +225,43 @@ public class GroupsControllerTest
         
         _mockGroupService.Verify(_ => _.GetAllTeamsAsync(), Times.Once());
     }
+    
+    [Fact]
+    public async Task ShouldReturnOkWhenEmptyTeamListRetrievedWhileGettingAllTeams()
+    {
+        var emptyTeamsList = new List<Group>();
+        _mockGroupService.Setup(service => service.GetAllTeamsAsync())
+            .ReturnsAsync(emptyTeamsList);
+        var getAllTeamsAction = await _groupsController.GetAllTeamsAsync();
+        Assert.IsType<OkObjectResult>(getAllTeamsAction.Result);
+        
+    }
+    
+    [Fact]
+    public async Task ShouldReturnOkWhenTeamListRetrievedWhileGettingAllTeams()
+    {
+        var allTeamsList = new List<Group>()
+        {
+            new Group("Team one"),
+            new Group("Team two")
+        };
+        _mockGroupService.Setup(service => service.GetAllTeamsAsync())
+            .ReturnsAsync(allTeamsList);
+        var getAllTeamsAction = await _groupsController.GetAllTeamsAsync();
+        var okObjectResult = Assert.IsType<OkObjectResult>(getAllTeamsAction.Result);
+        Assert.Equal(allTeamsList, okObjectResult.Value);
+    }
+    
+    [Fact]
+    public async Task ShouldReturnErrorIfAllTeamCannotBeRetrieved()
+    {
+        var notSuccessfulGettingAllTeams = new RepositoryException("Cannot perform get all teams function.");
+        _mockGroupService.Setup(_ => _.GetAllTeamsAsync())
+            .ThrowsAsync(notSuccessfulGettingAllTeams);
+
+        var allTeamsAsync = await _groupsController.GetAllTeamsAsync();
+
+        var resultObject = Assert.IsType<ObjectResult>(allTeamsAsync.Result);
+        Assert.Equal(StatusCodes.Status500InternalServerError, resultObject.StatusCode);
+    }
 }

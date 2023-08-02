@@ -113,8 +113,20 @@ public class GroupsController
         }
     }
 
-    public async Task<IEnumerable<Group>> GetAllTeamsAsync()
+    public async Task<ActionResult<IEnumerable<Group>>> GetAllTeamsAsync()
     {
-        return await _groupsService.GetAllTeamsAsync();
+        try
+        {
+            var allTeamsAsync = await _groupsService.GetAllTeamsAsync();
+            return new OkObjectResult(allTeamsAsync);
+
+        }
+        catch (RepositoryException error)
+        {
+            return new ObjectResult(error)
+            {
+                StatusCode = StatusCodes.Status500InternalServerError
+            };
+        }
     }
 }
