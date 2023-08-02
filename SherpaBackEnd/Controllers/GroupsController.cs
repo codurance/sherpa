@@ -103,7 +103,7 @@ public class GroupsController
         try
         {
             await _groupsService.AddTeamAsync(newTeam);
-            return new OkResult();
+            return new CreatedResult("", null);
         }
         catch (Exception error)
         {

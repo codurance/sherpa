@@ -201,7 +201,7 @@ public class GroupsControllerTest
     public async Task ShouldRetrieveOkWhenNoProblemsFoundWhileAdding()
     {
         var newTeam = new Group("New Team");
-        Assert.IsType<OkResult>(await _groupsController.AddTeamAsync(newTeam));
+        Assert.IsType<CreatedResult>(await _groupsController.AddTeamAsync(newTeam));
     }
     
     [Fact]
