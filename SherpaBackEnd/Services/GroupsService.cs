@@ -48,6 +48,13 @@ public class GroupsService : IGroupsService
 
     public async Task<IEnumerable<Group>> GetAllTeamsAsync()
     {
-        return await _groupRepository.GetAllTeamsAsync();
+        try
+        {
+            return await _groupRepository.GetAllTeamsAsync();
+        }
+        catch (Exception error)
+        {
+            throw new RepositoryException(error.Message, error);
+        }
     }
 }

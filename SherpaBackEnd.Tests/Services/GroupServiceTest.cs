@@ -62,4 +62,13 @@ public class GroupServiceTest
         var exceptionThrown = await Assert.ThrowsAsync<RepositoryException>(async () => await _groupService.AddTeamAsync(newGroup));
         Assert.IsType<RepositoryException>(exceptionThrown);
     }
+    
+    [Fact]
+    public async Task ShouldThrowErrorIfConnectionWithRepositoryFailsWhileGettingAll()
+    {
+        _mockGroupRepository.Setup(_ => _.GetAllTeamsAsync()).ThrowsAsync(new Exception());
+
+        var exceptionThrown = await Assert.ThrowsAsync<RepositoryException>(async () => await _groupService.GetAllTeamsAsync());
+        Assert.IsType<RepositoryException>(exceptionThrown);
+    }
 }
