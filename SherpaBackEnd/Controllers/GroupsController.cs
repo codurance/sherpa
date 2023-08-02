@@ -18,7 +18,7 @@ public class GroupsController
         _groupsService = groupsService;
     }
 
-    [HttpGet]
+  
     public async Task<ActionResult<IEnumerable<Group>>> GetGroupsAsync()
     {
         IEnumerable<Group> groups;
@@ -43,7 +43,7 @@ public class GroupsController
         }
     }
 
-    [HttpPost]
+
     public async Task<ActionResult<Group>> AddGroupAsync(Group group)
     {
         Console.WriteLine("backend " + group.Name);
@@ -98,6 +98,7 @@ public class GroupsController
         return new OkObjectResult(group);
     }
 
+    [HttpPost]
     public async Task<ActionResult> AddTeamAsync(Group newTeam)
     {
         try
@@ -114,6 +115,7 @@ public class GroupsController
         }
     }
 
+    [HttpGet]
     public async Task<ActionResult<IEnumerable<Group>>> GetAllTeamsAsync()
     {
         try
