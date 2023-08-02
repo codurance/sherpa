@@ -1,5 +1,6 @@
 using SherpaBackEnd.Model;
 using SherpaBackEnd.Model.Template;
+using SherpaBackEnd.Repositories;
 using SherpaBackEnd.Serializers;
 using SherpaBackEnd.Services;
 using SherpaBackEnd.Services.Email;

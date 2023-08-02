@@ -1,8 +1,8 @@
-using System.Threading.Tasks;
 using FileHelpers;
 using SherpaBackEnd.Exceptions;
+using SherpaBackEnd.Model.Template;
 
-namespace SherpaBackEnd.Model.Template;
+namespace SherpaBackEnd.Repositories;
 
 public class InMemoryFilesTemplateRepository : ITemplateRepository
 {

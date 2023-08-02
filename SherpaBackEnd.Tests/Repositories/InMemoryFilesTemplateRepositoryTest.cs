@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Model.Template;
+using SherpaBackEnd.Repositories;
 
 namespace SherpaBackEnd.Tests.Repositories;
 

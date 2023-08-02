@@ -5,6 +5,7 @@ using Moq;
 using Newtonsoft.Json;
 using SherpaBackEnd.Controllers;
 using SherpaBackEnd.Model.Template;
+using SherpaBackEnd.Repositories;
 using SherpaBackEnd.Services;
 
 namespace SherpaBackEnd.Tests.Acceptance;
