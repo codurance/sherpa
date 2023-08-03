@@ -38,7 +38,7 @@ public class AssessmentControllerAcceptanceTest
         
         var assessmentResult = Assert.IsType<OkObjectResult>(assessmentRequest.Result);
         var actualAssessment = Assert.IsAssignableFrom<Assessment>(assessmentResult.Value);
-        Assert.Equal(assessment.GroupId, actualAssessment.GroupId);
+        Assert.Equal(assessment.TeamId, actualAssessment.TeamId);
         Assert.Equal(assessment.TemplateId, actualAssessment.TemplateId);
         Assert.Equal(assessment.Name, actualAssessment.Name);
         Assert.Empty(actualAssessment.Surveys);
@@ -60,9 +60,9 @@ public class AssessmentControllerAcceptanceTest
     [Fact]
     public async Task AddNewSurveyToNonExistingAssessment_NotFoundExpected()
     {
-        var groupId = Guid.NewGuid();
+        var teamId = Guid.NewGuid();
         var templateId = Guid.NewGuid();
-        var assessmentToUpdate = new Assessment(groupId, templateId, "test assessment");
+        var assessmentToUpdate = new Assessment(teamId, templateId, "test assessment");
         // _inMemoryAssessmentRepository.AddAssessment(assessmentToUpdate);
 
         var updateAssessment = await _assessmentsController.UpdateAssessmentAsync(assessmentToUpdate);
@@ -73,9 +73,9 @@ public class AssessmentControllerAcceptanceTest
     [Fact]
     public async Task AddNewSurveyWithExistingAssessment_OkResultExpected()
     {
-        var groupId = Guid.NewGuid();
+        var teamId = Guid.NewGuid();
         var templateId = Guid.NewGuid();
-        var assessmentToUpdate = new Assessment(groupId, templateId, "test assessment");
+        var assessmentToUpdate = new Assessment(teamId, templateId, "test assessment");
         _inMemoryAssessmentRepository.AddAssessment(assessmentToUpdate);
 
 
@@ -93,20 +93,20 @@ public class AssessmentControllerAcceptanceTest
     }
 
     [Fact]
-    public async Task AddNewAssessmentAndNewSurveyForExistingGroupWithMembers_OkResultExpected()
+    public async Task AddNewAssessmentAndNewSurveyForExistingTeamWithMembers_OkResultExpected()
     {
-        var group = new Group("Group");
-        group.Members = new List<GroupMember>
+        var team = new Team("Team");
+        team.Members = new List<TeamMember>
         {
             new ("Name A", "LastName A", "Position A", "emaila@mail.com"),
             new ("Name B", "LastName B", "Position B", "emailb@mail.com")
         };
 
         var templateId = Guid.NewGuid();
-        var assessmentToUpdate = new Assessment(group.Id, templateId, "test assessment");
+        var assessmentToUpdate = new Assessment(team.Id, templateId, "test assessment");
         _inMemoryAssessmentRepository.AddAssessment(assessmentToUpdate);
 
-        var emails = group.Members.Select(m => m.Email).ToList();
+        var emails = team.Members.Select(m => m.Email).ToList();
         
         var survey = new Survey(DateOnly.FromDateTime(DateTime.Now), emails);
         var surveysList = new List<Survey> { survey };
@@ -118,33 +118,33 @@ public class AssessmentControllerAcceptanceTest
         
         Assert.NotEmpty(actualUpdatedAssessment.Surveys);
         Assert.Single(actualUpdatedAssessment.Surveys);
-        Assert.Equal(group.Members.Count(), actualUpdatedAssessment.Surveys.First().MembersCount);
+        Assert.Equal(team.Members.Count(), actualUpdatedAssessment.Surveys.First().MembersCount);
     }
 
 
     [Fact]
-    public async Task GetAssessmentsFromSingleGroup_OkResultExpected()
+    public async Task GetAssessmentsFromSingleTeam_OkResultExpected()
     {
         
-        var group = new Group("Group");
-        group.Members = new List<GroupMember>
+        var team = new Team("Team");
+        team.Members = new List<TeamMember>
         {
             new ("Name A", "LastName A", "Position A", "emaila@mail.com"),
             new ("Name B", "LastName B", "Position B", "emailb@mail.com")
         };
-        var anotherGroup = new Group("another Group");
-        anotherGroup.Members = new List<GroupMember>
+        var anotherTeam = new Team("another Team");
+        anotherTeam.Members = new List<TeamMember>
         {
             new ("Name C", "LastName C", "Position C", "emailc@mail.com"),
             new ("Name D", "LastName D", "Position D", "emaild@mail.com")
         };
         
-        var emails = group.Members.Select(m => m.Email).ToList();
-        var anotherEmails = anotherGroup.Members.Select(m => m.Email).ToList();
+        var emails = team.Members.Select(m => m.Email).ToList();
+        var anotherEmails = anotherTeam.Members.Select(m => m.Email).ToList();
 
         var templateId = Guid.NewGuid();
-        var assessmentToGet = new Assessment(group.Id, templateId, "test assessment");
-        var anotherAssessmentToGet = new Assessment(anotherGroup.Id, templateId, "another test assessment");
+        var assessmentToGet = new Assessment(team.Id, templateId, "test assessment");
+        var anotherAssessmentToGet = new Assessment(anotherTeam.Id, templateId, "another test assessment");
 
         assessmentToGet.Surveys = new List<Survey> { new (DateOnly.FromDateTime(DateTime.Now), emails) };
         anotherAssessmentToGet.Surveys = new List<Survey> { new (DateOnly.FromDateTime(DateTime.Now), anotherEmails) };
@@ -160,12 +160,12 @@ public class AssessmentControllerAcceptanceTest
         Assert.NotEmpty(actualAssessments);
         Assert.Equal(2, actualAssessments.Count());
         
-        var getAssessmentRequest = await _assessmentsController.GetAssessmentsAsync(group.Id);
+        var getAssessmentRequest = await _assessmentsController.GetAssessmentsAsync(team.Id);
         var getAssessmentResult = Assert.IsType<OkObjectResult>(getAssessmentRequest.Result);
         var actualAssessment = Assert.IsAssignableFrom<IEnumerable<Assessment>>(getAssessmentResult.Value);
 
 
-        Assert.Contains(actualAssessment, a => a.GroupId == group.Id);
+        Assert.Contains(actualAssessment, a => a.TeamId == team.Id);
 
         var emptyAssessment = await _assessmentsController.GetAssessmentsAsync(Guid.Empty);
         var emptyAssessmentResult = Assert.IsType<OkObjectResult>(emptyAssessment.Result);

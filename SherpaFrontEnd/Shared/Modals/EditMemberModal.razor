@@ -1,34 +1,34 @@
 @using SherpaFrontEnd.Model
 @using SherpaFrontEnd.ViewModel
-<EditForm Model="_editGroupMember" OnValidSubmit="Save">
+<EditForm Model="_editTeamMember" OnValidSubmit="Save">
     <DataAnnotationsValidator/>
     <ValidationSummary/>
 
     <p>
         <label>
             Name:
-            <InputText @bind-Value="_editGroupMember.Name"/>
+            <InputText @bind-Value="_editTeamMember.Name"/>
         </label>
     </p>
     
     <p>
         <label>
             Last Name:
-            <InputText @bind-Value="_editGroupMember.LastName"/>
+            <InputText @bind-Value="_editTeamMember.LastName"/>
         </label>
     </p>
     
     <p>
         <label>
             Position:
-            <InputText @bind-Value="_editGroupMember.Position"/>
+            <InputText @bind-Value="_editTeamMember.Position"/>
         </label>
     </p>
     
     <p>
         <label>
             Email:
-            <InputText type="email" @bind-Value="_editGroupMember.Email"/>
+            <InputText type="email" @bind-Value="_editTeamMember.Email"/>
         </label>
     </p>
     
@@ -43,18 +43,18 @@
     [CascadingParameter]
     BlazoredModalInstance? ModalInstance { get; set; }
 
-    private EditGroupMember _editGroupMember = null!;
+    private EditTeamMember _editTeamMember = null!;
     
     [Parameter] 
     public List<string>? MembersEmails { get; set; }
 
     [Parameter] 
-    public GroupMember? GroupMember { get; set; }
+    public TeamMember? TeamMember { get; set; }
     
 
     protected override void OnInitialized()
     {
-        _editGroupMember = new EditGroupMember(GroupMember, MembersEmails);
+        _editTeamMember = new EditTeamMember(TeamMember, MembersEmails);
     }
     
     private void Cancel()
@@ -64,6 +64,6 @@
 
     private void Save()
     {
-        ModalInstance?.CloseAsync(ModalResult.Ok(_editGroupMember));
+        ModalInstance?.CloseAsync(ModalResult.Ok(_editTeamMember));
     }
 }

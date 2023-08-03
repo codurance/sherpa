@@ -1,0 +1,81 @@
+@using SherpaFrontEnd.Model
+@using SherpaFrontEnd.Services
+@using SherpaFrontEnd.Shared.Modals
+@inject ITeamDataService TeamDataService;
+
+@inject NavigationManager _nav
+
+@page "/teams-list-page"
+
+<div>
+
+    <button id="create-team" onclick="@(() => { })"></button>
+    <input id="create-team-name" onchange="@(() => { })"/>
+    <button id="create-team-confirm" @onclick="@(() => _nav.NavigateTo($"/team-content/{Teams[0].Id}"))"></button>
+
+    @if (Teams is not null && Teams.Count == 0)
+    {
+        <div class="text-center">
+            <h3>You have no teams!</h3>
+            <h3>Do you want to start creating one?</h3>
+            <button class="w-25 btn btn-outline-primary" @onclick="AddTeam">New team!</button>
+        </div>
+    }
+
+    @if (Teams is not null)
+    {
+        <h3>Your teams!</h3>
+
+        <button class="w-25 btn btn-outline-primary" @onclick="AddTeam">Add new team</button>
+
+        foreach (var team in Teams)
+        {
+            <div class="card my-2" style="width: 18rem;" @onclick="@(() => _nav.NavigateTo($"/team-content/{team.Id}"))">
+                <div class="card-body">
+                    <h5 class="card-title">@team.Name</h5>
+                    <p class="card-text">Overall scoring in analysis</p>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <h3>An error has occured - try again later</h3>
+    }
+</div>
+
+@code {
+
+    public List<Team>? Teams { get; set; }
+
+    [CascadingParameter]
+    public IModalService Modal { get; set; } = default!;
+
+    private async Task AddTeam()
+    {
+        var modal = Modal.Show<AddTeamModal>("Add team");
+        var modalResult = await modal.Result;
+
+        if (modalResult.Cancelled)
+        {
+            return;
+        }
+
+        var team = (Team)modalResult.Data;
+
+
+        if (Teams is not null)
+        {
+            if (Teams.Any(g => g.Name == team.Name))
+            {
+                Modal.Show<WarningModal>("Team name must be unique");
+            }
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Teams = await TeamDataService.GetAllTeams();
+    }
+
+}

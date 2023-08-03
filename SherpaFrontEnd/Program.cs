@@ -18,8 +18,8 @@ builder.Services.Configure<JsonSerializerOptions>(options =>
     options.Converters.Add(new DateOnlyJsonConverter());
 });
 
-builder.Services.AddScoped<IGroupMemberService, InMemoryGroupMemberService>();
-builder.Services.AddScoped<IGroupDataService, GroupServiceHttpClient>();
+builder.Services.AddScoped<ITeamMemberService, InMemoryTeamMemberService>();
+builder.Services.AddScoped<ITeamDataService, TeamServiceHttpClient>();
 builder.Services.AddScoped<IAssessmentsDataService, AssessmentsServiceHttpClient>();
 
 builder.Services.AddBlazoredModal();

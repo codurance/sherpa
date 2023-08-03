@@ -24,10 +24,10 @@ public class AssessmentsController
         return new OkObjectResult(assessments);
     }
     
-    [HttpGet("group-assessments/{groupId:guid}")]
-    public async Task<ActionResult<IEnumerable<Assessment>>> GetAssessmentsAsync(Guid groupId)
+    [HttpGet("team-assessments/{teamId:guid}")]
+    public async Task<ActionResult<IEnumerable<Assessment>>> GetAssessmentsAsync(Guid teamId)
     {
-        var assessments = await _assessmentService.GetAssessments(groupId);
+        var assessments = await _assessmentService.GetAssessments(teamId);
         if (assessments is not null)
         {
             return new OkObjectResult(assessments);
@@ -53,7 +53,7 @@ public class AssessmentsController
     public async Task<ActionResult<Assessment>> AddAssessmentAsync(Assessment assessmentDto)
     {
         var assessment = await _assessmentService
-            .AddAssessment(assessmentDto.GroupId, assessmentDto.TemplateId, assessmentDto.Name);
+            .AddAssessment(assessmentDto.TeamId, assessmentDto.TemplateId, assessmentDto.Name);
         
         if (assessment is not null)
         {
@@ -66,7 +66,7 @@ public class AssessmentsController
     [HttpPut]
     public async Task<ActionResult<Assessment>> UpdateAssessmentAsync(Assessment assessmentToUpdate)
     {
-        var assessment = await _assessmentService.GetAssessment(assessmentToUpdate.GroupId, assessmentToUpdate.TemplateId);
+        var assessment = await _assessmentService.GetAssessment(assessmentToUpdate.TeamId, assessmentToUpdate.TemplateId);
         if (assessment is null)
         {
             return new NotFoundResult();

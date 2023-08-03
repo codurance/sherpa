@@ -4,28 +4,28 @@
 @using SherpaFrontEnd.Shared.Tabs
 @using System.Net
 @inject NavigationManager Nav
-@inject IGroupDataService GroupDataService
+@inject ITeamDataService TeamDataService
 @inject IAssessmentsDataService AssessmentsDataService
 
-@page "/group-content/{GroupId:guid?}"
+@page "/team-content/{TeamId:guid?}"
 
-    <h3>@Group?.Name
-        <button class="btn btn-remove" title="Delete group" @onclick="DeleteGroup"><span class="oi oi-trash"></span></button>
+    <h3>@Team?.Name
+        <button class="btn btn-remove" title="Delete team" @onclick="DeleteTeam"><span class="oi oi-trash"></span></button>
     </h3>
 
 
 <TabControl>
     <TabPage Text="Members">
         <Members
-            Group="@Group"
-            OnUpdateGroup="@OnUpdateGroup">
+            Team="@Team"
+            OnUpdateTeam="@OnUpdateTeam">
         </Members>
     </TabPage>
     <TabPage Text="Assessments">
         <Assessments
             SurveyTemplates="@SurveyTemplates"
-            SelectedGroupAssessments="@Assessments"
-            SelectedGroupId="@Group?.Id"
+            SelectedTeamAssessments="@Assessments"
+            SelectedTeamId="@Team?.Id"
             Emails="@Emails"
             OnAddSurvey="@OnAddSurvey"
             OnCreateEvaluation="@OnUpdateAssessment"
@@ -39,9 +39,9 @@
     public RenderFragment ChildContent { get; set; }
     
     [Parameter]
-    public Guid GroupId { get; set; } = Guid.Empty;
+    public Guid TeamId { get; set; } = Guid.Empty;
     
-    public Group? Group { get; set; }
+    public Team? Team { get; set; }
 
     private List<string?> Emails { get; set; } = new();
     
@@ -54,15 +54,15 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Group = await GroupDataService.GetGroup(GroupId);
-        Emails = Group!.Members.Select(m => m.Email).ToList();
+        Team = await TeamDataService.GetTeamById(TeamId);
+        Emails = Team!.Members.Select(m => m.Email).ToList();
         SurveyTemplates = await AssessmentsDataService.GetTemplates();
-        Assessments = await AssessmentsDataService.GetAssessments(GroupId);
+        Assessments = await AssessmentsDataService.GetAssessments(TeamId);
     }
     
-    private async Task OnUpdateGroup(Group group)
+    private async Task OnUpdateTeam(Team team)
     {
-        await GroupDataService.PutGroup(group);
+        await TeamDataService.PutTeam(team);
     }
     
     private async Task OnUpdateAssessment(Assessment assessment)
@@ -73,7 +73,7 @@
     private async Task OnAddSurvey(SurveyTemplate template)
     {
         var assessmentName = $"{template.Name} {DateTime.Now}";
-        var assessment = await AssessmentsDataService.AddAssessment(GroupId, template.Id, assessmentName);
+        var assessment = await AssessmentsDataService.AddAssessment(TeamId, template.Id, assessmentName);
 
         if (assessment is not null)
         {
@@ -81,20 +81,20 @@
         }
     }
 
-    private async void DeleteGroup()
+    private async void DeleteTeam()
     {
-        var modal = Modal.Show<ConfirmationModal>($"Delete {Group!.Name}?");
+        var modal = Modal.Show<ConfirmationModal>($"Delete {Team!.Name}?");
         var modalResult = await modal.Result;
 
         if (!modalResult.Cancelled)
         {
-            var deleteStatus = await GroupDataService.DeleteGroup(GroupId);
+            var deleteStatus = await TeamDataService.DeleteTeam(TeamId);
             if (deleteStatus == HttpStatusCode.OK)
             {
-                Nav.NavigateTo("/groups-list-page");
-                //TODO alert (on groups page) successfully deleted
+                Nav.NavigateTo("/teams-list-page");
+                //TODO alert (on teams page) successfully deleted
             }
-            //TODO alert (on this page) group wasn't deleted
+            //TODO alert (on this page) team wasn't deleted
         }
 
 

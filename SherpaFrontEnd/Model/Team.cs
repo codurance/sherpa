@@ -2,7 +2,7 @@
 
 namespace SherpaFrontEnd.Model;
 
-public class Group
+public class Team
 {
     [Required]
     [MinLength(2)]
@@ -10,14 +10,14 @@ public class Group
     
     public Guid Id { get; init; }
 
-    public List<GroupMember> Members { get; set; } = new();
+    public List<TeamMember> Members { get; set; } = new();
     
-public Group()
+public Team()
 {
     Id = Guid.NewGuid();
 }
 
-public Group(Guid id, string name)
+public Team(Guid id, string name)
 {
     Id = id;
     Name = name;

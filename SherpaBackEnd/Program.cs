@@ -19,8 +19,8 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
-builder.Services.AddSingleton<IGroupRepository, InMemoryGroupRepository>();
-builder.Services.AddSingleton<IGroupsService, GroupsService>();
+builder.Services.AddSingleton<ITeamRepository, InMemoryTeamRepository>();
+builder.Services.AddSingleton<ITeamService, TeamService>();
 builder.Services.AddSingleton<ISurveyRepository, InMemorySurveyRepository>();
 builder.Services.AddSingleton<IAssessmentRepository, InMemoryAssessmentRepository>();
 builder.Services.AddSingleton<IAssessmentService, AssessmentService>();

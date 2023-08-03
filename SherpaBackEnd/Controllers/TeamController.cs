@@ -8,30 +8,30 @@ namespace SherpaBackEnd.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class GroupsController
+public class TeamController
 {
-    private readonly IGroupsService _groupsService;
+    private readonly ITeamService _teamService;
 
 
-    public GroupsController(IGroupsService groupsService)
+    public TeamController(ITeamService teamService)
     {
-        _groupsService = groupsService;
+        _teamService = teamService;
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Group>>> GetGroupsAsync()
+    public async Task<ActionResult<IEnumerable<Team>>> DeprecatedGetAllTeamsAsync()
     {
-        IEnumerable<Group> groups;
+        IEnumerable<Team> teams;
         try
         {
-            groups = await _groupsService.GetGroups();
+            teams = await _teamService.DeprecatedGetAllTeamsAsync();
 
-            if (!groups.Any())
+            if (!teams.Any())
             {
                 return new NotFoundResult();
             }
 
-            return new OkObjectResult(groups);
+            return new OkObjectResult(teams);
         }
         catch (ConnectionToRepositoryUnsuccessfulException repositoryException)
         {
@@ -44,65 +44,65 @@ public class GroupsController
     }
 
     [HttpPost]
-    public async Task<ActionResult<Group>> AddGroupAsync(Group group)
+    public async Task<ActionResult<Team>> DeprecatedAddTeamAsync(Team team)
     {
-        Console.WriteLine("backend " + group.Name);
-        if (String.IsNullOrEmpty(group.Name))
+        Console.WriteLine("backend " + team.Name);
+        if (String.IsNullOrEmpty(team.Name))
         {
             return new BadRequestResult();
         }
 
-        await Task.Run(() => _groupsService.AddGroup(group));
+        await Task.Run(() => _teamService.DeprecatedAddTeamAsync(team));
         return new OkResult();
     }
 
     [HttpGet("{guid:guid}")]
-    public async Task<ActionResult<Group>> GetGroupAsync(Guid guid)
+    public async Task<ActionResult<Team>> GetTeamByIdAsync(Guid guid)
     {
-        var group = await _groupsService.GetGroup(guid);
+        var team = await _teamService.GetTeamByIdAsync(guid);
 
-        if (group is null)
+        if (team is null)
         {
             return new NotFoundResult();
         }
 
-        return new OkObjectResult(group);
+        return new OkObjectResult(team);
     }
 
     [HttpDelete("{guid:guid}")]
-    public async Task<ActionResult<Group>> DeleteGroupAsync(Guid guid)
+    public async Task<ActionResult<Team>> DeleteTeamByIdAsync(Guid guid)
     {
-        var group = await _groupsService.GetGroup(guid);
-        if (group is null)
+        var team = await _teamService.GetTeamByIdAsync(guid);
+        if (team is null)
         {
             return new NotFoundResult();
         }
 
-        group.Delete();
-        await _groupsService.UpdateGroup(group);
+        team.Delete();
+        await _teamService.UpdateTeamByIdAsync(team);
         return new OkResult();
     }
 
     [HttpPut("{guid:guid}")]
-    public async Task<ActionResult<Group>> UpdateGroupAsync(Guid guid, Group group)
+    public async Task<ActionResult<Team>> UpdateTeamAsync(Guid guid, Team team)
     {
-        // TODO use (Group group) signature to not expose too much
-        var groupFound = await _groupsService.GetGroup(guid);
-        if (groupFound is null)
+        // TODO use (Team team) signature to not expose too much
+        var teamFound = await _teamService.GetTeamByIdAsync(guid);
+        if (teamFound is null)
         {
             return new NotFoundResult();
         }
 
-        group.Id = guid;
-        await _groupsService.UpdateGroup(group);
-        return new OkObjectResult(group);
+        team.Id = guid;
+        await _teamService.UpdateTeamByIdAsync(team);
+        return new OkObjectResult(team);
     }
 
-    public async Task<ActionResult> AddTeamAsync(Group newTeam)
+    public async Task<ActionResult> AddTeamAsync(Team newTeam)
     {
         try
         {
-            await _groupsService.AddTeamAsync(newTeam);
+            await _teamService.AddTeamAsync(newTeam);
             return new CreatedResult("", null);
         }
         catch (Exception error)
@@ -114,11 +114,11 @@ public class GroupsController
         }
     }
 
-    public async Task<ActionResult<IEnumerable<Group>>> GetAllTeamsAsync()
+    public async Task<ActionResult<IEnumerable<Team>>> GetAllTeamsAsync()
     {
         try
         {
-            var allTeamsAsync = await _groupsService.GetAllTeamsAsync();
+            var allTeamsAsync = await _teamService.GetAllTeamsAsync();
             return new OkObjectResult(allTeamsAsync);
 
         }

@@ -21,20 +21,20 @@ public class InMemoryAssessmentRepository : IAssessmentRepository
         return await Task.FromResult(_assessments);
     }
 
-    public async Task<IEnumerable<Assessment>> GetAssessments(Guid groupId)
+    public async Task<IEnumerable<Assessment>> GetAssessments(Guid teamId)
     {
-        return await Task.FromResult(_assessments.FindAll(a => a.GroupId == groupId));
+        return await Task.FromResult(_assessments.FindAll(a => a.TeamId == teamId));
     }
 
-    public async Task<Assessment?> GetAssessment(Guid groupId, Guid templateId)
+    public async Task<Assessment?> GetAssessment(Guid teamId, Guid templateId)
     {
-        return await Task.FromResult(_assessments.FirstOrDefault(a => a.GroupId == groupId && a.TemplateId == templateId));
+        return await Task.FromResult(_assessments.FirstOrDefault(a => a.TeamId == teamId && a.TemplateId == templateId));
     }
 
     public Task<Assessment> UpdateAssessment(Assessment assessmentToUpdate)
     {
         var assessmentIndex = _assessments
-            .FindIndex(a => a.GroupId == assessmentToUpdate.GroupId && a.TemplateId == assessmentToUpdate.TemplateId);
+            .FindIndex(a => a.TeamId == assessmentToUpdate.TeamId && a.TemplateId == assessmentToUpdate.TemplateId);
 
         _assessments[assessmentIndex] = assessmentToUpdate;
 

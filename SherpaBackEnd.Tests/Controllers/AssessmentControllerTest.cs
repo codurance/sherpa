@@ -48,14 +48,14 @@ public class AssessmentControllerTest
     {
         var assessment = new Assessment(Guid.NewGuid(), Guid.NewGuid(), "Assessment A");
         
-        _mockService.Setup(m => m.AddAssessment(assessment.GroupId, assessment.TemplateId, assessment.Name))
-            .ReturnsAsync(new Assessment(assessment.GroupId, assessment.TemplateId, assessment.Name));
+        _mockService.Setup(m => m.AddAssessment(assessment.TeamId, assessment.TemplateId, assessment.Name))
+            .ReturnsAsync(new Assessment(assessment.TeamId, assessment.TemplateId, assessment.Name));
 
         var assessmentRequest = await _controller.AddAssessmentAsync(assessment);
         var assessmentResult = Assert.IsType<OkObjectResult>(assessmentRequest.Result);
         var actualAssessment = Assert.IsAssignableFrom<Assessment>(assessmentResult.Value);
         
-        Assert.Equal(assessment.GroupId, actualAssessment.GroupId);
+        Assert.Equal(assessment.TeamId, actualAssessment.TeamId);
         Assert.Equal(assessment.TemplateId, actualAssessment.TemplateId);
         Assert.Equal(assessment.Name, actualAssessment.Name);
         Assert.Empty(actualAssessment.Surveys);
@@ -83,20 +83,20 @@ public class AssessmentControllerTest
     }
 
     [Fact]
-    public async Task AddSurveyForGroupWithMembers_OkResultExpected()
+    public async Task AddSurveyForTeamWithMembers_OkResultExpected()
     {
-        var group = new Group("Group");
-        group.Members = new List<GroupMember>
+        var team = new Team("Team");
+        team.Members = new List<TeamMember>
         {
             new ("Name A", "LastName A", "Position A", "emaila@mail.com"),
             new ("Name B", "LastName B", "Position B", "emailb@mail.com")
         };
-        var assessment = new Assessment(group.Id, Guid.NewGuid(), "assessment");
+        var assessment = new Assessment(team.Id, Guid.NewGuid(), "assessment");
 
         _mockService.Setup(m => m.GetAssessment(It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(assessment);
         
-        var emails = group.Members.Select(m => m.Email).ToList();
+        var emails = team.Members.Select(m => m.Email).ToList();
         var survey = new Survey(DateOnly.FromDateTime(DateTime.Now), emails);
         var surveysList = new List<Survey> { survey };
         assessment.Surveys = surveysList;
@@ -108,20 +108,20 @@ public class AssessmentControllerTest
         var updateAssessmentResult = Assert.IsType<OkObjectResult>(updatedAssessmentRequest.Result);
         var actualUpdatedAssessmentAssessment = Assert.IsAssignableFrom<Assessment>(updateAssessmentResult.Value);
         
-        Assert.Equal(assessment.GroupId, actualUpdatedAssessmentAssessment.GroupId);
+        Assert.Equal(assessment.TeamId, actualUpdatedAssessmentAssessment.TeamId);
         Assert.Equal(assessment.TemplateId, actualUpdatedAssessmentAssessment.TemplateId);
         Assert.Equal(assessment.Name, actualUpdatedAssessmentAssessment.Name);
         Assert.NotEmpty(actualUpdatedAssessmentAssessment.Surveys);
 
         var addedSurvey = actualUpdatedAssessmentAssessment.Surveys.First();
-        Assert.Equal(group.Members.Count(), addedSurvey.MembersCount);
+        Assert.Equal(team.Members.Count(), addedSurvey.MembersCount);
     }
     
     [Fact]
     public async Task DeleteSurveyFromExistingAssessment_OkResultExpected()
     {
-        var group = new Group("Group");
-        var assessment = new Assessment(group.Id, Guid.NewGuid(), "assessment");
+        var team = new Team("Team");
+        var assessment = new Assessment(team.Id, Guid.NewGuid(), "assessment");
 
         var survey = new Survey(DateOnly.FromDateTime(DateTime.Now), new List<string>());
         assessment.Surveys = new List<Survey> { survey };

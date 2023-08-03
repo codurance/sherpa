@@ -11,18 +11,18 @@ public class TeamsAcceptanceTest
     [Fact]
     public async void ShouldBeAbleToCreateTeamAndGetUpdatedListOfTeamsWithNewOne()
     {
-        var emptyGroupList = new List<Group>();
-        var inMemoryGroupRepository = new InMemoryGroupRepository(emptyGroupList);
-        var groupsService = new GroupsService(inMemoryGroupRepository);
-        var groupsController = new GroupsController(groupsService);
+        var emptyTeamsList = new List<Team>();
+        var inMemoryTeamRepository = new InMemoryTeamRepository(emptyTeamsList);
+        var teamService = new TeamService(inMemoryTeamRepository);
+        var teamController = new TeamController(teamService);
 
-        const string groupName = "New group";
-        var newGroup = new Group(groupName);
+        const string teamName = "New team";
+        var newTeam = new Team(teamName);
 
-        await groupsController.AddTeamAsync(newGroup);
+        await teamController.AddTeamAsync(newTeam);
 
-        var actualGroups = await groupsController.GetAllTeamsAsync();
-        var okObjectResult = Assert.IsType<OkObjectResult>(actualGroups.Result);
-        Assert.Equal(emptyGroupList, okObjectResult.Value);
+        var actualTeams = await teamController.GetAllTeamsAsync();
+        var okObjectResult = Assert.IsType<OkObjectResult>(actualTeams.Result);
+        Assert.Equal(emptyTeamsList, okObjectResult.Value);
     }
 }
