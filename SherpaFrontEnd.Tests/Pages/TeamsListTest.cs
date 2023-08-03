@@ -35,4 +35,24 @@ public class TeamListTest
         
         Assert.Equal(team.Name, _renderedComponent.Instance.Teams![0].Name);
     }
+
+    [Fact]
+    public async Task ShouldShowTitle()
+    {
+        var page = _testContext.RenderComponent<TeamsList>();
+        _mockTeamService.Setup(m => m.GetAllTeams()).ReturnsAsync(new List<Team>());
+        
+        var allTeamsTitle = page.FindAll("h1,h2,h3").FirstOrDefault(element => element.InnerHtml.Contains("All teams"));
+        Assert.NotNull(allTeamsTitle);
+    }
+    
+    [Fact]
+    public async Task ShouldShowAddNewTeamButton()
+    {
+        var page = _testContext.RenderComponent<TeamsList>();
+        _mockTeamService.Setup(m => m.GetAllTeams()).ReturnsAsync(new List<Team>());
+        
+        var addNewTeamButton = page.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Create new team"));
+        Assert.NotNull(addNewTeamButton);
+    }
 }
