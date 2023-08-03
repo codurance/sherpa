@@ -17,8 +17,7 @@ public class TeamController
     {
         _teamService = teamService;
     }
-
-    [HttpGet]
+    
     public async Task<ActionResult<IEnumerable<Team>>> DeprecatedGetAllTeamsAsync()
     {
         IEnumerable<Team> teams;
@@ -42,8 +41,7 @@ public class TeamController
             };
         }
     }
-
-    [HttpPost]
+    
     public async Task<ActionResult<Team>> DeprecatedAddTeamAsync(Team team)
     {
         Console.WriteLine("backend " + team.Name);
@@ -98,6 +96,7 @@ public class TeamController
         return new OkObjectResult(team);
     }
 
+    [HttpPost]
     public async Task<ActionResult> AddTeamAsync(Team newTeam)
     {
         try
@@ -114,6 +113,7 @@ public class TeamController
         }
     }
 
+    [HttpGet]
     public async Task<ActionResult<IEnumerable<Team>>> GetAllTeamsAsync()
     {
         try
