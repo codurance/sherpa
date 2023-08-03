@@ -9,7 +9,7 @@ namespace SherpaBackEnd.Tests.Acceptance;
 public class TeamsAcceptanceTest
 {
     [Fact]
-    public async void ShouldBeAbleToCreateTeamAndGetUpdatedListOfTeamsWithNewOne()
+    public async Task ShouldBeAbleToCreateTeamAndGetUpdatedListOfTeamsWithNewOne()
     {
         var emptyTeamsList = new List<Team>();
         var inMemoryTeamRepository = new InMemoryTeamRepository(emptyTeamsList);
