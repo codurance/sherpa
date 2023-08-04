@@ -16,7 +16,7 @@ public class CreateTeamOffcanvasTest
         
         var teamNameLabel = component.FindAll("label").FirstOrDefault(element => element.InnerHtml.Contains("Team's name"));
         var teamNameInputId = teamNameLabel.Attributes.GetNamedItem("for");
-        var teamNameInput = component.FindAll($"#{teamNameInputId}");
+        var teamNameInput = component.FindAll($"#{teamNameInputId.TextContent}");
         Assert.NotNull(teamNameInput);
         
         var continueButton = component.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Confirm"));

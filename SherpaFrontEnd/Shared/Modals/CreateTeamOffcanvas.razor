@@ -6,8 +6,8 @@
     <div class="offcanvas-body">
         <form>
             <label for="team-name-input">Team's name</label>
-            <input id="team-name-input" type="text" required/>
-            <button type="submit">Confirm</button>
+            <input @bind="@_newTeamName" id="team-name-input" type="text" required/>
+            <button onclick="@CreateTeam" type="submit">Confirm</button>
         </form>
         <button>Cancel</button>
     </div>
@@ -16,4 +16,8 @@
 @code {
     [Parameter]
     public string? CanvasId { get; set; }
+
+    private string _newTeamName = "";
+    
+    private async Task CreateTeam(){}
 }

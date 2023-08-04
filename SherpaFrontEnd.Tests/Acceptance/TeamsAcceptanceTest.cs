@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
+using AngleSharp.Dom;
 using Blazored.Modal;
 using Bunit;
 using Bunit.TestDoubles;
@@ -20,18 +21,26 @@ public class TeamsAcceptanceTest
     private readonly Mock<HttpMessageHandler> _httpHandlerMock;
     private readonly Mock<IHttpClientFactory> _factoryHttpClient;
     private readonly TeamServiceHttpClient _teamsService;
+    private readonly FakeNavigationManager _navMan;
+    private readonly Mock<IGuidService> _guidService;
+    private ITestOutputHelper _output;
 
-    public TeamsAcceptanceTest()
+    public TeamsAcceptanceTest(ITestOutputHelper output)
     {
+        _output = output;
+        
         _testCtx = new TestContext();
         _testCtx.Services.AddBlazoredModal();
         _httpHandlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
         _factoryHttpClient = new Mock<IHttpClientFactory>();
         _teamsService = new TeamServiceHttpClient(_factoryHttpClient.Object);
+        _guidService = new Mock<IGuidService>();
         _testCtx.Services.AddSingleton<ITeamDataService>(_teamsService);
+        _testCtx.Services.AddSingleton<IGuidService>(_guidService.Object);
         const string baseUrl = "http://localhost";
         var httpClient = new HttpClient(_httpHandlerMock.Object, false) { BaseAddress = new Uri(baseUrl) };
         _factoryHttpClient.Setup(_ => _.CreateClient("SherpaBackEnd")).Returns(httpClient);
+        _navMan = _testCtx.Services.GetRequiredService<FakeNavigationManager>();
     }
 /*
     [Fact]
@@ -106,8 +115,6 @@ public class TeamsAcceptanceTest
     [Fact]
     private async Task UserShouldBeAbleToNavigateToTeamsPageWithoutTeamsAndSeeItsComponents()
     {
-        _testCtx.Services.AddBlazoredModal();
-        
         var emptyTeamsList = new List<Team>(){};
         var emptyTeamListJson = await JsonContent.Create(emptyTeamsList).ReadAsStringAsync();
         var responseEmpty = new HttpResponseMessage()
@@ -219,11 +226,97 @@ public class TeamsAcceptanceTest
         Assert.NotNull(createNewTeamTitle);
         var teamNameLabel = teamsListComponent.FindAll("label").FirstOrDefault(element => element.InnerHtml.Contains("Team's name"));
         var teamNameInputId = teamNameLabel.Attributes.GetNamedItem("for");
-        var teamNameInput = teamsListComponent.FindAll($"#{teamNameInputId}");
+        var teamNameInput = teamsListComponent.FindAll($"#{teamNameInputId.TextContent}");
         Assert.NotNull(teamNameInput);
         var confirmButton = teamsListComponent.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Confirm"));
         Assert.NotNull(confirmButton);
         var cancelButton = teamsListComponent.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Cancel"));
         Assert.NotNull(cancelButton);
     }
+    
+    [Fact]
+    private async Task ShouldBeAbleCreateATeamAndBeRedirectedToTeamPage()
+    {
+        //GIVEN that an Org coach is on the page for creating a team
+
+        var emptyTeamsList = new List<Team>(){};
+        var emptyTeamListJson = await JsonContent.Create(emptyTeamsList).ReadAsStringAsync();
+        var responseEmpty = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(emptyTeamListJson)
+        };
+
+        _httpHandlerMock
+            .Protected()
+            .SetupSequence<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.Is<HttpRequestMessage>(
+                    m => m.Method.Equals(HttpMethod.Get)),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(responseEmpty);
+        
+        var creationResponse = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.Created,
+        };
+        
+        _httpHandlerMock
+            .Protected()
+            .SetupSequence<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.Is<HttpRequestMessage>(
+                    m => m.Method.Equals(HttpMethod.Post)),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(creationResponse);
+
+        var teamsListComponent = _testCtx.RenderComponent<TeamsList>();
+        
+        var createNewTeamButton = teamsListComponent.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Create new team"));
+        Assert.NotNull(createNewTeamButton);
+        
+        createNewTeamButton.Click();
+        
+        //    WHEN he enters a team name
+        //    and clicks on Confirm
+        
+        var teamId = Guid.NewGuid();
+
+        _guidService.Setup(service => service.GenerateRandomGuid()
+        ).Returns(teamId);
+        
+        var teamNameLabel = teamsListComponent.FindAll("label").FirstOrDefault(element => element.InnerHtml.Contains("Team's name"));
+        var teamNameInputId = teamNameLabel.Attributes.GetNamedItem("for");
+        var teamNameInput = teamsListComponent.Find($"#{teamNameInputId.TextContent}");
+        Assert.NotNull(teamNameInput);
+
+        teamNameInput.Change("Demo team");
+        
+        var confirmButton = teamsListComponent.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Confirm"));
+        Assert.NotNull(confirmButton);
+        
+        confirmButton.Click();
+
+        //    THEN he should be redirected on this Team page (Analysis tab)
+        //and on the Team page he should see the following info:
+        //Team name without Editing
+        //Tab Analysis
+        //the button “Send a new survey“ without functionality
+
+        Assert.Equal($"http://localhost/team-content/{teamId.ToString()}", _navMan.Uri);
+        
+        var teamNameElement = teamsListComponent.FindAll("p").FirstOrDefault(element => element.InnerHtml.Contains("Demo team"));
+        var analysisTab = teamsListComponent.FindAll("div").FirstOrDefault(element => element.InnerHtml.Contains("Analysis"));
+        var sendNewSurveyTeam = teamsListComponent.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Send a new survey"));
+        
+        Assert.NotNull(teamNameElement);
+        Assert.NotNull(analysisTab);
+        Assert.NotNull(sendNewSurveyTeam);
+
+    }
+}
+
+public interface IGuidService
+{
+    public Guid GenerateRandomGuid();
 }
