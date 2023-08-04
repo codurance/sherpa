@@ -25,7 +25,7 @@ public class TeamsAcceptanceTest
     private readonly FakeNavigationManager _navMan;
     private readonly Mock<IGuidService> _guidService;
     private ITestOutputHelper _output;
-    private readonly Mock<IAssessmentsDataService> _assesmentsService;
+    private readonly Mock<IAssessmentsDataService> _assessmentsService;
 
     public TeamsAcceptanceTest(ITestOutputHelper output)
     {
@@ -37,85 +37,16 @@ public class TeamsAcceptanceTest
         _factoryHttpClient = new Mock<IHttpClientFactory>();
         _teamsService = new TeamServiceHttpClient(_factoryHttpClient.Object);
         _guidService = new Mock<IGuidService>();
-        _assesmentsService = new Mock<IAssessmentsDataService>();
+        _assessmentsService = new Mock<IAssessmentsDataService>();
         _testCtx.Services.AddSingleton<ITeamDataService>(_teamsService);
         _testCtx.Services.AddSingleton<IGuidService>(_guidService.Object);
-        _testCtx.Services.AddSingleton<IAssessmentsDataService>(_assesmentsService.Object);
+        _testCtx.Services.AddSingleton<IAssessmentsDataService>(_assessmentsService.Object);
         const string baseUrl = "http://localhost";
         var httpClient = new HttpClient(_httpHandlerMock.Object, false) { BaseAddress = new Uri(baseUrl) };
         _factoryHttpClient.Setup(_ => _.CreateClient("SherpaBackEnd")).Returns(httpClient);
         _navMan = _testCtx.Services.GetRequiredService<FakeNavigationManager>();
     }
-/*
-    [Fact]
-    async Task should_be_able_to_create_team()
-    {
-        var teamId = Guid.NewGuid();
-        const string teamName = "Test Team";
-        var team = new Team(teamId, teamName);
 
-        var testCtx = new TestContext();
-        var httpHandlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
-
-        var factoryHttpClient = new Mock<IHttpClientFactory>();
-        var teamsService = new TeamServiceHttpClient(factoryHttpClient.Object);
-        testCtx.Services.AddSingleton<ITeamDataService>(teamsService);
-        
-        const string baseUrl = "http://localhost";
-        var httpClient = new HttpClient(httpHandlerMock.Object, false) { BaseAddress = new Uri(baseUrl) };
-
-        factoryHttpClient.Setup(_ => _.CreateClient("SherpaBackEnd")).Returns(httpClient);
-
-        var emptyTeamsList = new List<Team>(){new Team(teamId, "monda")};
-        var emptyTeamListJson = await JsonContent.Create(emptyTeamsList).ReadAsStringAsync();
-        var responseEmpty = new HttpResponseMessage()
-        {
-            StatusCode = HttpStatusCode.OK,
-            Content = new StringContent(emptyTeamListJson)
-        };
-
-        httpHandlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get)),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(responseEmpty);
-
-        var teamJson = await JsonContent.Create(team).ReadAsStringAsync();
-        var createdTeamResponse = new HttpResponseMessage()
-        {
-            StatusCode = HttpStatusCode.Created,
-        };
-        
-        httpHandlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Content != null && m.Method.Equals(HttpMethod.Post) && m.Content.Equals(teamJson) && m.RequestUri!.AbsoluteUri.Contains("/team")),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(createdTeamResponse);
-
-        var teamsPage = testCtx.RenderComponent<TeamsList>();
-
-        var createTeamButton = teamsPage.Find("#create-team");
-        createTeamButton.Click();
-
-        var teamNameFormInput = teamsPage.Find("#create-team-name");
-        teamNameFormInput.Change(teamName);
-
-        var confirmTeamCreationButton = teamsPage.Find("#create-team-confirm");
-        confirmTeamCreationButton.Click();
-
-
-        var navMan = testCtx.Services.GetRequiredService<FakeNavigationManager>();
-        Assert.Equal( $"{baseUrl}/team-content/{teamId}", navMan.Uri);
-        
-    } */
-
-       
     [Fact]
     private async Task UserShouldBeAbleToNavigateToTeamsPageWithoutTeamsAndSeeItsComponents()
     {
