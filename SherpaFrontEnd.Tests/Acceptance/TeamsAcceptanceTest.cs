@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
 using AngleSharp.Dom;
 using Blazored.Modal;
 using Bunit;
@@ -235,7 +236,7 @@ public class TeamsAcceptanceTest
     }
     
     [Fact]
-    private async Task ShouldBeAbleCreateATeamAndBeRedirectedToTeamPage()
+    private async Task ShouldBeAbleToCreateATeamAndBeRedirectedToTeamPage()
     {
         //GIVEN that an Org coach is on the page for creating a team
 
@@ -285,11 +286,14 @@ public class TeamsAcceptanceTest
         _guidService.Setup(service => service.GenerateRandomGuid()
         ).Returns(teamId);
 
+        const string teamName = "Team name";
+        var newTeam = new Team(teamId, teamName);
+        var newTeamAsJson = await JsonContent.Create(newTeam).ReadAsStringAsync();
+        
         var teamResponse = new HttpResponseMessage()
         {
             StatusCode = HttpStatusCode.OK,
-            // TODO: Change this
-            Content = null
+            Content = new StringContent(newTeamAsJson)
         };
         
         _httpHandlerMock
