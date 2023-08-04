@@ -16,11 +16,22 @@ namespace BlazorApp.Tests.Acceptance;
 
 public class TeamsAcceptanceTest
 {
-    private readonly ITestOutputHelper _output;
+    private readonly TestContext _testCtx;
+    private readonly Mock<HttpMessageHandler> _httpHandlerMock;
+    private readonly Mock<IHttpClientFactory> _factoryHttpClient;
+    private readonly TeamServiceHttpClient _teamsService;
 
-    public TeamsAcceptanceTest(ITestOutputHelper output)
+    public TeamsAcceptanceTest()
     {
-        this._output = output;
+        _testCtx = new TestContext();
+        _testCtx.Services.AddBlazoredModal();
+        _httpHandlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
+        _factoryHttpClient = new Mock<IHttpClientFactory>();
+        _teamsService = new TeamServiceHttpClient(_factoryHttpClient.Object);
+        _testCtx.Services.AddSingleton<ITeamDataService>(_teamsService);
+        const string baseUrl = "http://localhost";
+        var httpClient = new HttpClient(_httpHandlerMock.Object, false) { BaseAddress = new Uri(baseUrl) };
+        _factoryHttpClient.Setup(_ => _.CreateClient("SherpaBackEnd")).Returns(httpClient);
     }
 /*
     [Fact]
@@ -91,22 +102,12 @@ public class TeamsAcceptanceTest
         
     } */
 
+       
     [Fact]
     private async Task UserShouldBeAbleToNavigateToTeamsPageWithoutTeamsAndSeeItsComponents()
     {
-        var testCtx = new TestContext();
-        testCtx.Services.AddBlazoredModal();
-
-        var httpHandlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
-
-        var factoryHttpClient = new Mock<IHttpClientFactory>();
-        var teamsService = new TeamServiceHttpClient(factoryHttpClient.Object);
-        testCtx.Services.AddSingleton<ITeamDataService>(teamsService);
-
-        const string baseUrl = "http://localhost";
-        var httpClient = new HttpClient(httpHandlerMock.Object, false) { BaseAddress = new Uri(baseUrl) };
-        factoryHttpClient.Setup(_ => _.CreateClient("SherpaBackEnd")).Returns(httpClient);
-
+        _testCtx.Services.AddBlazoredModal();
+        
         var emptyTeamsList = new List<Team>(){};
         var emptyTeamListJson = await JsonContent.Create(emptyTeamsList).ReadAsStringAsync();
         var responseEmpty = new HttpResponseMessage()
@@ -115,7 +116,7 @@ public class TeamsAcceptanceTest
             Content = new StringContent(emptyTeamListJson)
         };
 
-        httpHandlerMock
+        _httpHandlerMock
             .Protected()
             .SetupSequence<Task<HttpResponseMessage>>(
                 "SendAsync",
@@ -124,15 +125,14 @@ public class TeamsAcceptanceTest
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(responseEmpty);
         
-        var appComponent = testCtx.RenderComponent<App>();
+        var appComponent = _testCtx.RenderComponent<App>();
 
 
         var targetPage = "teams-list-page";
         var teamsPageLink = appComponent.Find($"a[href='{targetPage}']");
         Assert.NotNull(teamsPageLink);
-        var navManager = testCtx.Services.GetRequiredService<FakeNavigationManager>();
+        var navManager = _testCtx.Services.GetRequiredService<FakeNavigationManager>();
         navManager.NavigateTo($"/{targetPage}");
-        _output.WriteLine(appComponent.Markup);
 
         var allTeamsTitle = appComponent.FindAll("h1,h2,h3").FirstOrDefault(element => element.InnerHtml.Contains("All teams"));
         Assert.NotNull(allTeamsTitle);
@@ -144,19 +144,6 @@ public class TeamsAcceptanceTest
     [Fact]
     private async Task UserShouldBeAbleToNavigateToTeamsPageWithTeamsAndSeeItsComponents()
     {
-        var testCtx = new TestContext();
-        testCtx.Services.AddBlazoredModal();
-
-        var httpHandlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
-
-        var factoryHttpClient = new Mock<IHttpClientFactory>();
-        var teamsService = new TeamServiceHttpClient(factoryHttpClient.Object);
-        testCtx.Services.AddSingleton<ITeamDataService>(teamsService);
-
-        const string baseUrl = "http://localhost";
-        var httpClient = new HttpClient(httpHandlerMock.Object, false) { BaseAddress = new Uri(baseUrl) };
-        factoryHttpClient.Setup(_ => _.CreateClient("SherpaBackEnd")).Returns(httpClient);
-
         var teamName = "Team name";
         var teamsList = new List<Team>(){new Team(Guid.NewGuid(), teamName)};
         var reamListJson = await JsonContent.Create(teamsList).ReadAsStringAsync();
@@ -166,7 +153,7 @@ public class TeamsAcceptanceTest
             Content = new StringContent(reamListJson)
         };
 
-        httpHandlerMock
+        _httpHandlerMock
             .Protected()
             .SetupSequence<Task<HttpResponseMessage>>(
                 "SendAsync",
@@ -175,15 +162,14 @@ public class TeamsAcceptanceTest
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(response);
         
-        var appComponent = testCtx.RenderComponent<App>();
+        var appComponent = _testCtx.RenderComponent<App>();
 
 
         var targetPage = "teams-list-page";
         var teamsPageLink = appComponent.Find($"a[href='{targetPage}']");
         Assert.NotNull(teamsPageLink);
-        var navManager = testCtx.Services.GetRequiredService<FakeNavigationManager>();
+        var navManager = _testCtx.Services.GetRequiredService<FakeNavigationManager>();
         navManager.NavigateTo($"/{targetPage}");
-        _output.WriteLine(appComponent.Markup);
 
         var allTeamsTitle = appComponent.FindAll("h1,h2,h3").FirstOrDefault(element => element.InnerHtml.Contains("All teams"));
         Assert.NotNull(allTeamsTitle);
@@ -198,17 +184,7 @@ public class TeamsAcceptanceTest
     [Fact]
     private async Task ShouldBeAbleToSeeCreateNewTeamFormWhenClickingOnCreateNewTeamInTeamsPage()
     {
-        // GIVEN that an Org coach is on the All Teams page
-        var testCtx = new TestContext();
-        var httpHandlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
-
-        var factoryHttpClient = new Mock<IHttpClientFactory>();
-        var teamsService = new TeamServiceHttpClient(factoryHttpClient.Object);
-        testCtx.Services.AddSingleton<ITeamDataService>(teamsService);
-
-        const string baseUrl = "http://localhost";
-        var httpClient = new HttpClient(httpHandlerMock.Object, false) { BaseAddress = new Uri(baseUrl) };
-        factoryHttpClient.Setup(_ => _.CreateClient("SherpaBackEnd")).Returns(httpClient);
+        // GIVEN that an Org coach is on the All Teams pag
 
         var emptyTeamsList = new List<Team>(){};
         var emptyTeamListJson = await JsonContent.Create(emptyTeamsList).ReadAsStringAsync();
@@ -218,7 +194,7 @@ public class TeamsAcceptanceTest
             Content = new StringContent(emptyTeamListJson)
         };
 
-        httpHandlerMock
+        _httpHandlerMock
             .Protected()
             .SetupSequence<Task<HttpResponseMessage>>(
                 "SendAsync",
@@ -227,18 +203,21 @@ public class TeamsAcceptanceTest
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(responseEmpty);
 
-        var teamsListComponent = testCtx.RenderComponent<TeamsList>();
+        var teamsListComponent = _testCtx.RenderComponent<TeamsList>();
         
         // WHEN he clicks on “+ Create a new team“
         var createNewTeamButton = teamsListComponent.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Create new team"));
         Assert.NotNull(createNewTeamButton);
         
+        createNewTeamButton.Click();
+        
+        
         // THEN he should be redirected on the page for creating a team
         //     with one mandatory text field “Team´s name”
         //     and 2 buttons Cancel and Confirm
-        var createNewTeamTitle = teamsListComponent.FindAll("h1,h2,h3").FirstOrDefault(element => element.InnerHtml.Contains("Create new team"));
+        var createNewTeamTitle = teamsListComponent.FindAll("h3").FirstOrDefault(element => element.InnerHtml.Contains("Create new team"));
         Assert.NotNull(createNewTeamTitle);
-        var teamNameLabel = teamsListComponent.FindAll("label").FirstOrDefault(element => element.InnerHtml.Contains("Team name"));
+        var teamNameLabel = teamsListComponent.FindAll("label").FirstOrDefault(element => element.InnerHtml.Contains("Team's name"));
         var teamNameInputId = teamNameLabel.Attributes.GetNamedItem("for");
         var teamNameInput = teamsListComponent.FindAll($"#{teamNameInputId}");
         Assert.NotNull(teamNameInput);
