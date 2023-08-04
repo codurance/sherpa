@@ -1,4 +1,4 @@
-namespace BlazorApp.Tests.Acceptance;
+namespace SherpaFrontEnd.Services;
 
 public interface IGuidService
 {

@@ -11,11 +11,32 @@ namespace BlazorApp.Tests.Shared.Modals;
 
 public class CreateTeamOffcanvasTest
 {
+    private readonly TestContext _testCtx;
+    private readonly Mock<IGuidService> _guidService;
+    private readonly Mock<ITeamDataService> _teamService;
+    private readonly FakeNavigationManager _navMan;
+    private readonly Guid _teamId;
+
+    public CreateTeamOffcanvasTest()
+    {
+        _testCtx = new TestContext();
+        _guidService = new Mock<IGuidService>();
+        _testCtx.Services.AddSingleton<IGuidService>(_guidService.Object);
+        
+        _teamId = Guid.NewGuid();
+        _guidService.Setup(s => s.GenerateRandomGuid()).Returns(_teamId);
+        
+        _teamService = new Mock<ITeamDataService>();
+        _testCtx.Services.AddSingleton<ITeamDataService>(_teamService.Object);
+
+        _navMan = _testCtx.Services.GetRequiredService<FakeNavigationManager>();
+    }
+    
+
     [Fact]
     public void ShouldRenderAllInputsAndButtons()
     {
-        var testCtx = new TestContext();
-        var component = testCtx.RenderComponent<CreateTeamOffcanvas>();
+        var component = _testCtx.RenderComponent<CreateTeamOffcanvas>();
         
         var createNewTeamTitle = component.FindAll("h1,h2,h3").FirstOrDefault(element => element.InnerHtml.Contains("Create new team"));
         Assert.NotNull(createNewTeamTitle);
@@ -35,19 +56,7 @@ public class CreateTeamOffcanvasTest
     [Fact]
     public async Task ShouldCallServiceAndRedirectToCreatedTeamPage()
     {
-        var testCtx = new TestContext();
-        var guidService = new Mock<IGuidService>();
-        testCtx.Services.AddSingleton<IGuidService>(guidService.Object);
-        
-        var teamId = Guid.NewGuid();
-        guidService.Setup(s => s.GenerateRandomGuid()).Returns(teamId);
-        
-        var teamService = new Mock<ITeamDataService>();
-        testCtx.Services.AddSingleton<ITeamDataService>(teamService.Object);
-
-        var navMan = testCtx.Services.GetRequiredService<FakeNavigationManager>();
-
-        var component = testCtx.RenderComponent<CreateTeamOffcanvas>();
+        var component = _testCtx.RenderComponent<CreateTeamOffcanvas>();
         
         var teamNameLabel = component.FindAll("label").FirstOrDefault(element => element.InnerHtml.Contains("Team's name"));
         var teamNameInputId = teamNameLabel.Attributes.GetNamedItem("for");
@@ -62,7 +71,7 @@ public class CreateTeamOffcanvasTest
         
         confirmButton.Click();
         
-        teamService.Verify(service => service.AddTeam(It.IsAny<Team>()));
-        Assert.Equal($"http://localhost/team-content/{teamId.ToString()}", navMan.Uri);
+        _teamService.Verify(service => service.AddTeam(It.IsAny<Team>()));
+        Assert.Equal($"http://localhost/team-content/{_teamId.ToString()}", _navMan.Uri);
     }
 }

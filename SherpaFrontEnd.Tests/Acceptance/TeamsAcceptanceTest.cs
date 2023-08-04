@@ -332,6 +332,5 @@ public class TeamsAcceptanceTest
         Assert.NotNull(teamNameElement);
         Assert.NotNull(analysisTab);
         Assert.NotNull(sendNewSurveyTeam);
-
     }
 }

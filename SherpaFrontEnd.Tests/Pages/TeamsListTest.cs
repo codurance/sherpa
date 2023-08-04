@@ -1,4 +1,5 @@
 using AngleSharp.Common;
+using BlazorApp.Tests.Acceptance;
 using Bunit;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
@@ -15,12 +16,15 @@ public class TeamListTest
 {
     private readonly TestContext _testContext;
     private readonly Mock<ITeamDataService> _mockTeamService;
+    private readonly Mock<IGuidService> _mockGuidService;
 
     public TeamListTest()
     {
         _testContext = new TestContext();
         _mockTeamService = new Mock<ITeamDataService>();
         _testContext.Services.AddScoped(s => _mockTeamService.Object);
+        _mockGuidService = new Mock<IGuidService>();
+        _testContext.Services.AddScoped(s => _mockGuidService.Object);
     }
 
     [Fact]
