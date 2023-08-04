@@ -66,4 +66,21 @@ public class TeamListTest
         var teamNameElement = page.FindAll("h5").FirstOrDefault(element => element.InnerHtml.Contains(teamName));
         Assert.NotNull(teamNameElement);
     }
+
+    [Fact]
+    public async Task ShouldDisplayCreateNewTeamFormWhenClickingOnCreateNewTeam()
+    {
+        _mockTeamService.Setup(m => m.GetAllTeams()).ReturnsAsync(new List<Team>());
+        var page = _testContext.RenderComponent<TeamsList>();
+        
+        var createNewTeamButton = page.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Create new team"));
+        Assert.NotNull(createNewTeamButton);
+        
+        createNewTeamButton.Click();
+
+        page.WaitForElement("#create-new-team-form[role='dialog']");
+        var formContainer = page.Find("#create-new-team-form");
+        
+        Assert.Contains("show", formContainer.ClassList);
+    }
 }
