@@ -1,31 +1,25 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
-using System.Net.Sockets;
 using Blazored.Modal;
-using Blazored.Modal.Services;
 using Bunit;
 using Bunit.TestDoubles;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Moq.Protected;
 using SherpaFrontEnd;
 using SherpaFrontEnd.Model;
-using SherpaFrontEnd.Pages;
 using SherpaFrontEnd.Services;
-using SherpaFrontEnd.Shared.Modals;
 using Xunit.Abstractions;
 
-namespace BlazorApp.Tests.Pages;
+namespace BlazorApp.Tests.Acceptance;
 
 public class TeamsAcceptanceTest
 {
-    private ITestOutputHelper output;
+    private readonly ITestOutputHelper _output;
 
     public TeamsAcceptanceTest(ITestOutputHelper output)
     {
-        this.output = output;
+        this._output = output;
     }
 /*
     [Fact]
@@ -97,7 +91,7 @@ public class TeamsAcceptanceTest
     } */
 
     [Fact]
-    async Task ShouldBeAbleToNavigateToTeamsPageAndSeeItsComponents()
+    private async Task UserShouldBeAbleToNavigateToTeamsPageWithoutTeamsAndSeeItsComponents()
     {
         var testCtx = new TestContext();
         testCtx.Services.AddBlazoredModal();
@@ -137,12 +131,66 @@ public class TeamsAcceptanceTest
         Assert.NotNull(teamsPageLink);
         var navManager = testCtx.Services.GetRequiredService<FakeNavigationManager>();
         navManager.NavigateTo($"/{targetPage}");
-        output.WriteLine(appComponent.Markup);
+        _output.WriteLine(appComponent.Markup);
 
         var allTeamsTitle = appComponent.FindAll("h1,h2,h3").FirstOrDefault(element => element.InnerHtml.Contains("All teams"));
         Assert.NotNull(allTeamsTitle);
         
         var createTeamButton = appComponent.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Create new team"));
         Assert.NotNull(createTeamButton);
+    }
+    
+    [Fact]
+    private async Task UserShouldBeAbleToNavigateToTeamsPageWithTeamsAndSeeItsComponents()
+    {
+        var testCtx = new TestContext();
+        testCtx.Services.AddBlazoredModal();
+
+        var httpHandlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
+
+        var factoryHttpClient = new Mock<IHttpClientFactory>();
+        var teamsService = new TeamServiceHttpClient(factoryHttpClient.Object);
+        testCtx.Services.AddSingleton<ITeamDataService>(teamsService);
+
+        const string baseUrl = "http://localhost";
+        var httpClient = new HttpClient(httpHandlerMock.Object, false) { BaseAddress = new Uri(baseUrl) };
+        factoryHttpClient.Setup(_ => _.CreateClient("SherpaBackEnd")).Returns(httpClient);
+
+        var teamName = "Team name";
+        var teamsList = new List<Team>(){new Team(Guid.NewGuid(), teamName)};
+        var reamListJson = await JsonContent.Create(teamsList).ReadAsStringAsync();
+        var response = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(reamListJson)
+        };
+
+        httpHandlerMock
+            .Protected()
+            .SetupSequence<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.Is<HttpRequestMessage>(
+                    m => m.Method.Equals(HttpMethod.Get)),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(response);
+        
+        var appComponent = testCtx.RenderComponent<App>();
+
+
+        var targetPage = "teams-list-page";
+        var teamsPageLink = appComponent.Find($"a[href='{targetPage}']");
+        Assert.NotNull(teamsPageLink);
+        var navManager = testCtx.Services.GetRequiredService<FakeNavigationManager>();
+        navManager.NavigateTo($"/{targetPage}");
+        _output.WriteLine(appComponent.Markup);
+
+        var allTeamsTitle = appComponent.FindAll("h1,h2,h3").FirstOrDefault(element => element.InnerHtml.Contains("All teams"));
+        Assert.NotNull(allTeamsTitle);
+        
+        var createTeamButton = appComponent.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Create new team"));
+        Assert.NotNull(createTeamButton);
+        
+        var teamNameElement = appComponent.FindAll("h5").FirstOrDefault(element => element.InnerHtml.Contains(teamName));
+        Assert.NotNull(teamNameElement);
     }
 }

@@ -39,8 +39,8 @@ public class TeamListTest
     [Fact]
     public async Task ShouldShowTitle()
     {
-        var page = _testContext.RenderComponent<TeamsList>();
         _mockTeamService.Setup(m => m.GetAllTeams()).ReturnsAsync(new List<Team>());
+        var page = _testContext.RenderComponent<TeamsList>();
         
         var allTeamsTitle = page.FindAll("h1,h2,h3").FirstOrDefault(element => element.InnerHtml.Contains("All teams"));
         Assert.NotNull(allTeamsTitle);
@@ -49,10 +49,21 @@ public class TeamListTest
     [Fact]
     public async Task ShouldShowAddNewTeamButton()
     {
-        var page = _testContext.RenderComponent<TeamsList>();
         _mockTeamService.Setup(m => m.GetAllTeams()).ReturnsAsync(new List<Team>());
+        var page = _testContext.RenderComponent<TeamsList>();
         
         var addNewTeamButton = page.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Create new team"));
         Assert.NotNull(addNewTeamButton);
+    }
+    
+    [Fact]
+    public async Task ShouldShowTeamsNameIfTheyExist()
+    {
+        const string teamName = "Team name";
+        _mockTeamService.Setup(m => m.GetAllTeams()).ReturnsAsync(new List<Team>(){new Team(Guid.NewGuid(), teamName)});
+        var page = _testContext.RenderComponent<TeamsList>();
+        
+        var teamNameElement = page.FindAll("h5").FirstOrDefault(element => element.InnerHtml.Contains(teamName));
+        Assert.NotNull(teamNameElement);
     }
 }
