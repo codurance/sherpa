@@ -21,6 +21,7 @@ builder.Services.Configure<JsonSerializerOptions>(options =>
 builder.Services.AddScoped<ITeamMemberService, InMemoryTeamMemberService>();
 builder.Services.AddScoped<ITeamDataService, TeamServiceHttpClient>();
 builder.Services.AddScoped<IAssessmentsDataService, AssessmentsServiceHttpClient>();
+builder.Services.AddScoped<ITemplateService, TemplateService>();
 
 builder.Services.AddBlazoredModal();
 
