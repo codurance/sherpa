@@ -25,6 +25,7 @@ public class TeamsAcceptanceTest
     private readonly FakeNavigationManager _navMan;
     private readonly Mock<IGuidService> _guidService;
     private ITestOutputHelper _output;
+    private readonly Mock<IAssessmentsDataService> _assesmentsService;
 
     public TeamsAcceptanceTest(ITestOutputHelper output)
     {
@@ -36,8 +37,10 @@ public class TeamsAcceptanceTest
         _factoryHttpClient = new Mock<IHttpClientFactory>();
         _teamsService = new TeamServiceHttpClient(_factoryHttpClient.Object);
         _guidService = new Mock<IGuidService>();
+        _assesmentsService = new Mock<IAssessmentsDataService>();
         _testCtx.Services.AddSingleton<ITeamDataService>(_teamsService);
         _testCtx.Services.AddSingleton<IGuidService>(_guidService.Object);
+        _testCtx.Services.AddSingleton<IAssessmentsDataService>(_assesmentsService.Object);
         const string baseUrl = "http://localhost";
         var httpClient = new HttpClient(_httpHandlerMock.Object, false) { BaseAddress = new Uri(baseUrl) };
         _factoryHttpClient.Setup(_ => _.CreateClient("SherpaBackEnd")).Returns(httpClient);
@@ -271,7 +274,9 @@ public class TeamsAcceptanceTest
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(creationResponse);
 
-        var teamsListComponent = _testCtx.RenderComponent<TeamsList>();
+        var teamsListComponent = _testCtx.RenderComponent<App>();
+        
+        _navMan.NavigateTo("/teams-list-page");
         
         var createNewTeamButton = teamsListComponent.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Create new team"));
         Assert.NotNull(createNewTeamButton);
@@ -325,8 +330,15 @@ public class TeamsAcceptanceTest
 
         Assert.Equal($"http://localhost/team-content/{teamId.ToString()}", _navMan.Uri);
         
-        var teamNameElement = teamsListComponent.FindAll("p").FirstOrDefault(element => element.InnerHtml.Contains("Demo team"));
-        var analysisTab = teamsListComponent.FindAll("div").FirstOrDefault(element => element.InnerHtml.Contains("Analysis"));
+        _navMan.NavigateTo($"/team-content/{teamId.ToString()}");
+
+        _output.WriteLine(_navMan.Uri);
+        _output.WriteLine(teamsListComponent.Markup);
+        teamsListComponent.WaitForState(() => teamsListComponent.FindAll("h3").FirstOrDefault(element => element.InnerHtml.Contains(teamName)) != null);
+        
+
+        var teamNameElement = teamsListComponent.FindAll("h3").FirstOrDefault(element => element.InnerHtml.Contains(teamName));
+        var analysisTab = teamsListComponent.FindAll("li").FirstOrDefault(element => element.InnerHtml.Contains("Analysis"));
         var sendNewSurveyTeam = teamsListComponent.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Send a new survey"));
         
         Assert.NotNull(teamNameElement);

@@ -26,15 +26,22 @@ public class TeamContentTest
     [Fact]
     public void SingleTeamIsRendered()
     {
+        const string teamName = "Demo team";
         var team = new Team
         {
-            Name = "Team A",
+            Name = teamName,
             Id = Guid.NewGuid()
         };
 
         _mockTeamService.Setup(m => m.GetTeamById(It.IsAny<Guid>())).ReturnsAsync(team);
-        _renderedComponent = _testContext.RenderComponent<TeamContent>();
 
-        Assert.Equal(team.Name, _renderedComponent.Instance.Team!.Name);
+        var teamDetailsPage = _testContext.RenderComponent<TeamContent>();
+        var teamNameElement = teamDetailsPage.FindAll("h3").FirstOrDefault(element => element.InnerHtml.Contains(teamName));
+        var analysisTab = teamDetailsPage.FindAll("li").FirstOrDefault(element => element.InnerHtml.Contains("Analysis"));
+        var sendNewSurveyTeam = teamDetailsPage.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Send a new survey"));
+        
+        Assert.NotNull(teamNameElement);
+        Assert.NotNull(analysisTab);
+        Assert.NotNull(sendNewSurveyTeam);
     }
 }

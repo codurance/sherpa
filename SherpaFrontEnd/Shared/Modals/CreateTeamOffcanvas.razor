@@ -10,11 +10,9 @@
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
-        <form>
-            <label for="team-name-input">Team's name</label>
-            <input @bind="@_newTeamName" id="team-name-input" type="text" required/>
-            <button onclick="@CreateTeam" type="submit">Confirm</button>
-        </form>
+        <label for="team-name-input">Team's name</label>
+        <input @bind="@_newTeamName" id="team-name-input" type="text" required/>
+        <button onclick="@CreateTeam">Confirm</button>
         <button>Cancel</button>
     </div>
 </div>
@@ -30,7 +28,8 @@
     {
         var teamId = GuidService.GenerateRandomGuid();
         await TeamDataService.AddTeam(new Team(teamId, _newTeamName));
-        NavManager.NavigateTo($"/team-content/{teamId.ToString()}");
+        var newUri = NavManager.BaseUri + $"team-content/{teamId.ToString()}";
+        NavManager.NavigateTo(newUri);
     }
 
 }
