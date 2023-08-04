@@ -1,8 +1,15 @@
+@using SherpaFrontEnd.Services
+@using SherpaFrontEnd.Model
+@using BlazorApp.Tests.Acceptance
+@inject ITeamDataService TeamDataService;
+@inject IGuidService GuidService;
+@inject NavigationManager NavManager
+
 <div class="offcanvas offcanvas-start" tabindex="-1" id="@CanvasId" aria-labelledby="offcanvasExampleLabel">
-      <div class="offcanvas-header">
+    <div class="offcanvas-header">
         <h3 class="offcanvas-title" id="offcanvasExampleLabel">Create new team</h3>
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-      </div>
+    </div>
     <div class="offcanvas-body">
         <form>
             <label for="team-name-input">Team's name</label>
@@ -11,13 +18,20 @@
         </form>
         <button>Cancel</button>
     </div>
-    </div>
+</div>
 
 @code {
+
     [Parameter]
     public string? CanvasId { get; set; }
 
     private string _newTeamName = "";
-    
-    private async Task CreateTeam(){}
+
+    private async Task CreateTeam()
+    {
+        var teamId = GuidService.GenerateRandomGuid();
+        await TeamDataService.AddTeam(new Team(teamId, _newTeamName));
+        NavManager.NavigateTo($"/team-content/{teamId.ToString()}");
+    }
+
 }

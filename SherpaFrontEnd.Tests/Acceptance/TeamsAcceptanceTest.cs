@@ -335,8 +335,3 @@ public class TeamsAcceptanceTest
 
     }
 }
-
-public interface IGuidService
-{
-    public Guid GenerateRandomGuid();
-}
