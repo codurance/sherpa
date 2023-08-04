@@ -8,6 +8,7 @@ using Moq;
 using Moq.Protected;
 using SherpaFrontEnd;
 using SherpaFrontEnd.Model;
+using SherpaFrontEnd.Pages;
 using SherpaFrontEnd.Services;
 using Xunit.Abstractions;
 
@@ -192,5 +193,58 @@ public class TeamsAcceptanceTest
         
         var teamNameElement = appComponent.FindAll("h5").FirstOrDefault(element => element.InnerHtml.Contains(teamName));
         Assert.NotNull(teamNameElement);
+    }
+
+    [Fact]
+    private async Task ShouldBeAbleToSeeCreateNewTeamFormWhenClickingOnCreateNewTeamInTeamsPage()
+    {
+        // GIVEN that an Org coach is on the All Teams page
+        var testCtx = new TestContext();
+        var httpHandlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
+
+        var factoryHttpClient = new Mock<IHttpClientFactory>();
+        var teamsService = new TeamServiceHttpClient(factoryHttpClient.Object);
+        testCtx.Services.AddSingleton<ITeamDataService>(teamsService);
+
+        const string baseUrl = "http://localhost";
+        var httpClient = new HttpClient(httpHandlerMock.Object, false) { BaseAddress = new Uri(baseUrl) };
+        factoryHttpClient.Setup(_ => _.CreateClient("SherpaBackEnd")).Returns(httpClient);
+
+        var emptyTeamsList = new List<Team>(){};
+        var emptyTeamListJson = await JsonContent.Create(emptyTeamsList).ReadAsStringAsync();
+        var responseEmpty = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(emptyTeamListJson)
+        };
+
+        httpHandlerMock
+            .Protected()
+            .SetupSequence<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.Is<HttpRequestMessage>(
+                    m => m.Method.Equals(HttpMethod.Get)),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(responseEmpty);
+
+        var teamsListComponent = testCtx.RenderComponent<TeamsList>();
+        
+        // WHEN he clicks on “+ Create a new team“
+        var createNewTeamButton = teamsListComponent.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Create new team"));
+        Assert.NotNull(createNewTeamButton);
+        
+        // THEN he should be redirected on the page for creating a team
+        //     with one mandatory text field “Team´s name”
+        //     and 2 buttons Cancel and Confirm
+        var createNewTeamTitle = teamsListComponent.FindAll("h1,h2,h3").FirstOrDefault(element => element.InnerHtml.Contains("Create new team"));
+        Assert.NotNull(createNewTeamTitle);
+        var teamNameLabel = teamsListComponent.FindAll("label").FirstOrDefault(element => element.InnerHtml.Contains("Team name"));
+        var teamNameInputId = teamNameLabel.Attributes.GetNamedItem("for");
+        var teamNameInput = teamsListComponent.FindAll($"#{teamNameInputId}");
+        Assert.NotNull(teamNameInput);
+        var confirmButton = teamsListComponent.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Confirm"));
+        Assert.NotNull(confirmButton);
+        var cancelButton = teamsListComponent.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Cancel"));
+        Assert.NotNull(cancelButton);
     }
 }
