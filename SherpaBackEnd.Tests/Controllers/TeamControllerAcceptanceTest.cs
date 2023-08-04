@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Moq;
 using SherpaBackEnd.Controllers;
 using SherpaBackEnd.Dtos;
 using SherpaBackEnd.Model;
@@ -13,7 +15,8 @@ public class TeamControllerAcceptanceTest
     {
         var inMemoryTeamRepository = new InMemoryTeamRepository();
         var teamService = new TeamService(inMemoryTeamRepository);
-        var teamController = new TeamController(teamService);
+        var logger = Mock.Of<ILogger<TeamController>>();
+        var teamController = new TeamController(teamService, logger);
 
         var teamActionResult = await teamController.DeprecatedGetAllTeamsAsync();
         var teamsObjectResult = Assert.IsType<OkObjectResult>(teamActionResult.Result);
@@ -38,7 +41,8 @@ public class TeamControllerAcceptanceTest
     {
         var inMemoryTeamRepository = new InMemoryTeamRepository();
         var teamService = new TeamService(inMemoryTeamRepository);
-        var teamController = new TeamController(teamService);
+        var logger = Mock.Of<ILogger<TeamController>>();
+        var teamController = new TeamController(teamService, logger);
 
         var teamsActionResult = await teamController.DeprecatedGetAllTeamsAsync();
         var teamsObjectResult = Assert.IsType<OkObjectResult>(teamsActionResult.Result);

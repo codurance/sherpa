@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Moq;
 using SherpaBackEnd.Controllers;
 using SherpaBackEnd.Dtos;
 using SherpaBackEnd.Model;
@@ -14,7 +16,8 @@ public class TeamsAcceptanceTest
         var emptyTeamsList = new List<Team>();
         var inMemoryTeamRepository = new InMemoryTeamRepository(emptyTeamsList);
         var teamService = new TeamService(inMemoryTeamRepository);
-        var teamController = new TeamController(teamService);
+        var logger = Mock.Of<ILogger<TeamController>>();
+        var teamController = new TeamController(teamService, logger);
 
         const string teamName = "New team";
         var newTeam = new Team(teamName);

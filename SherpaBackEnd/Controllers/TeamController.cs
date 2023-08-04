@@ -11,11 +11,12 @@ namespace SherpaBackEnd.Controllers;
 public class TeamController
 {
     private readonly ITeamService _teamService;
-
-
-    public TeamController(ITeamService teamService)
+    private readonly ILogger _logger;
+    
+    public TeamController(ITeamService teamService, ILogger<TeamController> logger)
     {
         _teamService = teamService;
+        _logger = logger;
     }
     
     public async Task<ActionResult<IEnumerable<Team>>> DeprecatedGetAllTeamsAsync()
@@ -34,6 +35,7 @@ public class TeamController
         }
         catch (ConnectionToRepositoryUnsuccessfulException repositoryException)
         {
+            _logger.LogError(default, repositoryException, repositoryException.Message);
             var error = new { message = "Internal server error. Try again later" };
             return new ObjectResult(error)
             {

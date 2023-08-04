@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using SherpaBackEnd.Controllers;
 using SherpaBackEnd.Dtos;
@@ -17,7 +18,8 @@ public class TeamControllerTest
     public TeamControllerTest()
     {
         _mockTeamService = new Mock<ITeamService>();
-        _teamController = new TeamController(_mockTeamService.Object);
+        var logger = Mock.Of<ILogger<TeamController>>();
+        _teamController = new TeamController(_mockTeamService.Object, logger);
     }
 
     [Fact]
