@@ -1,6 +1,7 @@
 using AngleSharp.Common;
 using BlazorApp.Tests.Acceptance;
 using Bunit;
+using Bunit.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 using Moq;
@@ -17,6 +18,7 @@ public class TeamListTest
     private readonly TestContext _testContext;
     private readonly Mock<ITeamDataService> _mockTeamService;
     private readonly Mock<IGuidService> _mockGuidService;
+    private readonly FakeNavigationManager _navMan;
 
     public TeamListTest()
     {
@@ -25,6 +27,7 @@ public class TeamListTest
         _testContext.Services.AddScoped(s => _mockTeamService.Object);
         _mockGuidService = new Mock<IGuidService>();
         _testContext.Services.AddScoped(s => _mockGuidService.Object);
+        _navMan = _testContext.Services.GetRequiredService<FakeNavigationManager>();
     }
 
     [Fact]
@@ -93,5 +96,24 @@ public class TeamListTest
 
         Assert.Equal("showOffCanvas", jsRuntimeInvocation.Identifier);
         Assert.Contains("create-new-team-form", jsRuntimeInvocation.Arguments);
+    }
+
+    [Fact]
+    public async Task ShouldBeAbleToClickOnATeamAndNavigateToItsOwnPage()
+    {
+        const string teamName = "Team Name";
+        var teamId = Guid.NewGuid();
+        var newTeam = new Team(teamId, teamName);
+        _mockTeamService.Setup(m => m.GetAllTeams()).ReturnsAsync(new List<Team>(){newTeam});
+        _mockTeamService.Setup(m => m.GetTeamById(teamId)).ReturnsAsync(newTeam);
+        var page = _testContext.RenderComponent<TeamsList>();
+        
+        var existingTeamNameElement = page.FindAll("h5")
+            .FirstOrDefault(element => element.InnerHtml.Contains(teamName));
+        Assert.NotNull(existingTeamNameElement);
+        
+        existingTeamNameElement.Click();
+        
+        Assert.Equal($"http://localhost/team-content/{teamId.ToString()}", _navMan.Uri);
     }
 }

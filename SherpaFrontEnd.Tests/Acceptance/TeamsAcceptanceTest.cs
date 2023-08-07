@@ -335,4 +335,61 @@ public class TeamsAcceptanceTest
 
         Assert.Equal($"http://localhost/teams-list-page", _navMan.Uri);
     }
+
+    [Fact]
+    public async Task ShouldBeAbleToClickOnATeamAndNavigateToItsOwnPage()
+    {
+        // GIVEN that an Org coach is on the All Teams page
+        
+        const string teamName = "Team name";
+        var teamId = Guid.NewGuid();
+        var team = new Team(teamId, teamName);
+        var teamsList = new List<Team>() { team };
+        var teamListJson = await JsonContent.Create(teamsList).ReadAsStringAsync();
+        var teamListResponse = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(teamListJson)
+        };
+        
+        // and he has already created a team
+        
+        _httpHandlerMock
+            .Protected()
+            .SetupSequence<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.Is<HttpRequestMessage>(
+                    m => m.Method.Equals(HttpMethod.Get)),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(teamListResponse);
+
+        var singleTeamJson = await JsonContent.Create(team).ReadAsStringAsync();
+        var singleTeamResponse = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(singleTeamJson)
+        };
+        
+        _httpHandlerMock
+            .Protected()
+            .SetupSequence<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.Is<HttpRequestMessage>(
+                    m => m.Method.Equals(HttpMethod.Get) && m.RequestUri.AbsoluteUri.Contains($"/team/{teamId.ToString()}")),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(singleTeamResponse);
+        
+        var appComponent = _testCtx.RenderComponent<App>();
+        
+        _navMan.NavigateTo("/teams-list-page");
+        
+        // and he can click on this team
+
+        var existingTeamNameElement = appComponent.FindAll("h5").FirstOrDefault(element => element.InnerHtml.Contains(teamName));
+        Assert.NotNull(existingTeamNameElement);
+        
+        existingTeamNameElement.Click();
+        
+        Assert.Equal($"http://localhost/team-content/{teamId.ToString()}", _navMan.Uri);
+    }
 }
