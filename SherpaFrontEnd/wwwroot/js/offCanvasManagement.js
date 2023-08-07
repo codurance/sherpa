@@ -2,8 +2,8 @@
 
 window.showOffCanvas = (elementId) => {
     const offCanvasElement = document.querySelector(`#${elementId}`);
-    
-    if(!createTeamOffCanvas){
+
+    if(!createTeamOffCanvas || createTeamOffCanvas._isShown === true){
         createTeamOffCanvas = new bootstrap.Offcanvas(offCanvasElement);
     }
 
@@ -12,8 +12,8 @@ window.showOffCanvas = (elementId) => {
 
 window.hideOffCanvas = (elementId) => {
     const offCanvasElement = document.querySelector(`#${elementId}`);
-    
-    if(!createTeamOffCanvas){
+
+    if(!createTeamOffCanvas || createTeamOffCanvas._isShown === false){
         createTeamOffCanvas = new bootstrap.Offcanvas(offCanvasElement);
     }
 
