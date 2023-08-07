@@ -79,7 +79,7 @@ public class TeamListTest
     public async Task ShouldCallShowOffScreenJsFunctionWhenClickingCreateNewTeamButton()
     {
         _mockTeamService.Setup(m => m.GetAllTeams()).ReturnsAsync(new List<Team>());
-        var jsRuntimeInvocationHandler = _testContext.JSInterop.SetupVoid("showOffCanvas").SetVoidResult();
+        _testContext.JSInterop.SetupVoid("showOffCanvas").SetVoidResult();
 
         var page = _testContext.RenderComponent<TeamsList>();
 

@@ -1,11 +1,21 @@
-﻿window.showOffCanvas = (elementId) => {
+﻿var createTeamOffCanvas;
+
+window.showOffCanvas = (elementId) => {
     const offCanvasElement = document.querySelector(`#${elementId}`);
-    const bootstrapOffCanvasElement = new bootstrap.Offcanvas(offCanvasElement);
-    bootstrapOffCanvasElement.show();
+    
+    if(!createTeamOffCanvas){
+        createTeamOffCanvas = new bootstrap.Offcanvas(offCanvasElement);
+    }
+
+    createTeamOffCanvas.show();
 }
 
 window.hideOffCanvas = (elementId) => {
     const offCanvasElement = document.querySelector(`#${elementId}`);
-    const bootstrapOffCanvasElement = new bootstrap.Offcanvas(offCanvasElement);
-    bootstrapOffCanvasElement.hide();
+    
+    if(!createTeamOffCanvas){
+        createTeamOffCanvas = new bootstrap.Offcanvas(offCanvasElement);
+    }
+
+    createTeamOffCanvas.hide();
 }

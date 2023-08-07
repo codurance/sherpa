@@ -276,4 +276,63 @@ public class TeamsAcceptanceTest
         Assert.NotNull(analysisTab);
         Assert.NotNull(sendNewSurveyTeam);
     }
+
+    [Fact]
+    public async Task ShouldBeAbleToClickCancelInTeamCreationFormAndStayInTheSamePage()
+    {
+        //GIVEN that an Org coach is on the page for creating a team
+
+        var emptyTeamsList = new List<Team>(){};
+        var emptyTeamListJson = await JsonContent.Create(emptyTeamsList).ReadAsStringAsync();
+        var responseEmpty = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(emptyTeamListJson)
+        };
+
+        _httpHandlerMock
+            .Protected()
+            .SetupSequence<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.Is<HttpRequestMessage>(
+                    m => m.Method.Equals(HttpMethod.Get)),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(responseEmpty);
+
+        _testCtx.JSInterop.SetupVoid("hideOffCanvas", "create-new-team-form").SetVoidResult();
+        var teamsListComponent = _testCtx.RenderComponent<App>();
+        
+        _navMan.NavigateTo("/teams-list-page");
+        
+        var createNewTeamButton = teamsListComponent.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Create new team"));
+        Assert.NotNull(createNewTeamButton);
+        
+        createNewTeamButton.Click();
+        
+        // WHEN he enters a team name
+        
+        var teamId = Guid.NewGuid();
+
+        _guidService.Setup(service => service.GenerateRandomGuid()
+        ).Returns(teamId);
+
+        var teamNameLabel = teamsListComponent.FindAll("label").FirstOrDefault(element => element.InnerHtml.Contains("Team's name"));
+        var teamNameInputId = teamNameLabel.Attributes.GetNamedItem("for");
+        var teamNameInput = teamsListComponent.Find($"#{teamNameInputId.TextContent}");
+        Assert.NotNull(teamNameInput);
+
+        teamNameInput.Change("Demo team");
+        
+        // and clicks on Cancel
+        
+        var cancelButton = teamsListComponent.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Cancel"));
+        Assert.NotNull(cancelButton);
+        
+        cancelButton.Click();
+
+        // THEN he should be redirected on the All Teams page
+        // and a team should not be created
+
+        Assert.Equal($"http://localhost/teams-list-page", _navMan.Uri);
+    }
 }

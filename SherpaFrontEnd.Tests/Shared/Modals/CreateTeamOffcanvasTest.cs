@@ -1,3 +1,4 @@
+using AngleSharp.Common;
 using BlazorApp.Tests.Acceptance;
 using Bunit;
 using Bunit.TestDoubles;
@@ -73,5 +74,24 @@ public class CreateTeamOffcanvasTest
         
         _teamService.Verify(service => service.AddTeam(It.IsAny<Team>()));
         Assert.Equal($"http://localhost/team-content/{_teamId.ToString()}", _navMan.Uri);
+    }
+    
+    [Fact]
+    public async Task ShouldCallJsInteropWithCloseOffcanvasIfCancelIsClicked()
+    {
+        var component = _testCtx.RenderComponent<CreateTeamOffcanvas>();
+        _testCtx.JSInterop.SetupVoid("hideOffCanvas", "create-new-team-form").SetVoidResult();
+        
+        var cancelButton
+            = component.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Cancel"));
+        Assert.NotNull(cancelButton);
+        
+        cancelButton.Click();
+        
+        var jsRuntimeInvocation = _testCtx.JSInterop.Invocations.GetItemByIndex(0);
+
+        Assert.Equal("hideOffCanvas", jsRuntimeInvocation.Identifier);
+        Assert.Contains("create-new-team-form", jsRuntimeInvocation.Arguments);
+        
     }
 }

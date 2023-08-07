@@ -3,6 +3,7 @@
 @inject ITeamDataService TeamDataService;
 @inject IGuidService GuidService;
 @inject NavigationManager NavManager
+@inject IJSRuntime JS
 
 <div class="offcanvas offcanvas-start" tabindex="-1" id="@CanvasId" aria-labelledby="offcanvasExampleLabel">
     <div class="offcanvas-header">
@@ -13,7 +14,7 @@
         <label for="team-name-input">Team's name</label>
         <input @bind="@_newTeamName" id="team-name-input" type="text" required/>
         <button onclick="@CreateTeam">Confirm</button>
-        <button>Cancel</button>
+        <button onclick="@CloseOffCanvas">Cancel</button>
     </div>
 </div>
 
@@ -23,13 +24,20 @@
     public string? CanvasId { get; set; }
 
     private string _newTeamName = "";
-
+    
+    private const string NewTeamFormId = "create-new-team-form";
+    
     private async Task CreateTeam()
     {
         var teamId = GuidService.GenerateRandomGuid();
         await TeamDataService.AddTeam(new Team(teamId, _newTeamName));
         var newUri = NavManager.BaseUri + $"team-content/{teamId.ToString()}";
         NavManager.NavigateTo(newUri);
+    }
+
+    private async Task CloseOffCanvas()
+    {
+        await JS.InvokeVoidAsync("hideOffCanvas", NewTeamFormId);
     }
 
 }
