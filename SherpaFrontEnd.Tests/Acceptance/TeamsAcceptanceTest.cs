@@ -392,4 +392,91 @@ public class TeamsAcceptanceTest
         
         Assert.Equal($"http://localhost/team-content/{teamId.ToString()}", _navMan.Uri);
     }
+    
+    [Fact]
+    public async Task ShouldRedirectToErrorPageIfFoundErrorWhenAddingTeam()
+    {
+        // GIVEN that an Org coach is on the Creating a new team page
+        
+        const string teamName = "Team name";
+        var teamId = Guid.NewGuid();
+        var team = new Team(teamId, teamName);
+        var teamsList = new List<Team>() { team };
+        var teamListJson = await JsonContent.Create(teamsList).ReadAsStringAsync();
+        var teamListResponse = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(teamListJson)
+        };
+        
+        _httpHandlerMock
+            .Protected()
+            .SetupSequence<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.Is<HttpRequestMessage>(
+                    m => m.Method.Equals(HttpMethod.Get)),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(teamListResponse);
+
+        var singleTeamJson = await JsonContent.Create(team).ReadAsStringAsync();
+        var singleTeamResponse = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(singleTeamJson)
+        };
+        
+        _httpHandlerMock
+            .Protected()
+            .SetupSequence<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.Is<HttpRequestMessage>(
+                    m => m.Method.Equals(HttpMethod.Get) && m.RequestUri.AbsoluteUri.Contains($"/team/{teamId.ToString()}")),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(singleTeamResponse);
+        
+        var creationResponse = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.InternalServerError,
+        };
+        
+        _httpHandlerMock
+            .Protected()
+            .SetupSequence<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.Is<HttpRequestMessage>(
+                    m => m.Method.Equals(HttpMethod.Post)),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(creationResponse);
+        
+        var appComponent = _testCtx.RenderComponent<App>();
+        
+        _navMan.NavigateTo("/teams-list-page");
+        
+        var createNewTeamButton = appComponent.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Create new team"));
+        Assert.NotNull(createNewTeamButton);
+        
+        createNewTeamButton.Click();
+        
+        // WHEN he enters Teams name
+        
+        var teamNameLabel = appComponent.FindAll("label").FirstOrDefault(element => element.InnerHtml.Contains("Team's name"));
+        var teamNameInputId = teamNameLabel.Attributes.GetNamedItem("for");
+        var teamNameInput = appComponent.Find($"#{teamNameInputId.TextContent}");
+        Assert.NotNull(teamNameInput);
+
+        teamNameInput.Change("Demo team");
+
+        //     and click on Confirm
+        
+        var confirmButton = appComponent.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Confirm"));
+        Assert.NotNull(confirmButton);
+
+        confirmButton.Click();
+
+        //     and something went wrong (we could not create a new team)
+        // THEN he should see the error message “Something went wrong“ at the top of the page
+        
+        Assert.Equal($"http://localhost/error", _navMan.Uri);
+        Assert.NotNull(appComponent.FindAll("p").FirstOrDefault(element => element.InnerHtml.Contains("Something went wrong.")));
+    }
 }

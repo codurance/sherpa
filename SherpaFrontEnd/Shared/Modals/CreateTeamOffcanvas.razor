@@ -30,9 +30,19 @@
     private async Task CreateTeam()
     {
         var teamId = GuidService.GenerateRandomGuid();
-        await TeamDataService.AddTeam(new Team(teamId, _newTeamName));
-        var newUri = NavManager.BaseUri + $"team-content/{teamId.ToString()}";
-        NavManager.NavigateTo(newUri);
+        
+        try
+        {
+            await TeamDataService.AddTeam(new Team(teamId, _newTeamName));
+            
+            var newUri = NavManager.BaseUri + $"team-content/{teamId.ToString()}";
+            NavManager.NavigateTo(newUri);
+        }
+        catch 
+        {
+            var errorUri = NavManager.BaseUri + $"error";
+            NavManager.NavigateTo(errorUri);
+        }
     }
 
     private async Task CloseOffCanvas()

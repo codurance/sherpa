@@ -92,6 +92,28 @@ public class CreateTeamOffcanvasTest
 
         Assert.Equal("hideOffCanvas", jsRuntimeInvocation.Identifier);
         Assert.Contains("create-new-team-form", jsRuntimeInvocation.Arguments);
+    }
+
+    [Fact]
+    public async Task ShouldRedirectToErrorPageIfFoundErrorWhenAddingTeam()
+    {
+        _teamService.Setup(_ => _.AddTeam(It.IsAny<Team>())).ThrowsAsync(new Exception());
         
+        var component = _testCtx.RenderComponent<CreateTeamOffcanvas>();
+        
+        var teamNameLabel = component.FindAll("label").FirstOrDefault(element => element.InnerHtml.Contains("Team's name"));
+        var teamNameInputId = teamNameLabel.Attributes.GetNamedItem("for");
+        var teamNameInput = component.Find($"#{teamNameInputId.TextContent}");
+        Assert.NotNull(teamNameInput);
+
+        const string teamName = "Demo team";
+        teamNameInput.Change(teamName);
+        
+        var confirmButton = component.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Confirm"));
+        Assert.NotNull(confirmButton);
+        
+        confirmButton.Click();
+        
+        Assert.Equal($"http://localhost/error", _navMan.Uri);
     }
 }
