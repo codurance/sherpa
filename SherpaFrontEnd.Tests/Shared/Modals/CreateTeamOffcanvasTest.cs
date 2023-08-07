@@ -1,4 +1,5 @@
 using AngleSharp.Common;
+using AngleSharp.Dom;
 using BlazorApp.Tests.Acceptance;
 using Bunit;
 using Bunit.TestDoubles;
@@ -52,6 +53,16 @@ public class CreateTeamOffcanvasTest
         
         Assert.NotNull(continueButton);
         Assert.NotNull(cancelButton);
+    }
+    
+    [Fact]
+    public void ShouldRenderOnTheRightSideOfTheScreen()
+    {
+        var component = _testCtx.RenderComponent<CreateTeamOffcanvas>();
+        
+        var createTeamForm = component.FindAll("div").FirstOrDefault(element => element.ClassList.Contains("offcanvas-end"));
+        Assert.NotNull(createTeamForm);
+
     }
 
     [Fact]
