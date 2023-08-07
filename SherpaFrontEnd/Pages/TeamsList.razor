@@ -6,15 +6,16 @@
 
 @inject NavigationManager _nav
 @inject IJSRuntime JS
+@inject NavigationManager NavManager
 
 @page "/teams-list-page"
 
 <div>
 
     <h2>All teams</h2>
-    
-    <CreateTeamOffcanvas CanvasId="@CanvasId" />
-    
+
+    <CreateTeamOffcanvas CanvasId="@CanvasId"/>
+
     @if (Teams is not null && Teams.Count == 0)
     {
         <div class="text-center">
@@ -23,7 +24,7 @@
             <button class="w-25 btn btn-outline-primary" onclick="@ShowFormContainer">Create new team</button>
         </div>
     }
-    
+
     @if (Teams is not null && Teams.Count != 0)
     {
         <button class="w-25 btn btn-outline-primary" onclick="@ShowFormContainer">Create new team</button>
@@ -34,7 +35,6 @@
                     <h5 class="card-title">@team.Name</h5>
                 </div>
             </div>
-            
         }
     }
 
@@ -46,34 +46,12 @@
 </div>
 
 @code {
-    public const string CanvasId = "create-new-team-form";
+        public const string CanvasId = "create-new-team-form";
 
     public List<Team>? Teams { get; set; } = new List<Team>();
 
     [CascadingParameter]
     public IModalService Modal { get; set; } = default!;
-
-    private async Task AddTeam()
-    {
-        var modal = Modal.Show<AddTeamModal>("Add team");
-        var modalResult = await modal.Result;
-
-        if (modalResult.Cancelled)
-        {
-            return;
-        }
-
-        var team = (Team)modalResult.Data;
-
-
-        if (Teams is not null)
-        {
-            if (Teams.Any(g => g.Name == team.Name))
-            {
-                Modal.Show<WarningModal>("Team name must be unique");
-            }
-        }
-    }
 
     public async void ShowFormContainer()
     {
@@ -82,7 +60,15 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Teams = await TeamDataService.GetAllTeams();
+        try
+        {
+            Teams = await TeamDataService.GetAllTeams();
+        }
+        catch
+        {
+            var errorUri = NavManager.BaseUri + $"error";
+            NavManager.NavigateTo(errorUri);
+        }
     }
 
 }

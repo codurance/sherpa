@@ -563,4 +563,40 @@ public class TeamsAcceptanceTest
 
         Assert.Contains("This field is mandatory", inputGroup.ToMarkup());
     }
+
+    [Fact]
+    public async Task ShouldBeRedirectedToErrorPageIfThereIsAnErrorLoadingTeams()
+    {
+        // GIVEN that an Org coach have a menu on the left
+        const string teamName = "Team name";
+        var teamId = Guid.NewGuid();
+        var team = new Team(teamId, teamName);
+        var teamsList = new List<Team>() { team };
+        var teamListJson = await JsonContent.Create(teamsList).ReadAsStringAsync();
+        var teamListResponse = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.InternalServerError
+        };
+
+        _httpHandlerMock
+            .Protected()
+            .SetupSequence<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.Is<HttpRequestMessage>(
+                    m => m.Method.Equals(HttpMethod.Get)),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(teamListResponse);
+        
+        var appComponent = _testCtx.RenderComponent<App>();
+        
+        // WHEN he clicks on Teams
+        // and something went wrong (we couldn't retrieve the data)
+        _navMan.NavigateTo("/teams-list-page");
+        
+        // THEN he should see the error message “Something went wrong“ at the top of the page.
+        
+        Assert.Equal($"http://localhost/error", _navMan.Uri);
+        Assert.NotNull(appComponent.FindAll("p")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Something went wrong.")));
+    }
 }

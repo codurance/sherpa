@@ -116,4 +116,17 @@ public class TeamListTest
         
         Assert.Equal($"http://localhost/team-content/{teamId.ToString()}", _navMan.Uri);
     }
+    
+    [Fact]
+    public async Task ShouldRedirectToErrorPageIfServiceThrowsWhenGettingTeams()
+    {
+        const string teamName = "Team Name";
+        var teamId = Guid.NewGuid();
+        var newTeam = new Team(teamId, teamName);
+        _mockTeamService.Setup(m => m.GetAllTeams()).ThrowsAsync(new Exception());
+        
+        _testContext.RenderComponent<TeamsList>();
+        
+        Assert.Equal($"http://localhost/error", _navMan.Uri);
+    }
 }
