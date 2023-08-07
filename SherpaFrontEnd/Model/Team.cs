@@ -4,8 +4,7 @@ namespace SherpaFrontEnd.Model;
 
 public class Team
 {
-    [Required]
-    [MinLength(2)]
+    [Required(ErrorMessage = "This field is mandatory")]
     public string? Name { get; set; }
     
     public Guid Id { get; init; }

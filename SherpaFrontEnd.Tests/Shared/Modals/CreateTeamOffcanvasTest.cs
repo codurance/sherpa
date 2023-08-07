@@ -116,4 +116,24 @@ public class CreateTeamOffcanvasTest
         
         Assert.Equal($"http://localhost/error", _navMan.Uri);
     }
+    
+    [Fact]
+    public async Task ShouldShowMandatoryFieldErrorFeedbackIfUserDoesNotFillItBeforeClickingContinue()
+    {
+        _teamService.Setup(_ => _.AddTeam(It.IsAny<Team>())).ThrowsAsync(new Exception());
+        
+        var component = _testCtx.RenderComponent<CreateTeamOffcanvas>();
+        
+        var confirmButton = component.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Confirm"));
+        Assert.NotNull(confirmButton);
+        
+        confirmButton.Click();
+
+        component.WaitForElement(".validation-message");
+        
+        var teamNameLabelAfterClick = component.FindAll("label").FirstOrDefault(element => element.InnerHtml.Contains("Team's name"));
+        var inputGroup = teamNameLabelAfterClick.Parent;
+        
+        Assert.Contains("This field is mandatory", inputGroup.ToMarkup());
+    }
 }
