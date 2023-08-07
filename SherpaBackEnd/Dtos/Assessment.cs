@@ -4,15 +4,15 @@ namespace SherpaBackEnd.Dtos;
 
 public class Assessment
 {
-    public Guid GroupId { get; }
+    public Guid TeamId { get; }
     public Guid TemplateId { get; }
     
     public string Name { get; }
     public IEnumerable<Survey> Surveys{ get; set; }
     
-    public Assessment(Guid groupId, Guid templateId, string name)
+    public Assessment(Guid teamId, Guid templateId, string name)
     {
-        GroupId = groupId;
+        TeamId = teamId;
         TemplateId = templateId;
         Name = name;
         Surveys = new List<Survey>();

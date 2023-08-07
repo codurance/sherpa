@@ -43,20 +43,20 @@ public class AssessmentServiceTest
     
     
     [Fact]
-    public async Task AddSurveyForGroupWithMembers()
+    public async Task AddSurveyForTeamWithMembers()
     {
-        var group = new Group("Group");
-        group.Members = new List<GroupMember>
+        var team = new Team("Team");
+        team.Members = new List<TeamMember>
         {
             new ("Name A", "LastName A", "Position A", "emaila@mail.com"),
             new ("Name B", "LastName B", "Position B", "emailb@mail.com")
         };
-        var assessment = new Assessment(group.Id, Guid.NewGuid(), "assessment");
+        var assessment = new Assessment(team.Id, Guid.NewGuid(), "assessment");
 
         _assessmentRepository.Setup(m => m.GetAssessment(It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(assessment);
         
-        var emails = group.Members.Select(m => m.Email).ToList();
+        var emails = team.Members.Select(m => m.Email).ToList();
         var survey = new Survey(DateOnly.FromDateTime(DateTime.Now), emails);
         var surveysList = new List<Survey> { survey };
         assessment.Surveys = surveysList;
@@ -65,22 +65,22 @@ public class AssessmentServiceTest
             
         var updatedAssessment = await _assessmentService.UpdateAssessment(assessment);
         
-        Assert.Equal(assessment.GroupId, updatedAssessment.GroupId);
+        Assert.Equal(assessment.TeamId, updatedAssessment.TeamId);
         Assert.Equal(assessment.TemplateId, updatedAssessment.TemplateId);
         Assert.Equal(assessment.Name, updatedAssessment.Name);
         Assert.NotEmpty(updatedAssessment.Surveys);
 
         var addedSurvey = updatedAssessment.Surveys.First();
-        Assert.Equal(group.Members.Count(), addedSurvey.MembersCount);
-        Assert.Equal(group.Members.First().Email, addedSurvey.Emails.First());
-        Assert.Equal(group.Members.Last().Email, addedSurvey.Emails.Last());
+        Assert.Equal(team.Members.Count(), addedSurvey.MembersCount);
+        Assert.Equal(team.Members.First().Email, addedSurvey.Emails.First());
+        Assert.Equal(team.Members.Last().Email, addedSurvey.Emails.Last());
     }
 
     [Fact]
     public async Task DeleteSurveyFromExistingAssessment_UpdateAssessmentWasInvoked()
     {
-        var group = new Group("Group");
-        var assessment = new Assessment(group.Id, Guid.NewGuid(), "assessment");
+        var team = new Team("Team");
+        var assessment = new Assessment(team.Id, Guid.NewGuid(), "assessment");
 
         assessment.Surveys = new List<Survey>
         {
@@ -93,11 +93,11 @@ public class AssessmentServiceTest
     }
 
     [Fact]
-    public async Task GetAssessmentsByGroupId_IsUsingRepository()
+    public async Task GetAssessmentsByTeamId_IsUsingRepository()
     {
-        var groupId = Guid.NewGuid();
-        await _assessmentService.GetAssessments(groupId);
-        _assessmentRepository.Verify(m => m.GetAssessments(groupId));
+        var teamId = Guid.NewGuid();
+        await _assessmentService.GetAssessments(teamId);
+        _assessmentRepository.Verify(m => m.GetAssessments(teamId));
     }
         
 }

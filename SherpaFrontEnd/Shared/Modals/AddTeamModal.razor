@@ -1,10 +1,10 @@
 ﻿@using SherpaFrontEnd.Model
-<p>Choose name for the group:</p>
-<EditForm Model="Group" OnValidSubmit="Add">
+<p>Choose name for the team:</p>
+<EditForm Model="Team" OnValidSubmit="Add">
     <DataAnnotationsValidator/>
     <ValidationSummary/>
 
-    <InputText @bind-Value="Group.Name"/>
+    <InputText @bind-Value="Team.Name"/>
 
     <div class="btn-group w-100 mt-5" role="group">
         <button class="w-50 btn btn-outline-danger btn-sm" @onclick="Cancel">Cancel</button>
@@ -17,7 +17,7 @@
     [CascadingParameter]
     BlazoredModalInstance? ModalInstance { get; set; }
 
-    private Group Group { get; } = new();
+    private Team Team { get; } = new();
 
     void Cancel()
     {
@@ -26,7 +26,7 @@
 
     private void Add()
     {
-        ModalInstance?.CloseAsync(ModalResult.Ok(Group));
+        ModalInstance?.CloseAsync(ModalResult.Ok(Team));
     }
 
 }

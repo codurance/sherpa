@@ -1,6 +1,6 @@
 namespace SherpaFrontEnd.Model;
 
-public class GroupMember
+public class TeamMember
 {
     public string? Name { get; set; }
     
@@ -10,7 +10,7 @@ public class GroupMember
     
     public string? Email { get; set; }
 
-    public GroupMember(string? name, string? lastName, string? position, string? email)
+    public TeamMember(string? name, string? lastName, string? position, string? email)
     {
         Name = name;
         LastName = lastName;
@@ -18,7 +18,7 @@ public class GroupMember
         Email = email;
     }
 
-    public GroupMember()
+    public TeamMember()
     {
         
     }

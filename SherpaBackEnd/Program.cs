@@ -1,3 +1,4 @@
+using SherpaBackEnd.Dtos;
 using SherpaBackEnd.Model;
 using SherpaBackEnd.Model.Template;
 using SherpaBackEnd.Repositories;
@@ -20,8 +21,9 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
-builder.Services.AddSingleton<IGroupRepository, InMemoryGroupRepository>();
-builder.Services.AddSingleton<IGroupsService, GroupsService>();
+builder.Services.AddSingleton<ITeamRepository, InMemoryTeamRepository>(
+    _ => new InMemoryTeamRepository(new List<Team>()));
+builder.Services.AddSingleton<ITeamService, TeamService>();
 builder.Services.AddSingleton<ITemplateRepository, InMemoryFilesTemplateRepository>(_ =>
     new InMemoryFilesTemplateRepository("Templates"));
 builder.Services.AddSingleton<ITemplateService, TemplateService>();

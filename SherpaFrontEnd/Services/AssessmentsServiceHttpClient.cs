@@ -45,9 +45,9 @@ public class AssessmentsServiceHttpClient : IAssessmentsDataService
         return new List<Assessment>();
     }
 
-    public async Task<List<Assessment>?> GetAssessments(Guid groupId)
+    public async Task<List<Assessment>?> GetAssessments(Guid teamId)
     {
-        var request = new HttpRequestMessage(HttpMethod.Get, $"/assessments/group-assessments/{groupId.ToString()}");
+        var request = new HttpRequestMessage(HttpMethod.Get, $"/assessments/team-assessments/{teamId.ToString()}");
         var response = await _httpClient.SendAsync(request);
         
         if (response.StatusCode == HttpStatusCode.OK)
@@ -79,9 +79,9 @@ public class AssessmentsServiceHttpClient : IAssessmentsDataService
         return new List<SurveyTemplate>();
     }
 
-    public async Task<Assessment?> AddAssessment(Guid groupId, Guid templateId, string name)
+    public async Task<Assessment?> AddAssessment(Guid teamId, Guid templateId, string name)
     {
-        var assessment = new AssessmentToAdd(groupId, templateId, name);
+        var assessment = new AssessmentToAdd(teamId, templateId, name);
         
         var assessmentToAdd =
             JsonSerializer.Serialize(assessment,

@@ -2,11 +2,11 @@
 
 namespace SherpaFrontEnd.Services;
 
-public class InMemoryGroupMemberService : IGroupMemberService
+public class InMemoryTeamMemberService : ITeamMemberService
 {
-    public List<GroupMember> GetMembers()
+    public List<TeamMember> GetMembers()
     {
-        return new List<GroupMember>
+        return new List<TeamMember>
         {
             new("Bob", "Smith", "CEO", "email1@mail.com"),
             new("Tom", "Hardy", "CP", "email2@mail.com")

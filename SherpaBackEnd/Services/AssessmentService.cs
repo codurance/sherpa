@@ -23,14 +23,14 @@ public class AssessmentService : IAssessmentService
         return await _surveyRepository.GetTemplates();
     }
 
-    public async Task<Assessment?> AddAssessment(Guid groupId, Guid templateId, string name)
+    public async Task<Assessment?> AddAssessment(Guid teamId, Guid templateId, string name)
     {
         if (_surveyRepository.IsTemplateExist(templateId))
         {
-            var newAssessment = new Assessment(groupId, templateId, name);
+            var newAssessment = new Assessment(teamId, templateId, name);
             _assessmentRepository.AddAssessment(newAssessment);
 
-            return await _assessmentRepository.GetAssessment(groupId, templateId);
+            return await _assessmentRepository.GetAssessment(teamId, templateId);
         }
 
         return null;
@@ -41,14 +41,14 @@ public class AssessmentService : IAssessmentService
         return await _assessmentRepository.GetAssessments();
     }
 
-    public async Task<IEnumerable<Assessment>> GetAssessments(Guid groupId)
+    public async Task<IEnumerable<Assessment>> GetAssessments(Guid teamId)
     {
-        return await _assessmentRepository.GetAssessments(groupId);
+        return await _assessmentRepository.GetAssessments(teamId);
     }
 
-    public async Task<Assessment?> GetAssessment(Guid groupId, Guid templateId)
+    public async Task<Assessment?> GetAssessment(Guid teamId, Guid templateId)
     {
-        return await _assessmentRepository.GetAssessment(groupId, templateId);
+        return await _assessmentRepository.GetAssessment(teamId, templateId);
     }
 
     public async Task<Assessment> UpdateAssessment(Assessment assessmentToUpdate)

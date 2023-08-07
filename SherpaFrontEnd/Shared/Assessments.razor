@@ -12,7 +12,7 @@
 </div>
 <div>
     <SurveysTable
-        Assessments="@SelectedGroupAssessments"
+        Assessments="@SelectedTeamAssessments"
         Emails="@Emails"
         OnCreateSurvey="@OnCreateEvaluation"
         OnDeleteSurvey="@OnDeleteEvaluation">
@@ -21,10 +21,10 @@
 
 @code {
     [Parameter]
-    public List<Assessment>? SelectedGroupAssessments { get; set; }
+    public List<Assessment>? SelectedTeamAssessments { get; set; }
     
     [Parameter]
-    public Guid? SelectedGroupId { get; set; }
+    public Guid? SelectedTeamId { get; set; }
     
     [Parameter]
     public List<string>? Emails { get; set; }

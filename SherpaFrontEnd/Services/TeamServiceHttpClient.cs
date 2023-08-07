@@ -4,69 +4,69 @@ using SherpaFrontEnd.Model;
 
 namespace SherpaFrontEnd.Services;
 
-public class GroupServiceHttpClient : IGroupDataService
+public class TeamServiceHttpClient : ITeamDataService
 {
     private const string Sherpabackend = "SherpaBackEnd";
     private readonly IHttpClientFactory _clientFactory;
 
-    public GroupServiceHttpClient(IHttpClientFactory httpClientFactory)
+    public TeamServiceHttpClient(IHttpClientFactory httpClientFactory)
     {
         _clientFactory = httpClientFactory;
     }
 
-    public async Task<List<Group>?> GetGroups()
+    public async Task<List<Team>?> GetAllTeams()
     {
         var client = _clientFactory.CreateClient(Sherpabackend);
-        var request = new HttpRequestMessage(HttpMethod.Get, "/groups");
+        var request = new HttpRequestMessage(HttpMethod.Get, "/team");
         var response = await client.SendAsync(request);
 
         response.EnsureSuccessStatusCode();
         var responseString = await response.Content.ReadAsStringAsync();
 
-        return JsonSerializer.Deserialize<List<Group>>(
+        return JsonSerializer.Deserialize<List<Team>>(
             responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
     }
 
-    public async Task<Group?> GetGroup(Guid guid)
+    public async Task<Team?> GetTeamById(Guid guid)
     {
         var client = _clientFactory.CreateClient(Sherpabackend);
-        var request = new HttpRequestMessage(HttpMethod.Get, $"/groups/{guid}");
+        var request = new HttpRequestMessage(HttpMethod.Get, $"/team/{guid}");
         var response = await client.SendAsync(request);
 
         response.EnsureSuccessStatusCode();
         var responseString = await response.Content.ReadAsStringAsync();
 
-        return JsonSerializer.Deserialize<Group>(
+        return JsonSerializer.Deserialize<Team>(
             responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
     }
 
-    public async Task<HttpStatusCode> DeleteGroup(Guid guid)
+    public async Task<HttpStatusCode> DeleteTeam(Guid guid)
     {
         var httpClient = _clientFactory.CreateClient(Sherpabackend);
-        var response = await httpClient.DeleteAsync($"/groups/{guid.ToString()}");
+        var response = await httpClient.DeleteAsync($"/team/{guid.ToString()}");
         response.EnsureSuccessStatusCode();
         return response.StatusCode;
     }
 
-    public async Task PutGroup(Group group)
+    public async Task PutTeam(Team team)
     {
-        var groupToUpdate =
-            JsonSerializer.Serialize(group, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        var teamToUpdate =
+            JsonSerializer.Serialize(team, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         var httpClient = _clientFactory.CreateClient(Sherpabackend);
-        var response = await httpClient.PutAsync($"/groups/{group.Id.ToString()}",
-            new StringContent(groupToUpdate, System.Text.Encoding.UTF8, "application/json"));
+        var response = await httpClient.PutAsync($"/team/{team.Id.ToString()}",
+            new StringContent(teamToUpdate, System.Text.Encoding.UTF8, "application/json"));
         response.EnsureSuccessStatusCode();
     }
 
-    public async Task AddGroup(Group group)
+    public async Task AddTeam(Team team)
     {
-        var groupToAdd =
-            JsonSerializer.Serialize(group,
+        var teamToAdd =
+            JsonSerializer.Serialize(team,
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
         var client = _clientFactory.CreateClient(Sherpabackend);
-        var response = await client.PostAsync("/groups", 
-            new StringContent(groupToAdd, System.Text.Encoding.UTF8, "application/json"));
+        var response = await client.PostAsync("/team", 
+            new StringContent(teamToAdd, System.Text.Encoding.UTF8, "application/json"));
         response.EnsureSuccessStatusCode();
     }
 }

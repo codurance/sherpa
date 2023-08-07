@@ -1,0 +1,65 @@
+@using SherpaFrontEnd.Services
+@using SherpaFrontEnd.Model
+@inject ITeamDataService TeamDataService;
+@inject IGuidService GuidService;
+@inject NavigationManager NavManager
+@inject IJSRuntime JS
+
+<div class="offcanvas offcanvas-start" tabindex="-1" id="@CanvasId" aria-labelledby="offcanvasExampleLabel">
+    <div class="offcanvas-header">
+        <h3 class="offcanvas-title" id="offcanvasExampleLabel">Create new team</h3>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <EditForm Model="Team" OnValidSubmit="@CreateTeam">
+            <DataAnnotationsValidator/>
+            <div>
+                <label for="team-name-input">Team's name</label>
+                <InputText id="team-name-input" @bind-Value="Team.Name"/>
+                <ValidationMessage For="@(() => Team.Name)"/>
+            </div>
+
+            <div class="btn-group w-100 mt-5" role="group">
+                <button type="submit" class="w-50 btn btn-outline-primary btn-sm">Confirm</button>
+            </div>
+        </EditForm>
+        <button class="w-50 btn btn-outline-danger btn-sm" @onclick="@CloseOffCanvas">Cancel</button>
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public string? CanvasId { get; set; }
+
+    private Team Team { get; } = new();
+
+
+        private const string NewTeamFormId = "create-new-team-form";
+
+    private async Task CreateTeam()
+    {
+        var teamId = GuidService.GenerateRandomGuid();
+
+        try
+        {
+            await TeamDataService.AddTeam(new Team(teamId, Team.Name!));
+
+            var newUri = NavManager.BaseUri + $"team-content/{teamId.ToString()}";
+            NavManager.NavigateTo(newUri);
+        }
+        catch
+        {
+            var errorUri = NavManager.BaseUri + $"error";
+            NavManager.NavigateTo(errorUri);
+        }
+    }
+
+    private async Task CloseOffCanvas()
+    {
+        await JS.InvokeVoidAsync("hideOffCanvas", NewTeamFormId);
+    }
+    
+    
+
+}

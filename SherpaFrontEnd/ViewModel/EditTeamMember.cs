@@ -3,7 +3,7 @@ using SherpaFrontEnd.Model;
 
 namespace SherpaFrontEnd.ViewModel;
 
-public class EditGroupMember
+public class EditTeamMember
 {
     [Required]
     [MinLength(2)]
@@ -25,12 +25,12 @@ public class EditGroupMember
 
 
 
-    public EditGroupMember(GroupMember? groupMember, List<string>? membersEmails)
+    public EditTeamMember(TeamMember? teamMember, List<string>? membersEmails)
     {
-        Name = groupMember?.Name;
-        LastName = groupMember?.LastName;
-        Position = groupMember?.Position;
-        Email = groupMember?.Email;
+        Name = teamMember?.Name;
+        LastName = teamMember?.LastName;
+        Position = teamMember?.Position;
+        Email = teamMember?.Email;
         ForbiddenEmails = membersEmails;
     }
 }

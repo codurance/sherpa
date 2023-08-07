@@ -16,10 +16,10 @@
     </tr>
     </thead>
     
-    @if (_group is not null && _group.Members.Any())
+    @if (_team is not null && _team.Members.Any())
     {
         <tbody>
-        @foreach (var currentMember in _group.Members)
+        @foreach (var currentMember in _team.Members)
         {
             <tr id="@currentMember.Email">
                 <td class="align-middle">
@@ -51,84 +51,84 @@
 </table>
 
 <div>
-    <button class="w-25 btn btn-outline-primary" @onclick="AddGroupMember">Add</button>
+    <button class="w-25 btn btn-outline-primary" @onclick="AddTeamMember">Add</button>
 </div>
 
 @code {
-    private Group? _group;
+    private Team? _team;
     [Parameter]
-    public Group? Group
+    public Team? Team
     {
-        get => _group;
+        get => _team;
         set
         {
-            Console.WriteLine("Group setter");
+            Console.WriteLine("Team setter");
             if (value is null)
             {
                 return;
             }
 
-            _group = value;
-            _group.Members.Sort((m1, m2) =>
+            _team = value;
+            _team.Members.Sort((m1, m2) =>
                 string.Compare(m1.LastName, m2.LastName, StringComparison.Ordinal));
         }
     }
     
     [Parameter]
-    public EventCallback<Group> OnUpdateGroup { get; set; }
+    public EventCallback<Team> OnUpdateTeam { get; set; }
 
     [CascadingParameter]
     public IModalService Modal { get; set; } = default!;
 
-    private async Task UpdateGroupMember()
+    private async Task UpdateTeamMember()
     {
-        Console.WriteLine(_group?.Members);
-        await OnUpdateGroup.InvokeAsync(_group);
+        Console.WriteLine(_team?.Members);
+        await OnUpdateTeam.InvokeAsync(_team);
     }
 
-    private async Task DeleteGroupMember(string? memberEmail)
+    private async Task DeleteTeamMember(string? memberEmail)
     {
-        _group?.Members.Remove(_group.Members.First(m => m.Email == memberEmail));
-        await OnUpdateGroup.InvokeAsync(_group);
+        _team?.Members.Remove(_team.Members.First(m => m.Email == memberEmail));
+        await OnUpdateTeam.InvokeAsync(_team);
     }
     
-    private async Task AddGroupMember()
+    private async Task AddTeamMember()
     {
         var parameters = new ModalParameters();
-        parameters.Add(nameof(EditMemberModal.GroupMember), new GroupMember());
+        parameters.Add(nameof(EditMemberModal.TeamMember), new TeamMember());
 
         var modal = Modal.Show<EditMemberModal>("Add member", parameters);
         var modalResult = await modal.Result;
 
         if (!modalResult.Cancelled)
         {
-            var groupMemberToAdd = (EditGroupMember)modalResult.Data;
+            var teamMemberToAdd = (EditTeamMember)modalResult.Data;
 
-            if (_group is not null)
+            if (_team is not null)
             {
-                if (_group.Members.Any(m => m.Email == groupMemberToAdd.Email))
+                if (_team.Members.Any(m => m.Email == teamMemberToAdd.Email))
                 {
                     Modal.Show<WarningModal>("Email should be unique");
                     return;
                 }
 
-                _group.Members.Add(new GroupMember
+                _team.Members.Add(new TeamMember
                 {
-                    Name = groupMemberToAdd.Name,
-                    LastName = groupMemberToAdd.LastName,
-                    Position = groupMemberToAdd.Position,
-                    Email = groupMemberToAdd.Email
+                    Name = teamMemberToAdd.Name,
+                    LastName = teamMemberToAdd.LastName,
+                    Position = teamMemberToAdd.Position,
+                    Email = teamMemberToAdd.Email
                 });
-                await OnUpdateGroup.InvokeAsync(_group);
+                await OnUpdateTeam.InvokeAsync(_team);
             }
         }
     }
 
-    private async Task OnEditMemberClick(GroupMember? currentMember)
+    private async Task OnEditMemberClick(TeamMember? currentMember)
     {
         var parameters = new ModalParameters();
-        parameters.Add(nameof(EditMemberModal.GroupMember), currentMember);
-        var membersEmails = _group?.Members
+        parameters.Add(nameof(EditMemberModal.TeamMember), currentMember);
+        var membersEmails = _team?.Members
             .FindAll(m => m.Email != currentMember?.Email)
             .Select(m => m.Email).ToList();
         parameters.Add(nameof(EditMemberModal.MembersEmails), membersEmails);
@@ -138,26 +138,26 @@
 
         if (!modalResult.Cancelled)
         {
-            var updatesGroup = (EditGroupMember)modalResult.Data;
+            var updatesTeam = (EditTeamMember)modalResult.Data;
             if (currentMember is not null)
             {
-                currentMember.Name = updatesGroup.Name;
-                currentMember.LastName = updatesGroup.LastName;
-                currentMember.Position = updatesGroup.Position;
-                currentMember.Email = updatesGroup.Email;
-                await UpdateGroupMember();
+                currentMember.Name = updatesTeam.Name;
+                currentMember.LastName = updatesTeam.LastName;
+                currentMember.Position = updatesTeam.Position;
+                currentMember.Email = updatesTeam.Email;
+                await UpdateTeamMember();
             }
         }
     }
 
-    private async Task OnDeleteMemberClick(GroupMember? currentMember)
+    private async Task OnDeleteMemberClick(TeamMember? currentMember)
     {
         var modal = Modal.Show<ConfirmationModal>($"Delete {currentMember?.Name} {currentMember?.LastName}?");
         var modalResult = await modal.Result;
 
         if (!modalResult.Cancelled)
         {
-            await DeleteGroupMember(currentMember?.Email);
+            await DeleteTeamMember(currentMember?.Email);
         }
     }
 }

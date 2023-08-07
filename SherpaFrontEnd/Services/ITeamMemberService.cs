@@ -2,8 +2,8 @@
 
 namespace SherpaFrontEnd.Services;
 
-public interface IGroupMemberService
+public interface ITeamMemberService
 {
     
-    List<GroupMember> GetMembers();
+    List<TeamMember> GetMembers();
 }
