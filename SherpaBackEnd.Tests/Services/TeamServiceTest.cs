@@ -71,4 +71,16 @@ public class TeamServiceTest
         var exceptionThrown = await Assert.ThrowsAsync<ConnectionToRepositoryUnsuccessfulException>(async () => await _teamService.GetAllTeamsAsync());
         Assert.IsType<ConnectionToRepositoryUnsuccessfulException>(exceptionThrown);
     }
+    
+    [Fact]
+    public async Task ShouldReturnTeamGivenByRepoWhenGettingById()
+    {
+        var teamId = Guid.NewGuid();
+        var expectedTeam = new Team(teamId, "Demo team");
+        _mockTeamRepository.Setup(_ => _.GetTeamByIdAsync(teamId)).ReturnsAsync(expectedTeam);
+
+        var actualTeam = await _teamService.GetTeamByIdAsync(teamId);
+
+        Assert.Equal(expectedTeam, actualTeam);
+    }
 }

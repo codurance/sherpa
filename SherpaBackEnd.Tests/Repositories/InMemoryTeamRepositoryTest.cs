@@ -34,4 +34,19 @@ public class InMemoryTeamRepositoryTest
         
         Assert.Equal(new List<Team>(){existingTeam1, existingTeam2}, retrievedTeams);
     }
+    
+    [Fact]
+    public async Task ShouldBeAbleToGetTeamById()
+    {
+        var teamId = Guid.NewGuid();
+        const string teamName = "Team 1";
+        var expectedTeam = new Team(teamId, teamName);
+        
+        var initialList = new List<Team>(){expectedTeam};
+        var inMemoryTeamRepository = new InMemoryTeamRepository(initialList);
+
+        var actualTeam = await inMemoryTeamRepository.GetTeamByIdAsync(teamId);
+        
+        Assert.Equal(expectedTeam, actualTeam);
+    }
 }

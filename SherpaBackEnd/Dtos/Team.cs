@@ -14,6 +14,16 @@ public class Team
         Name = name;
     }
 
+    public Team(Guid id, string name)
+    {
+        Id = id;
+        Name = name;
+    }
+
+    public Team()
+    {
+    }
+
     public void Delete()
     {
         IsDeleted = true;

@@ -24,6 +24,11 @@ public class TeamService : ITeamService
         return await _teamRepository.DeprecatedAddTeamAsync(team);
     }
 
+    public async Task<Team?> DeprecatedGetTeamByIdAsync(Guid guid)
+    {
+        return await _teamRepository.DeprecatedGetTeamByIdAsync(guid);
+    }
+    
     public async Task<Team?> GetTeamByIdAsync(Guid guid)
     {
         return await _teamRepository.GetTeamByIdAsync(guid);

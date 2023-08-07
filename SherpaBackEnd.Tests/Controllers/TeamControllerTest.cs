@@ -57,25 +57,11 @@ public class TeamControllerTest
         
     }
 
-    [Fact]
-    public async Task GetTeamById_RepoReturnsEmptyTeam_OkExpected()
-    {
-        var expectedTeam = new Team("Team");
-        var guid = expectedTeam.Id;
-        
-        _mockTeamService.Setup(m => m.GetTeamByIdAsync(guid)).ReturnsAsync(expectedTeam);
-        var actionResult = await _teamController.GetTeamByIdAsync(guid);
-
-        var okObjectResult = Assert.IsType<OkObjectResult>(actionResult.Result);
-        var actualTeam = Assert.IsAssignableFrom<Team>(okObjectResult.Value);
-        Assert.Empty(actualTeam.Members);
-    }
-
 
     [Fact]
     public async Task GetTeamById_RepoDoesntReturnTeam_NotFoundExpected()
     {
-        _mockTeamService.Setup(m => m.GetTeamByIdAsync(It.IsAny<Guid>()))
+        _mockTeamService.Setup(m => m.DeprecatedGetTeamByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync((Team)null);
         
         var actionResult = await _teamController.GetTeamByIdAsync(new Guid());
@@ -105,7 +91,7 @@ public class TeamControllerTest
     [Fact]
     public async Task DeleteTeam_TeamDoesNotExist_ExpectedNotFound()
     {
-        _mockTeamService.Setup(repo => repo.GetTeamByIdAsync(It.IsAny<Guid>()))
+        _mockTeamService.Setup(repo => repo.DeprecatedGetTeamByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync((Team)null);
         
         var actionResult = await _teamController.DeleteTeamByIdAsync(Guid.NewGuid());
@@ -116,7 +102,7 @@ public class TeamControllerTest
     public async Task DeleteTeam_TeamExists_ExpectedOkResult()
     {
         var team = new Team("Deleting Team");
-        _mockTeamService.Setup(repo => repo.GetTeamByIdAsync(It.IsAny<Guid>()))
+        _mockTeamService.Setup(repo => repo.DeprecatedGetTeamByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync(team);
         
         var actionResult = await _teamController.DeleteTeamByIdAsync(team.Id);
@@ -127,11 +113,11 @@ public class TeamControllerTest
     public async Task DeleteTeam_TeamExists_VerifyInteractionWithRepository()
     {
         var team = new Team("Deleting Team");
-        _mockTeamService.Setup(repo => repo.GetTeamByIdAsync(team.Id))
+        _mockTeamService.Setup(repo => repo.DeprecatedGetTeamByIdAsync(team.Id))
             .ReturnsAsync(team);
         
         await _teamController.DeleteTeamByIdAsync(team.Id);
-        _mockTeamService.Verify(repo => repo.GetTeamByIdAsync(team.Id));
+        _mockTeamService.Verify(repo => repo.DeprecatedGetTeamByIdAsync(team.Id));
         Assert.True(team.IsDeleted);
         _mockTeamService.Verify(repo => repo.UpdateTeamByIdAsync(team));
     }
@@ -139,7 +125,7 @@ public class TeamControllerTest
     [Fact]
     public async Task UpdateTeam_TeamDoesNotExist_ExpectedNotFound()
     {
-        _mockTeamService.Setup(repo => repo.GetTeamByIdAsync(It.IsAny<Guid>()))
+        _mockTeamService.Setup(repo => repo.DeprecatedGetTeamByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync((Team)null);
         
         var actionResult = await _teamController.UpdateTeamAsync(Guid.NewGuid(), new Team("name"));
@@ -156,7 +142,7 @@ public class TeamControllerTest
             new ("Name B", "lastName B", "position B", "e2@e.com")
         };
         
-        _mockTeamService.Setup(repo => repo.GetTeamByIdAsync(It.IsAny<Guid>()))
+        _mockTeamService.Setup(repo => repo.DeprecatedGetTeamByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync(team);
 
         var members = team.Members.ToList();
@@ -178,7 +164,7 @@ public class TeamControllerTest
             new ("Name B", "lastName B", "position B", "e2@e.com")
         };
         
-        _mockTeamService.Setup(repo => repo.GetTeamByIdAsync(It.IsAny<Guid>()))
+        _mockTeamService.Setup(repo => repo.DeprecatedGetTeamByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync(team);
 
         team.Name = "updated name";
@@ -265,5 +251,21 @@ public class TeamControllerTest
 
         var resultObject = Assert.IsType<ObjectResult>(allTeamsAsync.Result);
         Assert.Equal(StatusCodes.Status500InternalServerError, resultObject.StatusCode);
+    }
+    
+    [Fact]
+    public async Task ShouldReturnTeamReturnedByTeamService()
+    {
+        var teamId = Guid.NewGuid();
+
+        var expectedTeam = new Team(teamId, "Demo team");
+        _mockTeamService.Setup(_ => _.GetTeamByIdAsync(teamId))
+            .ReturnsAsync(expectedTeam);
+
+        var actualTeam = await _teamController.GetTeamByIdAsync(teamId);
+
+        var resultObject = Assert.IsType<OkObjectResult>(actualTeam.Result);
+        Assert.Equal(StatusCodes.Status200OK, resultObject.StatusCode);
+        Assert.Equal(expectedTeam, resultObject.Value);
     }
 }

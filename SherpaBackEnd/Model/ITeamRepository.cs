@@ -7,6 +7,7 @@ public interface ITeamRepository
 
     Task<IEnumerable<Team>> DeprecatedGetAllTeams();
 
+    Task<Team?> DeprecatedGetTeamByIdAsync(Guid guid);
     Task<Team?> GetTeamByIdAsync(Guid guid);
 
     Task<Team> UpdateTeamByIdAsync(Team team);

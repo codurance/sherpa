@@ -72,7 +72,7 @@ public class TeamController
     [HttpDelete("{guid:guid}")]
     public async Task<ActionResult<Team>> DeleteTeamByIdAsync(Guid guid)
     {
-        var team = await _teamService.GetTeamByIdAsync(guid);
+        var team = await _teamService.DeprecatedGetTeamByIdAsync(guid);
         if (team is null)
         {
             return new NotFoundResult();
@@ -87,7 +87,7 @@ public class TeamController
     public async Task<ActionResult<Team>> UpdateTeamAsync(Guid guid, Team team)
     {
         // TODO use (Team team) signature to not expose too much
-        var teamFound = await _teamService.GetTeamByIdAsync(guid);
+        var teamFound = await _teamService.DeprecatedGetTeamByIdAsync(guid);
         if (teamFound is null)
         {
             return new NotFoundResult();

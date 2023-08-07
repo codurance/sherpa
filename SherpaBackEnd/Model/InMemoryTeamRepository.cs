@@ -44,7 +44,7 @@ public class InMemoryTeamRepository : ITeamRepository
         return await Task.FromResult(_dataSet.Values.ToList());
     }
 
-    public async Task<Team?> GetTeamByIdAsync(Guid guid)
+    public async Task<Team?> DeprecatedGetTeamByIdAsync(Guid guid)
     {
         return await Task.FromResult(_dataSet.GetValueOrDefault(guid));
     }
@@ -69,5 +69,10 @@ public class InMemoryTeamRepository : ITeamRepository
     public async Task<IEnumerable<Team>> GetAllTeamsAsync()
     {
         return await Task.FromResult(_teams);
+    }
+
+    public async Task<Team?> GetTeamByIdAsync(Guid teamId)
+    {
+        return _teams.Find(team => team.Id == teamId);
     }
 }
