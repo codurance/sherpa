@@ -1,3 +1,5 @@
+using AngleSharp.Css.Dom;
+using AngleSharp.Dom;
 using Bunit;
 using SherpaFrontEnd.Shared;
 
@@ -17,24 +19,15 @@ public class NavMenuTest
     }
     
     [Fact]
-    public void ShouldHaveAnAnchorWithTeamsPageRef()
+    public void ShouldHaveAnAnchorWithTeamsPageHRefRAndRedirectToTeamsList()
     {
         var ctx = new TestContext();
         var component = ctx.RenderComponent<NavMenu>();
 
-        var element = component.Find("a[href='teams-list-page']");
-
-        Assert.NotNull(element);
+        var teamsElement = component.FindAll("a")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Teams"));
+        Assert.NotNull(teamsElement);
+        Assert.Contains("teams-list-page", teamsElement.GetAttribute("href"));
     }
 
-    [Fact]
-    public void ShouldHaveTheTitleTeams()
-    {
-        var ctx = new TestContext();
-        var component = ctx.RenderComponent<NavMenu>();
-
-        var element = component.Find("a[href='teams-list-page']");
-
-        Assert.Contains("Teams", element.InnerHtml);
-    }
 }
