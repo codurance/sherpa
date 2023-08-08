@@ -2,17 +2,21 @@ namespace SherpaBackEnd.Dtos;
 
 public class TeamMember
 {
-    public string Name { get; set; }
-    public string LastName { get; set; }
-    public string Position { get; set; }
+    public Guid Id { get; set; }
     
+    public string Name { get; set; } = "";
+    
+    public string LastName { get; set; } = "";
+    public string FullName { get; set; }
+    public string Position { get; set; }
+
     public string Email { get; set; }
 
-    public TeamMember(string name, string lastName, string position, string email)
+    public TeamMember(Guid id, string fullName, string position, string email)
     {
-        Name = name;
-        LastName = lastName;
+        Id = id;
         Position = position;
         Email = email;
+        FullName = fullName;
     }
 }

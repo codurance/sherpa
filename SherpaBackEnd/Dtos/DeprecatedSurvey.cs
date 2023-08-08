@@ -1,6 +1,6 @@
 namespace SherpaBackEnd.Model;
 
-public class Survey
+public class DeprecatedSurvey
 {
     public DateOnly Date { get; set; }
     
@@ -9,7 +9,7 @@ public class Survey
     public int MembersCount { get; set; }
 
 
-    public Survey(DateOnly date, List<string> emails)
+    public DeprecatedSurvey(DateOnly date, List<string> emails)
     {
         Date = date;
         Emails = emails;

@@ -8,12 +8,12 @@ namespace SherpaBackEnd.Tests.Controllers;
 
 public class SurveysControllerTest
 {
-    private SurveysController _surveysController;
+    private DeprecatedSurveysController _deprecatedSurveysController;
     private Mock<ISurveysService> _mockSurveyRepository;
 
     public SurveysControllerTest()
     {
         _mockSurveyRepository = new Mock<ISurveysService>();
-        _surveysController = new SurveysController(_mockSurveyRepository.Object);
+        _deprecatedSurveysController = new DeprecatedSurveysController(_mockSurveyRepository.Object);
     }
 }

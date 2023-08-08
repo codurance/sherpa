@@ -138,15 +138,15 @@ public class TeamControllerTest
         var team = new Team("Team A");
         team.Members = new List<TeamMember>
         {
-            new ("Name A", "lastName A", "position A", "e1@e.com"),
-            new ("Name B", "lastName B", "position B", "e2@e.com")
+            new (Guid.NewGuid(), "lastName A", "position A", "e1@e.com"),
+            new (Guid.NewGuid(), "lastName B", "position B", "e2@e.com")
         };
         
         _mockTeamService.Setup(repo => repo.DeprecatedGetTeamByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync(team);
 
         var members = team.Members.ToList();
-        members.Add(new TeamMember("Name C", "Lastname C", "position C", "e3@e.com"));
+        members.Add(new TeamMember(Guid.NewGuid(), "Lastname C", "position C", "e3@e.com"));
         team.Members = members;
         
         await _teamController.UpdateTeamAsync(team.Id,team);
@@ -160,8 +160,8 @@ public class TeamControllerTest
         var team = new Team("Team A");
         team.Members = new List<TeamMember>
         {
-            new ("Name A", "lastName A", "position A", "e1@e.com"),
-            new ("Name B", "lastName B", "position B", "e2@e.com")
+            new (Guid.NewGuid(), "lastName A", "position A", "e1@e.com"),
+            new (Guid.NewGuid(), "lastName B", "position B", "e2@e.com")
         };
         
         _mockTeamService.Setup(repo => repo.DeprecatedGetTeamByIdAsync(It.IsAny<Guid>()))

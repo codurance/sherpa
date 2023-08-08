@@ -23,6 +23,16 @@
       <AdditionalFiles Include="Shared\Modals\AddTeamModal.razor" />
       <AdditionalFiles Include="Shared\Modals\ConfirmationModal.razor" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Content Remove="Shared\Modals\CreateTeamOffcanvas 2.razor" />
+      <Content Remove="Shared\Modals\AddTeamModal 2.razor" />
+      <Content Remove="Pages\TeamsList 2.razor" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Pages\TeamsList.razor 2.css" />
+    </ItemGroup>
     
     <Target Name="CompileTailwind" BeforeTargets="Build">
         <Exec Command="npx tailwindcss -i ./Styles/tailwind.css -o ./wwwroot/css/tailwind.css --minified" />

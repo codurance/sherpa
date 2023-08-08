@@ -48,8 +48,8 @@ public class AssessmentServiceTest
         var team = new Team("Team");
         team.Members = new List<TeamMember>
         {
-            new ("Name A", "LastName A", "Position A", "emaila@mail.com"),
-            new ("Name B", "LastName B", "Position B", "emailb@mail.com")
+            new (Guid.NewGuid(), "LastName A", "Position A", "emaila@mail.com"),
+            new (Guid.NewGuid(), "LastName B", "Position B", "emailb@mail.com")
         };
         var assessment = new Assessment(team.Id, Guid.NewGuid(), "assessment");
 
@@ -57,8 +57,8 @@ public class AssessmentServiceTest
             .ReturnsAsync(assessment);
         
         var emails = team.Members.Select(m => m.Email).ToList();
-        var survey = new Survey(DateOnly.FromDateTime(DateTime.Now), emails);
-        var surveysList = new List<Survey> { survey };
+        var survey = new DeprecatedSurvey(DateOnly.FromDateTime(DateTime.Now), emails);
+        var surveysList = new List<DeprecatedSurvey> { survey };
         assessment.Surveys = surveysList;
 
         _assessmentRepository.Setup(m => m.UpdateAssessment(assessment)).ReturnsAsync(assessment);
@@ -82,12 +82,12 @@ public class AssessmentServiceTest
         var team = new Team("Team");
         var assessment = new Assessment(team.Id, Guid.NewGuid(), "assessment");
 
-        assessment.Surveys = new List<Survey>
+        assessment.Surveys = new List<DeprecatedSurvey>
         {
             new (DateOnly.FromDateTime(DateTime.Now), new List<string>())
         };
         
-        assessment.Surveys = new List<Survey>();
+        assessment.Surveys = new List<DeprecatedSurvey>();
         await _assessmentService.UpdateAssessment(assessment);
         _assessmentRepository.Verify(m => m.UpdateAssessment(assessment));
     }

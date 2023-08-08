@@ -56,7 +56,7 @@
 
     private async Task AddNewSurvey(Assessment assessment)
     {
-        var survey = new Survey(DateOnly.FromDateTime(DateTime.Now), Emails);
+        var survey = new DeprecatedSurvey(DateOnly.FromDateTime(DateTime.Now), Emails);
         
         var surveysList = assessment.Surveys.ToList();
         surveysList.Add(survey);
@@ -65,10 +65,10 @@
         await OnCreateSurvey.InvokeAsync(assessment);
     }
 
-    private async Task DeleteSurvey(Assessment assessment, Survey survey)
+    private async Task DeleteSurvey(Assessment assessment, DeprecatedSurvey deprecatedSurvey)
     {
         var surveysList = assessment.Surveys.ToList();
-        var wasDeleted = surveysList.Remove(survey);
+        var wasDeleted = surveysList.Remove(deprecatedSurvey);
         if (wasDeleted)
         {
             assessment.Surveys = surveysList;

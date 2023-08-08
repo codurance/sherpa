@@ -88,8 +88,8 @@ public class AssessmentControllerTest
         var team = new Team("Team");
         team.Members = new List<TeamMember>
         {
-            new ("Name A", "LastName A", "Position A", "emaila@mail.com"),
-            new ("Name B", "LastName B", "Position B", "emailb@mail.com")
+            new (Guid.NewGuid(), "LastName A", "Position A", "emaila@mail.com"),
+            new (Guid.NewGuid(), "LastName B", "Position B", "emailb@mail.com")
         };
         var assessment = new Assessment(team.Id, Guid.NewGuid(), "assessment");
 
@@ -97,8 +97,8 @@ public class AssessmentControllerTest
             .ReturnsAsync(assessment);
         
         var emails = team.Members.Select(m => m.Email).ToList();
-        var survey = new Survey(DateOnly.FromDateTime(DateTime.Now), emails);
-        var surveysList = new List<Survey> { survey };
+        var survey = new DeprecatedSurvey(DateOnly.FromDateTime(DateTime.Now), emails);
+        var surveysList = new List<DeprecatedSurvey> { survey };
         assessment.Surveys = surveysList;
 
         _mockService.Setup(m => m.UpdateAssessment(assessment)).ReturnsAsync(assessment);
@@ -123,8 +123,8 @@ public class AssessmentControllerTest
         var team = new Team("Team");
         var assessment = new Assessment(team.Id, Guid.NewGuid(), "assessment");
 
-        var survey = new Survey(DateOnly.FromDateTime(DateTime.Now), new List<string>());
-        assessment.Surveys = new List<Survey> { survey };
+        var survey = new DeprecatedSurvey(DateOnly.FromDateTime(DateTime.Now), new List<string>());
+        assessment.Surveys = new List<DeprecatedSurvey> { survey };
 
         _mockService.Setup(m => m.GetAssessment(It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(assessment);

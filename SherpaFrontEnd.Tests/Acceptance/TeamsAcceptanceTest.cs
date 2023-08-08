@@ -502,8 +502,9 @@ public class TeamsAcceptanceTest
 
         //     and something went wrong (we could not create a new team)
         // THEN he should see the error message “Something went wrong“ at the top of the page
-
-        Assert.Equal($"http://localhost/error", _navMan.Uri);
+        appComponent.WaitForAssertion(() => Assert.Equal($"http://localhost/error", _navMan.Uri));
+        
+        
         Assert.NotNull(appComponent.FindAll("p")
             .FirstOrDefault(element => element.InnerHtml.Contains("Something went wrong.")));
     }
