@@ -79,8 +79,8 @@ public class AssessmentControllerAcceptanceTest
         _inMemoryAssessmentRepository.AddAssessment(assessmentToUpdate);
 
 
-        var survey = new Survey(DateOnly.FromDateTime(DateTime.Now), new List<string>());
-        var surveysList = new List<Survey> { survey };
+        var survey = new DeprecatedSurvey(DateOnly.FromDateTime(DateTime.Now), new List<string>());
+        var surveysList = new List<DeprecatedSurvey> { survey };
         assessmentToUpdate.Surveys = surveysList;
 
         var updateAssessmentRequest = await _assessmentsController.UpdateAssessmentAsync(assessmentToUpdate);
@@ -108,8 +108,8 @@ public class AssessmentControllerAcceptanceTest
 
         var emails = team.Members.Select(m => m.Email).ToList();
         
-        var survey = new Survey(DateOnly.FromDateTime(DateTime.Now), emails);
-        var surveysList = new List<Survey> { survey };
+        var survey = new DeprecatedSurvey(DateOnly.FromDateTime(DateTime.Now), emails);
+        var surveysList = new List<DeprecatedSurvey> { survey };
         assessmentToUpdate.Surveys = surveysList;
 
         var updateAssessmentRequest = await _assessmentsController.UpdateAssessmentAsync(assessmentToUpdate);
@@ -146,8 +146,8 @@ public class AssessmentControllerAcceptanceTest
         var assessmentToGet = new Assessment(team.Id, templateId, "test assessment");
         var anotherAssessmentToGet = new Assessment(anotherTeam.Id, templateId, "another test assessment");
 
-        assessmentToGet.Surveys = new List<Survey> { new (DateOnly.FromDateTime(DateTime.Now), emails) };
-        anotherAssessmentToGet.Surveys = new List<Survey> { new (DateOnly.FromDateTime(DateTime.Now), anotherEmails) };
+        assessmentToGet.Surveys = new List<DeprecatedSurvey> { new (DateOnly.FromDateTime(DateTime.Now), emails) };
+        anotherAssessmentToGet.Surveys = new List<DeprecatedSurvey> { new (DateOnly.FromDateTime(DateTime.Now), anotherEmails) };
         
         _inMemoryAssessmentRepository.AddAssessment(assessmentToGet);
         _inMemoryAssessmentRepository.AddAssessment(anotherAssessmentToGet);

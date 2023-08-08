@@ -73,8 +73,8 @@ public class SurveyServiceTest
         _mockAssessmentRepository.Setup(m => m.GetAssessment(teamId, templateId))
             .ReturnsAsync(assessment);
 
-        var survey = new Survey(DateOnly.FromDateTime(DateTime.Now), new List<string>());
-        var surveys = new List<Survey> { survey };
+        var survey = new DeprecatedSurvey(DateOnly.FromDateTime(DateTime.Now), new List<string>());
+        var surveys = new List<DeprecatedSurvey> { survey };
         assessment.Surveys = surveys;
 
         _mockAssessmentRepository.Setup(m => m.UpdateAssessment(assessment))
