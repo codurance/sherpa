@@ -5,6 +5,8 @@ riderModule.iml
 /_ReSharper.Caches/
 .idea/**
 
+**/wwwroot/css/tailwind.css
+
 # Created by https://www.toptal.com/developers/gitignore/api/csharp,rider
 # Edit at https://www.toptal.com/developers/gitignore?templates=csharp,rider
 
