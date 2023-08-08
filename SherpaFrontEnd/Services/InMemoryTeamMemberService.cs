@@ -8,8 +8,8 @@ public class InMemoryTeamMemberService : ITeamMemberService
     {
         return new List<TeamMember>
         {
-            new("Bob", "Smith", "CEO", "email1@mail.com"),
-            new("Tom", "Hardy", "CP", "email2@mail.com")
+            new(Guid.NewGuid(), "Smith", "CEO", "email1@mail.com"),
+            new(Guid.NewGuid(), "Hardy", "CP", "email2@mail.com")
         };
     }
 }

@@ -15,7 +15,7 @@ public class InMemoryTeamRepository : ITeamRepository
         {
             Members = new List<TeamMember>
             {
-                new ("Bob", "Ross", "Painter", "bob@gmail.com"),
+                new (Guid.NewGuid(), "Ross", "Painter", "bob@gmail.com"),
             }
         };
 
@@ -24,9 +24,9 @@ public class InMemoryTeamRepository : ITeamRepository
         {
             Members = new List<TeamMember>
             {
-                new ("Mary", "Anne", "QA", "mary@gmail.com"),
-                new ("Bobby", "Smith", "CEO", "bobby@gmail.com"),
-                new ("Bobber", "Hardy", "CP", "bobber@gmail.com")
+                new (Guid.NewGuid(), "Anne", "QA", "mary@gmail.com"),
+                new (Guid.NewGuid(), "Smith", "CEO", "bobby@gmail.com"),
+                new (Guid.NewGuid(), "Hardy", "CP", "bobber@gmail.com")
             }
         };
 

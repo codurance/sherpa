@@ -98,8 +98,8 @@ public class AssessmentControllerAcceptanceTest
         var team = new Team("Team");
         team.Members = new List<TeamMember>
         {
-            new ("Name A", "LastName A", "Position A", "emaila@mail.com"),
-            new ("Name B", "LastName B", "Position B", "emailb@mail.com")
+            new (Guid.NewGuid(), "LastName A", "Position A", "emaila@mail.com"),
+            new (Guid.NewGuid(), "LastName B", "Position B", "emailb@mail.com")
         };
 
         var templateId = Guid.NewGuid();
@@ -129,14 +129,14 @@ public class AssessmentControllerAcceptanceTest
         var team = new Team("Team");
         team.Members = new List<TeamMember>
         {
-            new ("Name A", "LastName A", "Position A", "emaila@mail.com"),
-            new ("Name B", "LastName B", "Position B", "emailb@mail.com")
+            new (Guid.NewGuid(), "LastName A", "Position A", "emaila@mail.com"),
+            new (Guid.NewGuid(), "LastName B", "Position B", "emailb@mail.com")
         };
         var anotherTeam = new Team("another Team");
         anotherTeam.Members = new List<TeamMember>
         {
-            new ("Name C", "LastName C", "Position C", "emailc@mail.com"),
-            new ("Name D", "LastName D", "Position D", "emaild@mail.com")
+            new (Guid.NewGuid(), "LastName C", "Position C", "emailc@mail.com"),
+            new (Guid.NewGuid(), "LastName D", "Position D", "emaild@mail.com")
         };
         
         var emails = team.Members.Select(m => m.Email).ToList();

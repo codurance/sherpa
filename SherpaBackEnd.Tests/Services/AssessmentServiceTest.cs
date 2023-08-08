@@ -48,8 +48,8 @@ public class AssessmentServiceTest
         var team = new Team("Team");
         team.Members = new List<TeamMember>
         {
-            new ("Name A", "LastName A", "Position A", "emaila@mail.com"),
-            new ("Name B", "LastName B", "Position B", "emailb@mail.com")
+            new (Guid.NewGuid(), "LastName A", "Position A", "emaila@mail.com"),
+            new (Guid.NewGuid(), "LastName B", "Position B", "emailb@mail.com")
         };
         var assessment = new Assessment(team.Id, Guid.NewGuid(), "assessment");
 
