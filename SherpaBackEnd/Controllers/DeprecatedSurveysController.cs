@@ -4,10 +4,10 @@ using SherpaBackEnd.Services;
 
 namespace SherpaBackEnd.Controllers;
 
-public class SurveysController
+public class DeprecatedSurveysController
 {
     private ISurveysService _surveysService;
-    public SurveysController(ISurveysService surveysService)
+    public DeprecatedSurveysController(ISurveysService surveysService)
     {
         _surveysService = surveysService;
     }

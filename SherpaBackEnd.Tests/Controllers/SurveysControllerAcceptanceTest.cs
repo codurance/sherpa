@@ -16,7 +16,7 @@ public class SurveysControllerAcceptanceTest
     private AssessmentsController _assessmentsController;
 
     private ISurveysService _surveysService;
-    private SurveysController _surveysController;
+    private DeprecatedSurveysController _deprecatedSurveysController;
 
     public SurveysControllerAcceptanceTest()
     {
@@ -27,7 +27,7 @@ public class SurveysControllerAcceptanceTest
         _assessmentsController = new AssessmentsController(_asseptanceService);
 
         _surveysService = new SurveysService(_surveyRepository);
-        _surveysController = new SurveysController(_surveysService);
+        _deprecatedSurveysController = new DeprecatedSurveysController(_surveysService);
     }
 
     [Fact]
@@ -37,7 +37,7 @@ public class SurveysControllerAcceptanceTest
         var templatesResult = Assert.IsType<OkObjectResult>(templatesRequest.Result);
         var actualTemplates = Assert.IsAssignableFrom<IEnumerable<SurveyTemplate>>(templatesResult.Value);
         
-        var actualQuestionsRequest = await _surveysController.GetQuestions(actualTemplates.First().Id);
+        var actualQuestionsRequest = await _deprecatedSurveysController.GetQuestions(actualTemplates.First().Id);
         var actualQuestionsResult = Assert.IsType<OkObjectResult>(actualQuestionsRequest.Result);
         var actualQuestions = Assert.IsAssignableFrom<List<QuestionContent>>(actualQuestionsResult.Value);
 
