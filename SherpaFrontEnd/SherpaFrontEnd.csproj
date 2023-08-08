@@ -23,5 +23,9 @@
       <AdditionalFiles Include="Shared\Modals\AddTeamModal.razor" />
       <AdditionalFiles Include="Shared\Modals\ConfirmationModal.razor" />
     </ItemGroup>
+    
+    <Target Name="CompileTailwind" BeforeTargets="Build">
+        <Exec Command="npx tailwindcss -i ./Styles/tailwind.css -o ./wwwroot/css/tailwind.css --minified" />
+    </Target>
 
 </Project>

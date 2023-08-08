@@ -9,7 +9,7 @@
     </div>
 </div>
 
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+<div class="@NavMenuCssClass">
     <nav class="flex-column">
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="teams-list-page">
@@ -32,7 +32,7 @@
 @code {
     private bool collapseNavMenu = true;
 
-    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    private string? NavMenuCssClass => collapseNavMenu ? null : "collapse";
 
     private void ToggleNavMenu()
     {
