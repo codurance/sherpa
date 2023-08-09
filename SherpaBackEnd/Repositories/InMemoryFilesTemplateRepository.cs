@@ -40,6 +40,11 @@ public class InMemoryFilesTemplateRepository : ITemplateRepository
         return allTemplates.ToArray();
     }
 
+    public Task<Template?> GetTemplateByName(string templateName)
+    {
+        throw new NotImplementedException();
+    }
+
     private void ParseTemplateFile(string templateName, IFileHelperEngine<CsvHackmanQuestion> engine,
         ICollection<Template> allTemplates)
     {

@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Moq;
 using SherpaBackEnd.Controllers;
 using SherpaBackEnd.Dtos;
 using SherpaBackEnd.Model;
@@ -12,6 +14,7 @@ namespace SherpaBackEnd.Tests.Acceptance;
 
 public class SurveyAcceptanceTest
 {
+    private ILogger<SurveyController> _logger = new Mock<ILogger<SurveyController>>().Object;
     private const string TestFolder = "test/unit";
     private const string QuestionInSpanish = "Question in spanish";
     private const string QuestionInEnglish = "Question in english";
@@ -64,8 +67,8 @@ public class SurveyAcceptanceTest
         var inMemoryTeamRepository = new InMemoryTeamRepository(new List<Team>() { team });
 
         var inMemorySurveyRepository = new InMemorySurveyRepository();
-        var surveysService = new SurveysService(inMemorySurveyRepository, inMemoryTeamRepository, inMemoryTemplateRepository);
-        var surveyController = new SurveyController(surveysService);
+        var surveysService = new SurveyService(inMemorySurveyRepository, inMemoryTeamRepository, inMemoryTemplateRepository);
+        var surveyController = new SurveyController(surveysService, _logger);
         var createSurveyDto = new CreateSurveyDto(Guid.NewGuid(), team.Id, template.Name, "survey title",
             "Description", DateTime.Parse("2023-08-09T07:38:04+0000"));
         var expectedSurvey = new Survey(createSurveyDto.SurveyId, new User(Guid.NewGuid(), "Lucia"), Status.Draft,

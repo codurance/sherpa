@@ -2,6 +2,7 @@ namespace SherpaBackEnd.Model;
 
 public interface ISurveyRepository
 {
-    Task<IEnumerable<SurveyTemplate>> GetTemplates();
-    bool IsTemplateExist(Guid templateId);
+    Task<IEnumerable<SurveyTemplate>> DeprecatedGetTemplates();
+    bool DeprecatedIsTemplateExist(Guid templateId);
+    void CreateSurvey(Survey.Survey survey);
 }

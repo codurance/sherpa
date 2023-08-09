@@ -1,87 +1,43 @@
 ﻿using Moq;
 using SherpaBackEnd.Dtos;
 using SherpaBackEnd.Model;
+using SherpaBackEnd.Model.Survey;
+using SherpaBackEnd.Model.Template;
 using SherpaBackEnd.Services;
 using SherpaBackEnd.Services.Email;
+using ISurveyRepository = SherpaBackEnd.Model.ISurveyRepository;
 
 namespace SherpaBackEnd.Tests.Services;
 
 public class SurveyServiceTest
 {
-    private readonly Mock<ISurveyRepository> _mockSurveyRepository;
-    private readonly Mock<IAssessmentRepository> _mockAssessmentRepository;
-    private readonly Mock<IEmailService> _emailService;
-    private readonly AssessmentService _service;
+    private Mock<ISurveyRepository> _surveyRepo;
+    private Mock<ITeamRepository> _teamRepo;
+    private Mock<ITemplateRepository> _templateRepo;
 
     public SurveyServiceTest()
     {
-        _mockSurveyRepository = new Mock<ISurveyRepository>();
-        _mockAssessmentRepository = new Mock<IAssessmentRepository>();
-        _emailService = new Mock<IEmailService>();
-        _service = new AssessmentService(_mockSurveyRepository.Object, _mockAssessmentRepository.Object, _emailService.Object);
+        _surveyRepo = new Mock<ISurveyRepository>();
+        _teamRepo = new Mock<ITeamRepository>();
+        _templateRepo = new Mock<ITemplateRepository>();
     }
 
     [Fact]
-    public async Task GetTemplates_ReturnsNonEmptyList()
+    public async Task ShouldRetrieveTemplateAndTeamFromTheirReposAndPersistSurveyOnSurveyRepoWhenCallingCreateSurvey()
     {
-        var template = new SurveyTemplate("hackman");
+        var team = new Team(Guid.NewGuid(), "Demo team");
+        var template = new Template("demo", Array.Empty<IQuestion>(), 30);
 
-        _mockSurveyRepository.Setup(m => m.GetTemplates())
-            .ReturnsAsync(new List<SurveyTemplate> { template });
-        var actualTemplates = await _service.GetTemplates();
-        var templatesList = actualTemplates.ToList();
+        var service = new SurveyService(_surveyRepo.Object, _teamRepo.Object, _templateRepo.Object);
 
-        Assert.NotEmpty(templatesList);
-        Assert.Equal(template.Name, templatesList.First().Name);
-    }
+        _teamRepo.Setup(repository => repository.GetTeamByIdAsync(team.Id)).ReturnsAsync(team);
+        _templateRepo.Setup(repository => repository.GetTemplateByName(template.Name)).ReturnsAsync(template);
 
-    [Fact]
-    public async Task GetTemplates_InvokesRepository()
-    {
-        var templates = await _service.GetTemplates();
-        _mockSurveyRepository.Verify(m => m.GetTemplates());
-    }
-
-    [Fact]
-    public async Task AddNewAssessment_ReturnsNewAssessment()
-    {
-        var templateId = Guid.NewGuid();
-        var teamId = Guid.NewGuid();
-        const string name = "Assessment A";
-
-        var assessment = new Assessment(teamId, templateId, name);
-        _mockAssessmentRepository.Setup(m => m.GetAssessment(teamId, templateId))
-            .ReturnsAsync(assessment);
-        _mockSurveyRepository.Setup(m => m.IsTemplateExist(templateId))
-            .Returns(true);
+        var createSurveyDto = new CreateSurveyDto(Guid.NewGuid(), team.Id, template.Name, "Title", "Description", DateTime.Parse("2023-08-09T07:38:04+0000") );
+        await service.CreateSurvey(createSurveyDto);
         
-        var actualAssessment = await _service.AddAssessment(teamId, templateId, name);
+        var expectedSurvey = new Survey(createSurveyDto.SurveyId, new User(Guid.NewGuid(), "Lucia"), Status.Draft, createSurveyDto.Deadline, createSurveyDto.Title, createSurveyDto.Description, Array.Empty<Response>(), team, template);
         
-        Assert.Equal(teamId, actualAssessment!.TeamId);
-        Assert.Equal(templateId, actualAssessment.TemplateId);
-        Assert.Empty(actualAssessment.Surveys);
-    }
-
-    [Fact]
-    public async Task UpdateAssessment_ReturnsUpdatedAssessment()
-    {
-        var templateId = Guid.NewGuid();
-        var teamId = Guid.NewGuid();
-        const string name = "Assessment A";
-
-        var assessment = new Assessment(teamId, templateId, name);
-        _mockAssessmentRepository.Setup(m => m.GetAssessment(teamId, templateId))
-            .ReturnsAsync(assessment);
-
-        var survey = new DeprecatedSurvey(DateOnly.FromDateTime(DateTime.Now), new List<string>());
-        var surveys = new List<DeprecatedSurvey> { survey };
-        assessment.Surveys = surveys;
-
-        _mockAssessmentRepository.Setup(m => m.UpdateAssessment(assessment))
-            .ReturnsAsync(assessment);
-
-        var updatedAssessment = await _service.UpdateAssessment(assessment);
-        Assert.NotEmpty(updatedAssessment.Surveys);
-        Assert.Single(updatedAssessment.Surveys);
+        _surveyRepo.Verify(repository => repository.CreateSurvey(expectedSurvey));
     }
 }

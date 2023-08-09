@@ -13,13 +13,18 @@ public class InMemorySurveyRepository : ISurveyRepository
         _templates.Add(template.Id, template);
     }
 
-    public async Task<IEnumerable<SurveyTemplate>> GetTemplates()
+    public async Task<IEnumerable<SurveyTemplate>> DeprecatedGetTemplates()
     {
         return await Task.FromResult<IEnumerable<SurveyTemplate>>(_templates.Values);
     }
 
-    public bool IsTemplateExist(Guid templateId)
+    public bool DeprecatedIsTemplateExist(Guid templateId)
     {
         return _templates.ContainsKey(templateId);
+    }
+
+    public void CreateSurvey(Survey.Survey survey)
+    {
+        throw new NotImplementedException();
     }
 }

@@ -7,14 +7,31 @@ namespace SherpaBackEnd.Controllers;
 
 public class SurveyController
 {
-    public SurveyController(SurveysService surveysService)
+    private readonly ISurveyService _surveyService;
+    private readonly ILogger _logger;
+
+    public SurveyController(ISurveyService surveyService, ILogger<SurveyController> logger)
     {
-        throw new NotImplementedException();
+        _surveyService = surveyService;
+        _logger = logger;
     }
 
-    public Task<ActionResult> CreateSurvey(CreateSurveyDto createSurveyDto)
+    public async Task<ActionResult> CreateSurvey(CreateSurveyDto createSurveyDto)
     {
-        throw new NotImplementedException();
+        try
+        {
+            await _surveyService.CreateSurvey(createSurveyDto);
+
+            return new CreatedResult("", null);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(default, e, e.Message);
+            return new ObjectResult(e)
+            {
+                StatusCode = StatusCodes.Status500InternalServerError
+            };
+        }
     }
 
     public Task<ActionResult<Survey>> GetSurveyById(Guid surveyId)
