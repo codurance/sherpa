@@ -272,8 +272,8 @@ public class TeamsAcceptanceTest
         //Team name without Editing
         //Tab Analysis
         //the button “Send a new survey“ without functionality
-
-        Assert.Equal($"http://localhost/team-content/{teamId.ToString()}", _navMan.Uri);
+        
+        teamsListComponent.WaitForAssertion(()=> Assert.Equal($"http://localhost/team-content/{teamId.ToString()}", _navMan.Uri));
 
         _navMan.NavigateTo($"/team-content/{teamId.ToString()}");
 

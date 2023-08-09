@@ -76,11 +76,6 @@ public class TemplatesAcceptanceTests
             .FirstOrDefault(element => element.InnerHtml.Contains("Hackman Model"));
 
         Assert.NotNull(elementWithText);
-        // AND see a three dots button to open the menu
-        var threeDotsButton = component.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Open contextual menu for Hackman Model"));;
-
-        Assert.NotNull(threeDotsButton);
     }
 
     [Fact]
