@@ -3,9 +3,11 @@ namespace SherpaBackEnd.Model;
 public class InMemorySurveyRepository : ISurveyRepository
 {
     private Dictionary<Guid, SurveyTemplate> _templates;
+    private List<Survey.Survey> _surveys;
 
     public InMemorySurveyRepository()
     {
+        _surveys = new List<Survey.Survey>();
         _templates = new Dictionary<Guid, SurveyTemplate>();
 
         var template = new SurveyTemplate("Hackman");
@@ -23,8 +25,13 @@ public class InMemorySurveyRepository : ISurveyRepository
         return _templates.ContainsKey(templateId);
     }
 
-    public void CreateSurvey(Survey.Survey survey)
+    public async Task CreateSurvey(Survey.Survey survey)
     {
-        throw new NotImplementedException();
+        _surveys.Add(survey);
+    }
+
+    public async Task<Survey.Survey?> GetSurveyById(Guid surveyId)
+    {
+        return _surveys.Find(survey => survey.Id == surveyId);
     }
 }

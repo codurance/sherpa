@@ -4,5 +4,6 @@ public interface ISurveyRepository
 {
     Task<IEnumerable<SurveyTemplate>> DeprecatedGetTemplates();
     bool DeprecatedIsTemplateExist(Guid templateId);
-    void CreateSurvey(Survey.Survey survey);
+    Task CreateSurvey(Survey.Survey survey);
+    Task<Survey.Survey?> GetSurveyById(Guid surveyId);
 }
