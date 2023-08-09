@@ -1,6 +1,7 @@
 ﻿using Moq;
 using Newtonsoft.Json;
 using SherpaBackEnd.Dtos;
+using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Model;
 using SherpaBackEnd.Model.Survey;
 using SherpaBackEnd.Model.Template;
@@ -50,7 +51,7 @@ public class SurveyServiceTest
     [Fact]
     public async Task ShouldReturnSurveyGivenByTheRepository()
     {
-        Guid surveyId = Guid.NewGuid();
+        var surveyId = Guid.NewGuid();
         var service = new SurveyService(_surveyRepo.Object, _teamRepo.Object, _templateRepo.Object);
         var expectedSurvey = new Survey(Guid.NewGuid(), new User(service.DefaultUserId, "Lucia"), Status.Draft, DateTime.Parse("2023-08-09T07:38:04+0000"), "Title", "Description", Array.Empty<Response>(), new Team(Guid.NewGuid(), "Demo team"), new Template("demo", Array.Empty<IQuestion>(), 30));
         _surveyRepo.Setup(repository => repository.GetSurveyById(surveyId)).ReturnsAsync(expectedSurvey);
@@ -59,5 +60,17 @@ public class SurveyServiceTest
         
         _surveyRepo.Verify(repository => repository.GetSurveyById(surveyId));
         CustomAssertions.StringifyEquals(expectedSurvey, receivedSurvey);
+    }
+    
+    [Fact]
+    public async Task ShouldThrowNotFoundExceptionIfRepoReturnsNull()
+    {
+        var surveyId = Guid.NewGuid();
+        var service = new SurveyService(_surveyRepo.Object, _teamRepo.Object, _templateRepo.Object);
+        var expectedSurvey = new Survey(Guid.NewGuid(), new User(service.DefaultUserId, "Lucia"), Status.Draft, DateTime.Parse("2023-08-09T07:38:04+0000"), "Title", "Description", Array.Empty<Response>(), new Team(Guid.NewGuid(), "Demo team"), new Template("demo", Array.Empty<IQuestion>(), 30));
+        _surveyRepo.Setup(repository => repository.GetSurveyById(surveyId)).ReturnsAsync((Survey?)null);
+
+
+        await Assert.ThrowsAsync<NotFoundException>(async () => await service.GetSurveyById(surveyId));
     }
 }

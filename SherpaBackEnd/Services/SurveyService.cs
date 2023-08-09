@@ -43,6 +43,12 @@ public class SurveyService : ISurveyService
 
     public async Task<Survey> GetSurveyById(Guid expectedSurveyId)
     {
-        return await _surveyRepository.GetSurveyById(expectedSurveyId);
+        var surveyById = await _surveyRepository.GetSurveyById(expectedSurveyId);
+
+        if (surveyById == null)
+        {
+            throw new NotFoundException("Survey not found");
+        }
+        return surveyById;
     }
 }

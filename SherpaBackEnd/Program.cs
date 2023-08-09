@@ -30,6 +30,8 @@ builder.Services.AddSingleton<ITemplateService, TemplateService>();
 builder.Services.AddSingleton<ISurveyRepository, InMemorySurveyRepository>();
 builder.Services.AddSingleton<IAssessmentRepository, InMemoryAssessmentRepository>();
 builder.Services.AddSingleton<IAssessmentService, AssessmentService>();
+builder.Services.AddSingleton<ISurveyRepository, InMemorySurveyRepository>();
+builder.Services.AddSingleton<ISurveyService, SurveyService>();
 builder.Services.AddSingleton<IEmailService, SesEmailService>(provider =>
 {
     if (!builder.Environment.IsDevelopment())
