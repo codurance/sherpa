@@ -45,9 +45,4 @@ public class SurveyService : ISurveyService
     {
         throw new NotImplementedException();
     }
-
-    Task ISurveyService.CreateSurvey(CreateSurveyDto createSurveyDto)
-    {
-        throw new NotImplementedException();
-    }
 }

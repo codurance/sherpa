@@ -8,7 +8,7 @@ public class InMemoryFilesTemplateRepository : ITemplateRepository
 {
     private readonly string _folder;
 
-    private const string HackmanModel = "Hackman Model";
+    public const string HackmanModel = "Hackman Model";
 
     private readonly string[] _templateNames = { HackmanModel };
 
@@ -34,19 +34,25 @@ public class InMemoryFilesTemplateRepository : ITemplateRepository
 
         foreach (var templateName in _templateNames)
         {
-            ParseTemplateFile(templateName, engine, allTemplates);
+            var template = ParseTemplateFile(templateName, engine);
+            allTemplates.Add(template);
         }
 
         return allTemplates.ToArray();
     }
 
-    public Task<Template?> GetTemplateByName(string templateName)
+    public async Task<Template?> GetTemplateByName(string templateName)
     {
-        throw new NotImplementedException();
+        if (!_templateNames.Contains(templateName))
+        {
+            return null;
+        }
+        var engine = new FileHelperEngine<CsvHackmanQuestion>();
+        var templateFile = ParseTemplateFile(templateName, engine);
+        return templateFile;
     }
 
-    private void ParseTemplateFile(string templateName, IFileHelperEngine<CsvHackmanQuestion> engine,
-        ICollection<Template> allTemplates)
+    private Template ParseTemplateFile(string templateName, IFileHelperEngine<CsvHackmanQuestion> engine)
     {
         var fileName = $"{_folder}/{_templatesFileName[templateName]}";
 
@@ -59,7 +65,7 @@ public class InMemoryFilesTemplateRepository : ITemplateRepository
                 ParseRecordAndAddToQuestions(questions, record);
             }
 
-            allTemplates.Add(new Template(templateName, questions.ToArray(), _templatesDuration[templateName]));
+            return new Template(templateName, questions.ToArray(), _templatesDuration[templateName]);
         }
         catch (Exception e)
         {

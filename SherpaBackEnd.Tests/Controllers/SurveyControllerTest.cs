@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using SherpaBackEnd.Controllers;
 using SherpaBackEnd.Dtos;
+using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Services;
 
 namespace SherpaBackEnd.Tests.Controllers;
@@ -49,5 +50,23 @@ public class SurveyControllerTest
 
         var createdResult = Assert.IsType<ObjectResult>(actionResult);
         Assert.Equal(StatusCodes.Status500InternalServerError, createdResult.StatusCode);
+    }
+    
+    [Fact]
+    public async Task ShouldReturn400StatusCodeIfServiceThrowsNotFoundException()
+    {
+        var createSurveyDto = new CreateSurveyDto(Guid.NewGuid(), Guid.NewGuid(), "template-name", "title",
+            "description", DateTime.Parse("2023-08-09T07:38:04+0000"));
+        var controller = new SurveyController(_serviceMock.Object, _logger);
+        
+        const string exceptionMessage = "test";
+        _serviceMock.Setup(service => service.CreateSurvey(It.IsAny<CreateSurveyDto>())).ThrowsAsync(new NotFoundException(exceptionMessage));
+
+        var actionResult = await controller.CreateSurvey(createSurveyDto);
+        
+
+        var createdResult = Assert.IsType<ObjectResult>(actionResult);
+        Assert.Equal(StatusCodes.Status400BadRequest, createdResult.StatusCode);
+        Assert.Equal(exceptionMessage, createdResult.Value);
     }
 }

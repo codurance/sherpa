@@ -60,7 +60,7 @@ public class SurveyAcceptanceTest
                 HackmanSubcategory.DELIMITED, HackmanSubcomponent.SENSE_OF_URGENCY, Position)
         };
 
-        var template = new Template("demo-template", questions, 30);
+        var template = new Template(InMemoryFilesTemplateRepository.HackmanModel, questions, 30);
         var inMemoryTemplateRepository = new InMemoryFilesTemplateRepository(TestFolder);
         
         var team = new Team(Guid.NewGuid(), "Team Test");

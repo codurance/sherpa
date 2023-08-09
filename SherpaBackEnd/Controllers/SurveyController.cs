@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SherpaBackEnd.Dtos;
+using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Model.Survey;
 using SherpaBackEnd.Services;
 
@@ -23,6 +24,15 @@ public class SurveyController
             await _surveyService.CreateSurvey(createSurveyDto);
 
             return new CreatedResult("", null);
+        }
+        catch (NotFoundException e)
+        {
+            _logger.LogError(default, e, e.Message);
+            return new ObjectResult(e)
+            {
+                StatusCode = StatusCodes.Status400BadRequest,
+                Value = e.Message
+            };
         }
         catch (Exception e)
         {
