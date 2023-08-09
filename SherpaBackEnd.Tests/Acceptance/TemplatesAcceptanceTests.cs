@@ -7,6 +7,7 @@ using SherpaBackEnd.Controllers;
 using SherpaBackEnd.Model.Template;
 using SherpaBackEnd.Repositories;
 using SherpaBackEnd.Services;
+using SherpaBackEnd.Tests.Helpers;
 
 namespace SherpaBackEnd.Tests.Acceptance;
 
@@ -73,12 +74,11 @@ public class TemplatesAcceptanceTests : IDisposable
         var templatesResult = Assert.IsType<OkObjectResult>(actualResponse.Result);
         var actualTemplates = Assert.IsAssignableFrom<IEnumerable<Template>>(templatesResult.Value);
 
-        Assert.Equal(
-            JsonConvert.SerializeObject(new[]
+        CustomAssertions.StringifyEquals(new[]
             {
                 _hackmanTemplate
-            })
-            , JsonConvert.SerializeObject(actualTemplates));
+            }
+            , actualTemplates);
     }
 
     [Fact]

@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using Moq;
 using Moq.Protected;
 using Newtonsoft.Json;
+using SherpaBackEnd.Tests.Helpers;
 using SherpaFrontEnd.Services;
 
 namespace BlazorApp.Tests.Services;
@@ -47,6 +48,6 @@ public class TemplateServiceTest
         var actualResponse = await templateService.GetAllTemplates();
         
         var expectedResponse = new []{new TemplateWithNameAndTime("Test", 0)};
-        Assert.Equal(JsonConvert.SerializeObject(expectedResponse), JsonConvert.SerializeObject(actualResponse));
+        CustomAssertions.StringifyEquals(expectedResponse, actualResponse);
     }
 }

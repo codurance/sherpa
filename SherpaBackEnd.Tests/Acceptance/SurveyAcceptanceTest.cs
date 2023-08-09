@@ -9,6 +9,7 @@ using SherpaBackEnd.Model.Survey;
 using SherpaBackEnd.Model.Template;
 using SherpaBackEnd.Repositories;
 using SherpaBackEnd.Services;
+using SherpaBackEnd.Tests.Helpers;
 
 namespace SherpaBackEnd.Tests.Acceptance;
 
@@ -71,7 +72,7 @@ public class SurveyAcceptanceTest
         var surveyController = new SurveyController(surveysService, _logger);
         var createSurveyDto = new CreateSurveyDto(Guid.NewGuid(), team.Id, template.Name, "survey title",
             "Description", DateTime.Parse("2023-08-09T07:38:04+0000"));
-        var expectedSurvey = new Survey(createSurveyDto.SurveyId, new User(Guid.NewGuid(), "Lucia"), Status.Draft,
+        var expectedSurvey = new Survey(createSurveyDto.SurveyId, new User(surveysService.DefaultUserId, "Lucia"), Status.Draft,
             createSurveyDto.Deadline, createSurveyDto.Title, createSurveyDto.Description, Array.Empty<Response>(),
             team, template);
 
@@ -85,7 +86,7 @@ public class SurveyAcceptanceTest
         //Then: they should retrieve the same survey they have already created
         var okObjectResult = Assert.IsType<OkObjectResult>(retrievedSurvey.Result);
         Assert.Equal(StatusCodes.Status200OK, okObjectResult.StatusCode);
-        Assert.Equal(expectedSurvey, retrievedSurvey);
+        CustomAssertions.StringifyEquals(expectedSurvey, okObjectResult.Value);
     }
     
     public void Dispose()

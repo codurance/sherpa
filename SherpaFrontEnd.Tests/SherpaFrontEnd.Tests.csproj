@@ -26,6 +26,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\SherpaBackEnd.Tests\SherpaBackEnd.Tests.csproj" />
       <ProjectReference Include="..\SherpaFrontEnd\SherpaFrontEnd.csproj" />
     </ItemGroup>
 

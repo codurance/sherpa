@@ -33,7 +33,7 @@ public class SurveyService : ISurveyService
         
         var survey = new Survey(createSurveyDto.SurveyId, new User(DefaultUserId, "Lucia"), Status.Draft, createSurveyDto.Deadline, createSurveyDto.Title, createSurveyDto.Description, Array.Empty<Response>(), team, template);
         
-        _surveyRepository.CreateSurvey(survey);
+        await _surveyRepository.CreateSurvey(survey);
     }
 
     public Task<IEnumerable<Survey>> GetAllSurveys()
@@ -41,8 +41,8 @@ public class SurveyService : ISurveyService
         throw new NotImplementedException();
     }
 
-    public Task<Survey?> GetSurveyById(Guid expectedSurveyId)
+    public async Task<Survey> GetSurveyById(Guid expectedSurveyId)
     {
-        throw new NotImplementedException();
+        return await _surveyRepository.GetSurveyById(expectedSurveyId);
     }
 }

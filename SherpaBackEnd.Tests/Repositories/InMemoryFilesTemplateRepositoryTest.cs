@@ -2,6 +2,7 @@ using Newtonsoft.Json;
 using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Model.Template;
 using SherpaBackEnd.Repositories;
+using SherpaBackEnd.Tests.Helpers;
 
 namespace SherpaBackEnd.Tests.Repositories;
 
@@ -56,12 +57,11 @@ public class InMemoryFilesTemplateRepositoryTest : IDisposable
         var templateRepository = new InMemoryFilesTemplateRepository(TestFolder);
         var actualResult = await templateRepository.GetAllTemplatesAsync();
 
-        Assert.Equal(
-            JsonConvert.SerializeObject(new[]
+        CustomAssertions.StringifyEquals(new[]
             {
                 template
-            })
-            , JsonConvert.SerializeObject(actualResult));
+            }
+            , actualResult);
     }
     
     [Fact]
@@ -103,7 +103,7 @@ public class InMemoryFilesTemplateRepositoryTest : IDisposable
         var templateRepository = new InMemoryFilesTemplateRepository(TestFolder);
 
         var actualTemplate = await templateRepository.GetTemplateByName(templateName);
-        Assert.Equal(JsonConvert.SerializeObject(expectedTemplate), JsonConvert.SerializeObject(actualTemplate));
+        CustomAssertions.StringifyEquals(expectedTemplate, actualTemplate);
     }
     
     [Fact]
