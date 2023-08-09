@@ -41,7 +41,7 @@ public class SurveyService : ISurveyService
         throw new NotImplementedException();
     }
 
-    public Task<Survey?> GetSurveyById()
+    public Task<Survey?> GetSurveyById(Guid expectedSurveyId)
     {
         throw new NotImplementedException();
     }

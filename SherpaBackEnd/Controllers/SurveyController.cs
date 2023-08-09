@@ -25,27 +25,34 @@ public class SurveyController
 
             return new CreatedResult("", null);
         }
-        catch (NotFoundException e)
-        {
-            _logger.LogError(default, e, e.Message);
-            return new ObjectResult(e)
-            {
-                StatusCode = StatusCodes.Status400BadRequest,
-                Value = e.Message
-            };
-        }
         catch (Exception e)
         {
             _logger.LogError(default, e, e.Message);
-            return new ObjectResult(e)
+            
+            return e switch
             {
-                StatusCode = StatusCodes.Status500InternalServerError
+                NotFoundException => new ObjectResult(e) { StatusCode = StatusCodes.Status400BadRequest, Value = e.Message},
+                _ => new ObjectResult(e) { StatusCode = StatusCodes.Status500InternalServerError }
             };
         }
     }
 
-    public Task<ActionResult<Survey>> GetSurveyById(Guid surveyId)
+    public async Task<ActionResult<Survey>> GetSurveyById(Guid surveyId)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var surveyById = await _surveyService.GetSurveyById(surveyId);
+            return new OkObjectResult(surveyById);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(default, e, e.Message);
+
+            return e switch
+            {
+                NotFoundException => new ObjectResult(e) { StatusCode = StatusCodes.Status404NotFound, Value = e.Message },
+                _ => new ObjectResult(e) { StatusCode = StatusCodes.Status500InternalServerError }
+            };
+        }
     }
 }
