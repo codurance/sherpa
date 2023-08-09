@@ -1,4 +1,6 @@
-<div class="template-box">
+@inject NavigationManager NavManager
+
+<div class="template-box" onclick="@(() => NavManager.NavigateTo($"/templates/{Uri.EscapeDataString(Name)}"))">
     <h2 class="template-box__title">@Name</h2>
     <p class="template-box__time"><i class="las la-clock"></i> @MinutesToComplete min</p>
 </div>

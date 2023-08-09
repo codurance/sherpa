@@ -30,7 +30,7 @@ public class SurveyAcceptanceTest
         _httpClientFactory = new Mock<IHttpClientFactory>();
         _httpClientFactory.Setup(factory => factory.CreateClient("SherpaBackEnd")).Returns(httpClient);
         _templateService = new TemplateService(_httpClientFactory.Object);
-        _testCtx.Services.AddSingleton<TemplateService>(_templateService);
+        _testCtx.Services.AddSingleton<ITemplateService>(_templateService);
         _navManager = _testCtx.Services.GetRequiredService<FakeNavigationManager>();
     }
 
@@ -65,12 +65,18 @@ public class SurveyAcceptanceTest
         elementBox.Click();
         
         appComponent.WaitForAssertion(() =>
-            Assert.Equal($"http://localhost/template/{Uri.EscapeDataString("Hackman Model")}", _navManager.Uri));
+            Assert.Equal($"http://localhost/templates/{Uri.EscapeDataString("Hackman Model")}", _navManager.Uri));
+        
+        _navManager.NavigateTo($"http://localhost/templates/{Uri.EscapeDataString("Hackman Model")}");
 
+        appComponent.WaitForState(() => 
+            appComponent.FindAll("h1")
+                .FirstOrDefault(element => element.InnerHtml.Contains("Hackman Model")) != null);
+        
         var templateTitle = appComponent.FindAll("h1")
             .FirstOrDefault(element => element.InnerHtml.Contains("Hackman Model"));
         Assert.NotNull(templateTitle);
-
+        
         var launchThisTemplateButton = appComponent.FindAll("button")
             .FirstOrDefault(element => element.InnerHtml.Contains("Launch this template"));
         Assert.NotNull(launchThisTemplateButton);
