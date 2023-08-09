@@ -76,8 +76,9 @@ public class SurveyAcceptanceTest
             team, template);
 
         //When: they create a new Survey 
-        await surveyController.CreateSurvey(createSurveyDto);
-
+        var actionResult = await surveyController.CreateSurvey(createSurveyDto);
+        Assert.IsType<CreatedResult>(actionResult);
+        
         //And: they get it back later
         var retrievedSurvey = await surveyController.GetSurveyById(createSurveyDto.SurveyId);
 

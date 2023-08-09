@@ -1,4 +1,5 @@
 ﻿using SherpaBackEnd.Dtos;
+using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Model;
 using SherpaBackEnd.Model.Survey;
 using SherpaBackEnd.Model.Template;
@@ -12,6 +13,7 @@ public class SurveyService : ISurveyService
     private readonly ISurveyRepository _surveyRepository;
     private readonly ITeamRepository _teamRepository;
     private readonly ITemplateRepository _templateRepository;
+    public readonly Guid DefaultUserId = Guid.NewGuid();
 
     public SurveyService(ISurveyRepository surveyRepository, ITeamRepository teamRepository,
         ITemplateRepository templateRepository)
@@ -21,9 +23,17 @@ public class SurveyService : ISurveyService
         _templateRepository = templateRepository;
     }
 
-    public Task CreateSurvey(CreateSurveyDto createSurveyDto)
+    public async Task CreateSurvey(CreateSurveyDto createSurveyDto)
     {
-        throw new NotImplementedException();
+        var team = await _teamRepository.GetTeamByIdAsync(createSurveyDto.TeamId);
+        var template = await _templateRepository.GetTemplateByName(createSurveyDto.TemplateName);
+        
+        if (team == null) throw new NotFoundException("Team not found");
+        if (template == null) throw new NotFoundException("Template not found");
+        
+        var survey = new Survey(createSurveyDto.SurveyId, new User(DefaultUserId, "Lucia"), Status.Draft, createSurveyDto.Deadline, createSurveyDto.Title, createSurveyDto.Description, Array.Empty<Response>(), team, template);
+        
+        _surveyRepository.CreateSurvey(survey);
     }
 
     public Task<IEnumerable<Survey>> GetAllSurveys()
