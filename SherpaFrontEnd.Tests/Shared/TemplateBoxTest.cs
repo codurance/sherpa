@@ -23,7 +23,7 @@ public class TemplateBoxTest
     public async Task ShouldRedirectToTheTemplateOwnPageOnClick()
     {
         var page = _testContext.RenderComponent<TemplateBox>(ComponentParameter.CreateParameter("Name","Hackman Model"));
-        
+
         var existingSurveyElement = page.FindAll("h2")
             .FirstOrDefault(element => element.InnerHtml.Contains("Hackman Model"));
         Assert.NotNull(existingSurveyElement);

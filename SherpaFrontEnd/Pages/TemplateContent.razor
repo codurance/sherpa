@@ -1,11 +1,10 @@
-@page "/templates/Hackman Model"
+@page "/templates/{templateName}"
 
-<h1>Hackman Model</h1>
+<h1>@TemplateName</h1>
 <button class="w-25 btn btn-outline-primary">Launch this template</button>
 
 @code {
-    
     [Parameter]
-    public string? Name { get; set; }
-    
+    public string? TemplateName { get; set; }
+
 }

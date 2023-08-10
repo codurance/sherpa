@@ -55,7 +55,7 @@ public class SurveyAcceptanceTest
 
         var appComponent = _testCtx.RenderComponent<App>();
 
-        var targetPage = "templates";
+        const string targetPage = "templates";
         _navManager.NavigateTo($"http://localhost/{targetPage}");
 
         var elementBox = appComponent.FindAll("h2")
