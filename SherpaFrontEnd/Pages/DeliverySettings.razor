@@ -1,0 +1,16 @@
+@page "/survey/delivery-settings"
+@inject NavigationManager NavManager
+<h3>DeliverySettings</h3>
+
+@code {
+
+    [SupplyParameterFromQuery]
+    [Parameter]
+    public string? Template { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Console.WriteLine("QueryParam: " + Template);
+    }
+
+}

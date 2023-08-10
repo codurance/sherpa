@@ -129,7 +129,7 @@ public class SurveyAcceptanceTest
 
         appComponent.WaitForAssertion(() =>
             Assert.Equal(
-                $"http://localhost/templates/delivery-settings?template={Uri.EscapeDataString("Hackman Model")}",
+                $"http://localhost/survey/delivery-settings?template={Uri.EscapeDataString("Hackman Model")}",
                 _navManager.Uri));
         
         var teamSelect = appComponent.FindAll("select")
