@@ -1,6 +1,49 @@
 @page "/survey/delivery-settings"
+@using SherpaFrontEnd.Dtos
+@using SherpaFrontEnd.Model
+@using SherpaFrontEnd.Services
 @inject NavigationManager NavManager
+@inject ITeamDataService TeamDataService
+
+
 <h3>DeliverySettings</h3>
+
+<EditForm Model="CreateSurveyDto" OnValidSubmit="() => { }">
+    <DataAnnotationsValidator/>
+
+    <div>
+        <label for="survey-team-id"></label>
+        <InputSelect id="survey-team-id" @bind-Value="CreateSurveyDto.TeamId">
+            @if (Teams != null)
+            {
+                foreach (var team in Teams)
+                {
+                    <option value="@team.Id">@team.Name</option>
+                }
+            }
+        </InputSelect>
+        <ValidationMessage For="@(() => CreateSurveyDto.TeamId)"/>
+    </div>
+
+    <div>
+        <label for="survey-title-input">Title</label>
+        <InputText id="survey-title-input" @bind-Value="CreateSurveyDto.Title"/>
+        <ValidationMessage For="@(() => CreateSurveyDto.Title)"/>
+    </div>
+
+    <div>
+        <label for="survey-description-input">Description</label>
+        <InputTextArea id="survey-description-input" @bind-Value="CreateSurveyDto.Description"/>
+    </div>
+
+    <div>
+        <label for="survey-deadline-input">Deadline</label>
+        <InputDate id="survey-deadline-input" @bind-Value="CreateSurveyDto.Deadline"/>
+    </div>
+    <div class="btn-group w-100 mt-5" role="group">
+        <button type="submit" class="w-50 btn btn-outline-primary btn-sm">Continue</button>
+    </div>
+</EditForm>
 
 @code {
 
@@ -8,9 +51,29 @@
     [Parameter]
     public string? Template { get; set; }
 
+    private CreateSurveyDto CreateSurveyDto { get; set; } = new();
+
+    public IEnumerable<Team>? Teams { get; set; }
+
+
     protected override async Task OnInitializedAsync()
     {
-        Console.WriteLine("QueryParam: " + Template);
+        CreateSurveyDto.SurveyId = Guid.NewGuid();
+        if (Template != null)
+        {
+            CreateSurveyDto.TemplateName = Template;
+        }
+        CreateSurveyDto.Description = null;
+        CreateSurveyDto.Deadline = null;
+
+        Teams = await FetchAllTeams();
     }
+
+    private async Task<List<Team>?> FetchAllTeams()
+    {
+        return await TeamDataService.GetAllTeams();
+    }
+
+
 
 }

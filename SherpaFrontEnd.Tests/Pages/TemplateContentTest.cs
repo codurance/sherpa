@@ -37,6 +37,6 @@ public class TemplateContentTest
         
         launchButton.Click();
         
-        component.WaitForAssertion(() => Assert.Equal($"http://localhost/templates/delivery-settings?template={Uri.EscapeDataString("Hackman Model")}", _navMan.Uri));
+        component.WaitForAssertion(() => Assert.Equal($"http://localhost/survey/delivery-settings?template={Uri.EscapeDataString("Hackman Model")}", _navMan.Uri));
     }
 }

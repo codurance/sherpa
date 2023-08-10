@@ -2,7 +2,7 @@
 @inject NavigationManager NavigationManager
 
 <h1>@TemplateName</h1>
-<button @onclick="@(() => NavigationManager.NavigateTo(NavigationManager.BaseUri + $"/survey/delivery-settings?template={Uri.EscapeDataString(TemplateName)}"))" class="w-25 btn btn-outline-primary">Launch this template</button>
+<button @onclick="@(() => NavigationManager.NavigateTo(NavigationManager.BaseUri + $"survey/delivery-settings?template={Uri.EscapeDataString(TemplateName)}"))" class="w-25 btn btn-outline-primary">Launch this template</button>
 
 @code {
     [Parameter]
