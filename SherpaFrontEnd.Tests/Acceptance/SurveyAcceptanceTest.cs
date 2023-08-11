@@ -165,7 +165,7 @@ public class SurveyAcceptanceTest
         Assert.NotNull(descriptionTextArea);
 
         var deadlineLabel = appComponent.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Deadline"));
+            .FirstOrDefault(element => element.InnerHtml.Contains("On a specific date"));
 
         var deadlineInput = appComponent.Find($"input#{deadlineLabel!.Attributes.GetNamedItem("for").Value}");
 
@@ -275,7 +275,7 @@ public class SurveyAcceptanceTest
         descriptionTextArea.Change("Description");
 
         var deadlineLabel = appComponent.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Deadline"));
+            .FirstOrDefault(element => element.InnerHtml.Contains("On a specific date"));
 
         var deadlineInput = appComponent.Find($"input#{deadlineLabel!.Attributes.GetNamedItem("for").Value}");
         deadlineInput.Change(deadline.Date.ToString("d"));

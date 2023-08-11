@@ -64,7 +64,7 @@ public class DeliverySettingsTest
         Assert.NotNull(descriptionTextArea);
 
         var deadlineLabel = component.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Deadline"));
+            .FirstOrDefault(element => element.InnerHtml.Contains("On a specific date"));
 
         var deadlineInput = component.Find($"input#{deadlineLabel!.Attributes.GetNamedItem("for").Value}");
 
@@ -108,7 +108,7 @@ public class DeliverySettingsTest
         descriptionTextArea.Change(surveyDescription);
 
         var deadlineLabel = component.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Deadline"));
+            .FirstOrDefault(element => element.InnerHtml.Contains("On a specific date"));
 
         var deadlineInput = component.Find($"input#{deadlineLabel!.Attributes.GetNamedItem("for").Value}");
         var deadline = DateTime.Parse("03/12/2020");
@@ -167,7 +167,7 @@ public class DeliverySettingsTest
         descriptionTextArea.Change(surveyDescription);
 
         var deadlineLabel = component.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Deadline"));
+            .FirstOrDefault(element => element.InnerHtml.Contains("On a specific date"));
 
         var deadlineInput = component.Find($"input#{deadlineLabel!.Attributes.GetNamedItem("for").Value}");
         var deadline = DateTime.Parse("03/12/2020");
