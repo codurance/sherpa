@@ -1,5 +1,8 @@
-﻿using Moq;
+﻿using Microsoft.Extensions.Logging;
+using Moq;
+using SherpaBackEnd.Controllers;
 using SherpaBackEnd.Dtos;
+using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Model;
 using SherpaBackEnd.Services;
 using SherpaBackEnd.Services.Email;
@@ -83,5 +86,30 @@ public class SurveyServiceTest
         var updatedAssessment = await _service.UpdateAssessment(assessment);
         Assert.NotEmpty(updatedAssessment.Surveys);
         Assert.Single(updatedAssessment.Surveys);
+    }
+
+    [Fact]
+    public async Task ShouldCallSurveyRepositoryToGetAllSurveysFromTeam()
+    {
+        var teamId = Guid.NewGuid();
+        var surveyRepository = new Mock<ISurveyRepository>();
+        var surveyService = new SurveyService(surveyRepository.Object);
+
+        await surveyService.GetAllSurveysFromTeam(teamId);
+        
+        surveyRepository.Verify(_ => _.GetAllSurveysFromTeam(teamId), Times.Once);
+    }
+
+    [Fact]
+    public async Task ShouldThrowErrorIfConnectionToRepositoryNotSuccessful()
+    {
+        var teamId = Guid.NewGuid();
+        var surveyRepository = new Mock<ISurveyRepository>();
+        var surveyService = new SurveyService(surveyRepository.Object);
+
+        surveyRepository.Setup(_ => _.GetAllSurveysFromTeam(teamId)).ThrowsAsync(new Exception());
+
+        var exceptionThrown = await Assert.ThrowsAsync<ConnectionToRepositoryUnsuccessfulException>(async () => await surveyService.GetAllSurveysFromTeam(teamId));
+        Assert.IsType<ConnectionToRepositoryUnsuccessfulException>(exceptionThrown);
     }
 }
