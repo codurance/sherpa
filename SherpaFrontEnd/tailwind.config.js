@@ -11,7 +11,7 @@ module.exports = {
                 "primary-dark-200": "var(--primary---dark--200)",
                 "primary-dark-100": "var(--primary---dark--100)",
                 "primary-red-900": "var(--primary---red--900)",
-                "primary-red-principal-800": "var(--primary---red---principal-800)",
+                "primary-red-principal-800": "var(--primary---red---principal)",
                 "primary-red-400": "var(--primary---red--400)",
                 "primary-red-300": "var(--primary---red--300)",
                 "primary-red-200": "var(--primary---red--200)",
