@@ -7,13 +7,13 @@
 @inject IGuidService GuidService
 @inject ISurveyService SurveyService
 
-<div>
+<div class="bg-gray-100 p-8 flex-1">
     <h2>Launch template survey</h2>
     <EditForm Model="CreateSurveyDto" OnValidSubmit="@CreateSurvey">
-        <div>
+        <div class="bg-gray-white rounded-2xl border border-gray-200">
             <DataAnnotationsValidator/>
 
-            <div>
+            <div class="flex">
                 <div>
                     <h3>Select team</h3>
                 </div>
@@ -30,7 +30,7 @@
                 </div>
             </div>
 
-            <div>
+            <div class="flex">
                 <div>
                     <h3>Introduce the survey to your team</h3>
                     <p>This information will be visible to recipìents</p>
@@ -48,7 +48,7 @@
                 </div>
 
             </div>
-            <div>
+            <div class="flex">
                 <div>
                     <h3>Survey delivery</h3>
                     <p>Schedule when to deliver the survey</p>
