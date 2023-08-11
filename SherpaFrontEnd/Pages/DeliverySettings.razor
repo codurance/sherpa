@@ -8,18 +8,18 @@
 @inject ISurveyService SurveyService
 
 <div class="bg-gray-100 p-8 flex-1">
-    <h2>Launch template survey</h2>
+    <h2 class ="text-title-h2--semibold text-black mb-8">Launch template survey</h2>
     <EditForm Model="CreateSurveyDto" OnValidSubmit="@CreateSurvey">
         <div class="bg-gray-white rounded-2xl border border-gray-200">
             <DataAnnotationsValidator/>
 
-            <div class="flex">
-                <div>
-                    <h3>Select team</h3>
+            <div class="flex px-12 py-10">
+                <div class="grow-[1]">
+                    <h3 class="text-title-h3">Select team</h3>
                 </div>
-                <div>
-                    <label for="survey-team-id">Team</label>
-                    <InputSelect id="survey-team-id" @bind-Value="CreateSurveyDto.TeamId">
+                <div class="grow-[2] flex flex-col">
+                    <label for="survey-team-id" class="text-text-label">Team</label>
+                    <InputSelect id="survey-team-id" @bind-Value="CreateSurveyDto.TeamId" class="max-w-xs">
                         <option disabled selected="selected">Select a team</option>
                         @foreach (var team in Teams)
                         {
@@ -30,31 +30,31 @@
                 </div>
             </div>
 
-            <div class="flex">
-                <div>
-                    <h3>Introduce the survey to your team</h3>
-                    <p>This information will be visible to recipìents</p>
+            <div class="flex px-12 py-10">
+                <div class="grow-[1] flex flex-col">
+                    <h3 class="text-title-h3">Introduce the survey to your team</h3>
+                    <p class="mt-3 text-text-body-14pt-regular">This information will be visible to recipients</p>
                 </div>
-                <div>
-                    <div>
-                        <label for="survey-title-input">Title</label>
-                        <InputText id="survey-title-input" @bind-Value="CreateSurveyDto.Title"/>
+                <div class ="grow-[2] flex flex-col">
+                    <div class="flex flex-col">
+                        <label for="survey-title-input" class="text-text-label">Title</label>
+                        <InputText id="survey-title-input" @bind-Value="CreateSurveyDto.Title" class="max-w-xs text-text-label"/>
                         <ValidationMessage For="@(() => CreateSurveyDto.Title)"/>
                     </div>
-                    <div>
-                        <label for="survey-description-input">Description</label>
+                    <div class="flex flex-col mt-5">
+                        <label for="survey-description-input" class="text-text-label">Description</label>
                         <InputTextArea id="survey-description-input" @bind-Value="CreateSurveyDto.Description"/>
                     </div>
                 </div>
 
             </div>
-            <div class="flex">
-                <div>
-                    <h3>Survey delivery</h3>
-                    <p>Schedule when to deliver the survey</p>
+            <div class="flex px-12 py-10">
+                <div class="grow-[1] flex flex-col">
+                    <h3 class="text-title-h3">Survey delivery</h3>
+                    <p class="mt-3 text-text-body-14pt-regular">Schedule when to deliver the survey</p>
                 </div>
-                <div>
-                    <p>This survey will end:</p>
+                <div class="grow-[2] flex flex-col">
+                    <p class="text-text-body-14pt-semibold">This survey will end:</p>
                     <div>
                         <label for="survey-deadline-input">On a specific date</label>
                         <InputDate id="survey-deadline-input" @bind-Value="CreateSurveyDto.Deadline"/>
