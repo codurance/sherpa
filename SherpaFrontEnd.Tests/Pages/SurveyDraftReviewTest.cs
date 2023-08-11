@@ -51,7 +51,7 @@ public class SurveyDraftReviewTest
         
         // deadline
         var surveyDeadlineElement = appComponent.FindAll("p")
-            .FirstOrDefault(element => element.InnerHtml.Contains(survey.Deadline.Value.ToString("d-M-YYYY")));
+            .FirstOrDefault(element => element.InnerHtml.Contains(survey.Deadline.Value.ToString("d-M-yyyy")));
         Assert.NotNull(surveyDeadlineElement);
         
         // name of the team

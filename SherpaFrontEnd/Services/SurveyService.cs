@@ -1,3 +1,4 @@
+using System.Net.Http.Json;
 using System.Text.Json;
 using SherpaFrontEnd.Dtos;
 
@@ -16,23 +17,14 @@ public class SurveyService : ISurveyService
     public async Task CreateSurvey(CreateSurveyDto createSurveyDto)
     {
         var client = _httpClientFactory.CreateClient(SherpaBackend);
-        var request = new HttpRequestMessage(HttpMethod.Post, "/survey");
-        var response = await client.SendAsync(request);
 
-        response.EnsureSuccessStatusCode();
+        await client.PostAsJsonAsync("/survey", createSurveyDto);
     }
 
     public async Task<SurveyWithoutQuestions?> GetSurveyById(Guid id)
     {
         var client = _httpClientFactory.CreateClient(SherpaBackend);
-        var request = new HttpRequestMessage(HttpMethod.Get, $"/survey/{id.ToString()}");
-        var response = await client.SendAsync(request);
-
-        response.EnsureSuccessStatusCode();
-        var responseString = await response.Content.ReadAsStringAsync();
-
-        return JsonSerializer.Deserialize<SurveyWithoutQuestions>(
-            responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        return await client.GetFromJsonAsync<SurveyWithoutQuestions>($"/survey/{id.ToString()}");
     }
 
 }

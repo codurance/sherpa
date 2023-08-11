@@ -16,12 +16,9 @@
     <div>
         <label for="survey-team-id"></label>
         <InputSelect id="survey-team-id" @bind-Value="CreateSurveyDto.TeamId">
-            @if (Teams != null)
+            @foreach (var team in Teams)
             {
-                foreach (var team in Teams)
-                {
-                    <option value="@team.Id">@team.Name</option>
-                }
+                <option value="@team.Id">@team.Name</option>
             }
         </InputSelect>
         <ValidationMessage For="@(() => CreateSurveyDto.TeamId)"/>
