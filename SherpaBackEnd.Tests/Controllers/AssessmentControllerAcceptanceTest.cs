@@ -3,6 +3,7 @@ using Moq;
 using SherpaBackEnd.Controllers;
 using SherpaBackEnd.Dtos;
 using SherpaBackEnd.Model;
+using SherpaBackEnd.Repositories;
 using SherpaBackEnd.Services;
 using SherpaBackEnd.Services.Email;
 
