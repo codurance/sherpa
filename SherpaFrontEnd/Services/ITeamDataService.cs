@@ -5,8 +5,8 @@ namespace SherpaFrontEnd.Services;
 
 public interface ITeamDataService
 {
-    public Task<List<Team>?> GetAllTeams();
-    Task<Team?> GetTeamById(Guid guid);
+    public Task<List<Team>> GetAllTeams();
+    Task<Team> GetTeamById(Guid guid);
     Task<HttpStatusCode> DeleteTeam(Guid guid);
     Task PutTeam(Team team);
     Task AddTeam(Team team);

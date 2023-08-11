@@ -41,7 +41,7 @@ public class InMemoryFilesTemplateRepository : ITemplateRepository
         return allTemplates.ToArray();
     }
 
-    public async Task<Template?> GetTemplateByName(string templateName)
+    public async Task<Template> GetTemplateByName(string templateName)
     {
         if (!_templateNames.Contains(templateName))
         {

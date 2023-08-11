@@ -23,6 +23,7 @@ builder.Services.AddScoped<ITeamDataService, TeamServiceHttpClient>();
 builder.Services.AddScoped<IAssessmentsDataService, AssessmentsServiceHttpClient>();
 builder.Services.AddScoped<ITemplateService, TemplateService>();
 builder.Services.AddScoped<IGuidService, GuidService>();
+builder.Services.AddScoped<ISurveyService, SurveyService>();
 
 builder.Services.AddBlazoredModal();
 

@@ -1,8 +1,8 @@
 using Newtonsoft.Json;
+using Shared.Test.Helpers;
 using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Model.Template;
 using SherpaBackEnd.Repositories;
-using SherpaBackEnd.Tests.Helpers;
 
 namespace SherpaBackEnd.Tests.Repositories;
 

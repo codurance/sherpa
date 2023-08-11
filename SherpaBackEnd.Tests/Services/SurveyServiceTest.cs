@@ -1,5 +1,6 @@
 ﻿using Moq;
 using Newtonsoft.Json;
+using Shared.Test.Helpers;
 using SherpaBackEnd.Dtos;
 using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Model;
@@ -7,7 +8,6 @@ using SherpaBackEnd.Model.Survey;
 using SherpaBackEnd.Model.Template;
 using SherpaBackEnd.Services;
 using SherpaBackEnd.Services.Email;
-using SherpaBackEnd.Tests.Helpers;
 using Xunit.Abstractions;
 using ISurveyRepository = SherpaBackEnd.Model.ISurveyRepository;
 

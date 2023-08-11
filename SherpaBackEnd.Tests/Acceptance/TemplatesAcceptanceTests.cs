@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
+using Shared.Test.Helpers;
 using SherpaBackEnd.Controllers;
 using SherpaBackEnd.Model.Template;
 using SherpaBackEnd.Repositories;
 using SherpaBackEnd.Services;
-using SherpaBackEnd.Tests.Helpers;
 
 namespace SherpaBackEnd.Tests.Acceptance;
 

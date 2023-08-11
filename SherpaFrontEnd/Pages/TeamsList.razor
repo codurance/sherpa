@@ -48,7 +48,7 @@
 @code {
         public const string CanvasId = "create-new-team-form";
 
-    public List<Team>? Teams { get; set; } = new List<Team>();
+    public List<Team> Teams { get; set; } = new List<Team>();
 
     [CascadingParameter]
     public IModalService Modal { get; set; } = default!;

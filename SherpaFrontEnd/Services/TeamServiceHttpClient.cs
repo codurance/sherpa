@@ -14,7 +14,7 @@ public class TeamServiceHttpClient : ITeamDataService
         _clientFactory = httpClientFactory;
     }
 
-    public async Task<List<Team>?> GetAllTeams()
+    public async Task<List<Team>> GetAllTeams()
     {
         var client = _clientFactory.CreateClient(Sherpabackend);
         var request = new HttpRequestMessage(HttpMethod.Get, "/team");
@@ -27,7 +27,7 @@ public class TeamServiceHttpClient : ITeamDataService
             responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
     }
 
-    public async Task<Team?> GetTeamById(Guid guid)
+    public async Task<Team> GetTeamById(Guid guid)
     {
         var client = _clientFactory.CreateClient(Sherpabackend);
         var request = new HttpRequestMessage(HttpMethod.Get, $"/team/{guid}");

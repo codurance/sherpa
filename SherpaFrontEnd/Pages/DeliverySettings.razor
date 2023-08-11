@@ -4,11 +4,13 @@
 @using SherpaFrontEnd.Services
 @inject NavigationManager NavManager
 @inject ITeamDataService TeamDataService
+@inject IGuidService GuidService
+@inject ISurveyService SurveyService
 
 
 <h3>DeliverySettings</h3>
 
-<EditForm Model="CreateSurveyDto" OnValidSubmit="() => { }">
+<EditForm Model="CreateSurveyDto" OnValidSubmit="@CreateSurvey">
     <DataAnnotationsValidator/>
 
     <div>
@@ -53,12 +55,12 @@
 
     private CreateSurveyDto CreateSurveyDto { get; set; } = new();
 
-    public IEnumerable<Team>? Teams { get; set; }
+    public IEnumerable<Team> Teams { get; set; }
 
 
     protected override async Task OnInitializedAsync()
     {
-        CreateSurveyDto.SurveyId = Guid.NewGuid();
+        CreateSurveyDto.SurveyId = GuidService.GenerateRandomGuid();
         if (Template != null)
         {
             CreateSurveyDto.TemplateName = Template;
@@ -69,11 +71,16 @@
         Teams = await FetchAllTeams();
     }
 
-    private async Task<List<Team>?> FetchAllTeams()
+    private async Task<List<Team>> FetchAllTeams()
     {
         return await TeamDataService.GetAllTeams();
     }
 
 
+    private async Task CreateSurvey()
+    {
+        await SurveyService.CreateSurvey(CreateSurveyDto);
+        NavManager.NavigateTo(NavManager.BaseUri + $"survey/draft-review/{CreateSurveyDto.SurveyId.ToString()}");
+    }
 
 }

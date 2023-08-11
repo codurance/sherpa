@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Moq.Protected;
 using SherpaFrontEnd;
+using SherpaFrontEnd.Dtos;
 using SherpaFrontEnd.Model;
 using SherpaFrontEnd.Services;
 
@@ -23,6 +24,9 @@ public class SurveyAcceptanceTest
     private readonly FakeNavigationManager _navManager;
     private readonly Team[] _teams;
     private readonly TeamServiceHttpClient _teamService;
+    private readonly Guid _surveyId = Guid.NewGuid();
+    private readonly Mock<IGuidService> _guidService;
+    private readonly SurveyService _surveyService;
 
     public SurveyAcceptanceTest()
     {
@@ -38,6 +42,11 @@ public class SurveyAcceptanceTest
         _testCtx.Services.AddSingleton<ITemplateService>(_templateService);
         _teamService = new TeamServiceHttpClient(_httpClientFactory.Object);
         _testCtx.Services.AddSingleton<ITeamDataService>(_teamService);
+        _surveyService = new SurveyService(_httpClientFactory.Object);
+        _testCtx.Services.AddSingleton<ISurveyService>(_surveyService);
+        _guidService = new Mock<IGuidService>();
+        _testCtx.Services.AddSingleton<IGuidService>(_guidService.Object);
+        _guidService.Setup(service => service.GenerateRandomGuid()).Returns(_surveyId);
         _navManager = _testCtx.Services.GetRequiredService<FakeNavigationManager>();
     }
 
@@ -53,7 +62,7 @@ public class SurveyAcceptanceTest
 
         _handlerMock
             .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
+            .Setup<Task<HttpResponseMessage>>(
                 "SendAsync",
                 ItExpr.Is<HttpRequestMessage>(
                     m => m.Method.Equals(HttpMethod.Get) && m.RequestUri!.AbsoluteUri.Contains("template")),
@@ -108,7 +117,7 @@ public class SurveyAcceptanceTest
 
         _handlerMock
             .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
+            .Setup<Task<HttpResponseMessage>>(
                 "SendAsync",
                 ItExpr.Is<HttpRequestMessage>(
                     m => m.Method.Equals(HttpMethod.Get) && m.RequestUri!.AbsoluteUri.Contains("team")),
@@ -161,5 +170,164 @@ public class SurveyAcceptanceTest
 
         Assert.NotNull(appComponent.FindAll("button")
             .FirstOrDefault(element => element.InnerHtml.Contains("Continue")));
+    }
+    
+    [Fact]
+    private async Task UserIsRedirectedToDraftReviewPageAfterCreatingASurvey()
+    {
+        // GIVEN that an Org coach is on the Delivery settings page for creating a survey
+        // and he filled in all fields
+        
+        var teamsJson = await JsonContent.Create(_teams).ReadAsStringAsync();
+        var responseWithTeams = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(teamsJson),
+        };
+
+        _handlerMock
+            .Protected()
+            .Setup<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.Is<HttpRequestMessage>(
+                    m => m.Method.Equals(HttpMethod.Get) && m.RequestUri!.AbsoluteUri.Contains("team")),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(responseWithTeams);
+        
+        var appComponent = _testCtx.RenderComponent<App>();
+
+        var targetPage = $"http://localhost/survey/delivery-settings?template={Uri.EscapeDataString("Hackman Model")}";
+
+        _navManager.NavigateTo(targetPage);
+
+        
+        var surveyCreationResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.Created,
+        };
+
+        _handlerMock
+            .Protected()
+            .Setup<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.Is<HttpRequestMessage>(
+                    m => m.Method.Equals(HttpMethod.Post) && m.RequestUri!.AbsoluteUri.Contains("survey")),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(surveyCreationResponse);
+
+        var deadline = DateTime.Now;
+        var templateWithoutQuestions = new TemplateWithoutQuestions("Hackman Model", 30);
+        var survey = new SurveyWithoutQuestions(
+            Guid.NewGuid(), 
+            new User(Guid.NewGuid(), "Lucia"), 
+            Status.Draft, 
+            deadline, 
+            "Title", 
+            "Description", 
+            Array.Empty<Response>(), 
+            _teams[0], 
+            templateWithoutQuestions);
+        
+        var surveyJson = await JsonContent.Create(survey).ReadAsStringAsync();
+        var surveyResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(surveyJson)
+        };
+
+        _handlerMock
+            .Protected()
+            .Setup<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.Is<HttpRequestMessage>(
+                    m => m.Method.Equals(HttpMethod.Get) && m.RequestUri!.AbsoluteUri.Contains("survey")),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(surveyResponse);
+        
+
+        appComponent.WaitForAssertion(() =>
+            Assert.Equal(
+                $"http://localhost/survey/delivery-settings?template={Uri.EscapeDataString("Hackman Model")}",
+                _navManager.Uri));
+        
+        var teamSelect = appComponent.FindAll("select")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Demo Team"));
+        
+        Assert.NotNull(teamSelect);
+        teamSelect.Change(_teams[0].Id);
+
+        var titleLabel = appComponent.FindAll("label")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Title"));
+
+        var titleInput = appComponent.Find($"input#{titleLabel!.Attributes.GetNamedItem("for").Value}");
+
+        Assert.NotNull(titleInput);
+        titleInput.Change("Title");
+
+        var descriptionLabel = appComponent.FindAll("label")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Description"));
+
+        var descriptionTextArea = appComponent.Find($"textarea#{descriptionLabel!.Attributes.GetNamedItem("for").Value}");
+        Assert.NotNull(descriptionTextArea);
+        descriptionTextArea.Change("Description");
+
+        var deadlineLabel = appComponent.FindAll("label")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Deadline"));
+
+        var deadlineInput = appComponent.Find($"input#{deadlineLabel!.Attributes.GetNamedItem("for").Value}");
+        deadlineInput.Change(deadline.Date.ToString("d"));
+
+        Assert.NotNull(deadlineInput);
+        
+        // WHEN he clicks on Continue
+
+        var continueButton = appComponent.FindAll("button")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Continue"));
+        Assert.NotNull(continueButton);
+        
+        continueButton.Click();
+        
+        // THEN he should be redirected on the Summary page for a survey
+        // and he should see the following info:
+        
+        appComponent.WaitForAssertion(() =>
+            Assert.Equal(
+                $"http://localhost/survey/draft-review/{_surveyId.ToString()}",
+                _navManager.Uri));
+        
+        // template
+        var templateNameElement = appComponent.FindAll("p")
+            .FirstOrDefault(element => element.InnerHtml.Contains(templateWithoutQuestions.Name));
+        Assert.NotNull(templateNameElement);
+        
+        // title
+        var surveyTitleElement = appComponent.FindAll("p")
+            .FirstOrDefault(element => element.InnerHtml.Contains(survey.Title));
+        Assert.NotNull(surveyTitleElement);
+        
+        // description
+        var surveyDescriptionElement = appComponent.FindAll("p")
+            .FirstOrDefault(element => element.InnerHtml.Contains(survey.Description));
+        Assert.NotNull(surveyDescriptionElement);
+        
+        // deadline
+        var surveyDeadlineElement = appComponent.FindAll("p")
+            .FirstOrDefault(element => element.InnerHtml.Contains(survey.Deadline.Value.ToString("d-M-YYYY")));
+        Assert.NotNull(surveyDeadlineElement);
+        
+        // name of the team
+        var teamNameElement = appComponent.FindAll("p")
+            .FirstOrDefault(element => element.InnerHtml.Contains(survey.Team.Name));
+        Assert.NotNull(teamNameElement);
+        
+        // button Back
+        var finalBackButton = appComponent.FindAll("button")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Back"));
+        Assert.NotNull(finalBackButton);
+        
+        // button Launch
+        var finalLaunchButton = appComponent.FindAll("button")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Continue"));
+        Assert.NotNull(finalLaunchButton);
     }
 }

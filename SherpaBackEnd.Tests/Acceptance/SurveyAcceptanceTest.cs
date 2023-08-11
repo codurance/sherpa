@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
+using Shared.Test.Helpers;
 using SherpaBackEnd.Controllers;
 using SherpaBackEnd.Dtos;
 using SherpaBackEnd.Model;
@@ -9,7 +10,6 @@ using SherpaBackEnd.Model.Survey;
 using SherpaBackEnd.Model.Template;
 using SherpaBackEnd.Repositories;
 using SherpaBackEnd.Services;
-using SherpaBackEnd.Tests.Helpers;
 
 namespace SherpaBackEnd.Tests.Acceptance;
 

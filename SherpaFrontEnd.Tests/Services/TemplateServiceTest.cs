@@ -3,7 +3,7 @@ using System.Net.Http.Json;
 using Moq;
 using Moq.Protected;
 using Newtonsoft.Json;
-using SherpaBackEnd.Tests.Helpers;
+using Shared.Test.Helpers;
 using SherpaFrontEnd.Services;
 
 namespace BlazorApp.Tests.Services;

@@ -23,7 +23,12 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Shared.Test\Shared.Test.csproj" />
       <ProjectReference Include="..\SherpaBackEnd\SherpaBackEnd.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Helpers\" />
     </ItemGroup>
 
 

@@ -1,0 +1,40 @@
+@page "/survey/draft-review/{SurveyId:guid}"
+@using SherpaFrontEnd.Dtos
+@using SherpaFrontEnd.Services
+@inject ISurveyService SurveyService
+
+<h3>SurveyDraftReview</h3>
+@if (_survey != null)
+{
+    <p>@_survey.Template.Name</p>
+    <p>@_survey.Title</p>
+    <p>@_survey.Description</p>
+    <p>@_survey.Team.Name</p>
+    @if (_survey.Deadline != null)
+    {
+        <p>@_survey.Deadline.Value.ToString("d-M-YYYY")</p>
+    }
+    else
+    {
+        <p>Not defined</p>
+    }
+    <p>@_survey.Template.Name</p>
+                             
+    <div>
+        <button>Continue</button>
+        <button>Back</button>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public Guid SurveyId { get; set; }
+
+    private SurveyWithoutQuestions? _survey;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _survey = await SurveyService.GetSurveyById(SurveyId);
+    }
+
+}

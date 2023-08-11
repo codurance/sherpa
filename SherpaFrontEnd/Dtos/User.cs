@@ -2,8 +2,8 @@ namespace SherpaFrontEnd.Dtos;
 
 public class User
 {
-    public Guid Id;
-    public string Name;
+    public Guid Id {get; set;}
+    public string Name {get; set;}
 
     public User(Guid id, string name)
     {
