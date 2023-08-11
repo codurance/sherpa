@@ -14,7 +14,7 @@
     <DataAnnotationsValidator/>
 
     <div>
-        <label for="survey-team-id"></label>
+        <label for="survey-team-id">Team</label>
         <InputSelect id="survey-team-id" @bind-Value="CreateSurveyDto.TeamId">
             @foreach (var team in Teams)
             {
@@ -64,6 +64,7 @@
         }
         CreateSurveyDto.Description = null;
         CreateSurveyDto.Deadline = null;
+        CreateSurveyDto.TeamId = null;
 
         Teams = await FetchAllTeams();
     }

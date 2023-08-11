@@ -9,7 +9,7 @@ public class CreateSurveyDto
     public Guid SurveyId { get; set; }
     
     [Required(ErrorMessage = "This field is mandatory")]
-    public Guid TeamId { get; set; }
+    public Guid? TeamId { get; set; }
     
     [Required(ErrorMessage = "This field is mandatory")]
     public string TemplateName { get; set; }

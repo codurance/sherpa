@@ -11,11 +11,13 @@ using SherpaFrontEnd;
 using SherpaFrontEnd.Dtos;
 using SherpaFrontEnd.Model;
 using SherpaFrontEnd.Services;
+using Xunit.Abstractions;
 
 namespace BlazorApp.Tests.Acceptance;
 
 public class SurveyAcceptanceTest
 {
+    private readonly ITestOutputHelper _testOutputHelper;
     private readonly TestContext _testCtx;
     private readonly Mock<HttpMessageHandler> _handlerMock;
     private readonly TemplateWithoutQuestions[] _templates;
@@ -28,8 +30,9 @@ public class SurveyAcceptanceTest
     private readonly Mock<IGuidService> _guidService;
     private readonly SurveyService _surveyService;
 
-    public SurveyAcceptanceTest()
+    public SurveyAcceptanceTest(ITestOutputHelper testOutputHelper)
     {
+        _testOutputHelper = testOutputHelper;
         _testCtx = new TestContext();
         _testCtx.Services.AddBlazoredModal();
         _handlerMock = new Mock<HttpMessageHandler>();
@@ -329,5 +332,64 @@ public class SurveyAcceptanceTest
         var finalLaunchButton = appComponent.FindAll("button")
             .FirstOrDefault(element => element.InnerHtml.Contains("Continue"));
         Assert.NotNull(finalLaunchButton);
+    }
+
+    [Fact]
+    private async Task ShouldShowFeedbackIfTryingToCreateASurveyWithoutFillingTheTitleAndTeam()
+    {
+        // GIVEN that an Org coach is on the Delivery settings page for creating a survey
+        var emptyTeamsList = await JsonContent.Create(new List<Team>()).ReadAsStringAsync();
+        var responseWithEmptyTeamsList = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(emptyTeamsList),
+        };
+
+        _handlerMock
+            .Protected()
+            .Setup<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.Is<HttpRequestMessage>(
+                    m => m.Method.Equals(HttpMethod.Get) && m.RequestUri!.AbsoluteUri.Contains("team")),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(responseWithEmptyTeamsList);
+        
+        var appComponent = _testCtx.RenderComponent<App>();
+
+        var targetPage = $"http://localhost/survey/delivery-settings?template={Uri.EscapeDataString("Hackman Model")}";
+
+        _navManager.NavigateTo(targetPage);
+        
+        // WHEN he clicks on Continue
+        var continueButton = appComponent.FindAll("button")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Continue"));
+        Assert.NotNull(continueButton);
+        
+        continueButton.Click();
+        appComponent.WaitForElement(".validation-message");
+        
+        // and he didn't enter anything to the mandatory fields: Title and Team
+        // team
+        var teamLabel = appComponent.FindAll("label")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Team"));
+        var teamSelector = appComponent.Find($"select#{teamLabel!.Attributes.GetNamedItem("for").Value}");
+        Assert.NotNull(teamSelector);
+
+        var inputTeamGroup = teamSelector.Parent;
+        
+        //title
+        var titleLabel = appComponent.FindAll("label")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Title"));
+        var titleInput = appComponent.Find($"input#{titleLabel!.Attributes.GetNamedItem("for").Value}");
+        Assert.NotNull(titleInput);
+        
+        var inputTitleGroup = titleInput.Parent;
+
+        // THEN these fields should be highlighted in read and under particular field he should see an error message
+        
+        Assert.Contains("This field is mandatory", inputTitleGroup.ToMarkup());
+
+        Assert.Contains("This field is mandatory", inputTeamGroup.ToMarkup());
+
     }
 }
