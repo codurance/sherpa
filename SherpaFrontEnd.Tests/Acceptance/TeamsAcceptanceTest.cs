@@ -272,8 +272,9 @@ public class TeamsAcceptanceTest
         //Team name without Editing
         //Tab Analysis
         //the button “Send a new survey“ without functionality
-        
-        teamsListComponent.WaitForAssertion(()=> Assert.Equal($"http://localhost/team-content/{teamId.ToString()}", _navMan.Uri));
+
+        teamsListComponent.WaitForAssertion(() =>
+            Assert.Equal($"http://localhost/team-content/{teamId.ToString()}", _navMan.Uri));
 
         _navMan.NavigateTo($"/team-content/{teamId.ToString()}");
 
@@ -503,8 +504,8 @@ public class TeamsAcceptanceTest
         //     and something went wrong (we could not create a new team)
         // THEN he should see the error message “Something went wrong“ at the top of the page
         appComponent.WaitForAssertion(() => Assert.Equal($"http://localhost/error", _navMan.Uri));
-        
-        
+
+
         Assert.NotNull(appComponent.FindAll("p")
             .FirstOrDefault(element => element.InnerHtml.Contains("Something went wrong.")));
     }
@@ -532,7 +533,7 @@ public class TeamsAcceptanceTest
                     m => m.Method.Equals(HttpMethod.Get)),
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(teamListResponse);
-        
+
         var appComponent = _testCtx.RenderComponent<App>();
 
         _navMan.NavigateTo("/teams-list-page");
@@ -542,7 +543,7 @@ public class TeamsAcceptanceTest
         Assert.NotNull(createNewTeamButton);
 
         createNewTeamButton.Click();
-        
+
         // WHEN he clicks on Confirm
         // and he didn't enter anything to the mandatory field Teams name
 
@@ -551,11 +552,11 @@ public class TeamsAcceptanceTest
         Assert.NotNull(confirmButton);
 
         confirmButton.Click();
-        
+
         appComponent.WaitForElement(".validation-message");
 
         // THEN this field should be highlighted in read and at the top of the page he should see an error message that it's mandatory field.
-        
+
         var teamNameLabel = appComponent.FindAll("label")
             .FirstOrDefault(element => element.InnerHtml.Contains("Team's name"));
 
@@ -587,17 +588,18 @@ public class TeamsAcceptanceTest
                     m => m.Method.Equals(HttpMethod.Get)),
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(teamListResponse);
-        
+
         var appComponent = _testCtx.RenderComponent<App>();
-        
+
         // WHEN he clicks on Teams
         // and something went wrong (we couldn't retrieve the data)
         _navMan.NavigateTo("/teams-list-page");
-        
+
         // THEN he should see the error message “Something went wrong“ at the top of the page.
-        
+
         Assert.Equal($"http://localhost/error", _navMan.Uri);
         Assert.NotNull(appComponent.FindAll("p")
             .FirstOrDefault(element => element.InnerHtml.Contains("Something went wrong.")));
     }
+
 }
