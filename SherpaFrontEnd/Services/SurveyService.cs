@@ -1,5 +1,7 @@
 using System.Net.Http.Json;
+using System.Text.Json;
 using SherpaFrontEnd.Dtos.Survey;
+using SherpaFrontEnd.Model;
 
 
 namespace SherpaFrontEnd.Services;
@@ -14,8 +16,15 @@ public class SurveyService: ISurveyService
         _httpClient = httpClientFactory.CreateClient(SherpaBackend);
     }
 
-    public Task<List<Survey>>GetAllSurveysByTeam()
+    public async Task<List<Survey>?> GetAllSurveysByTeam(Guid teamId)
     {
-        throw new NotImplementedException();
+        var request = new HttpRequestMessage(HttpMethod.Get, $"/teams/{teamId}/surveys");
+        var response = await _httpClient.SendAsync(request);
+
+        response.EnsureSuccessStatusCode();
+        var responseString = await response.Content.ReadAsStringAsync();
+
+        return JsonSerializer.Deserialize<List<Survey>>(
+            responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
     }
 }

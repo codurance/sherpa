@@ -44,4 +44,45 @@ public class TeamContentTest
         Assert.NotNull(analysisTab);
         Assert.NotNull(sendNewSurveyTeam);
     }
+
+    [Fact]
+    public void ShouldDisplayTeamSurveysTabPage()
+    {
+        const string teamName = "Demo team";
+        var team = new Team
+        {
+            Name = teamName,
+            Id = Guid.NewGuid()
+        };
+
+        _mockTeamService.Setup(m => m.GetTeamById(It.IsAny<Guid>())).ReturnsAsync(team);
+        var teamContentComponent = _testContext.RenderComponent<TeamContent>();
+        
+        var surveyTabPage = teamContentComponent.FindAll("a:not(a[href])").FirstOrDefault(element => element.InnerHtml.Contains("Surveys"));
+        
+        Assert.NotNull(surveyTabPage);
+    }
+    
+    [Fact]
+    public void ShouldDisplayTeamSurveysTabPageContent()
+    {
+        const string teamName = "Demo team";
+        var team = new Team
+        {
+            Name = teamName,
+            Id = Guid.NewGuid()
+        };
+
+        _mockTeamService.Setup(m => m.GetTeamById(It.IsAny<Guid>())).ReturnsAsync(team);
+        var teamContentComponent = _testContext.RenderComponent<TeamContent>();
+        
+        var surveyTabPage = teamContentComponent.FindAll("a:not(a[href])").FirstOrDefault(element => element.InnerHtml.Contains("Surveys"));
+        Assert.NotNull(surveyTabPage);
+        surveyTabPage.Click();
+        
+        
+        teamContentComponent.WaitForAssertion(() => Assert.NotNull(teamContentComponent.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Send a new survey"))));
+        Assert.NotNull(teamContentComponent.FindAll("h3").FirstOrDefault(element => element.InnerHtml.Contains("All Surveys")));
+        Assert.NotNull(teamContentComponent.FindAll("p").FirstOrDefault(element => element.InnerHtml.Contains("You don't have any surveys yet")));
+    }
 }

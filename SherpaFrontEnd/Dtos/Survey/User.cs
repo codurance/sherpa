@@ -2,8 +2,8 @@ namespace SherpaFrontEnd.Dtos.Survey;
 
 public class User
 {
-    public Guid Id;
-    public string Name;
+    public Guid Id {get;set;}
+    public string Name {get;set;}
 
     public User(Guid id, string name)
     {
@@ -11,5 +11,3 @@ public class User
         Name = name;
     }
 }
-
-// This file is placed inside Survey temporarily 

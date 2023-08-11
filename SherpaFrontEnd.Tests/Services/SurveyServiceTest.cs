@@ -5,6 +5,7 @@ using Moq.Protected;
 using Newtonsoft.Json;
 using SherpaFrontEnd.Services;
 using SherpaFrontEnd.Dtos.Survey;
+using SherpaFrontEnd.Model;
 
 namespace BlazorApp.Tests.Services;
 
@@ -22,9 +23,47 @@ public class SurveyServiceTest
     }
 
     [Fact]
-    public async Task ShouldReturnEmptyListOfSurveys()
+    public async Task ShouldReturnEmptyListOfSurveysFromTeam()
     {
-        var surveys = new Survey[] { };
+        var teamId = Guid.NewGuid();
+        var surveys = new List<Survey>() { };
+        var surveysJson = await JsonContent.Create(surveys).ReadAsStringAsync();
+        
+        var emptySurveyListResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(surveysJson),
+        };
+        
+        _handlerMock
+            .Protected()
+            .SetupSequence<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.Is<HttpRequestMessage>(
+                    m => m.Method.Equals(HttpMethod.Get)  && m.RequestUri!.AbsoluteUri.Contains($"teams/{teamId}/surveys")),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(emptySurveyListResponse);
+        
+
+        var surveyService = new SurveyService(_httpClientFactory.Object);
+        
+        var actualResponse = await surveyService.GetAllSurveysByTeam(teamId);
+        
+        var expectedResponse = new List<Survey>{ };
+        Assert.Equal(JsonConvert.SerializeObject(expectedResponse), JsonConvert.SerializeObject(actualResponse));
+    }
+    
+    [Fact]
+    public async Task ShouldReturnExpectedListOfSurveysFromTeam()
+    {
+        var teamId = Guid.NewGuid();
+        var userOne = new User(Guid.NewGuid(), "user");
+        var team = new Team(Guid.NewGuid(), "name");
+        var surveys = new List<Survey>()
+        {
+            new Survey(Guid.NewGuid(), userOne, Status.Draft, new DateTime(), "title", "description",
+                Array.Empty<Response>(), team, new Template("template"))
+        };
         var surveysJson = await JsonContent.Create(surveys).ReadAsStringAsync();
         
         var responseWithSurveys = new HttpResponseMessage
@@ -38,16 +77,15 @@ public class SurveyServiceTest
             .SetupSequence<Task<HttpResponseMessage>>(
                 "SendAsync",
                 ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get) && m.RequestUri!.AbsoluteUri.Contains("team") && m.RequestUri!.AbsoluteUri.Contains("surveys")),
+                    m => m.Method.Equals(HttpMethod.Get)  && m.RequestUri!.AbsoluteUri.Contains($"teams/{teamId}/surveys")),
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(responseWithSurveys);
         
 
-        ISurveyService SurveyService = new SurveyService(_httpClientFactory.Object);
+        var surveyService = new SurveyService(_httpClientFactory.Object);
         
-        var actualResponse = await SurveyService.GetAllSurveysByTeam();
-        
-        var expectedResponse = new Survey[]{ };
-        Assert.Equal(JsonConvert.SerializeObject(expectedResponse), JsonConvert.SerializeObject(actualResponse));
+        var actualResponse = await surveyService.GetAllSurveysByTeam(teamId);
+
+        Assert.Equal(JsonConvert.SerializeObject(surveys), JsonConvert.SerializeObject(actualResponse));
     }
 }

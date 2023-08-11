@@ -4,5 +4,5 @@ namespace SherpaFrontEnd.Services;
 
 public interface ISurveyService
 {
-    public Task<List<Survey>> GetAllSurveysByTeam();
+    public Task<List<Survey>?> GetAllSurveysByTeam(Guid teamId);
 }

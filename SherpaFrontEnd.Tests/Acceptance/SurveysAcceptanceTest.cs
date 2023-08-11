@@ -1,11 +1,13 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
+using Blazored.Modal;
 using Bunit;
 using Bunit.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Moq.Protected;
 using SherpaFrontEnd;
+using SherpaFrontEnd.Dtos.Survey;
 using SherpaFrontEnd.Model;
 using SherpaFrontEnd.Services;
 
@@ -17,12 +19,28 @@ public class SurveysAcceptanceTest
     private readonly Mock<IGuidService> _guidService;
     private readonly Mock<HttpMessageHandler> _httpHandlerMock;
     private readonly FakeNavigationManager _navMan;
+    private readonly TeamServiceHttpClient _teamsService;
+    private readonly Mock<IAssessmentsDataService> _assessmentsService;
+    private readonly Mock<IHttpClientFactory> _factoryHttpClient;
 
     public SurveysAcceptanceTest()
     {
         _testCtx = new TestContext();
+        _testCtx.Services.AddBlazoredModal();
         _guidService = new Mock<IGuidService>();
         _httpHandlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
+        
+        _factoryHttpClient = new Mock<IHttpClientFactory>();
+        _teamsService = new TeamServiceHttpClient(_factoryHttpClient.Object);
+        _guidService = new Mock<IGuidService>();
+        _assessmentsService = new Mock<IAssessmentsDataService>();
+        _testCtx.Services.AddSingleton<ITeamDataService>(_teamsService);
+        _testCtx.Services.AddSingleton<IGuidService>(_guidService.Object);
+        _testCtx.Services.AddSingleton<IAssessmentsDataService>(_assessmentsService.Object);
+        const string baseUrl = "http://localhost";
+        var httpClient = new HttpClient(_httpHandlerMock.Object, false) { BaseAddress = new Uri(baseUrl) };
+        _factoryHttpClient.Setup(_ => _.CreateClient("SherpaBackEnd")).Returns(httpClient);
+        
         _navMan = _testCtx.Services.GetRequiredService<FakeNavigationManager>();
     }
     
@@ -142,10 +160,6 @@ public class SurveysAcceptanceTest
         
         appComponent.WaitForAssertion(() => Assert.NotNull(appComponent.FindAll("h3").FirstOrDefault(element => element.InnerHtml.Contains("All Surveys"))));
         Assert.NotNull(appComponent.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Send a new survey")));
-        Assert.NotNull(appComponent.FindAll("p").FirstOrDefault(element => element.InnerHtml.Contains("Currently there is not any survey for your team")));
+        Assert.NotNull(appComponent.FindAll("p").FirstOrDefault(element => element.InnerHtml.Contains("You don't have any surveys yet")));
     }
-}
-
-public class Survey
-{
 }
