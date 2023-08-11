@@ -16,6 +16,7 @@
     <div>
         <label for="survey-team-id">Team</label>
         <InputSelect id="survey-team-id" @bind-Value="CreateSurveyDto.TeamId">
+            <option disabled selected="selected">Select a team</option>
             @foreach (var team in Teams)
             {
                 <option value="@team.Id">@team.Name</option>
