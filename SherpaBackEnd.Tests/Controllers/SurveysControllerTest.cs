@@ -9,11 +9,11 @@ namespace SherpaBackEnd.Tests.Controllers;
 public class SurveysControllerTest
 {
     private DeprecatedSurveysController _deprecatedSurveysController;
-    private Mock<ISurveysService> _mockSurveyRepository;
+    private Mock<ISurveyService> _mockSurveyRepository;
 
     public SurveysControllerTest()
     {
-        _mockSurveyRepository = new Mock<ISurveysService>();
+        _mockSurveyRepository = new Mock<ISurveyService>();
         _deprecatedSurveysController = new DeprecatedSurveysController(_mockSurveyRepository.Object);
     }
 }

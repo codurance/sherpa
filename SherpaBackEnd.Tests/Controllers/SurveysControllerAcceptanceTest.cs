@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Moq;
 using SherpaBackEnd.Model;
+using SherpaBackEnd.Repositories;
 using SherpaBackEnd.Services;
 using SherpaBackEnd.Services.Email;
 
@@ -15,7 +16,7 @@ public class SurveysControllerAcceptanceTest
     private AssessmentService _asseptanceService;
     private AssessmentsController _assessmentsController;
 
-    private ISurveysService _surveysService;
+    private ISurveyService _surveysService;
     private DeprecatedSurveysController _deprecatedSurveysController;
 
     public SurveysControllerAcceptanceTest()
@@ -26,7 +27,7 @@ public class SurveysControllerAcceptanceTest
         _asseptanceService = new AssessmentService(_surveyRepository, _assessmentRepository, _emailService.Object);
         _assessmentsController = new AssessmentsController(_asseptanceService);
 
-        _surveysService = new SurveysService(_surveyRepository);
+        _surveysService = new SurveyService(_surveyRepository);
         _deprecatedSurveysController = new DeprecatedSurveysController(_surveysService);
     }
 

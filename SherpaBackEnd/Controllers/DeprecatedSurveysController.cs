@@ -6,8 +6,8 @@ namespace SherpaBackEnd.Controllers;
 
 public class DeprecatedSurveysController
 {
-    private ISurveysService _surveysService;
-    public DeprecatedSurveysController(ISurveysService surveysService)
+    private ISurveyService _surveysService;
+    public DeprecatedSurveysController(ISurveyService surveysService)
     {
         _surveysService = surveysService;
     }
