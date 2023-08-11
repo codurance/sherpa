@@ -12,8 +12,8 @@ public class TemplateService: ITemplateService
         _httpClient = httpClientFactory.CreateClient(SherpaBackend);
     }
 
-    public Task<TemplateWithNameAndTime[]?> GetAllTemplates()
+    public Task<TemplateWithoutQuestions[]?> GetAllTemplates()
     {
-        return _httpClient.GetFromJsonAsync<TemplateWithNameAndTime[]>("/template");
+        return _httpClient.GetFromJsonAsync<TemplateWithoutQuestions[]>("/template");
     }
 }

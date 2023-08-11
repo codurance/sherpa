@@ -15,7 +15,7 @@ public class TemplatesAcceptanceTests
 {
     private readonly Mock<HttpMessageHandler> _handlerMock;
 
-    private readonly TemplateWithNameAndTime[] _templates;
+    private readonly TemplateWithoutQuestions[] _templates;
 
 
     private readonly Mock<IHttpClientFactory> _httpClientFactory;
@@ -25,7 +25,7 @@ public class TemplatesAcceptanceTests
     public TemplatesAcceptanceTests()
     {
         _handlerMock = new Mock<HttpMessageHandler>();
-        _templates = new[] { new TemplateWithNameAndTime("Hackman Model", 30) };
+        _templates = new[] { new TemplateWithoutQuestions("Hackman Model", 30) };
         var httpClient = new HttpClient(_handlerMock.Object, false) { BaseAddress = new Uri("http://host") };
         _httpClientFactory = new Mock<IHttpClientFactory>();
         _httpClientFactory.Setup(factory => factory.CreateClient("SherpaBackEnd")).Returns(httpClient);

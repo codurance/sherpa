@@ -1,12 +1,12 @@
 namespace SherpaFrontEnd.Services;
 
-public class TemplateWithNameAndTime
+public class TemplateWithoutQuestions
 {
     public string Name {get; set;}
     public int MinutesToComplete {get; set;}
 
 
-    public TemplateWithNameAndTime(string name, int minutesToComplete)
+    public TemplateWithoutQuestions(string name, int minutesToComplete)
     {
         Name = name;
         MinutesToComplete = minutesToComplete;

@@ -14,7 +14,7 @@ public class TemplatesTest
     private readonly Mock<ITemplateService> _mockService;
     private readonly TestContext _testContext;
     private readonly FakeNavigationManager _navMan;
-    private TemplateWithNameAndTime[] _templates;
+    private TemplateWithoutQuestions[] _templates;
     const string TemplatesPage = "templates";
 
     public TemplatesTest()
@@ -29,7 +29,7 @@ public class TemplatesTest
     [Fact]
     public void ComponentShouldPrintTheResultOfCallingGetAllTemplatesOfService()
     {
-        _templates = new[] { new TemplateWithNameAndTime("Hackman Model", 30) };
+        _templates = new[] { new TemplateWithoutQuestions("Hackman Model", 30) };
         _mockService.Setup(service => service.GetAllTemplates()).ReturnsAsync(_templates);
         var component = _testContext.RenderComponent<Templates>();
 
@@ -45,7 +45,7 @@ public class TemplatesTest
     [Fact]
     public async Task ShouldBeAbleToClickOnATeamAndNavigateToItsOwnPage()
     {
-        _templates = new[] { new TemplateWithNameAndTime("Hackman Model", 30) };
+        _templates = new[] { new TemplateWithoutQuestions("Hackman Model", 30) };
         _mockService.Setup(service => service.GetAllTemplates()).ReturnsAsync(_templates);
         var page = _testContext.RenderComponent<Templates>();
 

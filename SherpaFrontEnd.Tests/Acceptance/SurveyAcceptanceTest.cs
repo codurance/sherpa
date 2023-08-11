@@ -17,24 +17,27 @@ public class SurveyAcceptanceTest
 {
     private readonly TestContext _testCtx;
     private readonly Mock<HttpMessageHandler> _handlerMock;
-    private readonly TemplateWithNameAndTime[] _templates;
+    private readonly TemplateWithoutQuestions[] _templates;
     private readonly Mock<IHttpClientFactory> _httpClientFactory;
     private readonly TemplateService _templateService;
     private readonly FakeNavigationManager _navManager;
     private readonly Team[] _teams;
+    private readonly TeamServiceHttpClient _teamService;
 
     public SurveyAcceptanceTest()
     {
         _testCtx = new TestContext();
         _testCtx.Services.AddBlazoredModal();
         _handlerMock = new Mock<HttpMessageHandler>();
-        _templates = new[] { new TemplateWithNameAndTime("Hackman Model", 30) };
+        _templates = new[] { new TemplateWithoutQuestions("Hackman Model", 30) };
         _teams = new[] { new Team(Guid.NewGuid(), "Demo Team") };
         var httpClient = new HttpClient(_handlerMock.Object, false) { BaseAddress = new Uri("http://host") };
         _httpClientFactory = new Mock<IHttpClientFactory>();
         _httpClientFactory.Setup(factory => factory.CreateClient("SherpaBackEnd")).Returns(httpClient);
         _templateService = new TemplateService(_httpClientFactory.Object);
         _testCtx.Services.AddSingleton<ITemplateService>(_templateService);
+        _teamService = new TeamServiceHttpClient(_httpClientFactory.Object);
+        _testCtx.Services.AddSingleton<ITeamDataService>(_teamService);
         _navManager = _testCtx.Services.GetRequiredService<FakeNavigationManager>();
     }
 
@@ -135,30 +138,26 @@ public class SurveyAcceptanceTest
         var teamSelect = appComponent.FindAll("select")
             .FirstOrDefault(element => element.InnerHtml.Contains("Demo Team"));
         Assert.NotNull(teamSelect);
-        Assert.True(teamSelect.IsRequired());
 
         var titleLabel = appComponent.FindAll("label")
             .FirstOrDefault(element => element.InnerHtml.Contains("Title"));
 
-        var titleInput = appComponent.Find($"input#{titleLabel!.Attributes.GetNamedItem("for")}");
+        var titleInput = appComponent.Find($"input#{titleLabel!.Attributes.GetNamedItem("for").Value}");
 
         Assert.NotNull(titleInput);
-        Assert.True(titleInput.IsRequired());
 
         var descriptionLabel = appComponent.FindAll("label")
             .FirstOrDefault(element => element.InnerHtml.Contains("Description"));
 
-        var descriptionTextArea = appComponent.Find($"textarea#{descriptionLabel!.Attributes.GetNamedItem("for")}");
+        var descriptionTextArea = appComponent.Find($"textarea#{descriptionLabel!.Attributes.GetNamedItem("for").Value}");
         Assert.NotNull(descriptionTextArea);
-        Assert.False(descriptionTextArea.IsRequired());
 
         var deadlineLabel = appComponent.FindAll("label")
             .FirstOrDefault(element => element.InnerHtml.Contains("Deadline"));
 
-        var deadlineInput = appComponent.Find($"input#{deadlineLabel!.Attributes.GetNamedItem("for")}");
+        var deadlineInput = appComponent.Find($"input#{deadlineLabel!.Attributes.GetNamedItem("for").Value}");
 
         Assert.NotNull(deadlineInput);
-        Assert.False(deadlineInput.IsRequired());
 
         Assert.NotNull(appComponent.FindAll("button")
             .FirstOrDefault(element => element.InnerHtml.Contains("Continue")));

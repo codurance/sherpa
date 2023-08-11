@@ -2,5 +2,5 @@ namespace SherpaFrontEnd.Services;
 
 public interface ITemplateService
 {
-    public Task<TemplateWithNameAndTime[]?> GetAllTemplates();
+    public Task<TemplateWithoutQuestions[]?> GetAllTemplates();
 }

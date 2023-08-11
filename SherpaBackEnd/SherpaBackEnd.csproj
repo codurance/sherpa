@@ -18,7 +18,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\SherpaFrontEnd\SherpaFrontEnd.csproj" />
-
     </ItemGroup>
 
     <ItemGroup>

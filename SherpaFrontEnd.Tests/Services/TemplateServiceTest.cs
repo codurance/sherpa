@@ -24,7 +24,7 @@ public class TemplateServiceTest
     [Fact]
     public async Task Should_return_templates_returned_by_httpClient()
     {
-        var templates = new[] { new TemplateWithNameAndTime("Test", 0) };
+        var templates = new[] { new TemplateWithoutQuestions("Test", 0) };
         var templatesJson = await JsonContent.Create(templates).ReadAsStringAsync();
         
         var responseWithTemplates = new HttpResponseMessage
@@ -47,7 +47,7 @@ public class TemplateServiceTest
         
         var actualResponse = await templateService.GetAllTemplates();
         
-        var expectedResponse = new []{new TemplateWithNameAndTime("Test", 0)};
+        var expectedResponse = new []{new TemplateWithoutQuestions("Test", 0)};
         CustomAssertions.StringifyEquals(expectedResponse, actualResponse);
     }
 }
