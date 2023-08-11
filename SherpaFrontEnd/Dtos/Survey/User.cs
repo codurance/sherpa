@@ -1,4 +1,4 @@
-namespace SherpaBackEnd.Model;
+namespace SherpaFrontEnd.Dtos.Survey;
 
 public class User
 {
@@ -11,3 +11,5 @@ public class User
         Name = name;
     }
 }
+
+// This file is placed inside Survey temporarily 

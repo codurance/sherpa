@@ -1,4 +1,4 @@
-namespace SherpaBackEnd.Model.Survey;
+namespace SherpaFrontEnd.Dtos.Survey;
 
 public class Response
 {
