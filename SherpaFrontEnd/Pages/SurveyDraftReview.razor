@@ -3,30 +3,45 @@
 @using SherpaFrontEnd.Services
 @inject ISurveyService SurveyService
 
-<h3>SurveyDraftReview</h3>
-@if (_survey != null)
-{
-    <p>@_survey.Template.Name</p>
-    <p>@_survey.Title</p>
-    <p>@_survey.Description</p>
-    <p>@_survey.Team.Name</p>
-    @if (_survey.Deadline != null)
-    {
-        <p>@_survey.Deadline.Value.ToString("d-M-yyyy")</p>
-    }
-    else
-    {
-        <p>Not defined</p>
-    }
-    <p>@_survey.Template.Name</p>
-                             
+<div class="flex-1 bg-gray-100 p-8">
+    <h3 class="mb-8 text-black font-semibold text-title-h2--semibold">Review survey</h3>
     <div>
-        <button>Continue</button>
-        <button>Back</button>
     </div>
-}
+    <div class="mt-8 flex">
+        @if (_survey != null)
+        {
+            <div class="flex flex-col">
+                <p>TEMPLATE SELECTED</p>
+                <p>@_survey.Template.Name</p>
+                <p>SURVEY TITLE</p>
+                <p>@_survey.Title</p>
+                <p>SURVEY DESCRIPTION</p>
+                <p>@_survey.Description</p>
+            </div>
+            <div>
+                <p>TEAM</p>
+                <p>@_survey.Team.Name</p>
+                @if (_survey.Deadline != null)
+                {
+                    <p>@_survey.Deadline.Value.ToString("d-M-yyyy")</p>
+                }
+                else
+                {
+                    <p>Not defined</p>
+                }
+                <p>@_survey.Template.Name</p>
+            </div>
+        }
+    </div>
+    <div class="mt-9 flex w-full justify-end" role="group">
+        <button>Preview</button>
+        <button type="submit" class="flex items-center gap-2 rounded-lg px-6 py-2 text-base text-white bg-primary-red-principal-800 hover:bg-primary-red-900">Launch survey</button>
+    </div>
+
+</div>
 
 @code {
+
     [Parameter]
     public Guid SurveyId { get; set; }
 

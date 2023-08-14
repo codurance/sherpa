@@ -51,7 +51,7 @@ public class DeliverySettingsTest
         Assert.NotNull(teamSelect);
 
         var titleLabel = component.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Title"));
+            .FirstOrDefault(element => element.InnerHtml.Contains("Survey title"));
 
         var titleInput = component.Find($"input#{titleLabel!.Attributes.GetNamedItem("for").Value}");
 
@@ -90,7 +90,7 @@ public class DeliverySettingsTest
         Assert.NotNull(teamSelect);
         teamSelect.Change(_teams[0].Id);
 
-        const string surveyTitle = "Title";
+        const string surveyTitle = "Survey title";
         var titleLabel = component.FindAll("label")
             .FirstOrDefault(element => element.InnerHtml.Contains(surveyTitle));
 
@@ -149,7 +149,7 @@ public class DeliverySettingsTest
         Assert.NotNull(teamSelect);
         teamSelect.Change(_teams[0].Id);
 
-        const string surveyTitle = "Title";
+        const string surveyTitle = "Survey title";
         var titleLabel = component.FindAll("label")
             .FirstOrDefault(element => element.InnerHtml.Contains(surveyTitle));
 

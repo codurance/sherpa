@@ -152,7 +152,7 @@ public class SurveyAcceptanceTest
         Assert.NotNull(teamSelect);
 
         var titleLabel = appComponent.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Title"));
+            .FirstOrDefault(element => element.InnerHtml.Contains("Survey title"));
 
         var titleInput = appComponent.Find($"input#{titleLabel!.Attributes.GetNamedItem("for").Value}");
 
@@ -260,7 +260,7 @@ public class SurveyAcceptanceTest
         teamSelect.Change(_teams[0].Id);
 
         var titleLabel = appComponent.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Title"));
+            .FirstOrDefault(element => element.InnerHtml.Contains("Survey title"));
 
         var titleInput = appComponent.Find($"input#{titleLabel!.Attributes.GetNamedItem("for").Value}");
 
@@ -292,7 +292,6 @@ public class SurveyAcceptanceTest
         
         // THEN he should be redirected on the Summary page for a survey
         // and he should see the following info:
-        
         appComponent.WaitForAssertion(() =>
             Assert.Equal(
                 $"http://localhost/survey/draft-review/{_surveyId.ToString()}",
@@ -375,15 +374,15 @@ public class SurveyAcceptanceTest
         var teamSelector = appComponent.Find($"select#{teamLabel!.Attributes.GetNamedItem("for").Value}");
         Assert.NotNull(teamSelector);
 
-        var inputTeamGroup = teamSelector.Parent;
+        var inputTeamGroup = teamSelector.Parent.Parent;
         
         //title
         var titleLabel = appComponent.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Title"));
+            .FirstOrDefault(element => element.InnerHtml.Contains("Survey title"));
         var titleInput = appComponent.Find($"input#{titleLabel!.Attributes.GetNamedItem("for").Value}");
         Assert.NotNull(titleInput);
         
-        var inputTitleGroup = titleInput.Parent;
+        var inputTitleGroup = titleInput.Parent.Parent;
 
         // THEN these fields should be highlighted in read and under particular field he should see an error message
         

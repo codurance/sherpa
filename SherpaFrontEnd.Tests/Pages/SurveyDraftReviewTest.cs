@@ -61,12 +61,12 @@ public class SurveyDraftReviewTest
         
         // button Back
         var finalBackButton = appComponent.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Back"));
+            .FirstOrDefault(element => element.InnerHtml.Contains("Preview"));
         Assert.NotNull(finalBackButton);
         
         // button Launch
         var finalLaunchButton = appComponent.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Continue"));
+            .FirstOrDefault(element => element.InnerHtml.Contains("Launch survey"));
         Assert.NotNull(finalLaunchButton);
     }
 }
