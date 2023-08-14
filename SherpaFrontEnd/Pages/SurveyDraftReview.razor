@@ -5,31 +5,39 @@
 
 <div class="flex-1 bg-gray-100 p-8">
     <h3 class="mb-8 text-black font-semibold text-title-h2--semibold">Review survey</h3>
-    <div>
-    </div>
-    <div class="mt-8 flex">
+    <div class="mt-8 p-10 flex rounded-2xl border border-gray-200 px-12 bg-gray-white">
         @if (_survey != null)
         {
-            <div class="flex flex-col">
-                <p>TEMPLATE SELECTED</p>
-                <p>@_survey.Template.Name</p>
-                <p>SURVEY TITLE</p>
-                <p>@_survey.Title</p>
-                <p>SURVEY DESCRIPTION</p>
-                <p>@_survey.Description</p>
+            <div class="flex flex-col w-1/2 divide-y divide-primary-dark-100">
+                <div class="flex flex-col border border-gray-200 border-bottom">
+                    <p class="text-title-caption-12px">TEMPLATE SELECTED</p>
+                    <p class="text-text-body-14pt-regular">@_survey.Template.Name</p>
+                </div>
+                <div class="border border-gray-200">
+                    <div class="flex flex-col mt-6">
+                        <p class="text-title-caption-12px">SURVEY TITLE</p>
+                        <p class="text-text-body-14pt-regular">@_survey.Title</p>
+                    </div>
+                    <div class="flex flex-col mt-6">
+                        <p class="text-title-caption-12px">SURVEY DESCRIPTION</p>
+                        <p class="text-text-body-14pt-regular">@_survey.Description</p>
+                    </div>
+                </div>
+                <div class="flex flex-col mt-6">
+                    <p class="text-title-caption-12px">DELIVERY</p>
+                    @if (_survey.Deadline != null)
+                    {
+                        <p class="text-text-body-14pt-regular">@_survey.Deadline.Value.ToString("d-M-yyyy")</p>
+                    }
+                    else
+                    {
+                        <p class="text-text-body-14pt-regular">Not defined</p>
+                    }
+                </div>
             </div>
-            <div>
-                <p>TEAM</p>
-                <p>@_survey.Team.Name</p>
-                @if (_survey.Deadline != null)
-                {
-                    <p>@_survey.Deadline.Value.ToString("d-M-yyyy")</p>
-                }
-                else
-                {
-                    <p>Not defined</p>
-                }
-                <p>@_survey.Template.Name</p>
+            <div class="flex flex-col w-1/2 rounded-2xl px-12 bg-gray-100">
+                <p class="text-title-caption-12px">TEAM</p>
+                <p class="text-text-body-14pt-regular">@_survey.Team.Name</p>
             </div>
         }
     </div>
