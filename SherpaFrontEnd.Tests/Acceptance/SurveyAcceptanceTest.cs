@@ -278,9 +278,9 @@ public class SurveyAcceptanceTest
             .FirstOrDefault(element => element.InnerHtml.Contains("On a specific date"));
 
         var deadlineInput = appComponent.Find($"input#{deadlineLabel!.Attributes.GetNamedItem("for").Value}");
-        deadlineInput.Change(deadline.Date.ToString("d"));
-
         Assert.NotNull(deadlineInput);
+        deadlineInput.Change(deadline.Date.ToString("yyyy-MM-dd"));
+
         
         // WHEN he clicks on Continue
 
@@ -289,6 +289,8 @@ public class SurveyAcceptanceTest
         Assert.NotNull(continueButton);
         
         continueButton.Click();
+        
+        _testOutputHelper.WriteLine(appComponent.Markup);
         
         // THEN he should be redirected on the Summary page for a survey
         // and he should see the following info:
