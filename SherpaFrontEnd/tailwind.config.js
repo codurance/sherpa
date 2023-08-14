@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
     content: ["./**/*.{html,razor}"],
+    important: true,
     theme: {
         extend: {
             colors: {
@@ -20,6 +21,7 @@ module.exports = {
                 "gray-800": "var(--gray--800)",
                 "gray-600": "var(--gray--600)",
                 "gray-400": "var(--gray--400)",
+                "gray-300": "var(--gray--300)",
                 "gray-200": "var(--gray--200)",
                 "gray-100": "var(--gray--100)",
                 "gray-white": "var(--gray---white)",
