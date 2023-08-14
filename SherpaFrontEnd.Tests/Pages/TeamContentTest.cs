@@ -13,14 +13,17 @@ public class TeamContentTest
     private IRenderedComponent<TeamContent> _renderedComponent;
     private Mock<ITeamDataService> _mockTeamService;
     private Mock<IAssessmentsDataService> _mockAssessmentService;
+    private Mock<ISurveyService> _mockSurveyService;
 
     public TeamContentTest()
     {
         _testContext = new TestContext();
         _mockTeamService = new Mock<ITeamDataService>();
         _mockAssessmentService = new Mock<IAssessmentsDataService>();
+        _mockSurveyService = new Mock<ISurveyService>();
         _testContext.Services.AddScoped(s => _mockTeamService.Object);
         _testContext.Services.AddScoped(s => _mockAssessmentService.Object);
+        _testContext.Services.AddSingleton<ISurveyService>(_mockSurveyService.Object);
     }
 
     [Fact]

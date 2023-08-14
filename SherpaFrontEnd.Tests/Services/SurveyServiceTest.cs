@@ -40,7 +40,7 @@ public class SurveyServiceTest
             .SetupSequence<Task<HttpResponseMessage>>(
                 "SendAsync",
                 ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get)  && m.RequestUri!.AbsoluteUri.Contains($"teams/{teamId}/surveys")),
+                    m => m.Method.Equals(HttpMethod.Get)  && m.RequestUri!.AbsoluteUri.Contains($"team/{teamId.ToString()}/surveys")),
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(emptySurveyListResponse);
         
@@ -77,7 +77,7 @@ public class SurveyServiceTest
             .SetupSequence<Task<HttpResponseMessage>>(
                 "SendAsync",
                 ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get)  && m.RequestUri!.AbsoluteUri.Contains($"teams/{teamId}/surveys")),
+                    m => m.Method.Equals(HttpMethod.Get)  && m.RequestUri!.AbsoluteUri.Contains($"team/{teamId.ToString()}/surveys")),
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(responseWithSurveys);
         

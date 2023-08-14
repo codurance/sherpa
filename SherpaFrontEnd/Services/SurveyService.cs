@@ -18,7 +18,7 @@ public class SurveyService: ISurveyService
 
     public async Task<List<Survey>?> GetAllSurveysByTeam(Guid teamId)
     {
-        var request = new HttpRequestMessage(HttpMethod.Get, $"/teams/{teamId}/surveys");
+        var request = new HttpRequestMessage(HttpMethod.Get, $"/team/{teamId}/surveys");
         var response = await _httpClient.SendAsync(request);
 
         response.EnsureSuccessStatusCode();

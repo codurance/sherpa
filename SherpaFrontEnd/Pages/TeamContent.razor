@@ -2,10 +2,12 @@
 @using SherpaFrontEnd.Services
 @using SherpaFrontEnd.Shared.Modals
 @using SherpaFrontEnd.Shared.Tabs
+@using SherpaFrontEnd.Dtos.Survey
 @using System.Net
 @inject NavigationManager Nav
 @inject ITeamDataService TeamDataService
 @inject IAssessmentsDataService AssessmentsDataService
+@inject ISurveyService SurveyService
 
 @page "/team-content/{TeamId:guid?}"
 
@@ -31,6 +33,16 @@
             Team="@Team"
             OnUpdateTeam="@OnUpdateTeam">
         </Members>
+        @if (Surveys != null ||  Surveys.Count > 0)
+        {
+            @foreach (var survey in Surveys)
+            {
+                <div class="bg-white p-4 shadow rounded-lg mb-4">
+                    <h4 class="text-lg font-semibold">@survey.Title</h4>
+                    <p>@survey.Description</p>
+                </div>
+            }
+        }
     </TabPage>
     <TabPage Text="Assessments">
         <Assessments
@@ -61,6 +73,8 @@
 
     private List<Assessment>? Assessments { get; set; }
 
+    private List<Survey>? Surveys { get; set; }
+
     [CascadingParameter]
     public IModalService Modal { get; set; } = default!;
 
@@ -69,6 +83,7 @@
         Team = await TeamDataService.GetTeamById(TeamId);
         Emails = Team!.Members.Select(m => m.Email).ToList();
         SurveyTemplates = await AssessmentsDataService.GetTemplates();
+        Surveys = await SurveyService.GetAllSurveysByTeam(TeamId);
         Assessments = await AssessmentsDataService.GetAssessments(TeamId);
     }
 
