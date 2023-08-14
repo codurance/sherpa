@@ -161,10 +161,10 @@ public class SurveysAcceptanceTest
         teamSurveysTabPage.Click();
         
         appComponent.WaitForAssertion(() => Assert.NotNull(appComponent.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Send first survey"))));
-        Assert.NotNull(appComponent.FindAll("p").FirstOrDefault(element => element.InnerHtml.Contains("You don't have any surveys yet")));
+        Assert.NotNull(appComponent.FindAll("p").FirstOrDefault(element => element.InnerHtml.Contains("Let's begin the journey towards a stronger, more effective team!")));
     }
 
-       [Fact]
+    [Fact]
     public async Task ShouldBeAbleToViewSurveyPageFromSurveyTabWhenUserHasSurveys()
     {
         const string newTeamName = "Team with surveys";
@@ -222,14 +222,12 @@ public class SurveysAcceptanceTest
                          m.RequestUri.AbsoluteUri.Contains($"/team/{newTeamId.ToString()}")),
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(singleTeamResponse);
-
-        var teamId = Guid.NewGuid();
+        
         var userOne = new User(Guid.NewGuid(), "user");
-        var team = new Team(Guid.NewGuid(), "name");
         var SurveyList = new List<Survey>()
         {
             new Survey(Guid.NewGuid(), userOne, Status.Draft, new DateTime(), "title", "description",
-                Array.Empty<Response>(), team, new Template("template"))
+                Array.Empty<Response>(), newTeam, new Template("template"))
         };
         var SurveyListJson = await JsonContent.Create(SurveyList).ReadAsStringAsync();
         var SurveyListResponse = new HttpResponseMessage()
@@ -286,6 +284,5 @@ public class SurveysAcceptanceTest
         
         appComponent.WaitForAssertion(() => Assert.NotNull(appComponent.FindAll("h3").FirstOrDefault(element => element.InnerHtml.Contains("All Surveys"))));
         Assert.NotNull(appComponent.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Send new survey")));
-        Assert.Null(appComponent.FindAll("p").FirstOrDefault(element => element.InnerHtml.Contains("You don't have any surveys yet")));
     }
 }

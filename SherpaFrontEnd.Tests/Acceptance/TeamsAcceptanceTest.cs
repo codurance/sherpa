@@ -26,6 +26,7 @@ public class TeamsAcceptanceTest
     private readonly Mock<IGuidService> _guidService;
     private ITestOutputHelper _output;
     private readonly Mock<IAssessmentsDataService> _assessmentsService;
+    private readonly Mock<ISurveyService> _surveyService;
 
     public TeamsAcceptanceTest(ITestOutputHelper output)
     {
@@ -38,9 +39,11 @@ public class TeamsAcceptanceTest
         _teamsService = new TeamServiceHttpClient(_factoryHttpClient.Object);
         _guidService = new Mock<IGuidService>();
         _assessmentsService = new Mock<IAssessmentsDataService>();
+        _surveyService = new Mock<ISurveyService>();
         _testCtx.Services.AddSingleton<ITeamDataService>(_teamsService);
         _testCtx.Services.AddSingleton<IGuidService>(_guidService.Object);
         _testCtx.Services.AddSingleton<IAssessmentsDataService>(_assessmentsService.Object);
+        _testCtx.Services.AddSingleton<ISurveyService>(_surveyService.Object);
         const string baseUrl = "http://localhost";
         var httpClient = new HttpClient(_httpHandlerMock.Object, false) { BaseAddress = new Uri(baseUrl) };
         _factoryHttpClient.Setup(_ => _.CreateClient("SherpaBackEnd")).Returns(httpClient);
