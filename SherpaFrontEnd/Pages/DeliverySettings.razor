@@ -9,7 +9,9 @@
 
 <div class="flex-1 bg-gray-100 p-8">
     <h2 class="mb-8 text-black font-semibold text-title-h2--semibold">Send template survey</h2>
-    <EditForm Model="CreateSurveyDto" OnValidSubmit="@CreateSurvey">
+
+    <EditForm EditContext="EditContext" OnValidSubmit="@CreateSurvey">
+
         <div class="rounded-2xl border border-gray-200 px-12 bg-gray-white divide-y divide-primary-dark-100">
             <DataAnnotationsValidator/>
 
@@ -46,12 +48,14 @@
                 <div class="flex w-2/3 flex-col">
                     <div class="flex flex-col">
                         <label for="survey-title-input" class="text-text-label text-primary-dark-principal">Survey title</label>
-                        <InputText id="survey-title-input" @bind-Value="CreateSurveyDto.Title" class="max-w-xs rounded-lg border border-gray-300 shadow-sm py-2.5 px-3.5 mb-1"/>
+                        <div class="max-w-xs relative">
+                            <InputText id="survey-title-input" @bind-Value="CreateSurveyDto.Title" class="w-full rounded-lg border border-gray-300 shadow-sm py-2.5 px-3.5 mb-1"/>
+                            @if (!IsInvalid(nameof(CreateSurveyDto.Title)))
+                            {
+                                <i class="las la-exclamation-circle absolute text-red-500 text-2xl top-2 right-3"></i>
+                            }
+                        </div>
                         <ValidationMessage For="@(() => CreateSurveyDto.Title)"/>
-                        @if (editContext.GetValidationMessages(editContext.Field(nameof(CreateSurveyDto.Title))).Any())
-                        {
-                            <span class="invalid-icon">❌</span>
-                        }
                     </div>
                     <div class="mt-5 flex flex-col">
                         <label for="survey-description-input" class="text-text-label text-primary-dark-principal">Description</label>
@@ -80,8 +84,9 @@
                 <span>Continue</span><i class="las la-angle-right"></i>
             </button>
         </div>
-
     </EditForm>
+
+
 </div>
 
 @code {
@@ -94,12 +99,12 @@
 
     public IEnumerable<Team>? Teams { get; set; }
 
-    private EditContext editContext;
+    public EditContext? EditContext;
 
 
     protected override async Task OnInitializedAsync()
     {
-        editContext = new EditContext(CreateSurveyDto);
+        EditContext = new EditContext(CreateSurveyDto);
 
         CreateSurveyDto.SurveyId = GuidService.GenerateRandomGuid();
         if (Template != null)
@@ -123,6 +128,21 @@
     {
         await SurveyService.CreateSurvey(CreateSurveyDto);
         NavManager.NavigateTo(NavManager.BaseUri + $"survey/draft-review/{CreateSurveyDto.SurveyId.ToString()}");
+    }
+
+    private bool IsInvalid(string? field)
+    {
+        if (field == null || EditContext == null)
+        {
+            Console.WriteLine("Field is null");
+            return false;
+        }
+
+        var anyValidationMessages = EditContext.GetValidationMessages(new FieldIdentifier(CreateSurveyDto, field)).Any();
+
+        Console.WriteLine("IsValid: " + !anyValidationMessages);
+
+        return !anyValidationMessages;
     }
 
 }
