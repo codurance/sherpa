@@ -26,14 +26,16 @@
                 </div>
                 <div class="flex flex-col pt-8">
                     <p class="text-title-caption-12px text-primary-dark-400 mb-2">DELIVERY</p>
-                    @if (_survey.Deadline != null)
-                    {
-                        <p class="text-text-body-14pt-regular text-primary-dark-principal">Ends on @_survey.Deadline.Value.ToString("d-M-yyyy")</p>
-                    }
-                    else
-                    {
-                        <p class="text-text-body-14pt-regular text-primary-dark-principal">Not defined</p>
-                    }
+                    <ul class="list-disc pl-5">
+                        @if (_survey.Deadline != null)
+                        {
+                            <li class="text-text-body-14pt-regular text-primary-dark-principal">Ends on @_survey.Deadline.Value.ToString("dd/MM/yyyy")</li>
+                        }
+                        else
+                        {
+                            <li class="text-text-body-14pt-regular text-primary-dark-principal">Deadline not defined</li>
+                        }
+                    </ul>
                 </div>
             </div>
             <div class="flex flex-col w-1/2 rounded-2xl p-6 bg-gray-100">

@@ -315,8 +315,8 @@ public class SurveyAcceptanceTest
         Assert.NotNull(surveyDescriptionElement);
         
         // deadline
-        var surveyDeadlineElement = appComponent.FindAll("p")
-            .FirstOrDefault(element => element.InnerHtml.Contains(survey.Deadline.Value.ToString("d-M-yyyy")));
+        var surveyDeadlineElement = appComponent.FindAll("li")
+            .FirstOrDefault(element => element.InnerHtml.Contains(survey.Deadline.Value.ToString("dd/MM/yyyy")));
         Assert.NotNull(surveyDeadlineElement);
         
         // name of the team
