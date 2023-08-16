@@ -109,29 +109,8 @@ public class InMemoryFilesTemplateRepositoryTest : IDisposable
     [Fact]
     public async Task ShouldReturnNullIfTemplateDoesNotExistWhenCallingGetTemplateByName()
     {
-        var questions = new IQuestion[]
-        {
-            new HackmanQuestion(new Dictionary<string, string>()
-                {
-                    { Languages.SPANISH, QuestionInSpanish },
-                    { Languages.ENGLISH, QuestionInEnglish },
-                }, new Dictionary<string, string[]>()
-                {
-                    {
-                        Languages.SPANISH, new[] { ResponseSpanish1, ResponseSpanish2, ResponseSpanish3 }
-                    },
-                    {
-                        Languages.ENGLISH, new[] { ResponseEnglish1, ResponseEnglish2, ResponseEnglish3 }
-                    }
-                }, Reverse,
-                HackmanComponent.INTERPERSONAL_PEER_COACHING,
-                HackmanSubcategory.DELIMITED, HackmanSubcomponent.SENSE_OF_URGENCY, Position)
-        };
-
         const string templateName = "not-existing-template";
         
-        var expectedTemplate = new Template(templateName, questions, 30);
-
         var templateRepository = new InMemoryFilesTemplateRepository(TestFolder);
 
         var actualTemplate = await templateRepository.GetTemplateByName(templateName);
