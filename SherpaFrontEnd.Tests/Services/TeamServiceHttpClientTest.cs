@@ -1,9 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
-using Bunit.TestDoubles;
 using Moq;
 using Moq.Protected;
-using Newtonsoft.Json;
 using Shared.Test.Helpers;
 using SherpaFrontEnd.Model;
 using SherpaFrontEnd.Services;

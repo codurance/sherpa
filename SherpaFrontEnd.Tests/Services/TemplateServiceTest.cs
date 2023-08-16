@@ -2,7 +2,6 @@ using System.Net;
 using System.Net.Http.Json;
 using Moq;
 using Moq.Protected;
-using Newtonsoft.Json;
 using Shared.Test.Helpers;
 using SherpaFrontEnd.Services;
 

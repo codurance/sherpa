@@ -1,5 +1,3 @@
-using System.Globalization;
-using AngleSharp.Dom;
 using Bunit;
 using Bunit.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
