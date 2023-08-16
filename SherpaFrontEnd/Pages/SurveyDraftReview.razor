@@ -2,6 +2,7 @@
 @using SherpaFrontEnd.Dtos
 @using SherpaFrontEnd.Services
 @inject ISurveyService SurveyService
+@inject NavigationManager NavigationManager
 
 <div class="flex-1 bg-gray-100 p-8">
     <h3 class="mb-8 text-black font-semibold text-title-h2--semibold">Review survey</h3>
@@ -57,7 +58,14 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _survey = await SurveyService.GetSurveyById(SurveyId);
+        try
+        {
+            _survey = await SurveyService.GetSurveyById(SurveyId);
+        }
+        catch
+        {
+            NavigationManager.NavigateTo(NavigationManager.BaseUri + "error");
+        }
     }
 
 }

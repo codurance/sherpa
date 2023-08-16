@@ -113,7 +113,14 @@
         CreateSurveyDto.Deadline = null;
         CreateSurveyDto.TeamId = null;
 
-        Teams = await FetchAllTeams();
+        try
+        {
+            Teams = await FetchAllTeams();
+        }
+        catch
+        {
+            NavManager.NavigateTo(NavManager.BaseUri + "error");
+        }
     }
 
     private async Task<List<Team>> FetchAllTeams()
@@ -124,8 +131,15 @@
 
     private async Task CreateSurvey()
     {
-        await SurveyService.CreateSurvey(CreateSurveyDto);
-        NavManager.NavigateTo(NavManager.BaseUri + $"survey/draft-review/{CreateSurveyDto.SurveyId.ToString()}");
+        try
+        {
+            await SurveyService.CreateSurvey(CreateSurveyDto);
+            NavManager.NavigateTo(NavManager.BaseUri + $"survey/draft-review/{CreateSurveyDto.SurveyId.ToString()}");
+        }
+        catch
+        {
+            NavManager.NavigateTo(NavManager.BaseUri + "error");
+        }
     }
 
     private bool IsInvalid(string? field)

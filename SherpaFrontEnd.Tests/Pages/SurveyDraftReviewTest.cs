@@ -1,4 +1,5 @@
 using Bunit;
+using Bunit.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using SherpaFrontEnd.Dtos;
@@ -11,6 +12,18 @@ namespace BlazorApp.Tests.Pages;
 public class SurveyDraftReviewTest
 {
     private Guid _surveyId = Guid.NewGuid();
+    private readonly TestContext _ctx;
+    private readonly Mock<ISurveyService> _surveyService;
+    private readonly FakeNavigationManager _navMan;
+
+    public SurveyDraftReviewTest()
+    {
+         _ctx = new TestContext();
+         _surveyService
+            = new Mock<ISurveyService>();
+        _ctx.Services.AddSingleton<ISurveyService>(_surveyService.Object);
+        _navMan = _ctx.Services.GetRequiredService<FakeNavigationManager>();
+    }
 
     [Fact]
     public async Task ShouldDisplayDataRetrievedFromSurveyService()
@@ -29,12 +42,9 @@ public class SurveyDraftReviewTest
             templateWithoutQuestions);
         
         // template
-        var ctx = new TestContext();
-        var surveyService = new Mock<ISurveyService>();
-        surveyService.Setup(service => service.GetSurveyById(_surveyId)).ReturnsAsync(survey);
-        ctx.Services.AddSingleton<ISurveyService>(surveyService.Object);
+        _surveyService.Setup(service => service.GetSurveyById(_surveyId)).ReturnsAsync(survey);
         
-        var appComponent = ctx.RenderComponent<SurveyDraftReview>(ComponentParameter.CreateParameter("SurveyId", _surveyId));
+        var appComponent = _ctx.RenderComponent<SurveyDraftReview>(ComponentParameter.CreateParameter("SurveyId", _surveyId));
         var templateNameElement = appComponent.FindAll("p")
             .FirstOrDefault(element => element.InnerHtml.Contains(templateWithoutQuestions.Name));
         Assert.NotNull(templateNameElement);
@@ -68,5 +78,14 @@ public class SurveyDraftReviewTest
         var finalLaunchButton = appComponent.FindAll("button")
             .FirstOrDefault(element => element.InnerHtml.Contains("Launch survey"));
         Assert.NotNull(finalLaunchButton);
+    }
+    [Fact]
+    public async Task ShouldRedirectToErrorPageIfThereIsAnErrorLoadingTheSurvey()
+    {
+        _surveyService.Setup(service => service.GetSurveyById(_surveyId)).ThrowsAsync(new Exception());
+        
+        var appComponent = _ctx.RenderComponent<SurveyDraftReview>(ComponentParameter.CreateParameter("SurveyId", _surveyId));
+        
+        appComponent.WaitForAssertion(() => Assert.Equal("http://localhost/error", _navMan.Uri));
     }
 }
