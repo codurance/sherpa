@@ -1,3 +1,4 @@
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -40,7 +41,7 @@ public class SurveyControllerTest
     }
 
     [Fact]
-    public async Task ShouldReturn500StatusCodeIfServiceThrows()
+    public async Task ShouldReturn500StatusCodeIfServiceThrowsWhenCallingCreateSurvey()
     {
         var createSurveyDto = new CreateSurveyDto(Guid.NewGuid(), Guid.NewGuid(), "template-name", "title",
             "description", DateTime.Parse("2023-08-09T07:38:04+0000"));
@@ -56,7 +57,7 @@ public class SurveyControllerTest
     }
 
     [Fact]
-    public async Task ShouldReturn400StatusCodeIfServiceThrowsNotFoundException()
+    public async Task ShouldReturn400StatusCodeIfServiceThrowsNotFoundExceptionWhenCallingCreateSurvey()
     {
         var createSurveyDto = new CreateSurveyDto(Guid.NewGuid(), Guid.NewGuid(), "template-name", "title",
             "description", DateTime.Parse("2023-08-09T07:38:04+0000"));
@@ -75,7 +76,7 @@ public class SurveyControllerTest
     }
 
     [Fact]
-    public async Task ShouldReturnTheSurveyGivenByTheService()
+    public async Task ShouldReturnTheSurveyGivenByTheServiceWhenCallingGetSurveyById()
     {
         var expectedSurvey = new Survey(Guid.NewGuid(), new User(Guid.NewGuid(), "Lucia"), Status.Draft,
             DateTime.Parse("2023-08-09T07:38:04+0000"), "Title", "description", Array.Empty<Response>(),
@@ -91,7 +92,7 @@ public class SurveyControllerTest
     }
 
     [Fact]
-    public async Task ShouldReturn404IfServiceThrowsNotFoundException()
+    public async Task ShouldReturn404IfServiceThrowsNotFoundExceptionWhenCallingGetSurveyById()
     {
         var surveyId = Guid.NewGuid();
 
@@ -106,7 +107,7 @@ public class SurveyControllerTest
         Assert.Equal(StatusCodes.Status404NotFound, okObjectResul.StatusCode);
     }
     [Fact]
-    public async Task ShouldReturn500IfServiceThrowsNotPredefinedCustomException()
+    public async Task ShouldReturn500IfServiceThrowsNotPredefinedCustomExceptionWhenCallingGetSurveyById()
     {
         var surveyId = Guid.NewGuid();
 
