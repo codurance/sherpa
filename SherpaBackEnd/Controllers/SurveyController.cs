@@ -40,9 +40,9 @@ public class SurveyController
             };
         }
     }
-    
-[HttpGet("{guid:guid}")]
-public async Task<ActionResult<Survey>> GetSurveyById(Guid guid)
+
+    [HttpGet("{guid:guid}")]
+    public async Task<ActionResult<Survey>> GetSurveyById(Guid guid)
     {
         try
         {
