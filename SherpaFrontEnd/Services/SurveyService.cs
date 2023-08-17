@@ -8,18 +8,20 @@ namespace SherpaFrontEnd.Services;
 
 public class SurveyService: ISurveyService
 {
+    private readonly IHttpClientFactory _httpClientFactory;
     private readonly HttpClient _httpClient;
     private const string SherpaBackend = "SherpaBackEnd";
 
     public SurveyService(IHttpClientFactory httpClientFactory)
     {
-        _httpClient = httpClientFactory.CreateClient(SherpaBackend);
+        _httpClientFactory = httpClientFactory;
     }
 
     public async Task<List<Survey>?> GetAllSurveysByTeam(Guid teamId)
     {
+        var httpClient = _httpClientFactory.CreateClient(SherpaBackend);
         var request = new HttpRequestMessage(HttpMethod.Get, $"/team/{teamId}/surveys");
-        var response = await _httpClient.SendAsync(request);
+        var response = await httpClient.SendAsync(request);
 
         response.EnsureSuccessStatusCode();
         var responseString = await response.Content.ReadAsStringAsync();
