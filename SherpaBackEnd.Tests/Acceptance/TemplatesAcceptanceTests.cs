@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
+using Shared.Test.Helpers;
 using SherpaBackEnd.Controllers;
 using SherpaBackEnd.Model.Template;
 using SherpaBackEnd.Repositories;
@@ -73,12 +74,11 @@ public class TemplatesAcceptanceTests : IDisposable
         var templatesResult = Assert.IsType<OkObjectResult>(actualResponse.Result);
         var actualTemplates = Assert.IsAssignableFrom<IEnumerable<Template>>(templatesResult.Value);
 
-        Assert.Equal(
-            JsonConvert.SerializeObject(new[]
+        CustomAssertions.StringifyEquals(new[]
             {
                 _hackmanTemplate
-            })
-            , JsonConvert.SerializeObject(actualTemplates));
+            }
+            , actualTemplates);
     }
 
     [Fact]

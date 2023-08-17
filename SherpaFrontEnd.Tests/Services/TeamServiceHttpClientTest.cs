@@ -1,9 +1,8 @@
 using System.Net;
 using System.Net.Http.Json;
-using Bunit.TestDoubles;
 using Moq;
 using Moq.Protected;
-using Newtonsoft.Json;
+using Shared.Test.Helpers;
 using SherpaFrontEnd.Model;
 using SherpaFrontEnd.Services;
 
@@ -47,7 +46,7 @@ public class TeamServiceHttpClientTest
 
         var serviceResponse = await teamService.GetAllTeams();
 
-        Assert.Equal(JsonConvert.SerializeObject(teamsList), JsonConvert.SerializeObject(serviceResponse));
+        CustomAssertions.StringifyEquals(teamsList, serviceResponse);
     }
 
     [Fact]
@@ -103,6 +102,6 @@ public class TeamServiceHttpClientTest
 
         var serviceResponse = await teamService.GetTeamById(teamId);
 
-        Assert.Equal(JsonConvert.SerializeObject(newTeam), JsonConvert.SerializeObject(serviceResponse));
+        CustomAssertions.StringifyEquals(newTeam, serviceResponse);
     }
 }

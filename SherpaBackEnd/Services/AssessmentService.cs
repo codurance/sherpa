@@ -20,12 +20,12 @@ public class AssessmentService : IAssessmentService
 
     public async Task<IEnumerable<SurveyTemplate>> GetTemplates()
     {
-        return await _surveyRepository.GetTemplates();
+        return await _surveyRepository.DeprecatedGetTemplates();
     }
 
     public async Task<Assessment?> AddAssessment(Guid teamId, Guid templateId, string name)
     {
-        if (_surveyRepository.IsTemplateExist(templateId))
+        if (_surveyRepository.DeprecatedIsTemplateExist(templateId))
         {
             var newAssessment = new Assessment(teamId, templateId, name);
             _assessmentRepository.AddAssessment(newAssessment);

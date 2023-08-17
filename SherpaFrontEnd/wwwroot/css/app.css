@@ -1,7 +1,38 @@
 ﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 @font-face {
     font-family: proxima-nova;
+    src: url("./fonts/proxima_ssv/Proxima Nova Thin.otf") format("opentype");
+    font-weight: 100;
+}
+
+@font-face {
+    font-family: proxima-nova;
     src: url("./fonts/proxima_ssv/ProximaNova-Regular.otf") format("opentype");
+    font-weight: 400;
+}
+
+@font-face {
+    font-family: proxima-nova;
+    src: url("./fonts/proxima_ssv/Proxima Nova Semibold.otf") format("opentype");
+    font-weight: 600;
+}
+
+@font-face {
+    font-family: proxima-nova;
+    src: url("./fonts/proxima_ssv/Proxima Nova Bold.otf") format("opentype");
+    font-weight: 700;
+}
+
+@font-face {
+    font-family: proxima-nova;
+    src: url("./fonts/proxima_ssv/Proxima Nova Extrabold.otf") format("opentype");
+    font-weight: 800;
+}
+
+@font-face {
+    font-family: proxima-nova;
+    src: url("./fonts/proxima_ssv/Proxima Nova Black.otf") format("opentype");
+    font-weight: 900;
 }
 
 html, body {

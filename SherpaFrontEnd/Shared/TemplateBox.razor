@@ -1,11 +1,8 @@
-<div class="template-box">
+@inject NavigationManager NavManager
+
+<div class="template-box cursor-pointer" onclick="@(() => NavManager.NavigateTo($"/templates/{Uri.EscapeDataString(Name)}"))">
     <h2 class="template-box__title">@Name</h2>
     <p class="template-box__time"><i class="las la-clock"></i> @MinutesToComplete min</p>
-    <button class="template-box__button">
-        <span>
-            <i class="las la-ellipsis-v"></i>
-        </span><span class="visually-hidden">Open contextual menu for @Name</span>
-    </button>
 </div>
 
 @code {

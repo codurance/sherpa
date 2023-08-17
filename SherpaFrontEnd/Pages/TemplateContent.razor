@@ -1,0 +1,13 @@
+@page "/templates/{templateName}"
+@inject NavigationManager NavigationManager
+<div class="bg-[url('/img/templates/details/header.png')] min-h-[280px] bg-cover p-5 flex justify-between text-black items-start">
+    <h1 class="text-title-h2--semibold text-black">@TemplateName</h1>
+    <button @onclick="@(() => NavigationManager.NavigateTo(NavigationManager.BaseUri + $"survey/delivery-settings?template={Uri.EscapeDataString(TemplateName)}"))" class="bg-primary-red-principal-800 hover:bg-primary-red-900 rounded-lg px-6 text-white text-base py-2">Launch this template</button>
+</div>
+
+@code {
+
+    [Parameter]
+    public string? TemplateName { get; set; }
+
+}

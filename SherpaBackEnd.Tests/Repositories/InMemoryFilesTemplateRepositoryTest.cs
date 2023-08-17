@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using Shared.Test.Helpers;
 using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Model.Template;
 using SherpaBackEnd.Repositories;
@@ -56,12 +57,11 @@ public class InMemoryFilesTemplateRepositoryTest : IDisposable
         var templateRepository = new InMemoryFilesTemplateRepository(TestFolder);
         var actualResult = await templateRepository.GetAllTemplatesAsync();
 
-        Assert.Equal(
-            JsonConvert.SerializeObject(new[]
+        CustomAssertions.StringifyEquals(new[]
             {
                 template
-            })
-            , JsonConvert.SerializeObject(actualResult));
+            }
+            , actualResult);
     }
     
     [Fact]
@@ -72,6 +72,49 @@ public class InMemoryFilesTemplateRepositoryTest : IDisposable
         var csvParsingException = await Assert.ThrowsAnyAsync<CSVParsingException>(async () => await templateRepository.GetAllTemplatesAsync());
         
         Assert.Equal("Error while parsing the .csv files", csvParsingException.Message);
+    }
+
+    [Fact]
+    public async Task ShouldReturnTemplateWhenCallingGetTemplateByName()
+    {
+        var questions = new IQuestion[]
+        {
+            new HackmanQuestion(new Dictionary<string, string>()
+                {
+                    { Languages.SPANISH, QuestionInSpanish },
+                    { Languages.ENGLISH, QuestionInEnglish },
+                }, new Dictionary<string, string[]>()
+                {
+                    {
+                        Languages.SPANISH, new[] { ResponseSpanish1, ResponseSpanish2, ResponseSpanish3 }
+                    },
+                    {
+                        Languages.ENGLISH, new[] { ResponseEnglish1, ResponseEnglish2, ResponseEnglish3 }
+                    }
+                }, Reverse,
+                HackmanComponent.INTERPERSONAL_PEER_COACHING,
+                HackmanSubcategory.DELIMITED, HackmanSubcomponent.SENSE_OF_URGENCY, Position)
+        };
+
+        var templateName = InMemoryFilesTemplateRepository.HackmanModel;
+        
+        var expectedTemplate = new Template(templateName, questions, 30);
+
+        var templateRepository = new InMemoryFilesTemplateRepository(TestFolder);
+
+        var actualTemplate = await templateRepository.GetTemplateByName(templateName);
+        CustomAssertions.StringifyEquals(expectedTemplate, actualTemplate);
+    }
+    
+    [Fact]
+    public async Task ShouldReturnNullIfTemplateDoesNotExistWhenCallingGetTemplateByName()
+    {
+        const string templateName = "not-existing-template";
+        
+        var templateRepository = new InMemoryFilesTemplateRepository(TestFolder);
+
+        var actualTemplate = await templateRepository.GetTemplateByName(templateName);
+        Assert.Null(actualTemplate);
     }
 
     public void Dispose()

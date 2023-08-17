@@ -2,7 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using Moq;
 using Moq.Protected;
-using Newtonsoft.Json;
+using Shared.Test.Helpers;
 using SherpaFrontEnd.Services;
 
 namespace BlazorApp.Tests.Services;
@@ -23,7 +23,7 @@ public class TemplateServiceTest
     [Fact]
     public async Task Should_return_templates_returned_by_httpClient()
     {
-        var templates = new[] { new TemplateWithNameAndTime("Test", 0) };
+        var templates = new[] { new TemplateWithoutQuestions("Test", 0) };
         var templatesJson = await JsonContent.Create(templates).ReadAsStringAsync();
         
         var responseWithTemplates = new HttpResponseMessage
@@ -46,7 +46,7 @@ public class TemplateServiceTest
         
         var actualResponse = await templateService.GetAllTemplates();
         
-        var expectedResponse = new []{new TemplateWithNameAndTime("Test", 0)};
-        Assert.Equal(JsonConvert.SerializeObject(expectedResponse), JsonConvert.SerializeObject(actualResponse));
+        var expectedResponse = new []{new TemplateWithoutQuestions("Test", 0)};
+        CustomAssertions.StringifyEquals(expectedResponse, actualResponse);
     }
 }
