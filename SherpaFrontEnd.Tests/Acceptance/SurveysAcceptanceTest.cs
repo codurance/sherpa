@@ -119,7 +119,7 @@ public class SurveysAcceptanceTest
                 "SendAsync",
                 ItExpr.Is<HttpRequestMessage>(
                     m => m.Method.Equals(HttpMethod.Get) &&
-                         m.RequestUri.AbsoluteUri.Contains($"/team/{newTeamId.ToString()}/surveys")),
+                         m.RequestUri.AbsoluteUri.EndsWith($"/team/{newTeamId.ToString()}/surveys")),
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(emptySurveyListResponse);
 
@@ -153,7 +153,8 @@ public class SurveysAcceptanceTest
         confirmButton.Click();
         
         appComponent.WaitForAssertion(() => Assert.Equal($"http://localhost/team-content/{newTeamId.ToString()}", _navMan.Uri));
-        
+        Assert.NotNull(appComponent.FindAll("h3").FirstOrDefault(element => element.InnerHtml.Contains(newTeamName)));
+
         var teamSurveysTabPage = appComponent.FindAll("a:not(a[href])")
             .FirstOrDefault(element => element.InnerHtml.Contains("Surveys"));
         Assert.NotNull(teamSurveysTabPage);
