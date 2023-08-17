@@ -86,9 +86,9 @@ public class SurveyControllerTest
 
         var surveyById = await controller.GetSurveyById(expectedSurvey.Id);
 
-        var okObjectResul = Assert.IsType<OkObjectResult>(surveyById.Result);
+        var okObjectResult = Assert.IsType<OkObjectResult>(surveyById.Result);
 
-        Assert.Equal(expectedSurvey, okObjectResul.Value);
+        Assert.Equal(expectedSurvey, okObjectResult.Value);
     }
 
     [Fact]
@@ -102,9 +102,9 @@ public class SurveyControllerTest
         var controller = new SurveyController(_serviceMock.Object, _logger);
         var surveyById = await controller.GetSurveyById(surveyId);
 
-        var okObjectResul = Assert.IsType<ObjectResult>(surveyById.Result);
+        var okObjectResult = Assert.IsType<ObjectResult>(surveyById.Result);
 
-        Assert.Equal(StatusCodes.Status404NotFound, okObjectResul.StatusCode);
+        Assert.Equal(StatusCodes.Status404NotFound, okObjectResult.StatusCode);
     }
     [Fact]
     public async Task ShouldReturn500IfServiceThrowsNotPredefinedCustomExceptionWhenCallingGetSurveyById()
@@ -117,8 +117,8 @@ public class SurveyControllerTest
         var controller = new SurveyController(_serviceMock.Object, _logger);
         var surveyById = await controller.GetSurveyById(surveyId);
 
-        var okObjectResul = Assert.IsType<ObjectResult>(surveyById.Result);
+        var okObjectResult = Assert.IsType<ObjectResult>(surveyById.Result);
 
-        Assert.Equal(StatusCodes.Status500InternalServerError, okObjectResul.StatusCode);
+        Assert.Equal(StatusCodes.Status500InternalServerError, okObjectResult.StatusCode);
     }
 }

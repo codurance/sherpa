@@ -43,7 +43,7 @@ public class TemplatesTest
     }
 
     [Fact]
-    public async Task ShouldBeAbleToClickOnATeamAndNavigateToItsOwnPage()
+    public async Task ShouldBeAbleToClickOnATemplateAndNavigateToItsOwnPage()
     {
         _templates = new[] { new TemplateWithoutQuestions("Hackman Model", 30) };
         _mockService.Setup(service => service.GetAllTemplates()).ReturnsAsync(_templates);
