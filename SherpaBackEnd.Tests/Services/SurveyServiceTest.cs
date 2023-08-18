@@ -65,7 +65,6 @@ public class SurveyServiceTest
     {
         var surveyId = Guid.NewGuid();
         var service = new SurveyService(_surveyRepo.Object, _teamRepo.Object, _templateRepo.Object);
-        var expectedSurvey = new Survey(Guid.NewGuid(), new User(service.DefaultUserId, "Lucia"), Status.Draft, DateTime.Parse("2023-08-09T07:38:04+0000"), "Title", "Description", Array.Empty<Response>(), new Team(Guid.NewGuid(), "Demo team"), new Template("demo", Array.Empty<IQuestion>(), 30));
         _surveyRepo.Setup(repository => repository.GetSurveyById(surveyId)).ReturnsAsync((Survey?)null);
 
 
@@ -76,24 +75,22 @@ public class SurveyServiceTest
     public async Task ShouldCallSurveyRepositoryToGetAllSurveysFromTeam()
     {
         var teamId = Guid.NewGuid();
-        var surveyRepository = new Mock<ISurveyRepository>();
-        var surveyService = new SurveyService(surveyRepository.Object);
+        var service = new SurveyService(_surveyRepo.Object, _teamRepo.Object, _templateRepo.Object);
 
-        await surveyService.GetAllSurveysFromTeam(teamId);
+        await service.GetAllSurveysFromTeam(teamId);
         
-        surveyRepository.Verify(_ => _.GetAllSurveysFromTeam(teamId), Times.Once);
+        _surveyRepo.Verify(_ => _.GetAllSurveysFromTeam(teamId), Times.Once);
     }
 
     [Fact]
     public async Task ShouldThrowErrorIfConnectionToRepositoryNotSuccessful()
     {
         var teamId = Guid.NewGuid();
-        var surveyRepository = new Mock<ISurveyRepository>();
-        var surveyService = new SurveyService(surveyRepository.Object);
+        var service = new SurveyService(_surveyRepo.Object, _teamRepo.Object, _templateRepo.Object);
 
-        surveyRepository.Setup(_ => _.GetAllSurveysFromTeam(teamId)).ThrowsAsync(new Exception());
+        _surveyRepo.Setup(_ => _.GetAllSurveysFromTeam(teamId)).ThrowsAsync(new Exception());
 
-        var exceptionThrown = await Assert.ThrowsAsync<ConnectionToRepositoryUnsuccessfulException>(async () => await surveyService.GetAllSurveysFromTeam(teamId));
+        var exceptionThrown = await Assert.ThrowsAsync<ConnectionToRepositoryUnsuccessfulException>(async () => await service.GetAllSurveysFromTeam(teamId));
         Assert.IsType<ConnectionToRepositoryUnsuccessfulException>(exceptionThrown);
     }
 }

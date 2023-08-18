@@ -9,6 +9,7 @@ using Moq;
 using Moq.Protected;
 using SherpaFrontEnd;
 using SherpaFrontEnd.Dtos;
+using SherpaFrontEnd.Dtos.Survey;
 using SherpaFrontEnd.Model;
 using SherpaFrontEnd.Services;
 using Xunit.Abstractions;

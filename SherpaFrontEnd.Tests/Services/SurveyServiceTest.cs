@@ -17,6 +17,7 @@ public class SurveyServiceTest
     private readonly TestContext _testCtx;
     private readonly Mock<HttpMessageHandler> _handlerMock;
     private readonly Mock<IHttpClientFactory> _httpClientFactory;
+    private readonly Team[] _teams;
 
     public SurveyServiceTest()
     {

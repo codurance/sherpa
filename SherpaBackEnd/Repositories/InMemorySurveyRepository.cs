@@ -34,12 +34,12 @@ public class InMemorySurveyRepository : ISurveyRepository
         return _templates.ContainsKey(templateId);
     }
 
-    public async Task CreateSurvey(Survey.Survey survey)
+    public async Task CreateSurvey(Survey survey)
     {
         _surveys.Add(survey);
     }
 
-    public async Task<Survey.Survey?> GetSurveyById(Guid surveyId)
+    public async Task<Survey?> GetSurveyById(Guid surveyId)
     {
         return _surveys.Find(survey => survey.Id == surveyId);
     }
