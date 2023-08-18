@@ -7,7 +7,7 @@ using SherpaBackEnd.Services;
 namespace SherpaBackEnd.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("")]
 public class SurveyController
 {
     private readonly ISurveyService _surveyService;
@@ -19,7 +19,7 @@ public class SurveyController
         _logger = logger;
     }
 
-    [HttpPost]
+    [HttpPost("survey")]
     public async Task<ActionResult> CreateSurvey(CreateSurveyDto createSurveyDto)
     {
         try
@@ -41,7 +41,24 @@ public class SurveyController
         }
     }
 
-    [HttpGet("{guid:guid}")]
+    [HttpGet("team/{teamId:guid}/surveys")]
+    public async Task<ActionResult<IEnumerable<Survey>>> GetAllSurveysFromTeam(Guid teamId)
+    {
+        try
+        {
+            var allSurveysFromTeam = await _surveyService.GetAllSurveysFromTeam(teamId);
+            return new OkObjectResult(allSurveysFromTeam);
+        }
+        catch (Exception error)
+        {
+            return new ObjectResult(error)
+            {
+                StatusCode = StatusCodes.Status500InternalServerError
+            };
+        }
+    }
+
+    [HttpGet("survey/{guid:guid}")]
     public async Task<ActionResult<Survey>> GetSurveyById(Guid guid)
     {
         try
