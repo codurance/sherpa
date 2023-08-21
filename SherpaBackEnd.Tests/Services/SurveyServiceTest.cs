@@ -1,5 +1,4 @@
 ﻿using Moq;
-using Newtonsoft.Json;
 using Shared.Test.Helpers;
 using SherpaBackEnd.Dtos;
 using SherpaBackEnd.Exceptions;
@@ -7,7 +6,6 @@ using SherpaBackEnd.Model;
 using SherpaBackEnd.Model.Survey;
 using SherpaBackEnd.Model.Template;
 using SherpaBackEnd.Services;
-using SherpaBackEnd.Services.Email;
 using Xunit.Abstractions;
 using ISurveyRepository = SherpaBackEnd.Model.ISurveyRepository;
 
@@ -67,10 +65,32 @@ public class SurveyServiceTest
     {
         var surveyId = Guid.NewGuid();
         var service = new SurveyService(_surveyRepo.Object, _teamRepo.Object, _templateRepo.Object);
-        var expectedSurvey = new Survey(Guid.NewGuid(), new User(service.DefaultUserId, "Lucia"), Status.Draft, DateTime.Parse("2023-08-09T07:38:04+0000"), "Title", "Description", Array.Empty<Response>(), new Team(Guid.NewGuid(), "Demo team"), new Template("demo", Array.Empty<IQuestion>(), 30));
         _surveyRepo.Setup(repository => repository.GetSurveyById(surveyId)).ReturnsAsync((Survey?)null);
 
 
         await Assert.ThrowsAsync<NotFoundException>(async () => await service.GetSurveyById(surveyId));
+    }
+
+    [Fact]
+    public async Task ShouldCallSurveyRepositoryToGetAllSurveysFromTeam()
+    {
+        var teamId = Guid.NewGuid();
+        var service = new SurveyService(_surveyRepo.Object, _teamRepo.Object, _templateRepo.Object);
+
+        await service.GetAllSurveysFromTeam(teamId);
+        
+        _surveyRepo.Verify(_ => _.GetAllSurveysFromTeam(teamId), Times.Once);
+    }
+
+    [Fact]
+    public async Task ShouldThrowErrorIfConnectionToRepositoryNotSuccessful()
+    {
+        var teamId = Guid.NewGuid();
+        var service = new SurveyService(_surveyRepo.Object, _teamRepo.Object, _templateRepo.Object);
+
+        _surveyRepo.Setup(_ => _.GetAllSurveysFromTeam(teamId)).ThrowsAsync(new Exception());
+
+        var exceptionThrown = await Assert.ThrowsAsync<ConnectionToRepositoryUnsuccessfulException>(async () => await service.GetAllSurveysFromTeam(teamId));
+        Assert.IsType<ConnectionToRepositoryUnsuccessfulException>(exceptionThrown);
     }
 }

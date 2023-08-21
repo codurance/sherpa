@@ -36,6 +36,8 @@ public class SurveyAcceptanceTest
 {Position}|{ResponseEnglish1} // {ResponseEnglish2} // {ResponseEnglish3}|{ResponseSpanish1} // {ResponseSpanish2} // {ResponseSpanish3}|{QuestionInEnglish}|{QuestionInSpanish}|{Reverse.ToString()}|{HackmanComponent.INTERPERSONAL_PEER_COACHING}|{HackmanSubcategory.DELIMITED}|{HackmanSubcomponent.SENSE_OF_URGENCY}
 ";
         File.WriteAllText($"{TestFolder}/hackman.csv", contents);
+        
+        
     }
 
     [Fact]
@@ -87,6 +89,28 @@ public class SurveyAcceptanceTest
         var okObjectResult = Assert.IsType<OkObjectResult>(retrievedSurvey.Result);
         Assert.Equal(StatusCodes.Status200OK, okObjectResult.StatusCode);
         CustomAssertions.StringifyEquals(expectedSurvey, okObjectResult.Value);
+    }
+    
+    [Fact]
+    public async Task ShouldBeAbleToRetrieveATeamSurveys()
+    {
+        //Given: A user interacting with the backend API
+
+        var inMemoryTemplateRepository = new InMemoryFilesTemplateRepository(TestFolder);
+        
+        var teamId = Guid.NewGuid();
+        var emptySurveyList = new List<Survey>() { };
+        var inMemorySurveyRepository = new InMemorySurveyRepository(emptySurveyList);
+        ITeamRepository inMemoryTeamRepository = new InMemoryTeamRepository();
+        var surveysService = new SurveyService(inMemorySurveyRepository, inMemoryTeamRepository, inMemoryTemplateRepository);
+        
+        var surveyController = new SurveyController(surveysService, _logger);
+
+        var teamSurveys = await surveyController.GetAllSurveysFromTeam(teamId);
+
+        var resultObject = Assert.IsType<OkObjectResult>(teamSurveys.Result);
+        Assert.Equal(StatusCodes.Status200OK, resultObject.StatusCode);
+        Assert.Equal(emptySurveyList, resultObject.Value);
     }
     
     public void Dispose()

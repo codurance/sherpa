@@ -3,6 +3,7 @@ using Bunit.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using SherpaFrontEnd.Dtos;
+using SherpaFrontEnd.Dtos.Survey;
 using SherpaFrontEnd.Model;
 using SherpaFrontEnd.Pages;
 using SherpaFrontEnd.Services;

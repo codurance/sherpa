@@ -40,6 +40,18 @@ public class SurveyService : ISurveyService
     {
         throw new NotImplementedException();
     }
+    
+    public async Task<IEnumerable<Survey>> GetAllSurveysFromTeam(Guid teamId)
+    {
+        try
+        {
+            return await _surveyRepository.GetAllSurveysFromTeam(teamId);
+        }
+        catch (Exception error)
+        {
+            throw new ConnectionToRepositoryUnsuccessfulException(error.Message, error);
+        }
+    }
 
     public async Task<Survey> GetSurveyById(Guid expectedSurveyId)
     {

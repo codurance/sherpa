@@ -1,4 +1,5 @@
-﻿using SherpaFrontEnd.Model;
+﻿using SherpaFrontEnd.Dtos.Survey;
+using SherpaFrontEnd.Model;
 using SherpaFrontEnd.Services;
 
 namespace SherpaFrontEnd.Dtos;

@@ -7,7 +7,7 @@ using SherpaBackEnd.Services;
 namespace SherpaBackEnd.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("")]
 public class SurveyController
 {
     private readonly ISurveyService _surveyService;
@@ -19,7 +19,7 @@ public class SurveyController
         _logger = logger;
     }
 
-    [HttpPost]
+    [HttpPost("survey")]
     public async Task<ActionResult> CreateSurvey(CreateSurveyDto createSurveyDto)
     {
         try
@@ -28,20 +28,39 @@ public class SurveyController
 
             return new CreatedResult("", null);
         }
-        catch (Exception e)
+        catch (Exception error)
         {
-            _logger.LogError(default, e, e.Message);
+            _logger.LogError(default, error, error.Message);
 
-            return e switch
+            return error switch
             {
-                NotFoundException => new ObjectResult(e)
-                    { StatusCode = StatusCodes.Status400BadRequest, Value = e.Message },
-                _ => new ObjectResult(e) { StatusCode = StatusCodes.Status500InternalServerError }
+                NotFoundException => new ObjectResult(error)
+                    { StatusCode = StatusCodes.Status400BadRequest, Value = error.Message },
+                _ => new ObjectResult(error) { StatusCode = StatusCodes.Status500InternalServerError }
             };
         }
     }
 
-    [HttpGet("{guid:guid}")]
+    [HttpGet("team/{teamId:guid}/surveys")]
+    public async Task<ActionResult<IEnumerable<Survey>>> GetAllSurveysFromTeam(Guid teamId)
+    {
+        try
+        {
+            var allSurveysFromTeam = await _surveyService.GetAllSurveysFromTeam(teamId);
+            return new OkObjectResult(allSurveysFromTeam);
+        }
+        catch (Exception error)
+        {
+            _logger.LogError(default, error, error.Message);
+
+            return new ObjectResult(error)
+            {
+                StatusCode = StatusCodes.Status500InternalServerError
+            };
+        }
+    }
+
+    [HttpGet("survey/{guid:guid}")]
     public async Task<ActionResult<Survey>> GetSurveyById(Guid guid)
     {
         try
@@ -49,15 +68,15 @@ public class SurveyController
             var surveyById = await _surveyService.GetSurveyById(guid);
             return new OkObjectResult(surveyById);
         }
-        catch (Exception e)
+        catch (Exception error)
         {
-            _logger.LogError(default, e, e.Message);
+            _logger.LogError(default, error, error.Message);
 
-            return e switch
+            return error switch
             {
-                NotFoundException => new ObjectResult(e)
-                    { StatusCode = StatusCodes.Status404NotFound, Value = e.Message },
-                _ => new ObjectResult(e) { StatusCode = StatusCodes.Status500InternalServerError }
+                NotFoundException => new ObjectResult(error)
+                    { StatusCode = StatusCodes.Status404NotFound, Value = error.Message },
+                _ => new ObjectResult(error) { StatusCode = StatusCodes.Status500InternalServerError }
             };
         }
     }
