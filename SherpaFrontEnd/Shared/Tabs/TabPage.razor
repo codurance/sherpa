@@ -13,6 +13,10 @@
     [Parameter]
     public string Text { get; set; } = string.Empty;
 
+    [Parameter]
+    public int? Subtext { get; set; }
+
+
     protected override async Task OnInitializedAsync()
     {
         if (Parent == null)

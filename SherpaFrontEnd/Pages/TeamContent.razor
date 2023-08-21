@@ -24,10 +24,7 @@
     <TabPage Text="Analysis">
         <button>Send a new survey</button>
     </TabPage>
-    @{
-        int surveyCount = (@Surveys == null) ? 0 : @Surveys.Count;
-    }
-    <TabPage Text="Surveys ( @surveyCount )">
+    <TabPage Text="Surveys" Subtext="@Surveys!.Count">
         @if (Surveys != null && Surveys.Count > 0)
         {
             <div class="py-5 flex justify-between items-center rounded-3xl gap-2.5" style="margin: 0 1cm">
