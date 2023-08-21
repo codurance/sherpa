@@ -28,15 +28,15 @@ public class SurveyController
 
             return new CreatedResult("", null);
         }
-        catch (Exception e)
+        catch (Exception error)
         {
-            _logger.LogError(default, e, e.Message);
+            _logger.LogError(default, error, error.Message);
 
-            return e switch
+            return error switch
             {
-                NotFoundException => new ObjectResult(e)
-                    { StatusCode = StatusCodes.Status400BadRequest, Value = e.Message },
-                _ => new ObjectResult(e) { StatusCode = StatusCodes.Status500InternalServerError }
+                NotFoundException => new ObjectResult(error)
+                    { StatusCode = StatusCodes.Status400BadRequest, Value = error.Message },
+                _ => new ObjectResult(error) { StatusCode = StatusCodes.Status500InternalServerError }
             };
         }
     }
@@ -51,6 +51,8 @@ public class SurveyController
         }
         catch (Exception error)
         {
+            _logger.LogError(default, error, error.Message);
+
             return new ObjectResult(error)
             {
                 StatusCode = StatusCodes.Status500InternalServerError
@@ -66,15 +68,15 @@ public class SurveyController
             var surveyById = await _surveyService.GetSurveyById(guid);
             return new OkObjectResult(surveyById);
         }
-        catch (Exception e)
+        catch (Exception error)
         {
-            _logger.LogError(default, e, e.Message);
+            _logger.LogError(default, error, error.Message);
 
-            return e switch
+            return error switch
             {
-                NotFoundException => new ObjectResult(e)
-                    { StatusCode = StatusCodes.Status404NotFound, Value = e.Message },
-                _ => new ObjectResult(e) { StatusCode = StatusCodes.Status500InternalServerError }
+                NotFoundException => new ObjectResult(error)
+                    { StatusCode = StatusCodes.Status404NotFound, Value = error.Message },
+                _ => new ObjectResult(error) { StatusCode = StatusCodes.Status500InternalServerError }
             };
         }
     }
