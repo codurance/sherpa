@@ -144,7 +144,7 @@ public class TeamContentTest
         Assert.NotNull(surveyTabPage);
         surveyTabPage.Click();
 
-        var surveyName = teamContentComponent.FindAll("th").FirstOrDefault(element => element.InnerHtml.Contains("Survey name"));
+        var surveyName = teamContentComponent.FindAll("th").FirstOrDefault(element => element.InnerHtml.Contains("Survey title"));
         var template = teamContentComponent.FindAll("th").FirstOrDefault(element => element.InnerHtml.Contains("Template"));
         var coach = teamContentComponent.FindAll("th").FirstOrDefault(element => element.InnerHtml.Contains("Coach"));
         var deadline = teamContentComponent.FindAll("th").FirstOrDefault(element => element.InnerHtml.Contains("Deadline"));
