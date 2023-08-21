@@ -8,6 +8,10 @@
                     class="nav-link @GetButtonClass(tabPage)"
                     @onclick=@( () => ActivatePage(tabPage) )>
                     @tabPage.Text
+                    @if (@tabPage.Args != null)
+                    {
+                        <span> (@tabPage.Args.Count)</span>
+                    }
                 </a>
             </li>
         }
@@ -20,7 +24,7 @@
 
 @code{
     [Parameter]
-    public RenderFragment ChildContent { get; set; }
+    public RenderFragment? ChildContent { get; set; }
     
     public TabPage ActivePage { get; set; }
     List<TabPage> Pages = new();
