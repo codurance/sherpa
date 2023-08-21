@@ -187,7 +187,7 @@ public class TeamContentTest
             var surveyTableComponent = _testContext.RenderComponent<SurveyTable>(ComponentParameter.CreateParameter("Surveys", testSurvey));
 
                 var rows = surveyTableComponent.FindAll("tr.bg-white");
-                // Assert.Equal(testSurvey.Count, rows.Count); - For testing purposes it is commented out once done uncomment
+                Assert.Equal(testSurvey.Count, rows.Count);
 
                 foreach (var survey in testSurvey)
                 {
