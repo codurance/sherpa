@@ -2,33 +2,33 @@
 
 <div class="relative overflow-x-auto shadow-md sm:rounded-lg gap-2.5" style="margin: 0 1cm">
     <table class="w-full text-sm text-left text-gray-900">
-        <thead class="text-text-body-14pt-regular text-primary-dark-800 bg-gray-100">
+        <thead class="text-xs primary-dark-800 bg-gray-100">
             <tr>
-                <th scope="col" class="px-6 py-3 font-normal">
+                <th scope="col" class="px-6 py-3">
                     Survey title
                 </th>
-                <th scope="col" class="px-6 py-3 font-normal">
+                <th scope="col" class="px-6 py-3">
                     Template
                 </th>
-                <th scope="col" class="px-6 py-3 font-normal">
+                <th scope="col" class="px-6 py-3">
                     Coach
                 </th>
-                <th scope="col" class="px-6 py-3 font-normal">
+                <th scope="col" class="px-6 py-3">
                     Deadline
                 </th>
-                <th scope="col" class="px-6 py-3 font-normal">
+                <th scope="col" class="px-6 py-3">
                     Participants
                 </th>
-                <th scope="col" class="px-6 py-3 font-normal">
+                <th scope="col" class="px-6 py-3">
                     Status
                 </th>
             </tr>
         </thead>
         <tbody>
         @foreach (var survey in Surveys) {
-            <tr class="bg-white hover:bg-gray-50 text-text-body-14pt-regular">
+            <tr class="bg-white hover:bg-gray-50">
                 <td class="px-6 py-4">
-                    <div class="flex items-center text-text-body-14pt-semibold text-primary-dark-principal">
+                    <div class="flex items-center primary-dark-800">
                         @survey.Title
                     </div>
                 </td>

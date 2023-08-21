@@ -15,16 +15,15 @@
 <h3>
     @Team?.Name
 </h3>
-    <button class="btn btn-remove" title="Delete team" @onclick="DeleteTeam">
-        <span class="oi oi-trash"></span>
-    </button>
-
+<button class="btn btn-remove" title="Delete team" @onclick="DeleteTeam">
+    <span class="oi oi-trash"></span>
+</button>
 
 <TabControl>
     <TabPage Text="Analysis">
         <button>Send a new survey</button>
     </TabPage>
-    <TabPage Text="Surveys" Subtext="@Surveys!.Count">
+    <TabPage Text="Surveys" Args="@Surveys">
         @if (Surveys != null && Surveys.Count > 0)
         {
             <div class="py-5 flex justify-between items-center rounded-3xl gap-2.5" style="margin: 0 1cm">
