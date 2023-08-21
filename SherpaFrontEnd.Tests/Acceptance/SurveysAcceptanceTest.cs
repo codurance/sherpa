@@ -162,7 +162,7 @@ public class SurveysAcceptanceTest
         teamSurveysTabPage.Click();
         
         appComponent.WaitForAssertion(() => Assert.NotNull(appComponent.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Send first survey"))));
-        Assert.NotNull(appComponent.FindAll("h2").FirstOrDefault(element => element.InnerHtml.Contains("You don’t have any surveys yet")));
+        Assert.NotNull(appComponent.FindAll("p").FirstOrDefault(element => element.InnerHtml.Contains("You don’t have any surveys yet")));
         Assert.NotNull(appComponent.FindAll("p").FirstOrDefault(element => element.InnerHtml.Contains("Let's begin the journey towards a stronger, more effective team!")));
     }
 

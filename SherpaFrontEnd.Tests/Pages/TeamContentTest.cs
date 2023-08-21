@@ -93,7 +93,7 @@ public class TeamContentTest
         
         teamContentComponent.WaitForAssertion(() => Assert.NotNull(teamContentComponent.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Send first survey"))));
         Assert.NotNull(teamContentComponent.FindAll("p").FirstOrDefault(element => element.InnerHtml.Contains("Let's begin the journey towards a stronger, more effective team!")));
-        Assert.NotNull(teamContentComponent.FindAll("h2").FirstOrDefault(element => element.InnerHtml.Contains("You don’t have any surveys yet")));
+        Assert.NotNull(teamContentComponent.FindAll("p").FirstOrDefault(element => element.InnerHtml.Contains("You don’t have any surveys yet")));
     }
     
     [Fact]
@@ -192,7 +192,7 @@ public class TeamContentTest
                 foreach (var survey in testSurvey)
                 {
                     Assert.NotNull(rows.FirstOrDefault(element => element.ToMarkup().Contains(survey.Title), null));
-                    Assert.NotNull(rows.FirstOrDefault(element => element.ToMarkup().Contains(survey.Deadline.Date.ToString("dd/MM/yyyy")), null));
+                    Assert.NotNull(rows.FirstOrDefault(element => element.ToMarkup().Contains(survey.Deadline.Value.Date.ToString("dd/MM/yyyy")), null));
                     Assert.NotNull(rows.FirstOrDefault(element => element.ToMarkup().Contains(survey.Template.Name), null));
                     Assert.NotNull(rows.FirstOrDefault(element => element.ToMarkup().Contains(survey.Coach.Name), null));
                     Assert.NotNull(rows.FirstOrDefault(element => element.ToMarkup().Contains(Status.Draft.ToString()), null));
