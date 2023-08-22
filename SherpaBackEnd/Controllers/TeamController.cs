@@ -32,35 +32,6 @@ public class TeamController
         return new OkObjectResult(team);
     }
 
-    [HttpDelete("{guid:guid}")]
-    public async Task<ActionResult<Team>> DeleteTeamByIdAsync(Guid guid)
-    {
-        var team = await _teamService.DeprecatedGetTeamByIdAsync(guid);
-        if (team is null)
-        {
-            return new NotFoundResult();
-        }
-
-        team.Delete();
-        await _teamService.UpdateTeamByIdAsync(team);
-        return new OkResult();
-    }
-
-    [HttpPut("{guid:guid}")]
-    public async Task<ActionResult<Team>> UpdateTeamAsync(Guid guid, Team team)
-    {
-        // TODO use (Team team) signature to not expose too much
-        var teamFound = await _teamService.DeprecatedGetTeamByIdAsync(guid);
-        if (teamFound is null)
-        {
-            return new NotFoundResult();
-        }
-
-        team.Id = guid;
-        await _teamService.UpdateTeamByIdAsync(team);
-        return new OkObjectResult(team);
-    }
-
     [HttpPost]
     public async Task<ActionResult> AddTeamAsync(Team newTeam)
     {

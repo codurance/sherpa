@@ -4,7 +4,6 @@ namespace SherpaBackEnd.Model;
 
 public interface ITeamRepository
 {
-    Task<Team?> DeprecatedGetTeamByIdAsync(Guid guid);
     Task<Team?> GetTeamByIdAsync(Guid guid);
 
     Task<Team> UpdateTeamByIdAsync(Team team);

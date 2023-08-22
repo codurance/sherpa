@@ -39,11 +39,6 @@ public class InMemoryTeamRepository : ITeamRepository
         _teams = teams;
     }
 
-    public async Task<Team?> DeprecatedGetTeamByIdAsync(Guid guid)
-    {
-        return await Task.FromResult(_dataSet.GetValueOrDefault(guid));
-    }
-
     public async Task<Team> DeprecatedAddTeamAsync(Team team)
     {
         _dataSet.Add(team.Id, team);
