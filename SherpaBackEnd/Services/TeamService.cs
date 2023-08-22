@@ -18,11 +18,6 @@ public class TeamService : ITeamService
         return await _teamRepository.GetTeamByIdAsync(guid);
     }
 
-    public async Task<Team?> UpdateTeamByIdAsync(Team team)
-    {
-        return await _teamRepository.UpdateTeamByIdAsync(team);
-    }
-
     public async Task AddTeamAsync(Team newTeam)
     {
         try
