@@ -33,26 +33,6 @@ public class TeamControllerTest
     }
 
     [Fact]
-    public async Task AddNewTeam_OkResultExpected()
-    {
-        var expectedTeam = new Team("New team");
-
-        _mockTeamService.Setup(m => m.DeprecatedAddTeamAsync(It.IsAny<Team>()));
-
-        var actionResult = await _teamController.DeprecatedAddTeamAsync(expectedTeam);
-        Assert.IsType<OkResult>(actionResult.Result);
-    }
-
-    [Fact]
-    public async Task AddNewTeamWithoutName_BadRequestResultExpected()
-    {
-        var expectedTeam = new Team("");
-
-        var actionResult = await _teamController.DeprecatedAddTeamAsync(expectedTeam);
-        Assert.IsType<BadRequestResult>(actionResult.Result);
-    }
-
-    [Fact]
     public async Task DeleteTeam_TeamDoesNotExist_ExpectedNotFound()
     {
         _mockTeamService.Setup(repo => repo.DeprecatedGetTeamByIdAsync(It.IsAny<Guid>()))

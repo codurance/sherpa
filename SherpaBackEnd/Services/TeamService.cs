@@ -13,11 +13,6 @@ public class TeamService : ITeamService
         _teamRepository = teamRepository;
     }
 
-    public async Task<Team> DeprecatedAddTeamAsync(Team team)
-    {
-        return await _teamRepository.DeprecatedAddTeamAsync(team);
-    }
-
     public async Task<Team?> DeprecatedGetTeamByIdAsync(Guid guid)
     {
         return await _teamRepository.DeprecatedGetTeamByIdAsync(guid);

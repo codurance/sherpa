@@ -18,18 +18,6 @@ public class TeamController
         _teamService = teamService;
         _logger = logger;
     }
-    
-    public async Task<ActionResult<Team>> DeprecatedAddTeamAsync(Team team)
-    {
-        Console.WriteLine("backend " + team.Name);
-        if (String.IsNullOrEmpty(team.Name))
-        {
-            return new BadRequestResult();
-        }
-
-        await Task.Run(() => _teamService.DeprecatedAddTeamAsync(team));
-        return new OkResult();
-    }
 
     [HttpGet("{guid:guid}")]
     public async Task<ActionResult<Team>> GetTeamByIdAsync(Guid guid)
