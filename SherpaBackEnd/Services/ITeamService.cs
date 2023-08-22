@@ -4,8 +4,6 @@ namespace SherpaBackEnd.Services;
 
 public interface ITeamService
 {
-    Task<IEnumerable<Team>> DeprecatedGetAllTeamsAsync();
-
     Task<Team> DeprecatedAddTeamAsync(Team team);
     Task<Team?> DeprecatedGetTeamByIdAsync(Guid guid);
     Task<Team?> GetTeamByIdAsync(Guid guid);

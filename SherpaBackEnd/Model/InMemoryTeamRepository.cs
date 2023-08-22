@@ -38,11 +38,6 @@ public class InMemoryTeamRepository : ITeamRepository
     {
         _teams = teams;
     }
-    
-    public async Task<IEnumerable<Team>> DeprecatedGetAllTeams()
-    {
-        return await Task.FromResult(_dataSet.Values.ToList());
-    }
 
     public async Task<Team?> DeprecatedGetTeamByIdAsync(Guid guid)
     {

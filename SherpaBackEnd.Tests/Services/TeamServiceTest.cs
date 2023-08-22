@@ -18,25 +18,6 @@ public class TeamServiceTest
     }
 
     [Fact]
-    public async Task GetTeams_OnlyReturnsNotDeletedTeams()
-    {
-        var existingTeam = new Team("Existing team");
-        var deletedTeam = new Team("Deleted team");
-
-        deletedTeam.Delete();
-
-        _mockTeamRepository.Setup(repo => repo.DeprecatedGetAllTeams())
-            .ReturnsAsync(new List<Team>
-            {
-                existingTeam,
-                deletedTeam
-            });
-
-        var expectedTeamsList = await _teamService.DeprecatedGetAllTeamsAsync();
-        Assert.DoesNotContain(deletedTeam, expectedTeamsList);
-    }
-
-    [Fact]
     public async Task ShouldCallAddTeamMethodFromRepository()
     {
         var newTeam = new Team("Team name");

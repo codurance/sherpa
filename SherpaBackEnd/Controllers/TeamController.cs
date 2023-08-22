@@ -19,31 +19,6 @@ public class TeamController
         _logger = logger;
     }
     
-    public async Task<ActionResult<IEnumerable<Team>>> DeprecatedGetAllTeamsAsync()
-    {
-        IEnumerable<Team> teams;
-        try
-        {
-            teams = await _teamService.DeprecatedGetAllTeamsAsync();
-
-            if (!teams.Any())
-            {
-                return new NotFoundResult();
-            }
-
-            return new OkObjectResult(teams);
-        }
-        catch (ConnectionToRepositoryUnsuccessfulException repositoryException)
-        {
-            _logger.LogError(default, repositoryException, repositoryException.Message);
-            var error = new { message = "Internal server error. Try again later" };
-            return new ObjectResult(error)
-            {
-                StatusCode = StatusCodes.Status500InternalServerError
-            };
-        }
-    }
-    
     public async Task<ActionResult<Team>> DeprecatedAddTeamAsync(Team team)
     {
         Console.WriteLine("backend " + team.Name);

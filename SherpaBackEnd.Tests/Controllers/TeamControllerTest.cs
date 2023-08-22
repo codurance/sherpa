@@ -23,42 +23,6 @@ public class TeamControllerTest
     }
 
     [Fact]
-    public async Task GetTeams_RepoReturnsEmptyList_NotFoundExpected()
-    {
-        _mockTeamService.Setup(service => service.DeprecatedGetAllTeamsAsync())
-            .ReturnsAsync(new List<Team>());
-
-        var actionResult = await _teamController.DeprecatedGetAllTeamsAsync();
-        Assert.IsType<NotFoundResult>(actionResult.Result);
-    }
-
-    [Fact]
-    public async Task GetTeams_RepoReturnsList_OkExpected()
-    {
-        _mockTeamService.Setup(repo => repo.DeprecatedGetAllTeamsAsync())
-            .ReturnsAsync(new List<Team>{new("Team A"),new("Team B")});
-
-        var actionResult = await _teamController.DeprecatedGetAllTeamsAsync();
-        var objectResult = Assert.IsType<OkObjectResult>(actionResult.Result);
-        var teams = Assert.IsAssignableFrom<IEnumerable<Team>>(objectResult.Value);
-        Assert.Equal(2,teams.Count());
-    }
-
-    [Fact]
-    public async Task GetTeams_RepoThrowsError_ServerErrorExpected()
-    {
-        var dbException = new ConnectionToRepositoryUnsuccessfulException("Couldn't connect to the database");
-        _mockTeamService.Setup(repo => repo.DeprecatedGetAllTeamsAsync())
-            .ThrowsAsync(dbException);
-        var actionResult = await _teamController.DeprecatedGetAllTeamsAsync();
-
-        var objectResult = Assert.IsType<ObjectResult>(actionResult.Result);
-        Assert.Equal(StatusCodes.Status500InternalServerError, objectResult.StatusCode);
-        
-    }
-
-
-    [Fact]
     public async Task GetTeamById_RepoDoesntReturnTeam_NotFoundExpected()
     {
         _mockTeamService.Setup(m => m.DeprecatedGetTeamByIdAsync(It.IsAny<Guid>()))
