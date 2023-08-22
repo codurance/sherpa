@@ -30,9 +30,6 @@ builder.Services.AddSingleton<ITemplateRepository, InMemoryFilesTemplateReposito
     new InMemoryFilesTemplateRepository("Templates"));
 builder.Services.AddSingleton<ITemplateService, TemplateService>();
 
-builder.Services.AddSingleton<IAssessmentRepository, InMemoryAssessmentRepository>();
-builder.Services.AddSingleton<IAssessmentService, AssessmentService>();
-
 builder.Services.AddSingleton<ISurveyRepository, InMemorySurveyRepository>();
 builder.Services.AddSingleton<ISurveyService, SurveyService>();
 
