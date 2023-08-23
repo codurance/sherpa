@@ -59,4 +59,10 @@ public class InMemoryTeamRepository : ITeamRepository
     {
         return _teams.Find(team => team.Id == teamId);
     }
+    
+    public async Task<IEnumerable<TeamMember>> GetAllTeamMembersAsync(Guid teamId)
+    {
+        var team = await GetTeamByIdAsync(teamId);
+        return team.Members;
+    }
 }

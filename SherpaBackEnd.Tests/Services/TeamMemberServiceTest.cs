@@ -33,12 +33,12 @@ public class TeamMemberServiceTest
         
         var memberId = Guid.NewGuid();
         var teamMember = new TeamMember(memberId, "New Member", "Developer", "JohnDoe@google.com");
-        
+
         var mockTeamRepository = new Mock<ITeamRepository>();
         var teamMemberService = new TeamMemberService(mockTeamRepository.Object);
 
-        await teamMemberService.GetAllTeamMembersAsync(teamId, teamMember);
+        await teamMemberService.GetAllTeamMembersAsync(teamId);
         
-        mockTeamRepository.Verify(_ => _.GetAllTeamMembersAsync(teamId, teamMember), Times.Once);
+        mockTeamRepository.Verify(_ => _.GetAllTeamMembersAsync(teamId), Times.Once);
     }
 }

@@ -14,11 +14,11 @@ public class TeamMemberService : ITeamMemberService
 
     public async Task AddTeamMemberToTeamAsync(Guid teamId, TeamMember teamMember)
     {
-        _inMemoryTeamRepository.AddTeamMemberToTeamAsync(teamId, teamMember);
+        await _inMemoryTeamRepository.AddTeamMemberToTeamAsync(teamId, teamMember);
     }
 
     public async Task GetAllTeamMembersAsync(Guid teamId)
     {
-        throw new NotImplementedException();
+        await _inMemoryTeamRepository.GetAllTeamMembersAsync(teamId);
     }
 }
