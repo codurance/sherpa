@@ -12,7 +12,7 @@ public class TeamMemberService : ITeamMemberService
         _inMemoryTeamRepository = inMemoryTeamRepository;
     }
 
-    public Task addTeamMemberToTeam(Guid id, TeamMember member)
+    public Task AddTeamMemberToTeam(Guid id, TeamMember member)
     {
         throw new NotImplementedException();
     }
