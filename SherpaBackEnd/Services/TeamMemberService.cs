@@ -1,4 +1,5 @@
 using SherpaBackEnd.Dtos;
+using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Model;
 
 namespace SherpaBackEnd.Services;
@@ -14,11 +15,25 @@ public class TeamMemberService : ITeamMemberService
 
     public async Task AddTeamMemberToTeamAsync(Guid teamId, TeamMember teamMember)
     {
-        await _inMemoryTeamRepository.AddTeamMemberToTeamAsync(teamId, teamMember);
+        try
+        {
+            await _inMemoryTeamRepository.AddTeamMemberToTeamAsync(teamId, teamMember);
+        }
+        catch (Exception error)
+        {
+            throw new ConnectionToRepositoryUnsuccessfulException(error.Message, error);
+        }
     }
 
     public async Task<IEnumerable<TeamMember>> GetAllTeamMembersAsync(Guid teamId)
     {
-        return await _inMemoryTeamRepository.GetAllTeamMembersAsync(teamId);
+        try
+        {
+            return await _inMemoryTeamRepository.GetAllTeamMembersAsync(teamId);
+        }
+        catch (Exception error)
+        {
+            throw new ConnectionToRepositoryUnsuccessfulException(error.Message, error);
+        }
     }
 }

@@ -1,6 +1,7 @@
 using Moq;
 using SherpaBackEnd.Controllers;
 using SherpaBackEnd.Dtos;
+using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Model;
 using SherpaBackEnd.Services;
 
@@ -8,6 +9,16 @@ namespace SherpaBackEnd.Tests.Services;
 
 public class TeamMemberServiceTest
 {
+    private readonly Mock<ITeamRepository> _mockTeamRepository;
+    private readonly TeamMemberService _teamMemberService;
+
+    public TeamMemberServiceTest()
+    {
+        _mockTeamRepository = new Mock<ITeamRepository>();
+        _teamMemberService = new TeamMemberService(_mockTeamRepository.Object);
+
+    }
+
     [Fact]
     public async Task ShouldCallAddTeamMemberToTeamAsyncFromTeamRepository()
     {
@@ -17,12 +28,9 @@ public class TeamMemberServiceTest
         var memberId = Guid.NewGuid();
         var teamMember = new TeamMember(memberId, "New Member", "Developer", "JohnDoe@google.com");
         
-        var mockTeamRepository = new Mock<ITeamRepository>();
-        var teamMemberService = new TeamMemberService(mockTeamRepository.Object);
-
-        await teamMemberService.AddTeamMemberToTeamAsync(teamId, teamMember);
+        await _teamMemberService.AddTeamMemberToTeamAsync(teamId, teamMember);
         
-        mockTeamRepository.Verify(_ => _.AddTeamMemberToTeamAsync(teamId, teamMember), Times.Once);
+        _mockTeamRepository.Verify(_ => _.AddTeamMemberToTeamAsync(teamId, teamMember), Times.Once);
     }
 
     [Fact]
@@ -33,12 +41,34 @@ public class TeamMemberServiceTest
         
         var memberId = Guid.NewGuid();
         var teamMember = new TeamMember(memberId, "New Member", "Developer", "JohnDoe@google.com");
-
-        var mockTeamRepository = new Mock<ITeamRepository>();
-        var teamMemberService = new TeamMemberService(mockTeamRepository.Object);
-
-        await teamMemberService.GetAllTeamMembersAsync(teamId);
         
-        mockTeamRepository.Verify(_ => _.GetAllTeamMembersAsync(teamId), Times.Once);
+        await _teamMemberService.GetAllTeamMembersAsync(teamId);
+        
+        _mockTeamRepository.Verify(_ => _.GetAllTeamMembersAsync(teamId), Times.Once);
+    }
+    
+    [Fact]
+    public async Task ShouldThrowErrorIfConnectionWithRepositoryFailsWhileAddingTeamMembersToATeam()
+    {
+        const string teamName = "New team";
+        var teamId = Guid.NewGuid();
+        var memberId = Guid.NewGuid();
+        var teamMember = new TeamMember(memberId, "New Member", "Developer", "JohnDoe@google.com");
+        var teamMembers = new List<TeamMember>() { teamMember };
+        var team = new Team(teamId, teamName, teamMembers);
+        _mockTeamRepository.Setup(_ => _.AddTeamMemberToTeamAsync(teamId, teamMember)).ThrowsAsync(new Exception());
+
+        var exceptionThrown = await Assert.ThrowsAsync<ConnectionToRepositoryUnsuccessfulException>(async () => await _teamMemberService.AddTeamMemberToTeamAsync(teamId, teamMember));
+        Assert.IsType<ConnectionToRepositoryUnsuccessfulException>(exceptionThrown);
+    }
+    
+    [Fact]
+    public async Task ShouldThrowErrorIfConnectionWithRepositoryFailsWhileGettingAllTeamMembersOfATeam()
+    {
+        var teamId = Guid.NewGuid();
+        _mockTeamRepository.Setup(_ => _.GetAllTeamMembersAsync(teamId)).ThrowsAsync(new Exception());
+
+        var exceptionThrown = await Assert.ThrowsAsync<ConnectionToRepositoryUnsuccessfulException>(async () => await _teamMemberService.GetAllTeamMembersAsync(teamId));
+        Assert.IsType<ConnectionToRepositoryUnsuccessfulException>(exceptionThrown);
     }
 }
