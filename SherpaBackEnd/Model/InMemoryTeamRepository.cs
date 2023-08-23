@@ -49,6 +49,11 @@ public class InMemoryTeamRepository : ITeamRepository
         return await Task.FromResult(_teams);
     }
 
+    public Task AddTeamMemberToTeamAsync(Guid teamId, TeamMember teamMember)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<Team?> GetTeamByIdAsync(Guid teamId)
     {
         return _teams.Find(team => team.Id == teamId);

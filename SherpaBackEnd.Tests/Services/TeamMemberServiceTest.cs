@@ -9,7 +9,7 @@ namespace SherpaBackEnd.Tests.Services;
 public class TeamMemberServiceTest
 {
     [Fact]
-    public async Task ShouldCallGetTeamByIdAsyncFromTeamRepository()
+    public async Task ShouldCallAddTeamMemberToTeamAsyncFromTeamRepository()
     {
         const string teamName = "New team";
         var teamId = Guid.NewGuid();
@@ -22,6 +22,6 @@ public class TeamMemberServiceTest
 
         await teamMemberService.AddTeamMemberToTeamAsync(teamId, teamMember);
         
-        mockTeamRepository.Verify(_ => _.GetTeamByIdAsync(teamId), Times.Once);
+        mockTeamRepository.Verify(_ => _.AddTeamMemberToTeamAsync(teamId, teamMember), Times.Once);
     }
 }

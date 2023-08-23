@@ -14,6 +14,6 @@ public class TeamMemberService : ITeamMemberService
 
     public async Task AddTeamMemberToTeamAsync(Guid teamId, TeamMember teamMember)
     {
-        var teamByIdAsync = _inMemoryTeamRepository.GetTeamByIdAsync(teamId);
+        _inMemoryTeamRepository.AddTeamMemberToTeamAsync(teamId, teamMember);
     }
 }

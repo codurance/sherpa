@@ -49,4 +49,23 @@ public class InMemoryTeamRepositoryTest
         
         Assert.Equal(expectedTeam, actualTeam);
     }
+
+    [Fact]
+    public async Task ShouldBeAbleToAddTeamMemberToTeam()
+    {
+        var teamId = Guid.NewGuid();
+        const string teamName = "Team 1";
+        var initialTeam = new Team(teamId, teamName);
+
+        var memberId = Guid.NewGuid();
+        var teamMember = new TeamMember(memberId, "Name", "Position", "email@gov.com");
+        
+        var initialList = new List<Team>(){initialTeam};
+        var inMemoryTeamRepository = new InMemoryTeamRepository(initialList);
+
+        await inMemoryTeamRepository.AddTeamMemberToTeamAsync(teamId, teamMember);
+        
+        Assert.Contains(teamMember, initialList[0].Members);
+        Assert.True(initialList[0].Members.Count() == 1);
+    }
 }
