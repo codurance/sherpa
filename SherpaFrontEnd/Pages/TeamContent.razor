@@ -15,9 +15,6 @@
 <h3>
     @Team?.Name
 </h3>
-<button class="btn btn-remove" title="Delete team" @onclick="DeleteTeam">
-    <span class="oi oi-trash"></span>
-</button>
 
 <TabControl>
     <TabPage Text="Analysis">
@@ -39,7 +36,7 @@
         {
             <div class="py-5 flex justify-center items-center flex-col bg-indigo-50 rounded-3xl gap-2.5">
                 <img src="/img/empty-survey-icon.svg" alt="Empty Survey Icon" class="w-8 h-8">
-                <p class="text-center text-indigo-900 text-xl font-semibold leading-tight mb-1">
+                <p class="text-center text-primary-dark-principal text-xl font-semibold leading-tight mb-1">
                     You don’t have any surveys yet
                 </p>
                 <p class="text-center text-gray-700 text-base">
@@ -52,16 +49,8 @@
             </div>
         }
     </TabPage>
-    <TabPage Text="Assessments">
-        <Assessments
-            SurveyTemplates="@SurveyTemplates"
-            SelectedTeamAssessments="@Assessments"
-            SelectedTeamId="@Team?.Id"
-            Emails="@Emails"
-            OnAddSurvey="@OnAddSurvey"
-            OnCreateEvaluation="@OnUpdateAssessment"
-            OnDeleteEvaluation="@OnUpdateAssessment">
-        </Assessments>
+    <TabPage Text="Members">
+        <MemberTable Team="@Team"/>
     </TabPage>
 </TabControl>
 
@@ -76,11 +65,7 @@
     public Team? Team { get; set; }
 
     private List<string> Emails { get; set; } = new();
-
-    private List<SurveyTemplate>? SurveyTemplates { get; set; }
-
-    private List<Assessment>? Assessments { get; set; }
-
+    
     private List<Survey>? Surveys { get; set; }
 
     [CascadingParameter]
@@ -90,47 +75,6 @@
     {
         Team = await TeamDataService.GetTeamById(TeamId);
         Emails = Team!.Members.Select(m => m.Email).ToList();
-        SurveyTemplates = await AssessmentsDataService.GetTemplates();
         Surveys = await SurveyService.GetAllSurveysByTeam(TeamId);
-        Assessments = await AssessmentsDataService.GetAssessments(TeamId);
     }
-
-    private async Task OnUpdateTeam(Team team)
-    {
-        await TeamDataService.PutTeam(team);
-    }
-
-    private async Task OnUpdateAssessment(Assessment assessment)
-    {
-        await AssessmentsDataService.PutAssessment(assessment);
-    }
-
-    private async Task OnAddSurvey(SurveyTemplate template)
-    {
-        var assessmentName = $"{template.Name} {DateTime.Now}";
-        var assessment = await AssessmentsDataService.AddAssessment(TeamId, template.Id, assessmentName);
-
-        if (assessment is not null)
-        {
-            Assessments!.Add(assessment);
-        }
-    }
-
-    private async void DeleteTeam()
-    {
-        var modal = Modal.Show<ConfirmationModal>($"Delete {Team!.Name}?");
-        var modalResult = await modal.Result;
-
-        if (!modalResult.Cancelled)
-        {
-            var deleteStatus = await TeamDataService.DeleteTeam(TeamId);
-            if (deleteStatus == HttpStatusCode.OK)
-            {
-                Nav.NavigateTo("/teams-list-page");
-    //TODO alert (on teams page) successfully deleted
-            }
-    //TODO alert (on this page) team wasn't deleted
-        }
-    }
-
 }
