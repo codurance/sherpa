@@ -34,25 +34,28 @@
         </tr>
         </thead>
         <tbody class="bg-white">
-        <tr>
-            <td class="w-1/12 p-3 px-6">
-                <input type="checkbox" class="w-5 h-5 rounded border-gray-300 text-primary-dark-principal text-xl">
-            </td>
-            <td class="p-3">
-                Mike Wazowski
-            </td>
-            <td class="p-3">
-                mikewazowski@santander.com
-            </td>
-            <td class="p-3">
-                Product Designer
-            </td>
-            <td class="w-1/12 p-3 text-right">
-                <button class="p-0.5 text-2xl font-medium" type="button">
-                    <i class="las la-ellipsis-v"></i>
-                </button>
-            </td>
-        </tr>
+        @foreach (var member in Members)
+        {
+            <tr>
+                <td class="w-1/12 p-3 px-6">
+                    <input type="checkbox" class="w-5 h-5 rounded border-gray-300 text-primary-dark-principal text-xl">
+                </td>
+                <td class="p-3">
+                    @member.FullName
+                </td>
+                <td class="p-3">
+                    @member.Email
+                </td>
+                <td class="p-3">
+                    @member.Position
+                </td>
+                <td class="w-1/12 p-3 text-right">
+                    <button class="p-0.5 text-2xl font-medium" type="button">
+                        <i class="las la-ellipsis-v"></i>
+                    </button>
+                </td>
+            </tr>
+        }
         </tbody>
     </table>
 </div>
@@ -62,5 +65,8 @@
 
     [Parameter]
     public Team Team { get; set; }
+
+    [Parameter]
+    public IEnumerable<TeamMember> Members { get; set; }
 
 }
