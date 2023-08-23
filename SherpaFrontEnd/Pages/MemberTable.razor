@@ -1,0 +1,61 @@
+@using SherpaFrontEnd.Dtos.Survey
+@using SherpaFrontEnd.Model
+
+<header class="m-5 flex justify-between text-black items-center">
+    <h2 class="text-title-h2--semibold text-black">All members of @Team.Name</h2>
+    <aside class="flex gap-2.5">
+        <button class="bg-white border-2 rounded-lg px-6 py-2 text-gray-300 border-gray-200 font-semibold text-sm" disabled>
+            <i class="las la-trash"></i>
+            Remove
+        </button>
+        <button class="bg-primary-red-principal-800 hover:bg-primary-red-900 rounded-lg px-6 py-2 text-white font-semibold text-sm">
+            <i class="las la-plus"></i>
+            Add member
+        </button>
+    </aside>
+</header>
+<div class="mx-5 my-6 rounded-lg border-2 truncate text-left">
+    <table class="w-full text-sm text-gray-900">
+        <thead class="text-xs primary-dark-800 bg-gray-100 border-b-2">
+        <tr>
+            <th class="w-1/12 p-3 px-6">
+                <input type="checkbox" class="w-5 h-5 rounded border-gray-300 text-primary-dark-principal text-xl">
+            </th>
+            <th class="p-3">
+                Full name
+            </th>
+            <th class="p-3">
+                E-mail
+            </th>
+            <th class="p-3">
+                Position
+            </th>
+            <th class="w-1/12 p-3"></th>
+        </tr>
+        </thead>
+        <tbody class="bg-white">
+        <tr>
+            <td class="w-1/12 p-3 px-6">
+                <input type="checkbox" class="w-5 h-5 rounded border-gray-300 text-primary-dark-principal text-xl">
+            </td>
+            <td class="p-3">
+                Mike Wazowski
+            </td>
+            <td class="p-3">
+                mikewazowski@santander.com
+            </td>
+            <td class="p-3">
+                Product Designer
+            </td>
+            <td class="w-1/12 p-3 text-right">
+                <button class="p-0.5 text-2xl font-medium" type="button">
+                    <i class="las la-ellipsis-v"></i>
+                </button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+
+@code {}
