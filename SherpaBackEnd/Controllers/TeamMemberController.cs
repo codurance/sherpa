@@ -22,7 +22,7 @@ public class TeamMemberController
 
     public async Task<ActionResult<IEnumerable<Team>>> GetAllTeamMembersAsync(Guid teamId)
     {
-        await _teamMemberService.GetAllTeamMembersAsync(teamId);
-        return null;
+        var allTeamMembersAsync = await _teamMemberService.GetAllTeamMembersAsync(teamId);
+        return new OkObjectResult(allTeamMembersAsync);
     }
 }

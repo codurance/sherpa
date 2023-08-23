@@ -17,8 +17,8 @@ public class TeamMemberService : ITeamMemberService
         await _inMemoryTeamRepository.AddTeamMemberToTeamAsync(teamId, teamMember);
     }
 
-    public async Task GetAllTeamMembersAsync(Guid teamId)
+    public async Task<IEnumerable<TeamMember>> GetAllTeamMembersAsync(Guid teamId)
     {
-        await _inMemoryTeamRepository.GetAllTeamMembersAsync(teamId);
+        return await _inMemoryTeamRepository.GetAllTeamMembersAsync(teamId);
     }
 }
