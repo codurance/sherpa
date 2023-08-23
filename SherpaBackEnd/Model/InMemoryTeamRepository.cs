@@ -10,12 +10,12 @@ public class InMemoryTeamRepository : ITeamRepository
     public InMemoryTeamRepository()
     {
         _dataSet = new Dictionary<Guid, Team>();
-        
+
         var anotherTeamWithMembers = new Team("Team B")
         {
             Members = new List<TeamMember>
             {
-                new (Guid.NewGuid(), "Ross", "Painter", "bob@gmail.com"),
+                new(Guid.NewGuid(), "Ross", "Painter", "bob@gmail.com"),
             }
         };
 
@@ -24,9 +24,9 @@ public class InMemoryTeamRepository : ITeamRepository
         {
             Members = new List<TeamMember>
             {
-                new (Guid.NewGuid(), "Anne", "QA", "mary@gmail.com"),
-                new (Guid.NewGuid(), "Smith", "CEO", "bobby@gmail.com"),
-                new (Guid.NewGuid(), "Hardy", "CP", "bobber@gmail.com")
+                new(Guid.NewGuid(), "Anne", "QA", "mary@gmail.com"),
+                new(Guid.NewGuid(), "Smith", "CEO", "bobby@gmail.com"),
+                new(Guid.NewGuid(), "Hardy", "CP", "bobber@gmail.com")
             }
         };
 
@@ -51,8 +51,8 @@ public class InMemoryTeamRepository : ITeamRepository
 
     public async Task AddTeamMemberToTeamAsync(Guid teamId, TeamMember teamMember)
     {
-        var team = GetTeamByIdAsync(teamId);
-        team.Result.Members.Append(teamMember);
+        var team = await GetTeamByIdAsync(teamId);
+        team.Members.Add(teamMember);
     }
 
     public async Task<Team?> GetTeamByIdAsync(Guid teamId)

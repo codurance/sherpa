@@ -51,7 +51,7 @@ public class InMemoryTeamRepositoryTest
     }
 
     [Fact]
-    public async Task ShouldBeAbleToAddTeamMemberToTeam()
+    public async Task ShouldBeAbleToAddTeamMemberToTeamWhenThereAreNoTeamMembers()
     {
         var teamId = Guid.NewGuid();
         const string teamName = "Team 1";
@@ -67,5 +67,30 @@ public class InMemoryTeamRepositoryTest
         
         Assert.Contains(teamMember, initialList[0].Members);
         Assert.True(initialList[0].Members.Count() == 1);
+    }
+    
+    [Fact]
+    public async Task ShouldBeAbleToAddTeamMemberToTeamWhenThereIsAtLeastOneTeamMembers()
+    {
+        var teamId = Guid.NewGuid();
+        const string teamName = "Team 1";
+
+        var member1Id = Guid.NewGuid();
+        var teamMember1 = new TeamMember(member1Id, "Name1", "Position1", "email1@gov.com");
+        var member2Id = Guid.NewGuid();
+        var teamMember2 = new TeamMember(member2Id, "Name2", "Position2", "email2@gov.com");
+        var teamMembers = new List<TeamMember>() { teamMember1, teamMember2 };
+
+        var member3Id = Guid.NewGuid();
+        var teamMember3 = new TeamMember(member3Id, "Name3", "Position3", "email3@gov.com");
+
+        var initialTeam = new Team(teamId, teamName, teamMembers);
+        var initialList = new List<Team>(){initialTeam};
+        var inMemoryTeamRepository = new InMemoryTeamRepository(initialList);
+
+        await inMemoryTeamRepository.AddTeamMemberToTeamAsync(teamId, teamMember3);
+        
+        Assert.Contains(teamMember3, initialList[0].Members);
+        Assert.True(initialList[0].Members.Count() == 3);
     }
 }
