@@ -23,6 +23,6 @@ public class TeamMemberControllerTest
 
         await teamMemberController.AddTeamMemberToTeamAsync(teamId, teamMember);
         
-        mockTeamMemberService.Verify(_ => _.AddTeamMemberToTeam(teamId, teamMember), Times.Once);
+        mockTeamMemberService.Verify(_ => _.AddTeamMemberToTeamAsync(teamId, teamMember), Times.Once);
     }
 }

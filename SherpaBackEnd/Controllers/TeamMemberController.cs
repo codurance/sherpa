@@ -17,7 +17,7 @@ public class TeamMemberController
 
     public async Task AddTeamMemberToTeamAsync(Guid teamId, TeamMember teamMember)
     {
-        await _teamMemberService.AddTeamMemberToTeam(teamId, teamMember);
+        await _teamMemberService.AddTeamMemberToTeamAsync(teamId, teamMember);
     }
 
     public async Task<ActionResult<IEnumerable<Team>>> GetAllTeamMembersAsync()
