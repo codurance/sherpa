@@ -24,4 +24,21 @@ public class TeamMemberServiceTest
         
         mockTeamRepository.Verify(_ => _.AddTeamMemberToTeamAsync(teamId, teamMember), Times.Once);
     }
+
+    [Fact]
+    public async Task ShouldCallGetTeamMembersToTeamAsyncFromTeamRepository()
+    {
+        const string teamName = "New team";
+        var teamId = Guid.NewGuid();
+        
+        var memberId = Guid.NewGuid();
+        var teamMember = new TeamMember(memberId, "New Member", "Developer", "JohnDoe@google.com");
+        
+        var mockTeamRepository = new Mock<ITeamRepository>();
+        var teamMemberService = new TeamMemberService(mockTeamRepository.Object);
+
+        await teamMemberService.GetAllTeamMembersAsync(teamId, teamMember);
+        
+        mockTeamRepository.Verify(_ => _.GetAllTeamMembersAsync(teamId, teamMember), Times.Once);
+    }
 }

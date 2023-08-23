@@ -5,4 +5,5 @@ namespace SherpaBackEnd.Services;
 public interface ITeamMemberService
 {
     public Task AddTeamMemberToTeamAsync(Guid teamId, TeamMember teamMember);
+    public Task GetAllTeamMembersAsync(Guid teamId);
 }

@@ -20,8 +20,9 @@ public class TeamMemberController
         await _teamMemberService.AddTeamMemberToTeamAsync(teamId, teamMember);
     }
 
-    public async Task<ActionResult<IEnumerable<Team>>> GetAllTeamMembersAsync()
+    public async Task<ActionResult<IEnumerable<Team>>> GetAllTeamMembersAsync(Guid teamId)
     {
-        throw new NotImplementedException();
+        await _teamMemberService.GetAllTeamMembersAsync(teamId);
+        return null;
     }
 }

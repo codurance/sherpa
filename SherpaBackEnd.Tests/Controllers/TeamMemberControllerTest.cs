@@ -25,4 +25,22 @@ public class TeamMemberControllerTest
         
         mockTeamMemberService.Verify(_ => _.AddTeamMemberToTeamAsync(teamId, teamMember), Times.Once);
     }
+
+        [Fact]
+    public async Task ShouldCallGetAllTeamMemberByTeamAsyncFromService()
+    {
+        const string teamName = "New team";
+        var teamId = Guid.NewGuid();
+        
+        var memberId = Guid.NewGuid();
+        var teamMember = new TeamMember(memberId, "New Member", "Developer", "JohnDoe@google.com");
+        
+        var mockTeamMemberService = new Mock<ITeamMemberService>();
+        var logger = Mock.Of<ILogger<TeamMemberController>>();
+        var teamMemberController = new TeamMemberController(mockTeamMemberService.Object, logger);
+
+        await teamMemberController.GetAllTeamMembersAsync(teamId);
+        
+        mockTeamMemberService.Verify(_ => _.GetAllTeamMembersAsync(teamId), Times.Once);
+    }
 }

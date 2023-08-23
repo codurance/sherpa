@@ -28,7 +28,7 @@ public class TeamMemberAcceptanceTest
 
         await teamMemberController.AddTeamMemberToTeamAsync(teamId, newTeamMember);
 
-        var currentTeamMembers = await teamMemberController.GetAllTeamMembersAsync();
+        var currentTeamMembers = await teamMemberController.GetAllTeamMembersAsync(teamId);
         
         var okObjectResult = Assert.IsType<OkObjectResult>(currentTeamMembers.Result);
         Assert.Equal(StatusCodes.Status200OK, okObjectResult.StatusCode);

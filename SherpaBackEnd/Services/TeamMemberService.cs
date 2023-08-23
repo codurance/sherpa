@@ -16,4 +16,9 @@ public class TeamMemberService : ITeamMemberService
     {
         _inMemoryTeamRepository.AddTeamMemberToTeamAsync(teamId, teamMember);
     }
+
+    public async Task GetAllTeamMembersAsync(Guid teamId)
+    {
+        throw new NotImplementedException();
+    }
 }
