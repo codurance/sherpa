@@ -43,4 +43,32 @@ public class MemberTableTest
         Assert.NotNull(memberEmail);
         Assert.NotNull(memberPosition);
     }
+    
+    [Fact]
+    public void ShouldDisplayCorrectTeamMembersDataInMembersTabPageTable()
+    {
+        const string teamName = "Team with members";
+        var teamId = Guid.NewGuid();
+        var team = new Team(teamId, teamName);
+
+        var teamMembers = new List<TeamMember>()
+        {
+            new TeamMember(Guid.NewGuid(), "Rick Astley", "Popular Youtuber", "rickandrolling@gmail.com")
+        };
+
+        var membersTableComponent = _testContext.RenderComponent<MemberTable>(
+            ComponentParameter.CreateParameter("Team", team),
+            ComponentParameter.CreateParameter("Members", teamMembers)
+        );
+
+        var teamMembersRows = membersTableComponent.FindAll("tr.bg-white");
+        Assert.Equal(teamMembers.Count, teamMembersRows.Count);
+
+        foreach (var member in teamMembers)
+        {
+            Assert.NotNull(teamMembersRows.FirstOrDefault(element => element.ToMarkup().Contains(member.FullName), null));
+            Assert.NotNull(teamMembersRows.FirstOrDefault(element => element.ToMarkup().Contains(member.Email), null));
+            Assert.NotNull(teamMembersRows.FirstOrDefault(element => element.ToMarkup().Contains(member.Position), null));
+        }
+    }
 }
