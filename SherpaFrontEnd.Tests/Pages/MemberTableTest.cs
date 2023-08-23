@@ -61,7 +61,7 @@ public class MemberTableTest
             ComponentParameter.CreateParameter("Members", teamMembers)
         );
 
-        var teamMembersRows = membersTableComponent.FindAll("tr.bg-white");
+        var teamMembersRows = membersTableComponent.FindAll("tbody tr");
         Assert.Equal(teamMembers.Count, teamMembersRows.Count);
 
         foreach (var member in teamMembers)
