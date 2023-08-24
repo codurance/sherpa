@@ -34,7 +34,7 @@ public class TeamMemberServiceTest
     }
 
     [Fact]
-    public async Task ShouldCallGetTeamMembersToTeamAsyncFromTeamRepository()
+    public async Task ShouldCallGetAllTeamMembersAsyncFromTeamRepository()
     {
         const string teamName = "New team";
         var teamId = Guid.NewGuid();
@@ -45,6 +45,38 @@ public class TeamMemberServiceTest
         await _teamMemberService.GetAllTeamMembersAsync(teamId);
         
         _mockTeamRepository.Verify(_ => _.GetAllTeamMembersAsync(teamId), Times.Once);
+    }
+    
+    [Fact]
+    public async Task ShouldGetAllTeamMembersAsAListFromTeamRepository()
+    {
+        const string teamName = "New team";
+        var teamId = Guid.NewGuid();
+        
+        var memberId = Guid.NewGuid();
+        var teamMember = new TeamMember(memberId, "New Member", "Developer", "JohnDoe@google.com");
+        var teamMembers = new List<TeamMember>() { teamMember };
+
+        _mockTeamRepository.Setup(_ => _.GetAllTeamMembersAsync(teamId)).ReturnsAsync(teamMembers);
+
+        var allTeamMembers = await _teamMemberService.GetAllTeamMembersAsync(teamId);
+        Assert.IsType<List<TeamMember>>(allTeamMembers);
+        Assert.Contains(teamMember, teamMembers);
+        Assert.True(teamMembers.Count() == 1);
+    }
+    
+    [Fact]
+    public async Task ShouldGetAnEmptyListOfTeamMembersFromTeamRepository()
+    {
+        const string teamName = "New team";
+        var teamId = Guid.NewGuid();
+
+        var emptyTeamMembersList = new List<TeamMember>();
+        _mockTeamRepository.Setup(_ => _.GetAllTeamMembersAsync(teamId)).ReturnsAsync(emptyTeamMembersList);
+
+        var allTeamMembers = await _teamMemberService.GetAllTeamMembersAsync(teamId);
+        Assert.IsType<List<TeamMember>>(allTeamMembers);
+        Assert.True(!allTeamMembers.Any());
     }
     
     [Fact]
