@@ -34,6 +34,28 @@ public class TeamMemberControllerTest
 
         _mockTeamMemberService.Verify(_ => _.AddTeamMemberToTeamAsync(teamId, teamMember), Times.Once);
     }
+    
+    [Fact]
+    public async Task ShouldRetrieveOkWhenNoProblemsFoundWhileAddingMember()
+    {
+        const string teamName = "New team";
+        var teamId = Guid.NewGuid();
+
+        var memberId = Guid.NewGuid();
+        var teamMember = new TeamMember(memberId, "New Member", "Developer", "JohnDoe@google.com");
+        Assert.IsType<CreatedResult>(await _teamMemberController.AddTeamMemberToTeamAsync(teamId, teamMember));
+    }
+    
+    [Fact]
+    public async Task ShouldReturnErrorIfAMemberCanNotBeAdded()
+    {
+        var notSuccessfulAdding = new ConnectionToRepositoryUnsuccessfulException("Cannot perform add member function.");
+        _mockTeamMemberService.Setup(_ => _.AddTeamMemberToTeamAsync(It.IsAny<Guid>(), It.IsAny<TeamMember>())).ThrowsAsync(notSuccessfulAdding);
+
+        var allTeamMembers = await _teamMemberController.AddTeamMemberToTeamAsync(It.IsAny<Guid>(), It.IsAny<TeamMember>());
+        var resultObject = Assert.IsType<ObjectResult>(allTeamMembers);
+        Assert.Equal(StatusCodes.Status500InternalServerError, resultObject.StatusCode);
+    }
 
     [Fact]
     public async Task ShouldCallGetAllTeamMemberByTeamAsyncFromService()
@@ -65,7 +87,9 @@ public class TeamMemberControllerTest
             .ReturnsAsync(teamMemberList);
 
         var getAllTeamsAction = await _teamMemberController.GetAllTeamMembersAsync(teamId);
-        Assert.IsType<OkObjectResult>(getAllTeamsAction.Result);
+        var okObjectResult = Assert.IsType<OkObjectResult>(getAllTeamsAction.Result);
+        var teamMembers = Assert.IsType<List<TeamMember>>(okObjectResult.Value);
+        Assert.True(teamMembers.Any());
     }
 
     [Fact]

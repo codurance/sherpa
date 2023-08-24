@@ -4,6 +4,8 @@ using SherpaBackEnd.Services;
 
 namespace SherpaBackEnd.Controllers;
 
+[ApiController]
+[Route("")]
 public class TeamMemberController
 {
     private readonly ITeamMemberService _teamMemberService;
@@ -15,11 +17,24 @@ public class TeamMemberController
         _logger = logger;
     }
 
-    public async Task AddTeamMemberToTeamAsync(Guid teamId, TeamMember teamMember)
+    [HttpPatch("/team/{teamId:guid}/members")]
+    public async Task<ActionResult> AddTeamMemberToTeamAsync(Guid teamId, TeamMember teamMember)
     {
-        await _teamMemberService.AddTeamMemberToTeamAsync(teamId, teamMember);
+        try
+        {
+            await _teamMemberService.AddTeamMemberToTeamAsync(teamId, teamMember);
+            return new CreatedResult("", null);
+        }
+        catch (Exception error)
+        {
+            return new ObjectResult(error)
+            {
+                StatusCode = StatusCodes.Status500InternalServerError
+            };
+        }
     }
 
+    [HttpGet("/team/{teamId:guid}/members")]
     public async Task<ActionResult<IEnumerable<Team>>> GetAllTeamMembersAsync(Guid teamId)
     {
         try
@@ -31,7 +46,6 @@ public class TeamMemberController
             }
 
             return new OkObjectResult(allTeamMembers);
-
         }
         catch (Exception error)
         {
