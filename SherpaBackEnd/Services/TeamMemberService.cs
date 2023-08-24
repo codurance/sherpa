@@ -29,11 +29,18 @@ public class TeamMemberService : ITeamMemberService
     {
         try
         {
-            return await _inMemoryTeamRepository.GetAllTeamMembersAsync(teamId);
+            var teamMembers =  await _inMemoryTeamRepository.GetAllTeamMembersAsync(teamId);
+
+            if (teamMembers.GetType() == null){
+                throw new NotFoundException("Team Not Found");
+            }
+
+            return teamMembers;
         }
-        catch (Exception error)
-        {
+        catch (Exception error){
+
             throw new ConnectionToRepositoryUnsuccessfulException(error.Message, error);
+
         }
     }
 }

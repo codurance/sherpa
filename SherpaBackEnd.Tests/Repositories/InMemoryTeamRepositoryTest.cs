@@ -120,18 +120,4 @@ public class InMemoryTeamRepositoryTest
         Assert.IsType<List<TeamMember>>(allTeamMembers);
         Assert.True(allTeamMembers.Count() == 3);
     }
-
-    [Fact]
-    public async Task ShouldThrowAnExceptionWhenGetTeamByIdAsyncCanNotFindThatTeamId()
-    {
-        var teamId = Guid.NewGuid();
-
-        var initialList = new List<Team>() { };
-        var inMemoryTeamRepository = new InMemoryTeamRepository(initialList);
-
-        var exceptionThrown =
-            await Assert.ThrowsAsync<NotFoundException>(async () =>
-                await inMemoryTeamRepository.GetTeamByIdAsync(teamId));
-        Assert.IsType<NotFoundException>(exceptionThrown);
-    }
 }

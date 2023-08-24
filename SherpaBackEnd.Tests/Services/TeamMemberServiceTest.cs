@@ -103,4 +103,18 @@ public class TeamMemberServiceTest
         var exceptionThrown = await Assert.ThrowsAsync<ConnectionToRepositoryUnsuccessfulException>(async () => await _teamMemberService.GetAllTeamMembersAsync(teamId));
         Assert.IsType<ConnectionToRepositoryUnsuccessfulException>(exceptionThrown);
     }
+
+    [Fact]
+    public async Task ShouldThrowAnExceptionWhenGetTeamByIdAsyncCanNotFindThatTeamId()
+    {
+        var teamId = Guid.NewGuid();
+
+        var initialList = new List<Team>() { };
+        _mockTeamRepository.Setup(_ => _.GetAllTeamMembersAsync(teamId)).Returns((Task<IEnumerable<TeamMember>>) null);
+
+        var exceptionThrown =
+            await Assert.ThrowsAsync<NotFoundException>(async () =>
+                await _teamMemberService.GetAllTeamMembersAsync(teamId));
+        Assert.IsType<NotFoundException>(exceptionThrown);
+    }
 }
