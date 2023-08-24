@@ -3,7 +3,7 @@ namespace SherpaBackEnd.Dtos;
 public class Team
 {
     public Guid Id { get; set; }
-    public List<TeamMember> Members { get; set; } = new List<TeamMember>();
+    public List<TeamMember>? Members { get; set; } = new List<TeamMember>();
     public string Name { get; set; }
     public bool IsDeleted { get; private set; } = false;
 
@@ -24,7 +24,7 @@ public class Team
     {
     }
 
-    public Team(Guid id, string name, List<TeamMember> members)
+    public Team(Guid id, string name, List<TeamMember>? members)
     {
         Members = members;
         Id = id;

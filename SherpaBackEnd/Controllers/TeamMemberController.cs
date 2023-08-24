@@ -22,7 +22,23 @@ public class TeamMemberController
 
     public async Task<ActionResult<IEnumerable<Team>>> GetAllTeamMembersAsync(Guid teamId)
     {
-        var allTeamMembersAsync = await _teamMemberService.GetAllTeamMembersAsync(teamId);
-        return new OkObjectResult(allTeamMembersAsync);
+        try
+        {
+            var allTeamMembers = await _teamMemberService.GetAllTeamMembersAsync(teamId);
+            if (allTeamMembers == null)
+            {
+                return new NotFoundResult();
+            }
+
+            return new OkObjectResult(allTeamMembers);
+
+        }
+        catch (Exception error)
+        {
+            return new ObjectResult(error)
+            {
+                StatusCode = StatusCodes.Status500InternalServerError
+            };
+        }
     }
 }

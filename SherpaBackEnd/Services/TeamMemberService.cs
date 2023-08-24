@@ -25,17 +25,11 @@ public class TeamMemberService : ITeamMemberService
         }
     }
 
-    public async Task<IEnumerable<TeamMember>> GetAllTeamMembersAsync(Guid teamId)
+    public async Task<IEnumerable<TeamMember>?> GetAllTeamMembersAsync(Guid teamId)
     {
         try
         {
-            var teamMembers =  await _inMemoryTeamRepository.GetAllTeamMembersAsync(teamId);
-
-            if (teamMembers.GetType() == null){
-                throw new NotFoundException("Team Not Found");
-            }
-
-            return teamMembers;
+            return await _inMemoryTeamRepository.GetAllTeamMembersAsync(teamId);
         }
         catch (Exception error){
 

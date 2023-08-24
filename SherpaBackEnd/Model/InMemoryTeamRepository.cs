@@ -48,19 +48,20 @@ public class InMemoryTeamRepository : ITeamRepository
     {
         return await Task.FromResult(_teams);
     }
+
     // TODO: Remember to check for NULL, SAD PATH
     public async Task AddTeamMemberToTeamAsync(Guid teamId, TeamMember teamMember)
     {
         var team = await GetTeamByIdAsync(teamId);
         team.Members.Add(teamMember);
     }
-    // TODO: Write a test for NULL case/ no team exists with that ID
+
     public async Task<Team?> GetTeamByIdAsync(Guid teamId)
     {
         return _teams.Find(team => team.Id == teamId);
     }
-    
-    public async Task<IEnumerable<TeamMember>> GetAllTeamMembersAsync(Guid teamId)
+
+    public async Task<IEnumerable<TeamMember>?> GetAllTeamMembersAsync(Guid teamId)
     {
         var team = await GetTeamByIdAsync(teamId);
         return team.Members;

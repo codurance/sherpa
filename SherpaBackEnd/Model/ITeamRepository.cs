@@ -8,5 +8,5 @@ public interface ITeamRepository
     Task AddTeamAsync(Team team);
     Task<IEnumerable<Team>> GetAllTeamsAsync();
     Task AddTeamMemberToTeamAsync(Guid teamId, TeamMember teamMember);
-    Task<IEnumerable<TeamMember>> GetAllTeamMembersAsync(Guid teamId);
+    Task<IEnumerable<TeamMember>?> GetAllTeamMembersAsync(Guid teamId);
 }
