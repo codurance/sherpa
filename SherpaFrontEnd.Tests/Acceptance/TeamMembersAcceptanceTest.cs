@@ -22,6 +22,7 @@ public class TeamMembersAcceptanceTest
     private readonly TeamServiceHttpClient _teamsService;
     private FakeNavigationManager _navMan;
     private ITestOutputHelper _output;
+    private readonly Mock<IGuidService> _guidService;
 
     public TeamMembersAcceptanceTest(ITestOutputHelper output)
     {
@@ -31,9 +32,14 @@ public class TeamMembersAcceptanceTest
         _httpHandlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
         _factoryHttpClient = new Mock<IHttpClientFactory>();
         _teamsService = new TeamServiceHttpClient(_factoryHttpClient.Object);
+        _guidService = new Mock<IGuidService>();
         _surveyService = new Mock<ISurveyService>();
         _testCtx.Services.AddSingleton<ITeamDataService>(_teamsService);
         _testCtx.Services.AddSingleton<ISurveyService>(_surveyService.Object);
+        _testCtx.Services.AddSingleton<ISurveyService>(_surveyService.Object);
+        const string baseUrl = "http://localhost";
+        var httpClient = new HttpClient(_httpHandlerMock.Object, false) { BaseAddress = new Uri(baseUrl) };
+        _factoryHttpClient.Setup(_ => _.CreateClient("SherpaBackEnd")).Returns(httpClient);
         
         _navMan = _testCtx.Services.GetRequiredService<FakeNavigationManager>();
     }
@@ -55,8 +61,7 @@ public class TeamMembersAcceptanceTest
         const string teamName = "Team name";
         var teamId = Guid.NewGuid();
         var team = new Team(teamId, teamName);
-        var teamsList = new List<Team>() { team };
-        var teamListJson = await JsonContent.Create(teamsList).ReadAsStringAsync();
+        var teamListJson = await JsonContent.Create(team).ReadAsStringAsync();
         var teamListResponse = new HttpResponseMessage()
         {
             StatusCode = HttpStatusCode.OK,
@@ -79,8 +84,6 @@ public class TeamMembersAcceptanceTest
         
         var membersTab = appComponent.FindAll("a:not(a[href])")
             .FirstOrDefault(element => element.InnerHtml.Contains("Members"));
-        _output.WriteLine($"{appComponent.FindAll("a:not(a[href])").Count}");
-        _output.WriteLine(appComponent.Markup);
         
         Assert.NotNull(membersTab);
         membersTab.Click();
@@ -91,51 +94,50 @@ public class TeamMembersAcceptanceTest
             Assert.NotNull(appComponent.FindAll("button")
                 .FirstOrDefault(element => element.InnerHtml.Contains("Add member"))));
         
-        // var addTeamMemberButton = teamContentComponent.FindAll("button")
-        //     .FirstOrDefault(element => element.InnerHtml.Contains("Add member"));
-        // Assert.NotNull(addTeamMemberButton);
-        //
-        // addTeamMemberButton.Click();
+        var addTeamMemberButton = appComponent.FindAll("button")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Add member"));
+        Assert.NotNull(addTeamMemberButton);
+        
+        addTeamMemberButton.Click();
 
-
-        // // THEN he should be redirected on the Adding members page
-        // // and  see the following info:
-        //     // Full name - text field - mandatory
-        //     // email (email should be validated) - mandatory
-        //     // Position - text field - mandatory
-        //     
-        // var addMemberTitle = teamContentComponent.FindAll("h3")
-        //     .FirstOrDefault(element => element.InnerHtml.Contains("Add member"));
-        // Assert.NotNull(addMemberTitle);
-        //
-        // var addMemberDescription = teamContentComponent.FindAll("p")
-        //     .FirstOrDefault(element => element.InnerHtml.Contains("Add team member by filling in the required information"));
-        // Assert.NotNull(addMemberDescription);
-        //
-        // var fullNameLabel = teamContentComponent.FindAll("label")
-        //     .FirstOrDefault(element => element.InnerHtml.Contains("Full name"));
-        // var fullNameInputId = fullNameLabel.Attributes.GetNamedItem("for");
-        // var teamNameInput = teamContentComponent.FindAll($"#{fullNameInputId.TextContent}");
-        // Assert.NotNull(teamNameInput);
-        //
-        // var positionLabel = teamContentComponent.FindAll("label")
-        //     .FirstOrDefault(element => element.InnerHtml.Contains("Position"));
-        // var positionInputId = positionLabel.Attributes.GetNamedItem("for");
-        // var positionInput = teamContentComponent.FindAll($"#{positionInputId.TextContent}");
-        // Assert.NotNull(positionInput);
-        //
-        // var emailLabel = teamContentComponent.FindAll("label")
-        //     .FirstOrDefault(element => element.InnerHtml.Contains("Email"));
-        // var emailInputId = emailLabel.Attributes.GetNamedItem("for");
-        // var emailInput = teamContentComponent.FindAll($"#{emailInputId.TextContent}");
-        // Assert.NotNull(emailInput);
-        //
-        // var addMemberButton = teamContentComponent.FindAll("button")
-        //     .FirstOrDefault(element => element.InnerHtml.Contains("Add member"));
-        // Assert.NotNull(addMemberButton);
-        //
-        // var cancelButton = teamContentComponent.FindAll("button")
-        //     .FirstOrDefault(element => element.InnerHtml.Contains("Cancel"));
-        // Assert.NotNull(cancelButton);
+        // THEN he should be redirected on the Adding members page
+        // and  see the following info:
+            // Full name - text field - mandatory
+            // email (email should be validated) - mandatory
+            // Position - text field - mandatory
+            
+        var addMemberTitle = appComponent.FindAll("h3")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Add member"));
+        Assert.NotNull(addMemberTitle);
+        
+        var addMemberDescription = appComponent.FindAll("p")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Add team member by filling in the required information"));
+        Assert.NotNull(addMemberDescription);
+        
+        var fullNameLabel = appComponent.FindAll("label")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Full name"));
+        var fullNameInputId = fullNameLabel.Attributes.GetNamedItem("for");
+        var teamNameInput = appComponent.FindAll($"#{fullNameInputId.TextContent}");
+        Assert.NotNull(teamNameInput);
+        
+        var positionLabel = appComponent.FindAll("label")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Position"));
+        var positionInputId = positionLabel.Attributes.GetNamedItem("for");
+        var positionInput = appComponent.FindAll($"#{positionInputId.TextContent}");
+        Assert.NotNull(positionInput);
+        
+        var emailLabel = appComponent.FindAll("label")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Email"));
+        var emailInputId = emailLabel.Attributes.GetNamedItem("for");
+        var emailInput = appComponent.FindAll($"#{emailInputId.TextContent}");
+        Assert.NotNull(emailInput);
+        
+        var addMemberButton = appComponent.FindAll("button")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Add member"));
+        Assert.NotNull(addMemberButton);
+        
+        var cancelButton = appComponent.FindAll("button")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Cancel"));
+        Assert.NotNull(cancelButton);
     }
 }
