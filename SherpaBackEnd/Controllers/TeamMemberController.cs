@@ -17,12 +17,12 @@ public class TeamMemberController
         _logger = logger;
     }
 
-    [HttpPatch("/team/{teamId:guid}/members")]
-    public async Task<ActionResult> AddTeamMemberToTeamAsync(Guid teamId, TeamMember teamMember)
+    [HttpPatch("team/{teamId:guid}/members")]
+    public async Task<ActionResult> AddTeamMemberToTeamAsync(AddTeamMemberDto addTeamMemberDto)
     {
         try
         {
-            await _teamMemberService.AddTeamMemberToTeamAsync(teamId, teamMember);
+            await _teamMemberService.AddTeamMemberToTeamAsync(addTeamMemberDto);
             return new CreatedResult("", null);
         }
         catch (Exception error)
@@ -34,7 +34,7 @@ public class TeamMemberController
         }
     }
 
-    [HttpGet("/team/{teamId:guid}/members")]
+    [HttpGet("team/{teamId:guid}/members")]
     public async Task<ActionResult<IEnumerable<Team>>> GetAllTeamMembersAsync(Guid teamId)
     {
         try

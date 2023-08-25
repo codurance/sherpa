@@ -1,5 +1,4 @@
 using Moq;
-using SherpaBackEnd.Controllers;
 using SherpaBackEnd.Dtos;
 using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Model;
@@ -21,15 +20,15 @@ public class TeamMemberServiceTest
     [Fact]
     public async Task ShouldCallAddTeamMemberToTeamAsyncFromTeamRepository()
     {
-        const string teamName = "New team";
         var teamId = Guid.NewGuid();
 
         var memberId = Guid.NewGuid();
         var teamMember = new TeamMember(memberId, "New Member", "Developer", "JohnDoe@google.com");
+        var addTeamMemberDto = new AddTeamMemberDto(teamId, teamMember);
 
-        await _teamMemberService.AddTeamMemberToTeamAsync(teamId, teamMember);
+        await _teamMemberService.AddTeamMemberToTeamAsync(addTeamMemberDto);
 
-        _mockTeamRepository.Verify(_ => _.AddTeamMemberToTeamAsync(teamId, teamMember), Times.Once);
+        _mockTeamRepository.Verify(_ => _.AddTeamMemberToTeamAsync(addTeamMemberDto.TeamId, addTeamMemberDto.TeamMember), Times.Once);
     }
 
     [Fact]
@@ -82,7 +81,7 @@ public class TeamMemberServiceTest
             .ThrowsAsync(new Exception());
 
         var exceptionThrown = await Assert.ThrowsAsync<ConnectionToRepositoryUnsuccessfulException>(async () =>
-            await _teamMemberService.AddTeamMemberToTeamAsync(It.IsAny<Guid>(), It.IsAny<TeamMember>()));
+            await _teamMemberService.AddTeamMemberToTeamAsync(It.IsAny<AddTeamMemberDto>()));
         Assert.IsType<ConnectionToRepositoryUnsuccessfulException>(exceptionThrown);
     }
 

@@ -13,11 +13,11 @@ public class TeamMemberService : ITeamMemberService
         _inMemoryTeamRepository = inMemoryTeamRepository;
     }
 
-    public async Task AddTeamMemberToTeamAsync(Guid teamId, TeamMember teamMember)
+    public async Task AddTeamMemberToTeamAsync(AddTeamMemberDto addTeamMemberDto)
     {
         try
         {
-            await _inMemoryTeamRepository.AddTeamMemberToTeamAsync(teamId, teamMember);
+            await _inMemoryTeamRepository.AddTeamMemberToTeamAsync(addTeamMemberDto.TeamId, addTeamMemberDto.TeamMember);
         }
         catch (Exception error)
         {

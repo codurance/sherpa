@@ -19,6 +19,7 @@ public class TeamMemberAcceptanceTest
         var newTeam = new Team(teamId, teamName);
         var memberId = Guid.NewGuid();
         var newTeamMember = new TeamMember(memberId, "New Member", "Developer", "JohnDoe@google.com");
+        var addTeamMemberDto = new AddTeamMemberDto(teamId, newTeamMember);
 
         var teamsList = new List<Team>() { newTeam };
         var inMemoryTeamRepository = new InMemoryTeamRepository(teamsList);
@@ -26,7 +27,7 @@ public class TeamMemberAcceptanceTest
         var logger = Mock.Of<ILogger<TeamMemberController>>();
         var teamMemberController = new TeamMemberController(teamMemberService, logger);
 
-        await teamMemberController.AddTeamMemberToTeamAsync(teamId, newTeamMember);
+        await teamMemberController.AddTeamMemberToTeamAsync(addTeamMemberDto);
 
         var currentTeamMembers = await teamMemberController.GetAllTeamMembersAsync(teamId);
         
