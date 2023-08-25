@@ -1,12 +1,11 @@
 <CascadingValue Value="this">
     <ul class="nav nav-tabs my-4">
-      
         @foreach (TabPage tabPage in Pages)
         {
             <li class="nav-item">
                 <a
                     class="nav-link @GetButtonClass(tabPage)"
-                    @onclick=@( () => ActivatePage(tabPage) )>
+                    @onclick=@(() => ActivatePage(tabPage))>
                     @tabPage.Text
                     @if (@tabPage.Args != null)
                     {
@@ -16,19 +15,20 @@
             </li>
         }
     </ul>
-    
-    @ChildContent
-    
+    <main class="px-4">
+        @ChildContent
+    </main>
 </CascadingValue>
 
 
 @code{
+
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
-    
+
     public TabPage ActivePage { get; set; }
     List<TabPage> Pages = new();
-    
+
     string GetButtonClass(TabPage page)
     {
         return page == ActivePage ? "active" : "";
@@ -46,4 +46,5 @@
             ActivePage = tabPage;
         StateHasChanged();
     }
+
 }

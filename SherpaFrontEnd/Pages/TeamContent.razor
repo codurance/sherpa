@@ -35,7 +35,7 @@
         {
             <div class="py-5 flex justify-center items-center flex-col bg-indigo-50 rounded-3xl gap-2.5">
                 <img src="/img/empty-survey-icon.svg" alt="Empty Survey Icon" class="w-8 h-8">
-                <p class="text-center text-indigo-900 text-xl font-semibold leading-tight mb-1">
+                <p class="text-center text-primary-dark-principal text-xl font-semibold leading-tight mb-1">
                     You don’t have any surveys yet
                 </p>
                 <p class="text-center text-gray-700 text-base">
@@ -48,9 +48,8 @@
             </div>
         }
     </TabPage>
-    <TabPage Text="Assessments">
-        <Assessments>
-        </Assessments>
+    <TabPage Text="Members">
+        <MemberTable Team="@Team"/>
     </TabPage>
 </TabControl>
 
@@ -65,9 +64,7 @@
     public Team? Team { get; set; }
 
     private List<string> Emails { get; set; } = new();
-
-    private List<SurveyTemplate>? SurveyTemplates { get; set; }
-
+    
     private List<Survey>? Surveys { get; set; }
 
     [CascadingParameter]
@@ -78,11 +75,6 @@
         Team = await TeamDataService.GetTeamById(TeamId);
         Emails = Team!.Members.Select(m => m.Email).ToList();
         Surveys = await SurveyService.GetAllSurveysByTeam(TeamId);
-    }
-
-    private async Task OnUpdateTeam(Team team)
-    {
-        await TeamDataService.PutTeam(team);
     }
 
 }
