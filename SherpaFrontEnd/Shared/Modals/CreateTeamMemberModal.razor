@@ -66,9 +66,7 @@
 
     protected override void OnParametersSet()
     {
-        var generateRandomGuidForTeamMember = GuidService.GenerateRandomGuid();
         AddTeamMemberDto.TeamId = TeamId;
-        AddTeamMemberDto.TeamMember.Id = generateRandomGuidForTeamMember;
 
         EditContext = new EditContext(AddTeamMemberDto);
     }
@@ -76,8 +74,11 @@
 
     private async Task SubmitData()
     {
+        var generateRandomGuidForTeamMember = GuidService.GenerateRandomGuid();
+        AddTeamMemberDto.TeamMember.Id = generateRandomGuidForTeamMember;
         await CreateTeamMember.InvokeAsync(AddTeamMemberDto);
         await CloseModal.InvokeAsync();
+        AddTeamMemberDto = new AddTeamMemberDto(TeamId, new TeamMember(new Guid(), "", "", ""));
     }
 
 }
