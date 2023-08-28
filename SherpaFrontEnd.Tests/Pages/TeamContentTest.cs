@@ -1,6 +1,7 @@
 ﻿using Bunit;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
+using Shared.Test.Helpers;
 using SherpaFrontEnd.Dtos.Survey;
 using SherpaFrontEnd.Dtos.Team;
 using SherpaFrontEnd.Model;
@@ -232,61 +233,72 @@ public class TeamContentTest
         }
     }
 
-    // [Fact]
-    // public void ShouldCallAddTeamMemberOnTeamServiceWhenFillingTheAddTeamMemberModal()
-    // {
-    //     var teamId = Guid.NewGuid();
-    //     var teamMember = new TeamMember(Guid.NewGuid(), "Full name", "Some position", "demo@demo.com");
-    //
-    //     _mockGuidService.Setup(service => service.GenerateRandomGuid()).Returns(teamMember.Id);
-    //     
-    //     _mockTeamService.Setup(service => service.GetTeamById(teamId)).ReturnsAsync(new Team(teamId, "Team name"));
-    //     
-    //     var cut = _testContext.RenderComponent<TeamContent>();
-    //
-    //     var membersTab = cut.FindAll("a:not(a[href])")
-    //         .FirstOrDefault(element => element.InnerHtml.Contains("Members"));
-    //
-    //     Assert.NotNull(membersTab);
-    //     membersTab.Click();
-    //     
-    //     cut.WaitForAssertion(() =>
-    //         Assert.NotNull(cut.FindAll("button")
-    //             .FirstOrDefault(element => element.InnerHtml.Contains("Add member"))));
-    //
-    //     var addTeamMemberButton = cut.FindAll("button")
-    //         .FirstOrDefault(element => element.InnerHtml.Contains("Add member"));
-    //     Assert.NotNull(addTeamMemberButton);
-    //
-    //     addTeamMemberButton.Click();
-    //
-    //     var fullNameLabel = cut.FindAll("label")
-    //         .FirstOrDefault(element => element.InnerHtml.Contains("Full name"));
-    //     var fullNameInputId = fullNameLabel.Attributes.GetNamedItem("for");
-    //     var teamMemberNameInput = cut.Find($"#{fullNameInputId.TextContent}");
-    //     Assert.NotNull(teamMemberNameInput);
-    //     teamMemberNameInput.Change(teamMember.FullName);
-    //
-    //     var positionLabel = cut.FindAll("label")
-    //         .FirstOrDefault(element => element.InnerHtml.Contains("Position"));
-    //     var positionInputId = positionLabel.Attributes.GetNamedItem("for");
-    //     var positionInput = cut.Find($"#{positionInputId.TextContent}");
-    //     Assert.NotNull(positionInput);
-    //     positionInput.Change(teamMember.Position);
-    //
-    //     var emailLabel = cut.FindAll("label")
-    //         .FirstOrDefault(element => element.InnerHtml.Contains("Email"));
-    //     var emailInputId = emailLabel.Attributes.GetNamedItem("for");
-    //     var emailInput = cut.Find($"#{emailInputId.TextContent}");
-    //     Assert.NotNull(emailInput);
-    //     emailInput.Change(teamMember.Email);
-    //
-    //     var addMemberButton = cut.FindAll("button")
-    //         .FirstOrDefault(element => element.InnerHtml.Contains("Add member"));
-    //     Assert.NotNull(addMemberButton);
-    //     
-    //     addMemberButton.Click();
-    //
-    //     _mockTeamService.Verify(service => service.AddTeamMember(new AddTeamMemberDto(teamId, teamMember)), Times.Once);
-    // }
+    [Fact]
+    public void ShouldCallAddTeamMemberOnTeamServiceWhenFillingTheAddTeamMemberModal()
+    {
+        var teamId = Guid.NewGuid();
+        var teamMember = new TeamMember(Guid.NewGuid(), "Full name", "Some position", "demo@demo.com");
+    
+        _mockGuidService.Setup(service => service.GenerateRandomGuid()).Returns(teamMember.Id);
+        
+        _mockTeamService.Setup(service => service.GetTeamById(teamId)).ReturnsAsync(new Team(teamId, "Team name"));
+        
+        var cut = _testContext.RenderComponent<TeamContent>(
+            ComponentParameter.CreateParameter("TeamId", teamId)
+            );
+    
+        var membersTab = cut.FindAll("a:not(a[href])")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Members"));
+    
+        Assert.NotNull(membersTab);
+        membersTab.Click();
+        
+        cut.WaitForAssertion(() =>
+            Assert.NotNull(cut.FindAll("button")
+                .FirstOrDefault(element => element.InnerHtml.Contains("Add member"))));
+    
+        var addTeamMemberButton = cut.FindAll("button")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Add member"));
+        Assert.NotNull(addTeamMemberButton);
+    
+        addTeamMemberButton.Click();
+    
+        var fullNameLabel = cut.FindAll("label")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Full name"));
+        var fullNameInputId = fullNameLabel.Attributes.GetNamedItem("for");
+        var teamMemberNameInput = cut.Find($"#{fullNameInputId.TextContent}");
+        Assert.NotNull(teamMemberNameInput);
+        teamMemberNameInput.Change(teamMember.FullName);
+    
+        var positionLabel = cut.FindAll("label")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Position"));
+        var positionInputId = positionLabel.Attributes.GetNamedItem("for");
+        var positionInput = cut.Find($"#{positionInputId.TextContent}");
+        Assert.NotNull(positionInput);
+        positionInput.Change(teamMember.Position);
+    
+        var emailLabel = cut.FindAll("label")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Email"));
+        var emailInputId = emailLabel.Attributes.GetNamedItem("for");
+        var emailInput = cut.Find($"#{emailInputId.TextContent}");
+        Assert.NotNull(emailInput);
+        emailInput.Change(teamMember.Email);
+    
+        var addMemberButton = cut.FindAll("button")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Add member"));
+        Assert.NotNull(addMemberButton);
+        
+        addMemberButton.Click();
+        
+        var mockMethodInvocations = _mockTeamService.Invocations;
+        
+        Assert.Equal("GetTeamById", mockMethodInvocations[0].Method.Name);
+        CustomAssertions.StringifyEquals(teamId, mockMethodInvocations[0].Arguments[0]);
+        
+        Assert.Equal("AddTeamMember", mockMethodInvocations[1].Method.Name);
+        CustomAssertions.StringifyEquals(new AddTeamMemberDto(teamId, teamMember), mockMethodInvocations[1].Arguments[0]);
+        
+        Assert.Equal("GetTeamById", mockMethodInvocations[2].Method.Name);
+        CustomAssertions.StringifyEquals(teamId, mockMethodInvocations[2].Arguments[0]);
+    }
 }

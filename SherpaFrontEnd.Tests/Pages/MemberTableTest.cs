@@ -1,18 +1,24 @@
 ﻿using AngleSharp.Dom;
 using Bunit;
+using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using SherpaFrontEnd.Dtos.Team;
 using SherpaFrontEnd.Model;
 using SherpaFrontEnd.Pages;
+using SherpaFrontEnd.Services;
 
 namespace BlazorApp.Tests.Pages;
 
 public class MemberTableTest
 {
     private TestContext _testContext;
+    private readonly Mock<IGuidService> _mockGuidService;
 
     public MemberTableTest()
     {
         _testContext = new TestContext();
+        _mockGuidService = new Mock<IGuidService>();
+        _testContext.Services.AddSingleton<IGuidService>(_mockGuidService.Object);
     }
 
     [Fact]

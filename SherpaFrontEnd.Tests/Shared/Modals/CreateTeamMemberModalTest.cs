@@ -3,6 +3,7 @@ using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
+using Shared.Test.Helpers;
 using SherpaFrontEnd.Dtos.Team;
 using SherpaFrontEnd.Services;
 using SherpaFrontEnd.Shared.Modals;
@@ -102,7 +103,10 @@ public class CreateTeamMemberModalTest
         Assert.NotNull(addMemberButton);
         
         addMemberButton.Click();
+
+        var mockMethodInvocations = mockMethod.Invocations[0];
         
-        mockMethod.Verify(member => member.CreateTeamMember(new AddTeamMemberDto(teamId, teamMember)));
+        Assert.Equal("CreateTeamMember", mockMethodInvocations.Method.Name);
+        CustomAssertions.StringifyEquals(new AddTeamMemberDto(teamId, teamMember), (AddTeamMemberDto)mockMethodInvocations.Arguments[0]);
     }
 }

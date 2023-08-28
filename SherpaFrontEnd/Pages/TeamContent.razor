@@ -86,6 +86,7 @@
     private async Task CreateTeamMember(AddTeamMemberDto addTeamMemberDto)
     {
         // Create member
+        await TeamDataService.AddTeamMember(addTeamMemberDto);
         
         // Re-fetch team
         await FetchTeam();

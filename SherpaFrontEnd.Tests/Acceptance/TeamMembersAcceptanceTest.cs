@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using AngleSharp.Dom;
 using Blazored.Modal;
 using Bunit;
 using Bunit.TestDoubles;
@@ -37,7 +38,7 @@ public class TeamMembersAcceptanceTest
         _surveyService = new Mock<ISurveyService>();
         _testCtx.Services.AddSingleton<ITeamDataService>(_teamsService);
         _testCtx.Services.AddSingleton<ISurveyService>(_surveyService.Object);
-        _testCtx.Services.AddSingleton<ISurveyService>(_surveyService.Object);
+        _testCtx.Services.AddSingleton<IGuidService>(_guidService.Object);
         const string baseUrl = "http://localhost";
         var httpClient = new HttpClient(_httpHandlerMock.Object, false) { BaseAddress = new Uri(baseUrl) };
         _factoryHttpClient.Setup(_ => _.CreateClient("SherpaBackEnd")).Returns(httpClient);
@@ -77,6 +78,8 @@ public class TeamMembersAcceptanceTest
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(teamWithNewMemberJson)
         };
+        
+        _guidService.Setup(service => service.GenerateRandomGuid()).Returns(teamMember.Id);
 
         _httpHandlerMock
             .Protected()
@@ -93,7 +96,7 @@ public class TeamMembersAcceptanceTest
             .Setup<Task<HttpResponseMessage>>(
                 "SendAsync",
                 ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Post)),
+                    m => m.Method.Equals(HttpMethod.Patch)),
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(creationResponse);
 
@@ -162,6 +165,9 @@ public class TeamMembersAcceptanceTest
         // AND WHEN clicking on Add member
 
         addMemberButton.Click();
+        
+        appComponent.WaitForAssertion(() =>  Assert.Null(appComponent.FindAll("h3")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Add member"))));
         
         // THEN the created member should be in the members table
 

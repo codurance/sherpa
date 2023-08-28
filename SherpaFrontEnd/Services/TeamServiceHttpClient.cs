@@ -1,4 +1,5 @@
 using System.Net;
+using System.Net.Http.Json;
 using System.Text.Json;
 using SherpaFrontEnd.Dtos.Team;
 using SherpaFrontEnd.Model;
@@ -66,13 +67,17 @@ public class TeamServiceHttpClient : ITeamDataService
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
         var client = _clientFactory.CreateClient(Sherpabackend);
-        var response = await client.PostAsync("/team", 
+        var response = await client.PostAsync("/team",
             new StringContent(teamToAdd, System.Text.Encoding.UTF8, "application/json"));
         response.EnsureSuccessStatusCode();
     }
 
-    public Task AddTeamMember(AddTeamMemberDto addTeamMemberDto)
+    public async Task AddTeamMember(AddTeamMemberDto addTeamMemberDto)
     {
-        throw new NotImplementedException();
+        var client = _clientFactory.CreateClient(Sherpabackend);
+        await client.PatchAsync($"/team/{addTeamMemberDto.TeamId}/members", new StringContent(
+            JsonSerializer.Serialize(addTeamMemberDto,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }),
+            System.Text.Encoding.UTF8, "application/json"));
     }
 }
