@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SherpaFrontEnd.Model;
+namespace SherpaFrontEnd.Dtos.Team;
 
 public class Team
 {

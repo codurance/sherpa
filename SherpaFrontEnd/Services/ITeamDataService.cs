@@ -1,4 +1,5 @@
 using System.Net;
+using SherpaFrontEnd.Dtos.Team;
 using SherpaFrontEnd.Model;
 
 namespace SherpaFrontEnd.Services;

@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text.Json;
+using SherpaFrontEnd.Dtos.Team;
 using SherpaFrontEnd.Model;
 
 namespace SherpaFrontEnd.Services;

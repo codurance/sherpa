@@ -13,11 +13,11 @@ public class SurveyWithoutQuestions
     public string Title {get; set;}
     public string? Description {get; set;}
     public Response[] Responses {get; set;}
-    public Team Team {get; set;}
+    public Team.Team Team {get; set;}
     public TemplateWithoutQuestions Template {get; set;}
     
 
-    public SurveyWithoutQuestions(Guid id, User coach, Status status, DateTime? deadline, string title, string? description, Response[] responses, Team team, TemplateWithoutQuestions template)
+    public SurveyWithoutQuestions(Guid id, User coach, Status status, DateTime? deadline, string title, string? description, Response[] responses, Team.Team team, TemplateWithoutQuestions template)
     {
         Id = id;
         Coach = coach;

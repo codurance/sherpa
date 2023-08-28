@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using Moq;
 using Moq.Protected;
 using Shared.Test.Helpers;
+using SherpaFrontEnd.Dtos.Team;
 using SherpaFrontEnd.Model;
 using SherpaFrontEnd.Services;
 
