@@ -1,4 +1,5 @@
-﻿using Bunit;
+﻿using AngleSharp.Dom;
+using Bunit;
 using SherpaFrontEnd.Model;
 using SherpaFrontEnd.Pages;
 
@@ -12,7 +13,7 @@ public class MemberTableTest
     {
         _testContext = new TestContext();
     }
-    
+
     [Fact]
     public void ShouldDisplayCorrectHeadingsAndButtons()
     {
@@ -30,20 +31,23 @@ public class MemberTableTest
         var removeTeamMemberButton = membersTableComponent.FindAll("button[disabled]")
             .FirstOrDefault(button => button.ToMarkup().Contains("Remove"));
         Assert.NotNull(removeTeamMemberButton);
-        
+
         var addTeamMemberButton = membersTableComponent.FindAll("button")
             .FirstOrDefault(button => button.ToMarkup().Contains("Add member"));
         Assert.NotNull(addTeamMemberButton);
 
-        var memberFullName = membersTableComponent.FindAll("th").FirstOrDefault(element => element.InnerHtml.Contains("Full name"));
-        var memberEmail = membersTableComponent.FindAll("th").FirstOrDefault(element => element.InnerHtml.Contains("E-mail"));
-        var memberPosition = membersTableComponent.FindAll("th").FirstOrDefault(element => element.InnerHtml.Contains("Position"));
-        
+        var memberFullName = membersTableComponent.FindAll("th")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Full name"));
+        var memberEmail = membersTableComponent.FindAll("th")
+            .FirstOrDefault(element => element.InnerHtml.Contains("E-mail"));
+        var memberPosition = membersTableComponent.FindAll("th")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Position"));
+
         Assert.NotNull(memberFullName);
         Assert.NotNull(memberEmail);
         Assert.NotNull(memberPosition);
     }
-    
+
     [Fact]
     public void ShouldDisplayCorrectTeamMembersDataInMembersTabPageTable()
     {
@@ -66,9 +70,38 @@ public class MemberTableTest
 
         foreach (var member in teamMembers)
         {
-            Assert.NotNull(teamMembersRows.FirstOrDefault(element => element.ToMarkup().Contains(member.FullName), null));
+            Assert.NotNull(
+                teamMembersRows.FirstOrDefault(element => element.ToMarkup().Contains(member.FullName), null));
             Assert.NotNull(teamMembersRows.FirstOrDefault(element => element.ToMarkup().Contains(member.Email), null));
-            Assert.NotNull(teamMembersRows.FirstOrDefault(element => element.ToMarkup().Contains(member.Position), null));
+            Assert.NotNull(
+                teamMembersRows.FirstOrDefault(element => element.ToMarkup().Contains(member.Position), null));
         }
+    }
+
+    [Fact]
+    public void ShouldDisplayModalWhenClickingOnAddTeamMemberButton()
+    {
+        const string teamName = "Team with members";
+        var teamId = Guid.NewGuid();
+        var team = new Team(teamId, teamName);
+
+        var teamMembers = new List<TeamMember>();
+
+        var membersTableComponent = _testContext.RenderComponent<MemberTable>(
+            ComponentParameter.CreateParameter("Team", team),
+            ComponentParameter.CreateParameter("Members", teamMembers)
+        );
+        
+        var addTeamMemberButton = membersTableComponent.FindAll("button")
+            .FirstOrDefault(button => button.ToMarkup().Contains("Add member"));
+        Assert.NotNull(addTeamMemberButton);
+        
+        membersTableComponent.WaitForAssertion(() => Assert.Null(membersTableComponent.FindAll("h3")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Add member"))));
+        
+        addTeamMemberButton.Click();
+        
+        membersTableComponent.WaitForAssertion(() => Assert.NotNull(membersTableComponent.FindAll("h3")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Add member"))));
     }
 }
