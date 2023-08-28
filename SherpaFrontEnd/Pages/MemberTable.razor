@@ -1,6 +1,8 @@
 @using SherpaFrontEnd.Dtos.Survey
 @using SherpaFrontEnd.Model
+@using SherpaFrontEnd.Shared.Modals
 
+<CreateTeamMemberModal Show="@_isAddMemberModalOpen" />
 <header class="m-5 flex justify-between text-black items-center">
     <h2 class="text-title-h2--semibold text-black">All members of @Team.Name</h2>
     <aside class="flex gap-2.5">
@@ -8,7 +10,7 @@
             <i class="las la-trash"></i>
             Remove
         </button>
-        <button class="bg-primary-red-principal-800 hover:bg-primary-red-900 rounded-lg px-6 py-2 text-white font-semibold text-sm" onclick="@(() => {})">
+        <button class="bg-primary-red-principal-800 hover:bg-primary-red-900 rounded-lg px-6 py-2 text-white font-semibold text-sm" onclick="@ShowAddMemberModal">
             <i class="las la-plus"></i>
             Add member
         </button>
@@ -66,7 +68,15 @@
     [Parameter]
     public Team Team { get; set; }
 
+    private bool _isAddMemberModalOpen;
+
     [Parameter]
     public IEnumerable<TeamMember> Members { get; set; } = new List<TeamMember>(){ new TeamMember(Guid.NewGuid(), "Mike Wazowski", "Product Designer", "myballs@dotcom.com")};
 
+    private void ShowAddMemberModal()
+    {
+        _isAddMemberModalOpen = true;
+        Console.Write(_isAddMemberModalOpen);
+        StateHasChanged();
+    }
 }
