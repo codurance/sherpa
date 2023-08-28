@@ -1,5 +1,7 @@
 ﻿using AngleSharp.Dom;
+using BlazorApp.Tests.Helpers.Interfaces;
 using Bunit;
+using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using SherpaFrontEnd.Dtos.Team;
@@ -67,9 +69,10 @@ public class MemberTableTest
             new TeamMember(Guid.NewGuid(), "Rick Astley", "Popular Youtuber", "rickandrolling@gmail.com")
         };
 
+        team.Members = teamMembers;
+
         var membersTableComponent = _testContext.RenderComponent<MemberTable>(
-            ComponentParameter.CreateParameter("Team", team),
-            ComponentParameter.CreateParameter("Members", teamMembers)
+            ComponentParameter.CreateParameter("Team", team)
         );
 
         var teamMembersRows = membersTableComponent.FindAll("tbody tr");
@@ -92,23 +95,111 @@ public class MemberTableTest
         var teamId = Guid.NewGuid();
         var team = new Team(teamId, teamName);
 
-        var teamMembers = new List<TeamMember>();
 
         var membersTableComponent = _testContext.RenderComponent<MemberTable>(
-            ComponentParameter.CreateParameter("Team", team),
-            ComponentParameter.CreateParameter("Members", teamMembers)
+            ComponentParameter.CreateParameter("Team", team)
         );
-        
+
         var addTeamMemberButton = membersTableComponent.FindAll("button")
             .FirstOrDefault(button => button.ToMarkup().Contains("Add member"));
         Assert.NotNull(addTeamMemberButton);
-        
+
         membersTableComponent.WaitForAssertion(() => Assert.Null(membersTableComponent.FindAll("h3")
             .FirstOrDefault(element => element.InnerHtml.Contains("Add member"))));
-        
+
         addTeamMemberButton.Click();
-        
+
         membersTableComponent.WaitForAssertion(() => Assert.NotNull(membersTableComponent.FindAll("h3")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Add member"))));
+    }
+
+    [Fact]
+    public void ShouldCloseModalWhenClickingX()
+    {
+        const string teamName = "Team with members";
+        var teamId = Guid.NewGuid();
+        var team = new Team(teamId, teamName);
+        
+        var membersTableComponent = _testContext.RenderComponent<MemberTable>(
+            ComponentParameter.CreateParameter("Team", team)
+        );
+
+        var addTeamMemberButton = membersTableComponent.FindAll("button")
+            .FirstOrDefault(button => button.ToMarkup().Contains("Add member"));
+        Assert.NotNull(addTeamMemberButton);
+
+        membersTableComponent.WaitForAssertion(() => Assert.Null(membersTableComponent.FindAll("h3")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Add member"))));
+
+        addTeamMemberButton.Click();
+
+        membersTableComponent.WaitForAssertion(() => Assert.NotNull(membersTableComponent.FindAll("h3")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Add member"))));
+
+
+        var closeModalButton = membersTableComponent.FindAll("button")
+            .FirstOrDefault(button => button.ToMarkup().Contains("Add member"));
+
+        closeModalButton.Click();
+
+        membersTableComponent.WaitForAssertion(() => Assert.Null(membersTableComponent.FindAll("h3")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Add member"))));
+    }
+
+    [Fact]
+    public void ShouldCloseModalWhenSubmitingData()
+    {
+        const string teamName = "Team with members";
+        var teamId = Guid.NewGuid();
+        var team = new Team(teamId, teamName);
+        var teamMember = new TeamMember(Guid.NewGuid(), "Full name", "Some position", "demo@demo.com");
+        
+        var mockWithCreateTeamMember = new Mock<IWithCreateTeamMember>();
+
+        var membersTableComponent = _testContext.RenderComponent<MemberTable>(
+            ComponentParameter.CreateParameter("Team", team),
+            ComponentParameter.CreateParameter("CreateTeamMember", EventCallback.Factory.Create<AddTeamMemberDto>(this,
+                async (AddTeamMemberDto a) => await mockWithCreateTeamMember.Object.CreateTeamMember(a))
+            )
+        );
+
+        var addTeamMemberButton = membersTableComponent.FindAll("button")
+            .FirstOrDefault(button => button.ToMarkup().Contains("Add member"));
+        Assert.NotNull(addTeamMemberButton);
+
+        addTeamMemberButton.Click();
+
+        membersTableComponent.WaitForAssertion(() => Assert.NotNull(membersTableComponent.FindAll("h3")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Add member"))));
+
+        var fullNameLabel = membersTableComponent.FindAll("label")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Full name"));
+        var fullNameInputId = fullNameLabel.Attributes.GetNamedItem("for");
+        var teamMemberNameInput = membersTableComponent.Find($"#{fullNameInputId.TextContent}");
+        Assert.NotNull(teamMemberNameInput);
+        teamMemberNameInput.Change(teamMember.FullName);
+
+        var positionLabel = membersTableComponent.FindAll("label")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Position"));
+        var positionInputId = positionLabel.Attributes.GetNamedItem("for");
+        var positionInput = membersTableComponent.Find($"#{positionInputId.TextContent}");
+        Assert.NotNull(positionInput);
+        positionInput.Change(teamMember.Position);
+
+        var emailLabel = membersTableComponent.FindAll("label")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Email"));
+        var emailInputId = emailLabel.Attributes.GetNamedItem("for");
+        var emailInput = membersTableComponent.Find($"#{emailInputId.TextContent}");
+        Assert.NotNull(emailInput);
+        emailInput.Change(teamMember.Email);
+
+        var addMemberButton = membersTableComponent.FindAll("button")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Add member"));
+        Assert.NotNull(addMemberButton);
+
+        addMemberButton.Click();
+
+        membersTableComponent.WaitForAssertion(() => Assert.Null(membersTableComponent.FindAll("h3")
             .FirstOrDefault(element => element.InnerHtml.Contains("Add member"))));
     }
 }

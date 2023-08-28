@@ -5,7 +5,7 @@
 
 @if (Team != null)
 {
-    <CreateTeamMemberModal Show="@_isAddMemberModalOpen" CreateTeamMember="@CreateTeamMember" TeamId="Team.Id"/>
+    <CreateTeamMemberModal Show="@_isAddMemberModalOpen" CreateTeamMember="@CreateTeamMember" TeamId="Team.Id" CloseModal="@CloseAddMemberModal"/>
     <header class="m-5 flex justify-between text-black items-center">
         <h2 class="text-title-h2--semibold text-black">All members of @Team.Name</h2>
         <aside class="flex gap-2.5">
@@ -39,7 +39,7 @@
             </tr>
             </thead>
             <tbody class="bg-white">
-            @foreach (var member in Members)
+            @foreach (var member in Team.Members)
             {
                 <tr>
                     <td class="w-1/12 p-3 px-6">
@@ -73,9 +73,6 @@
     public Team? Team { get; set; }
 
     [Parameter]
-    public IEnumerable<TeamMember> Members { get; set; } = new List<TeamMember>() { new TeamMember(Guid.NewGuid(), "Mike Wazowski", "Product Designer", "myballs@dotcom.com") };
-
-    [Parameter]
     public EventCallback<AddTeamMemberDto> CreateTeamMember { get; set; }
 
     private bool _isAddMemberModalOpen;
@@ -85,6 +82,11 @@
         _isAddMemberModalOpen = true;
         Console.Write(_isAddMemberModalOpen);
         StateHasChanged();
+    }
+
+    private void CloseAddMemberModal()
+    {
+        _isAddMemberModalOpen = false;
     }
 
 }
