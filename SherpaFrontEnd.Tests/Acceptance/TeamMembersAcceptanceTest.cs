@@ -41,7 +41,7 @@ public class TeamMembersAcceptanceTest
         const string baseUrl = "http://localhost";
         var httpClient = new HttpClient(_httpHandlerMock.Object, false) { BaseAddress = new Uri(baseUrl) };
         _factoryHttpClient.Setup(_ => _.CreateClient("SherpaBackEnd")).Returns(httpClient);
-        
+
         _navMan = _testCtx.Services.GetRequiredService<FakeNavigationManager>();
     }
 
@@ -49,24 +49,33 @@ public class TeamMembersAcceptanceTest
     private async Task ShouldBeAbleToSeeAddTeamMemberFormWhenClickingOnAddMemberInTeamsPageAndMembersTab()
     {
         // GIVEN that an Org coach is on the Team page (Members tab)
-        // WHEN he clicks on “Add coachee“
-        // THEN he should be redirected on the Adding members page
-        // and  see the following info:
-        // Full name - text field - mandatory
-        // email (email should be validated) - mandatory
-        // Position - text field - mandatory
-
-
-        // GIVEN that an Org coach is on the Team page (Members tab)
 
         const string teamName = "Team name";
         var teamId = Guid.NewGuid();
         var team = new Team(teamId, teamName);
-        var teamListJson = await JsonContent.Create(team).ReadAsStringAsync();
-        var teamListResponse = new HttpResponseMessage()
+        var teamJson = await JsonContent.Create(team).ReadAsStringAsync();
+        var teamResponse = new HttpResponseMessage()
         {
             StatusCode = HttpStatusCode.OK,
-            Content = new StringContent(teamListJson)
+            Content = new StringContent(teamJson)
+        };
+
+        var creationResponse = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.Created,
+        };
+
+        var teamWithNewMember = new Team(teamId, teamName);
+        var teamMember =
+            new TeamMember(Guid.NewGuid(), "Nick Choudhry", "CraftsPerson-In-Training", "demo@codurance.es");
+        teamWithNewMember.Members.Add(teamMember);
+
+        var teamWithNewMemberJson = await JsonContent.Create(teamWithNewMember).ReadAsStringAsync();
+
+        var teamWithNewMemberResponse = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(teamWithNewMemberJson)
         };
 
         _httpHandlerMock
@@ -77,68 +86,92 @@ public class TeamMembersAcceptanceTest
                     m => m.Method.Equals(HttpMethod.Get) &&
                          m.RequestUri.AbsoluteUri.EndsWith($"/team/{teamId.ToString()}")),
                 ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(teamListResponse);
+            .ReturnsAsync(teamResponse).ReturnsAsync(teamWithNewMemberResponse);
+
+        _httpHandlerMock
+            .Protected()
+            .Setup<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.Is<HttpRequestMessage>(
+                    m => m.Method.Equals(HttpMethod.Post)),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(creationResponse);
 
         var appComponent = _testCtx.RenderComponent<App>();
         _navMan.NavigateTo($"/team-content/{teamId}");
         appComponent.WaitForAssertion(() => Assert.Equal($"http://localhost/team-content/{teamId}", _navMan.Uri));
-        
+
         var membersTab = appComponent.FindAll("a:not(a[href])")
             .FirstOrDefault(element => element.InnerHtml.Contains("Members"));
-        
+
         Assert.NotNull(membersTab);
         membersTab.Click();
 
         // WHEN he clicks on “Add member“
-        
+
         appComponent.WaitForAssertion(() =>
             Assert.NotNull(appComponent.FindAll("button")
                 .FirstOrDefault(element => element.InnerHtml.Contains("Add member"))));
-        
+
         var addTeamMemberButton = appComponent.FindAll("button")
             .FirstOrDefault(element => element.InnerHtml.Contains("Add member"));
         Assert.NotNull(addTeamMemberButton);
-        
+
         addTeamMemberButton.Click();
 
         // THEN he should be redirected on the Adding members page
         // and  see the following info:
-            // Full name - text field - mandatory
-            // email (email should be validated) - mandatory
-            // Position - text field - mandatory
-            
+        // Full name - text field - mandatory
+        // email (email should be validated) - mandatory
+        // Position - text field - mandatory
+
         var addMemberTitle = appComponent.FindAll("h3")
             .FirstOrDefault(element => element.InnerHtml.Contains("Add member"));
         Assert.NotNull(addMemberTitle);
-        
+
         var addMemberDescription = appComponent.FindAll("p")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Add team member by filling in the required information"));
+            .FirstOrDefault(element =>
+                element.InnerHtml.Contains("Add team member by filling in the required information"));
         Assert.NotNull(addMemberDescription);
-        
+
         var fullNameLabel = appComponent.FindAll("label")
             .FirstOrDefault(element => element.InnerHtml.Contains("Full name"));
         var fullNameInputId = fullNameLabel.Attributes.GetNamedItem("for");
-        var teamNameInput = appComponent.FindAll($"#{fullNameInputId.TextContent}");
-        Assert.NotNull(teamNameInput);
-        
+        var teamMemberNameInput = appComponent.Find($"#{fullNameInputId.TextContent}");
+        Assert.NotNull(teamMemberNameInput);
+        teamMemberNameInput.Change(teamMember.FullName);
+
         var positionLabel = appComponent.FindAll("label")
             .FirstOrDefault(element => element.InnerHtml.Contains("Position"));
         var positionInputId = positionLabel.Attributes.GetNamedItem("for");
-        var positionInput = appComponent.FindAll($"#{positionInputId.TextContent}");
+        var positionInput = appComponent.Find($"#{positionInputId.TextContent}");
         Assert.NotNull(positionInput);
-        
+        positionInput.Change(teamMember.Position);
+
         var emailLabel = appComponent.FindAll("label")
             .FirstOrDefault(element => element.InnerHtml.Contains("Email"));
         var emailInputId = emailLabel.Attributes.GetNamedItem("for");
-        var emailInput = appComponent.FindAll($"#{emailInputId.TextContent}");
+        var emailInput = appComponent.Find($"#{emailInputId.TextContent}");
         Assert.NotNull(emailInput);
-        
+        emailInput.Change(teamMember.Email);
+
         var addMemberButton = appComponent.FindAll("button")
             .FirstOrDefault(element => element.InnerHtml.Contains("Add member"));
         Assert.NotNull(addMemberButton);
         
-        var cancelButton = appComponent.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Cancel"));
-        Assert.NotNull(cancelButton);
+        // AND WHEN clicking on Add member
+
+        addMemberButton.Click();
+        
+        // THEN the created member should be in the members table
+
+        appComponent.WaitForAssertion(() => Assert.NotNull(appComponent.FindAll("td")
+            .FirstOrDefault(element => element.InnerHtml.Contains(teamMember.FullName))));
+        
+        Assert.NotNull(appComponent.FindAll("td")
+            .FirstOrDefault(element => element.InnerHtml.Contains(teamMember.Position)));
+        
+        Assert.NotNull(appComponent.FindAll("td")
+            .FirstOrDefault(element => element.InnerHtml.Contains(teamMember.Email)));
     }
 }

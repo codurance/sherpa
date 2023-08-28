@@ -3,7 +3,7 @@
 @using SherpaFrontEnd.Model
 @using SherpaFrontEnd.Shared.Modals
 
-<CreateTeamMemberModal Show="@_isAddMemberModalOpen" />
+<CreateTeamMemberModal Show="@_isAddMemberModalOpen" CreateTeamMember="@CreateTeamMember" TeamId="Team.Id"/>
 <header class="m-5 flex justify-between text-black items-center">
     <h2 class="text-title-h2--semibold text-black">All members of @Team.Name</h2>
     <aside class="flex gap-2.5">
@@ -68,11 +68,14 @@
 
     [Parameter]
     public Team Team { get; set; }
-
-    private bool _isAddMemberModalOpen;
-
+    
     [Parameter]
     public IEnumerable<TeamMember> Members { get; set; } = new List<TeamMember>(){ new TeamMember(Guid.NewGuid(), "Mike Wazowski", "Product Designer", "myballs@dotcom.com")};
+    
+    [Parameter]
+    public EventCallback<AddTeamMemberDto> CreateTeamMember { get; set; }
+
+    private bool _isAddMemberModalOpen;
 
     private void ShowAddMemberModal()
     {

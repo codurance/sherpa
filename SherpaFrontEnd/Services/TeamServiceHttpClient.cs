@@ -70,4 +70,9 @@ public class TeamServiceHttpClient : ITeamDataService
             new StringContent(teamToAdd, System.Text.Encoding.UTF8, "application/json"));
         response.EnsureSuccessStatusCode();
     }
+
+    public Task AddTeamMember(AddTeamMemberDto addTeamMemberDto)
+    {
+        throw new NotImplementedException();
+    }
 }

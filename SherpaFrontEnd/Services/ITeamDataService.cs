@@ -11,4 +11,5 @@ public interface ITeamDataService
     Task<HttpStatusCode> DeleteTeam(Guid guid);
     Task PutTeam(Team team);
     Task AddTeam(Team team);
+    Task AddTeamMember(AddTeamMemberDto addTeamMemberDto);
 }

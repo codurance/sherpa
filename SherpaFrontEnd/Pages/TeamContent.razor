@@ -50,7 +50,7 @@
         }
     </TabPage>
     <TabPage Text="Members">
-        <MemberTable Team="Team"/>
+        <MemberTable Team="Team" CreateTeamMember="@CreateTeamMember"/>
     </TabPage>
 </TabControl>
 
@@ -73,9 +73,22 @@
 
     protected override async void OnParametersSet()
     {
-        Team = await TeamDataService.GetTeamById(TeamId);
+        await FetchTeam();
         Emails = Team!.Members.Select(m => m.Email).ToList();
         Surveys = await SurveyService.GetAllSurveysByTeam(TeamId);
+    }
+
+    private async Task FetchTeam()
+    {
+        Team = await TeamDataService.GetTeamById(TeamId);
+    }
+
+    private async Task CreateTeamMember(AddTeamMemberDto addTeamMemberDto)
+    {
+        // Create member
+        
+        // Re-fetch team
+        await FetchTeam();
     }
 
 }
