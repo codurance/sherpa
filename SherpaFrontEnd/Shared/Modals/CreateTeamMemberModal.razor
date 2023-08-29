@@ -1,6 +1,7 @@
 @using SherpaFrontEnd.Dtos.Team
 @using SherpaFrontEnd.Services
 @inject IGuidService GuidService
+@inject NavigationManager NavigationManager
 @if (Show)
 {
     <div class="fixed top-0 left-0 z-50 w-screen h-screen bg-[#1D233C]/80 flex justify-center items-center">
@@ -90,11 +91,15 @@
 
     private async Task SubmitData()
     {
-        var generateRandomGuidForTeamMember = GuidService.GenerateRandomGuid();
-        TeamMember.Id = generateRandomGuidForTeamMember;
-        await CreateTeamMember.InvokeAsync(new AddTeamMemberDto(TeamId, TeamMember));
-        await CloseModal.InvokeAsync();
-        TeamMember = new TeamMember(new Guid(), "", "", "");
+        try{
+            var generateRandomGuidForTeamMember = GuidService.GenerateRandomGuid();
+            TeamMember.Id = generateRandomGuidForTeamMember;
+            await CreateTeamMember.InvokeAsync(new AddTeamMemberDto(TeamId, TeamMember));
+            await CloseModal.InvokeAsync();
+            TeamMember = new TeamMember(new Guid(), "", "", "");
+        }catch{
+            NavigationManager.NavigateTo(NavigationManager.BaseUri + "error");
+        }
     }
 
     private bool IsInvalid(string? field)
