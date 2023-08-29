@@ -220,4 +220,46 @@ public class CreateTeamMemberModalTest
         Assert.Equal("", positionInput.GetAttribute("value"));
         Assert.Equal("", emailInput.GetAttribute("value"));
     }
+
+    [Fact]
+    public void ShouldDisplayErrorMessagesIfFieldsAreEmpty()
+    {
+        var teamId = Guid.NewGuid();
+        var teamMember = new TeamMember(Guid.NewGuid(), "Full name", "Some position", "demo@demo.com");
+        var mockWithCreateTeamMember = new Mock<IWithCreateTeamMember>();
+        var mockWithCloseModal = new Mock<IWithCloseModal>();
+
+        _mockGuidService.Setup(service => service.GenerateRandomGuid()).Returns(teamMember.Id);
+
+        var cut = _ctx.RenderComponent<CreateTeamMemberModal>(
+            ComponentParameter.CreateParameter("Show", true),
+            ComponentParameter.CreateParameter("TeamId", teamId),
+            ComponentParameter.CreateParameter("CreateTeamMember",
+                EventCallback.Factory.Create<AddTeamMemberDto>(this,
+                    async (AddTeamMemberDto a) => await mockWithCreateTeamMember.Object.CreateTeamMember(a))),
+            ComponentParameter.CreateParameter("CloseModal",
+                EventCallback.Factory.Create(this, () => mockWithCloseModal.Object.CloseModal())
+            ));
+        
+        var addMemberButton = cut.FindAll("button")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Add member"));
+        Assert.NotNull(addMemberButton);
+
+        addMemberButton.Click();
+        
+        cut.WaitForAssertion(() => Assert.NotNull(cut.FindAll("p")
+            .FirstOrDefault(element => element.InnerHtml.Contains("This field is mandatory"))));
+        
+        var fullNameLabel = cut.FindAll("label")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Full name"));
+        Assert.Contains("This field is mandatory", fullNameLabel.Parent.ToMarkup());
+
+        var positionLabel = cut.FindAll("label")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Position"));
+        Assert.Contains("This field is mandatory", positionLabel.Parent.ToMarkup());
+
+        var emailLabel = cut.FindAll("label")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Email"));
+        Assert.Contains("This field is mandatory", emailLabel.Parent.ToMarkup());
+    }
 }

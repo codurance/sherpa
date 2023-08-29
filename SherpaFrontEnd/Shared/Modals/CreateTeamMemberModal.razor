@@ -21,15 +21,36 @@
                         <div class="flex gap-6 flex-col">
                             <div class="m-0">
                                 <label for="full-name" class="block mb-1.5 text-sm font-medium text-primary-dark-800">Full name</label>
-                                <InputText @bind-Value="@AddTeamMemberDto.TeamMember.FullName" type="text" name="full-name" id="full-name" class="shadow-sm border border-gray-300 text-primary-dark-principal text-sm rounded-lg block w-full p-2.5" placeholder="John Doe" required/>
+                                <div class="max-w-xs relative">
+                                    <InputText @bind-Value="@AddTeamMemberDto.TeamMember.FullName" type="text" name="full-name" id="full-name" class="shadow-sm border border-gray-300 text-primary-dark-principal text-sm rounded-lg block w-full p-2.5" placeholder="John Doe"/>
+                                    @if (!IsInvalid(nameof(AddTeamMemberDto.TeamMember.FullName)))
+                                    {
+                                        <i class="las la-exclamation-circle absolute text-red-500 text-2xl top-2 right-3"></i>
+                                    }
+                                </div>
+                                <ValidationMessage For="@(() => AddTeamMemberDto.TeamMember.FullName)"/>
                             </div>
                             <div class="m-0">
                                 <label for="position" class="block mb-1.5 text-sm font-medium text-primary-dark-800">Position</label>
-                                <InputText @bind-Value="@AddTeamMemberDto.TeamMember.Position" type="text" name="position" id="position" class="shadow-sm border border-gray-300 text-primary-dark-principal text-sm rounded-lg block w-full p-2.5" placeholder="Developer" required/>
+                                <div class="max-w-xs relative">
+                                    <InputText @bind-Value="@AddTeamMemberDto.TeamMember.Position" type="text" name="position" id="position" class="shadow-sm border border-gray-300 text-primary-dark-principal text-sm rounded-lg block w-full p-2.5" placeholder="Developer"/>
+                                    @if (!IsInvalid(nameof(AddTeamMemberDto.TeamMember.Position)))
+                                    {
+                                        <i class="las la-exclamation-circle absolute text-red-500 text-2xl top-2 right-3"></i>
+                                    }
+                                </div>
+                                <ValidationMessage For="@(() => AddTeamMemberDto.TeamMember.Position)"/>
                             </div>
                             <div class="m-0">
                                 <label for="email" class="block mb-1.5 text-sm font-medium text-primary-dark-800">Email</label>
-                                <InputText @bind-Value="@AddTeamMemberDto.TeamMember.Email" type="email" name="email" id="email" placeholder="johndoe@gmail.com" class="shadow-sm border border-gray-300 text-primary-dark-principal text-sm rounded-lg block w-full p-2.5" required/>
+                                <div class="max-w-xs relative">
+                                    <InputText @bind-Value="@AddTeamMemberDto.TeamMember.Email" name="email" id="email" placeholder="johndoe@gmail.com" class="shadow-sm border border-gray-300 text-primary-dark-principal text-sm rounded-lg block w-full p-2.5"/>
+                                    @if (!IsInvalid(nameof(AddTeamMemberDto.TeamMember.Position)))
+                                    {
+                                        <i class="las la-exclamation-circle absolute text-red-500 text-2xl top-2 right-3"></i>
+                                    }
+                                </div>
+                                <ValidationMessage For="@(() => AddTeamMemberDto.TeamMember.Position)"/>
                             </div>
                             <div class="flex justify-around gap-2 px-12 mt-6">
                                 <button class="w-full text-primary-red-principal-800 bg-white hover:bg-primary-red-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center border-3">Cancel</button>
@@ -38,8 +59,6 @@
                         </div>
                     </div>
                 </EditForm>
-
-
             </div>
         </div>
     </div>
@@ -55,7 +74,7 @@
 
     [Parameter]
     public EventCallback<AddTeamMemberDto> CreateTeamMember { get; set; }
-    
+
     [Parameter]
     public EventCallback CloseModal { get; set; }
 
@@ -81,5 +100,19 @@
         AddTeamMemberDto = new AddTeamMemberDto(TeamId, new TeamMember(new Guid(), "", "", ""));
     }
 
-}
+    private bool IsInvalid(string? field)
+    {
+        if (field == null || EditContext == null)
+        {
+            Console.WriteLine("Field is null");
+            return false;
+        }
 
+        var anyValidationMessages = EditContext.GetValidationMessages(new FieldIdentifier(AddTeamMemberDto, field)).Any();
+
+        Console.WriteLine("IsValid: " + !anyValidationMessages);
+
+        return !anyValidationMessages;
+    }
+
+}
