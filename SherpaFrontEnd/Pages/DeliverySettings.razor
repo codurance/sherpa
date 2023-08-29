@@ -20,7 +20,7 @@
                 <div class="flex w-2/3 flex-col">
                     <label for="survey-team-id" class="text-text-label text-primary-dark-principal">Team</label>
                     <div class="max-w-xs flex flex-col relative mb-1">
-                        <InputSelect id="survey-team-id" @bind-Value="CreateSurveyDto.TeamId" class="ext-primary-dark-principal w-full rounded-lg border border-gray-300 shadow-sm py-2.5 px-3.5">
+                        <InputSelect id="survey-team-id" @bind-Value="CreateSurveyDto.TeamId" class="text-primary-dark-principal w-full rounded-lg border border-gray-300 shadow-sm py-2.5 px-3.5">
                             <option disabled selected="selected">Select a team</option>
                             @if (Teams != null)
                             {
