@@ -152,9 +152,7 @@
         }
 
         var anyValidationMessages = EditContext.GetValidationMessages(new FieldIdentifier(CreateSurveyDto, field)).Any();
-
-        Console.WriteLine("IsValid: " + !anyValidationMessages);
-
+        
         return !anyValidationMessages;
     }
 

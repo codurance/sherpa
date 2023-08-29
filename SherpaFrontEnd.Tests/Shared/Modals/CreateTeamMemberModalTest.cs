@@ -247,7 +247,7 @@ public class CreateTeamMemberModalTest
 
         addMemberButton.Click();
         
-        cut.WaitForAssertion(() => Assert.NotNull(cut.FindAll("p")
+        cut.WaitForAssertion(() => Assert.NotNull(cut.FindAll(".validation-message")
             .FirstOrDefault(element => element.InnerHtml.Contains("This field is mandatory"))));
         
         var fullNameLabel = cut.FindAll("label")
