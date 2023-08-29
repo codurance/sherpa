@@ -150,6 +150,35 @@ public class CreateTeamMemberModalTest
 
         mockWithCloseModal.Verify(mock => mock.CloseModal(), Times.Once);
     }
+    
+    [Fact]
+    public void ShouldCallCloseModalIfCancelButtonClicked()
+    {
+        var teamId = Guid.NewGuid();
+        var teamMember = new TeamMember(Guid.NewGuid(), "Full name", "Some position", "demo@demo.com");
+        var mockWithCreateTeamMember = new Mock<IWithCreateTeamMember>();
+        var mockWithCloseModal = new Mock<IWithCloseModal>();
+
+        _mockGuidService.Setup(service => service.GenerateRandomGuid()).Returns(teamMember.Id);
+
+        var cut = _ctx.RenderComponent<CreateTeamMemberModal>(
+            ComponentParameter.CreateParameter("Show", true),
+            ComponentParameter.CreateParameter("TeamId", teamId),
+            ComponentParameter.CreateParameter("CreateTeamMember",
+                EventCallback.Factory.Create<AddTeamMemberDto>(this,
+                    async (AddTeamMemberDto a) => await mockWithCreateTeamMember.Object.CreateTeamMember(a))),
+            ComponentParameter.CreateParameter("CloseModal",
+                EventCallback.Factory.Create(this, () => mockWithCloseModal.Object.CloseModal())
+            ));
+
+        var cancelButton = cut.FindAll("button")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Cancel"));
+        Assert.NotNull(cancelButton);
+
+        cancelButton.Click();
+
+        mockWithCloseModal.Verify(mock => mock.CloseModal(), Times.Once);
+    }
 
     [Fact]
     public void ShouldBeEmptyAfterSubmitting()
@@ -197,6 +226,79 @@ public class CreateTeamMemberModalTest
         Assert.NotNull(addMemberButton);
 
         addMemberButton.Click();
+
+        cut.WaitForAssertion(() =>
+        {
+            fullNameLabel = cut.FindAll("label")
+                .FirstOrDefault(element => element.InnerHtml.Contains("Full name"));
+            fullNameInputId = fullNameLabel.Attributes.GetNamedItem("for");
+            teamMemberNameInput = cut.Find($"#{fullNameInputId.TextContent}");
+            Assert.NotNull(teamMemberNameInput);
+            Assert.Equal("", teamMemberNameInput.GetAttribute("value"));
+        });
+        
+        positionLabel = cut.FindAll("label")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Position"));
+        positionInputId = positionLabel.Attributes.GetNamedItem("for");
+        positionInput = cut.Find($"#{positionInputId.TextContent}");
+        Assert.NotNull(positionInput);
+
+        emailLabel = cut.FindAll("label")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Email"));
+        emailInputId = emailLabel.Attributes.GetNamedItem("for");
+        emailInput = cut.Find($"#{emailInputId.TextContent}");
+        Assert.NotNull(emailInput);
+
+        Assert.Equal("", positionInput.GetAttribute("value"));
+        Assert.Equal("", emailInput.GetAttribute("value"));
+    }
+    
+    [Fact]
+    public void ShouldBeEmptyAfterClosing()
+    {
+        var teamId = Guid.NewGuid();
+        var teamMember = new TeamMember(Guid.NewGuid(), "Full name", "Some position", "demo@demo.com");
+        var mockWithCreateTeamMember = new Mock<IWithCreateTeamMember>();
+        var mockWithCloseModal = new Mock<IWithCloseModal>();
+
+        _mockGuidService.Setup(service => service.GenerateRandomGuid()).Returns(teamMember.Id);
+
+        var cut = _ctx.RenderComponent<CreateTeamMemberModal>(
+            ComponentParameter.CreateParameter("Show", true),
+            ComponentParameter.CreateParameter("TeamId", teamId),
+            ComponentParameter.CreateParameter("CreateTeamMember",
+                EventCallback.Factory.Create<AddTeamMemberDto>(this,
+                    async (AddTeamMemberDto a) => await mockWithCreateTeamMember.Object.CreateTeamMember(a))),
+            ComponentParameter.CreateParameter("CloseModal",
+                EventCallback.Factory.Create(this, () => mockWithCloseModal.Object.CloseModal())
+            ));
+
+        var fullNameLabel = cut.FindAll("label")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Full name"));
+        var fullNameInputId = fullNameLabel.Attributes.GetNamedItem("for");
+        var teamMemberNameInput = cut.Find($"#{fullNameInputId.TextContent}");
+        Assert.NotNull(teamMemberNameInput);
+        teamMemberNameInput.Change(teamMember.FullName);
+
+        var positionLabel = cut.FindAll("label")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Position"));
+        var positionInputId = positionLabel.Attributes.GetNamedItem("for");
+        var positionInput = cut.Find($"#{positionInputId.TextContent}");
+        Assert.NotNull(positionInput);
+        positionInput.Change(teamMember.Position);
+
+        var emailLabel = cut.FindAll("label")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Email"));
+        var emailInputId = emailLabel.Attributes.GetNamedItem("for");
+        var emailInput = cut.Find($"#{emailInputId.TextContent}");
+        Assert.NotNull(emailInput);
+        emailInput.Change(teamMember.Email);
+
+        var cancelButton = cut.FindAll("button")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Cancel"));
+        Assert.NotNull(cancelButton);
+
+        cancelButton.Click();
 
         cut.WaitForAssertion(() =>
         {
