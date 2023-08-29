@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SherpaBackEnd.Dtos;
+using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Services;
 
 namespace SherpaBackEnd.Controllers;
@@ -27,6 +28,7 @@ public class TeamMemberController
         }
         catch (Exception error)
         {
+            _logger.LogError(default, error, error.Message);
             return new ObjectResult(error)
             {
                 StatusCode = StatusCodes.Status500InternalServerError
@@ -40,18 +42,16 @@ public class TeamMemberController
         try
         {
             var allTeamMembers = await _teamMemberService.GetAllTeamMembersAsync(teamId);
-            if (allTeamMembers == null)
-            {
-                return new NotFoundResult();
-            }
-
             return new OkObjectResult(allTeamMembers);
         }
         catch (Exception error)
         {
-            return new ObjectResult(error)
+            _logger.LogError(default, error, error.Message);
+            return error switch
             {
-                StatusCode = StatusCodes.Status500InternalServerError
+                NotFoundException => new ObjectResult(error)
+                    { StatusCode = StatusCodes.Status404NotFound },
+                _ => new ObjectResult(error) { StatusCode = StatusCodes.Status500InternalServerError }
             };
         }
     }

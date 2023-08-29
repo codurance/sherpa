@@ -73,25 +73,4 @@ public class TeamMemberServiceTest
         Assert.IsType<List<TeamMember>>(allTeamMembers);
         Assert.True(!allTeamMembers.Any());
     }
-
-    [Fact]
-    public async Task ShouldThrowErrorIfConnectionWithRepositoryFailsWhileAddingTeamMembersToATeam()
-    {
-        _mockTeamRepository.Setup(_ => _.AddTeamMemberToTeamAsync(It.IsAny<Guid>(), It.IsAny<TeamMember>()))
-            .ThrowsAsync(new Exception());
-
-        var exceptionThrown = await Assert.ThrowsAsync<ConnectionToRepositoryUnsuccessfulException>(async () =>
-            await _teamMemberService.AddTeamMemberToTeamAsync(It.IsAny<AddTeamMemberDto>()));
-        Assert.IsType<ConnectionToRepositoryUnsuccessfulException>(exceptionThrown);
-    }
-
-    [Fact]
-    public async Task ShouldThrowErrorIfConnectionWithRepositoryFailsWhileGettingAllTeamMembersOfATeam()
-    {
-        _mockTeamRepository.Setup(_ => _.GetAllTeamMembersAsync(It.IsAny<Guid>())).ThrowsAsync(new Exception());
-
-        var exceptionThrown = await Assert.ThrowsAsync<ConnectionToRepositoryUnsuccessfulException>(async () =>
-            await _teamMemberService.GetAllTeamMembersAsync(It.IsAny<Guid>()));
-        Assert.IsType<ConnectionToRepositoryUnsuccessfulException>(exceptionThrown);
-    }
 }

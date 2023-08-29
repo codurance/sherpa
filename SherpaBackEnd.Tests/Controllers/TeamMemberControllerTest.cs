@@ -68,7 +68,7 @@ public class TeamMemberControllerTest
     }
 
     [Fact]
-    public async Task ShouldReturnOkWhenEmptyTeamListRetrievedWhileGettingAllTeams()
+    public async Task ShouldReturnOkWhenTeamMembersListRetrievedWhileGettingTeamMembers()
     {
         var teamId = Guid.NewGuid();
         var member1Id = Guid.NewGuid();
@@ -91,10 +91,10 @@ public class TeamMemberControllerTest
     public async Task ShouldReturnNotFoundWhenGetTeamByIdAsyncCanNotFindThatTeamId()
     {
         var teamId = Guid.NewGuid();
-        _mockTeamMemberService.Setup(_ => _.GetAllTeamMembersAsync(teamId)).ReturnsAsync((IEnumerable<TeamMember>)null);
+        _mockTeamMemberService.Setup(_ => _.GetAllTeamMembersAsync(teamId)).ThrowsAsync(new NotFoundException("demo"));
 
         var allTeamMembers = await _teamMemberController.GetAllTeamMembersAsync(teamId);
-        var notFoundResult = Assert.IsType<NotFoundResult>(allTeamMembers.Result);
+        var notFoundResult = Assert.IsType<ObjectResult>(allTeamMembers.Result);
         Assert.Equal(StatusCodes.Status404NotFound, notFoundResult.StatusCode);
     }
 

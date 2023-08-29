@@ -15,26 +15,18 @@ public class TeamMemberService : ITeamMemberService
 
     public async Task AddTeamMemberToTeamAsync(AddTeamMemberDto addTeamMemberDto)
     {
-        try
-        {
-            await _inMemoryTeamRepository.AddTeamMemberToTeamAsync(addTeamMemberDto.TeamId, addTeamMemberDto.TeamMember);
-        }
-        catch (Exception error)
-        {
-            throw new ConnectionToRepositoryUnsuccessfulException(error.Message, error);
-        }
+        await _inMemoryTeamRepository.AddTeamMemberToTeamAsync(addTeamMemberDto.TeamId, addTeamMemberDto.TeamMember);
     }
 
     public async Task<IEnumerable<TeamMember>?> GetAllTeamMembersAsync(Guid teamId)
     {
-        try
+        var allTeamMembersAsync = await _inMemoryTeamRepository.GetAllTeamMembersAsync(teamId);
+
+        if (allTeamMembersAsync == null)
         {
-            return await _inMemoryTeamRepository.GetAllTeamMembersAsync(teamId);
+            throw new NotFoundException("Team not found");
         }
-        catch (Exception error){
 
-            throw new ConnectionToRepositoryUnsuccessfulException(error.Message, error);
-
-        }
+        return allTeamMembersAsync;
     }
 }

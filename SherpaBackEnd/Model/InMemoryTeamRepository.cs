@@ -1,4 +1,5 @@
 using SherpaBackEnd.Dtos;
+using SherpaBackEnd.Exceptions;
 
 namespace SherpaBackEnd.Model;
 
@@ -49,7 +50,6 @@ public class InMemoryTeamRepository : ITeamRepository
         return await Task.FromResult(_teams);
     }
 
-    // TODO: Remember to check for NULL, SAD PATH
     public async Task AddTeamMemberToTeamAsync(Guid teamId, TeamMember teamMember)
     {
         var team = await GetTeamByIdAsync(teamId);
