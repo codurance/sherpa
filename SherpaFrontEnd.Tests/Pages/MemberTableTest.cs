@@ -138,7 +138,7 @@ public class MemberTableTest
 
 
         var closeModalButton = membersTableComponent.FindAll("button")
-            .FirstOrDefault(button => button.ToMarkup().Contains("Add member"));
+            .FirstOrDefault(button => button.ToMarkup().Contains("Close modal"));
 
         closeModalButton.Click();
 

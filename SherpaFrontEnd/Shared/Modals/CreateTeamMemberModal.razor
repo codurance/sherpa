@@ -96,7 +96,9 @@
             TeamMember.Id = generateRandomGuidForTeamMember;
             await CreateTeamMember.InvokeAsync(new AddTeamMemberDto(TeamId, TeamMember));
             await CloseModal.InvokeAsync();
+            
             TeamMember = new TeamMember(new Guid(), "", "", "");
+            EditContext = new EditContext(TeamMember);
         }catch{
             NavigationManager.NavigateTo(NavigationManager.BaseUri + "error");
         }
