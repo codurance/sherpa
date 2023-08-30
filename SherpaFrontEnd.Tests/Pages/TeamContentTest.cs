@@ -246,8 +246,8 @@ public class TeamContentTest
         var teamMember = new TeamMember(Guid.NewGuid(), "Full name", "Some position", "demo@demo.com");
     
         _mockGuidService.Setup(service => service.GenerateRandomGuid()).Returns(teamMember.Id);
-        
         _mockTeamService.Setup(service => service.GetTeamById(teamId)).ReturnsAsync(new Team(teamId, "Team name"));
+        _mockSurveyService.Setup(service => service.GetAllSurveysByTeam(teamId)).ReturnsAsync(new List<Survey>());
         
         var cut = _testContext.RenderComponent<TeamContent>(
             ComponentParameter.CreateParameter("TeamId", teamId)

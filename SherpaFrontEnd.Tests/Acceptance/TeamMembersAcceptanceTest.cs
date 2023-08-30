@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Moq.Protected;
 using SherpaFrontEnd;
+using SherpaFrontEnd.Dtos.Survey;
 using SherpaFrontEnd.Dtos.Team;
 using SherpaFrontEnd.Model;
 using SherpaFrontEnd.Services;
@@ -20,7 +21,7 @@ public class TeamMembersAcceptanceTest
     private readonly TestContext _testCtx;
     private Mock<HttpMessageHandler> _httpHandlerMock;
     private readonly Mock<IHttpClientFactory> _factoryHttpClient;
-    private readonly Mock<ISurveyService> _surveyService;
+    private readonly ISurveyService _surveyService;
     private readonly TeamServiceHttpClient _teamsService;
     private FakeNavigationManager _navMan;
     private ITestOutputHelper _output;
@@ -34,10 +35,10 @@ public class TeamMembersAcceptanceTest
         _httpHandlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
         _factoryHttpClient = new Mock<IHttpClientFactory>();
         _teamsService = new TeamServiceHttpClient(_factoryHttpClient.Object);
+        _surveyService = new SurveyService(_factoryHttpClient.Object);
         _guidService = new Mock<IGuidService>();
-        _surveyService = new Mock<ISurveyService>();
         _testCtx.Services.AddSingleton<ITeamDataService>(_teamsService);
-        _testCtx.Services.AddSingleton<ISurveyService>(_surveyService.Object);
+        _testCtx.Services.AddSingleton<ISurveyService>(_surveyService);
         _testCtx.Services.AddSingleton<IGuidService>(_guidService.Object);
         const string baseUrl = "http://localhost";
         var httpClient = new HttpClient(_httpHandlerMock.Object, false) { BaseAddress = new Uri(baseUrl) };
@@ -90,6 +91,22 @@ public class TeamMembersAcceptanceTest
                          m.RequestUri.AbsoluteUri.EndsWith($"/team/{teamId.ToString()}")),
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(teamResponse).ReturnsAsync(teamWithNewMemberResponse);
+
+        var emptySurveyResponse = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent("[]")
+        };
+        
+        _httpHandlerMock
+            .Protected()
+            .Setup<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.Is<HttpRequestMessage>(
+                    m => m.Method.Equals(HttpMethod.Get) &&
+                         m.RequestUri.AbsoluteUri.EndsWith($"/team/{teamId.ToString()}/surveys")),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(emptySurveyResponse);
 
         _httpHandlerMock
             .Protected()
