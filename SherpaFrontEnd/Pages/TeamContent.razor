@@ -1,12 +1,7 @@
-@using SherpaFrontEnd.Model
 @using SherpaFrontEnd.Services
-@using SherpaFrontEnd.Shared.Modals
 @using SherpaFrontEnd.Shared.Tabs
 @using SherpaFrontEnd.Dtos.Survey
-@using SherpaFrontEnd.Pages
-@using System.Net
 @using SherpaFrontEnd.Dtos.Team
-@inject NavigationManager Nav
 @inject ITeamDataService TeamDataService
 @inject ISurveyService SurveyService
 
@@ -52,7 +47,7 @@
             </div>
         }
     </TabPage>
-    <TabPage Text="Members">
+    <TabPage Text="Members" Args="@Team.Members">
         <MemberTable Team="Team" CreateTeamMember="@CreateTeamMember"/>
     </TabPage>
 </TabControl>
@@ -85,6 +80,7 @@
     private async Task FetchTeam()
     {
         Team = await TeamDataService.GetTeamById(TeamId);
+        StateHasChanged();
     }
 
     private async Task CreateTeamMember(AddTeamMemberDto addTeamMemberDto)
