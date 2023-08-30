@@ -12,9 +12,12 @@
 
 @page "/team-content/{teamId:guid}"
 
-<h3>
-    @Team?.Name
-</h3>
+@if (Team != null && Surveys != null)
+{
+    <h3>
+        @Team.Name
+    </h3>
+
 
 <TabControl>
     <TabPage Text="Analysis">
@@ -53,7 +56,7 @@
         <MemberTable Team="@Team"/>
     </TabPage>
 </TabControl>
-
+}
 @code {
 
     [Parameter]
@@ -65,16 +68,17 @@
     public Team? Team { get; set; }
 
     private List<string> Emails { get; set; } = new();
-    
+
     private List<Survey>? Surveys { get; set; }
 
     [CascadingParameter]
     public IModalService Modal { get; set; } = default!;
 
-    protected override async void OnParametersSet()
+    protected override async Task OnInitializedAsync()
     {
         Team = await TeamDataService.GetTeamById(TeamId);
         Emails = Team!.Members.Select(m => m.Email).ToList();
         Surveys = await SurveyService.GetAllSurveysByTeam(TeamId);
     }
+
 }
