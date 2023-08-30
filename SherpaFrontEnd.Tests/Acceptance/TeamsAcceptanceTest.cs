@@ -1,7 +1,5 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
-using System.Text.Json;
-using AngleSharp.Dom;
 using Blazored.Modal;
 using Bunit;
 using Bunit.TestDoubles;
@@ -10,7 +8,6 @@ using Moq;
 using Moq.Protected;
 using SherpaFrontEnd;
 using SherpaFrontEnd.Dtos.Team;
-using SherpaFrontEnd.Model;
 using SherpaFrontEnd.Pages;
 using SherpaFrontEnd.Services;
 using Xunit.Abstractions;
@@ -26,7 +23,7 @@ public class TeamsAcceptanceTest
     private readonly FakeNavigationManager _navMan;
     private readonly Mock<IGuidService> _guidService;
     private ITestOutputHelper _output;
-    private readonly Mock<ISurveyService> _surveyService;
+    private readonly ISurveyService _surveyService;
 
     public TeamsAcceptanceTest(ITestOutputHelper output)
     {
@@ -37,11 +34,11 @@ public class TeamsAcceptanceTest
         _httpHandlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
         _factoryHttpClient = new Mock<IHttpClientFactory>();
         _teamsService = new TeamServiceHttpClient(_factoryHttpClient.Object);
+        _surveyService = new SurveyService(_factoryHttpClient.Object);
         _guidService = new Mock<IGuidService>();
-        _surveyService = new Mock<ISurveyService>();
         _testCtx.Services.AddSingleton<ITeamDataService>(_teamsService);
         _testCtx.Services.AddSingleton<IGuidService>(_guidService.Object);
-        _testCtx.Services.AddSingleton<ISurveyService>(_surveyService.Object);
+        _testCtx.Services.AddSingleton<ISurveyService>(_surveyService);
         const string baseUrl = "http://localhost";
         var httpClient = new HttpClient(_httpHandlerMock.Object, false) { BaseAddress = new Uri(baseUrl) };
         _factoryHttpClient.Setup(_ => _.CreateClient("SherpaBackEnd")).Returns(httpClient);
@@ -252,7 +249,23 @@ public class TeamsAcceptanceTest
                     m => m.Method.Equals(HttpMethod.Get) &&
                          m.RequestUri.AbsoluteUri.Contains($"/team/{teamId.ToString()}")),
                 ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(teamResponse);
+            .ReturnsAsync(teamResponse); 
+        
+        var teamSurveysResponse = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(emptyTeamListJson)
+        };
+
+        _httpHandlerMock
+            .Protected()
+            .SetupSequence<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.Is<HttpRequestMessage>(
+                    m => m.Method.Equals(HttpMethod.Get) &&
+                         m.RequestUri.AbsoluteUri.Contains($"/team/{teamId.ToString()}/surveys")),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(teamSurveysResponse);
 
         var teamNameLabel = teamsListComponent.FindAll("label")
             .FirstOrDefault(element => element.InnerHtml.Contains("Team's name"));
@@ -278,8 +291,7 @@ public class TeamsAcceptanceTest
 
         _navMan.NavigateTo($"/team-content/{teamId.ToString()}");
         
-        teamsListComponent.WaitForState(() =>
-            teamsListComponent.FindAll("h3").FirstOrDefault(element => element.InnerHtml.Contains(teamName)) != null);
+        teamsListComponent.WaitForAssertion(() => Assert.NotNull(teamsListComponent.FindAll("h3").FirstOrDefault(element => element.InnerHtml.Contains(teamName))));
 
 
         var teamNameElement = teamsListComponent.FindAll("h3")
@@ -399,6 +411,22 @@ public class TeamsAcceptanceTest
                          m.RequestUri.AbsoluteUri.Contains($"/team/{teamId.ToString()}")),
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(singleTeamResponse);
+        
+        var teamSurveysResponse = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent("[]")
+        };
+
+        _httpHandlerMock
+            .Protected()
+            .SetupSequence<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.Is<HttpRequestMessage>(
+                    m => m.Method.Equals(HttpMethod.Get) &&
+                         m.RequestUri.AbsoluteUri.Contains($"/team/{teamId.ToString()}/surveys")),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(teamSurveysResponse);
 
         var appComponent = _testCtx.RenderComponent<App>();
 

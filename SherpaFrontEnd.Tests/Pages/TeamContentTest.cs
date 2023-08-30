@@ -1,4 +1,5 @@
-﻿using Bunit;
+﻿using AngleSharp.Dom;
+using Bunit;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Shared.Test.Helpers;
@@ -43,16 +44,21 @@ public class TeamContentTest
         };
 
         _mockTeamService.Setup(m => m.GetTeamById(It.IsAny<Guid>())).ReturnsAsync(team);
+        _mockSurveyService.Setup(m => m.GetAllSurveysByTeam(It.IsAny<Guid>())).ReturnsAsync(new List<Survey>());
+
 
         var teamDetailsPage = _testContext.RenderComponent<TeamContent>();
-        var teamNameElement = teamDetailsPage.FindAll("h3")
-            .FirstOrDefault(element => element.InnerHtml.Contains(teamName));
+        teamDetailsPage.WaitForAssertion(() =>
+        {
+            Assert.NotNull(teamDetailsPage.FindAll("h3")
+                .FirstOrDefault(element => element.InnerHtml.Contains(teamName)));
+        });
         var analysisTab = teamDetailsPage.FindAll("li")
             .FirstOrDefault(element => element.InnerHtml.Contains("Analysis"));
         var sendNewSurveyTeam = teamDetailsPage.FindAll("button")
             .FirstOrDefault(element => element.InnerHtml.Contains("Send a new survey"));
 
-        Assert.NotNull(teamNameElement);
+
         Assert.NotNull(analysisTab);
         Assert.NotNull(sendNewSurveyTeam);
     }
@@ -68,12 +74,12 @@ public class TeamContentTest
         };
 
         _mockTeamService.Setup(m => m.GetTeamById(It.IsAny<Guid>())).ReturnsAsync(team);
+        _mockSurveyService.Setup(m => m.GetAllSurveysByTeam(It.IsAny<Guid>())).ReturnsAsync(new List<Survey>());
         var teamContentComponent = _testContext.RenderComponent<TeamContent>();
 
-        var surveyTabPage = teamContentComponent.FindAll("a:not(a[href])")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Surveys"));
-
-        Assert.NotNull(surveyTabPage);
+        teamContentComponent.WaitForAssertion(() =>
+            Assert.NotNull(teamContentComponent.FindAll("a:not(a[href])")
+                .FirstOrDefault(element => element.InnerHtml.Contains("Surveys"))));
     }
 
     [Fact]

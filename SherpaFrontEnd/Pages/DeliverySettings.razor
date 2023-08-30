@@ -21,7 +21,7 @@
                 <div class="flex w-2/3 flex-col">
                     <label for="survey-team-id" class="text-text-label text-primary-dark-principal">Team</label>
                     <div class="max-w-xs flex flex-col relative mb-1">
-                        <InputSelect id="survey-team-id" @bind-Value="CreateSurveyDto.TeamId" class="z-2 text-primary-dark-principal w-full rounded-lg border border-gray-300 shadow-sm py-2.5 px-3.5 appearance-none relative">
+                        <InputSelect id="survey-team-id" @bind-Value="CreateSurveyDto.TeamId" class="text-primary-dark-principal w-full rounded-lg border border-gray-300 shadow-sm py-2.5 px-3.5">
                             <option disabled selected="selected">Select a team</option>
                             @if (Teams != null)
                             {
@@ -33,7 +33,6 @@
                                 }
                             }
                         </InputSelect>
-                        <i class="las la-angle-down text-black absolute top-3.5 right-4"></i>
                     </div>
                     <ValidationMessage For="@(() => CreateSurveyDto.TeamId)"/>
                 </div>
