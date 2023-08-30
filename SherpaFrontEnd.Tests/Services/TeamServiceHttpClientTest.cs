@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using Moq;
 using Moq.Protected;
 using Shared.Test.Helpers;
+using SherpaFrontEnd.Dtos.Team;
 using SherpaFrontEnd.Model;
 using SherpaFrontEnd.Services;
 
@@ -103,5 +104,32 @@ public class TeamServiceHttpClientTest
         var serviceResponse = await teamService.GetTeamById(teamId);
 
         CustomAssertions.StringifyEquals(newTeam, serviceResponse);
+    }
+
+    [Fact]
+    public async Task ShouldDoAPatchHttpCallWhenCallingAddTeamMember()
+    {
+        var response = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.Created,
+        };
+
+        _httpHandlerMock
+            .Protected()
+            .Setup<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.Is<HttpRequestMessage>(
+                    m => m.Method.Equals(HttpMethod.Patch)),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(response);
+
+        var teamService = new TeamServiceHttpClient(_factoryHttpClient.Object);
+        var teamMember = new TeamMember(Guid.NewGuid(), "Sir Alex", "Lazy ass mf", "mymail@dotcom.com");
+
+        await teamService.AddTeamMember(new AddTeamMemberDto(Guid.NewGuid(), teamMember));
+
+        _httpHandlerMock.Protected().Verify("SendAsync", Times.Once(), ItExpr.Is<HttpRequestMessage>(
+                m => m.Method.Equals(HttpMethod.Patch)),
+            ItExpr.IsAny<CancellationToken>());
     }
 }

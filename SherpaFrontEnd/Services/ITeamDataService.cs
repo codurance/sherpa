@@ -1,4 +1,5 @@
 using System.Net;
+using SherpaFrontEnd.Dtos.Team;
 using SherpaFrontEnd.Model;
 
 namespace SherpaFrontEnd.Services;
@@ -10,4 +11,5 @@ public interface ITeamDataService
     Task<HttpStatusCode> DeleteTeam(Guid guid);
     Task PutTeam(Team team);
     Task AddTeam(Team team);
+    Task AddTeamMember(AddTeamMemberDto addTeamMemberDto);
 }

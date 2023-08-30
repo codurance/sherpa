@@ -9,6 +9,7 @@ using SherpaFrontEnd.Model;
 using SherpaFrontEnd.Services;
 using Newtonsoft.Json;
 using SherpaFrontEnd.Dtos.Survey;
+using SherpaFrontEnd.Dtos.Team;
 
 namespace BlazorApp.Tests.Services;
 

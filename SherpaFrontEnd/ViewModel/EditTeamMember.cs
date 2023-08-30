@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using SherpaFrontEnd.Dtos.Team;
 using SherpaFrontEnd.Model;
 
 namespace SherpaFrontEnd.ViewModel;
@@ -27,8 +28,8 @@ public class EditTeamMember
 
     public EditTeamMember(TeamMember? teamMember, List<string>? membersEmails)
     {
-        Name = teamMember?.Name;
-        LastName = teamMember?.LastName;
+        Name = teamMember?.FullName;
+        LastName = teamMember?.FullName;
         Position = teamMember?.Position;
         Email = teamMember?.Email;
         ForbiddenEmails = membersEmails;

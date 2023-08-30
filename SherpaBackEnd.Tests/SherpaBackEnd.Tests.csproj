@@ -28,7 +28,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Helpers\" />
+      <Folder Include="Helpers\Interfaces\" />
     </ItemGroup>
 
 

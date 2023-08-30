@@ -1,4 +1,5 @@
 using SherpaBackEnd.Dtos;
+using SherpaBackEnd.Exceptions;
 
 namespace SherpaBackEnd.Model;
 
@@ -10,12 +11,12 @@ public class InMemoryTeamRepository : ITeamRepository
     public InMemoryTeamRepository()
     {
         _dataSet = new Dictionary<Guid, Team>();
-        
+
         var anotherTeamWithMembers = new Team("Team B")
         {
             Members = new List<TeamMember>
             {
-                new (Guid.NewGuid(), "Ross", "Painter", "bob@gmail.com"),
+                new(Guid.NewGuid(), "Ross", "Painter", "bob@gmail.com"),
             }
         };
 
@@ -24,9 +25,9 @@ public class InMemoryTeamRepository : ITeamRepository
         {
             Members = new List<TeamMember>
             {
-                new (Guid.NewGuid(), "Anne", "QA", "mary@gmail.com"),
-                new (Guid.NewGuid(), "Smith", "CEO", "bobby@gmail.com"),
-                new (Guid.NewGuid(), "Hardy", "CP", "bobber@gmail.com")
+                new(Guid.NewGuid(), "Anne", "QA", "mary@gmail.com"),
+                new(Guid.NewGuid(), "Smith", "CEO", "bobby@gmail.com"),
+                new(Guid.NewGuid(), "Hardy", "CP", "bobber@gmail.com")
             }
         };
 
@@ -37,28 +38,6 @@ public class InMemoryTeamRepository : ITeamRepository
     public InMemoryTeamRepository(List<Team> teams)
     {
         _teams = teams;
-    }
-    
-    public async Task<IEnumerable<Team>> DeprecatedGetAllTeams()
-    {
-        return await Task.FromResult(_dataSet.Values.ToList());
-    }
-
-    public async Task<Team?> DeprecatedGetTeamByIdAsync(Guid guid)
-    {
-        return await Task.FromResult(_dataSet.GetValueOrDefault(guid));
-    }
-
-    public async Task<Team> DeprecatedAddTeamAsync(Team team)
-    {
-        _dataSet.Add(team.Id, team);
-        return await Task.FromResult(team);
-    }
-
-    public async Task<Team> UpdateTeamByIdAsync(Team team)
-    {
-        _dataSet[team.Id] = team;
-        return await Task.FromResult(team);
     }
 
     public async Task AddTeamAsync(Team newTeam)
@@ -71,8 +50,20 @@ public class InMemoryTeamRepository : ITeamRepository
         return await Task.FromResult(_teams);
     }
 
+    public async Task AddTeamMemberToTeamAsync(Guid teamId, TeamMember teamMember)
+    {
+        var team = await GetTeamByIdAsync(teamId);
+        team.Members.Add(teamMember);
+    }
+
     public async Task<Team?> GetTeamByIdAsync(Guid teamId)
     {
         return _teams.Find(team => team.Id == teamId);
+    }
+
+    public async Task<IEnumerable<TeamMember>?> GetAllTeamMembersAsync(Guid teamId)
+    {
+        var team = await GetTeamByIdAsync(teamId);
+        return team.Members;
     }
 }

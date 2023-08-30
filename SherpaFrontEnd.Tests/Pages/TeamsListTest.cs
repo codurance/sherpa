@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 using Moq;
 using Newtonsoft.Json;
+using SherpaFrontEnd.Dtos.Team;
 using SherpaFrontEnd.Model;
 using SherpaFrontEnd.Pages;
 using SherpaFrontEnd.Services;

@@ -35,11 +35,6 @@ public class SurveyService : ISurveyService
         
         await _surveyRepository.CreateSurvey(survey);
     }
-
-    public Task<IEnumerable<Survey>> GetAllSurveys()
-    {
-        throw new NotImplementedException();
-    }
     
     public async Task<IEnumerable<Survey>> GetAllSurveysFromTeam(Guid teamId)
     {

@@ -1,0 +1,129 @@
+@using SherpaFrontEnd.Dtos.Team
+@using SherpaFrontEnd.Services
+@inject IGuidService GuidService
+@inject NavigationManager NavigationManager
+@if (Show)
+{
+    <div class="fixed top-0 left-0 z-50 w-screen h-screen bg-[#1D233C]/80 flex justify-center items-center">
+        <div class="relative w-full max-w-md max-h-full">
+            <div class="relative bg-white rounded-lg shadow">
+                <button type="button" class="absolute top-3 right-2.5 text-primary-300 bg-transparent hover:bg-gray-200 hover:text-primary-dark-principal rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center" @onclick="@HandleClose">
+                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                    </svg>
+                    <span class="sr-only">Close modal</span>
+                </button>
+
+                <EditForm EditContext="EditContext" OnValidSubmit="@SubmitData">
+                    <DataAnnotationsValidator/>
+                    <div class="px-6 py-6 lg:px-8">
+                        <h3 class="mb-4 text-2xl text-pr text-primary-dark-principal text-center font-semibold">Add member</h3>
+                        <p class="text-primary-dark-principal mb-10">Add team member by filling in the required information</p>
+                        <div class="flex gap-6 flex-col">
+                            <div class="m-0">
+                                <label for="full-name" class="block mb-1.5 text-sm font-medium text-primary-dark-800">Full name</label>
+                                <div class="w-full relative">
+                                    <InputText @bind-Value="@TeamMember.FullName" type="text" name="full-name" id="full-name" class="shadow-sm border border-gray-300 text-primary-dark-principal text-sm rounded-lg block w-full p-2.5" placeholder="John Doe"/>
+                                    @if (!IsInvalid(nameof(TeamMember.FullName)))
+                                    {
+                                        <i class="las la-exclamation-circle absolute text-red-500 text-2xl top-[5px] right-3"></i>
+                                    }
+                                </div>
+                                <ValidationMessage For="@(() => TeamMember.FullName)"/>
+                            </div>
+                            <div class="m-0">
+                                <label for="position" class="block mb-1.5 text-sm font-medium text-primary-dark-800">Position</label>
+                                <div class="w-full relative">
+                                    <InputText @bind-Value="@TeamMember.Position" type="text" name="position" id="position" class="shadow-sm border border-gray-300 text-primary-dark-principal text-sm rounded-lg block w-full p-2.5" placeholder="Developer"/>
+                                    @if (!IsInvalid(nameof(TeamMember.Position)))
+                                    {
+                                        <i class="las la-exclamation-circle absolute text-red-500 text-2xl top-[5px] right-3"></i>
+                                    }
+                                </div>
+                                <ValidationMessage For="@(() => TeamMember.Position)"/>
+                            </div>
+                            <div class="m-0">
+                                <label for="email" class="block mb-1.5 text-sm font-medium text-primary-dark-800">Email</label>
+                                <div class="w-full relative">
+                                    <InputText @bind-Value="@TeamMember.Email" name="email" id="email" placeholder="johndoe@gmail.com" class="shadow-sm border border-gray-300 text-primary-dark-principal text-sm rounded-lg block w-full p-2.5"/>
+                                    @if (!IsInvalid(nameof(TeamMember.Email)))
+                                    {
+                                        <i class="las la-exclamation-circle absolute text-red-500 text-2xl top-[5px] right-3"></i>
+                                    }
+                                </div>
+                                <ValidationMessage For="@(() => TeamMember.Email)"/>
+                            </div>
+                            <div class="flex justify-around gap-2 px-12 mt-6 flex-row-reverse">
+                                <button type="submit" class="w-full text-white bg-primary-red-principal-800 hover:bg-primary-red-900 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Add member</button>
+                                <button class="w-full text-primary-red-principal-800 bg-white hover:bg-primary-red-100 font-medium rounded-lg text-sm px-5 py-2.5 text-center border-3" onclick="@HandleClose">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+
+    [Parameter]
+    public bool Show { get; set; } = false;
+
+    [Parameter]
+    public Guid TeamId { get; set; }
+
+    [Parameter]
+    public EventCallback<AddTeamMemberDto> CreateTeamMember { get; set; }
+
+    [Parameter]
+    public EventCallback CloseModal { get; set; }
+
+    public EditContext? EditContext;
+    
+    private TeamMember TeamMember { get; set; } = new TeamMember(new Guid(), "", "", "");
+
+    protected override void OnInitialized()
+    {
+        EditContext = new EditContext(TeamMember);
+    }
+
+
+    private async Task SubmitData()
+    {
+        try{
+            var generateRandomGuidForTeamMember = GuidService.GenerateRandomGuid();
+            TeamMember.Id = generateRandomGuidForTeamMember;
+            await CreateTeamMember.InvokeAsync(new AddTeamMemberDto(TeamId, TeamMember));
+            await HandleClose();
+        }catch{
+            NavigationManager.NavigateTo(NavigationManager.BaseUri + "error");
+        }
+    }
+
+    private async Task HandleClose()
+    {
+        await CloseModal.InvokeAsync();
+        SetDefaultFormValues();
+    }
+
+    private void SetDefaultFormValues()
+    {
+        TeamMember = new TeamMember(new Guid(), "", "", "");
+        EditContext = new EditContext(TeamMember);
+    }
+
+    private bool IsInvalid(string? field)
+    {
+        if (field == null || EditContext == null)
+        {
+            Console.WriteLine("Field is null");
+            return false;
+        }
+
+        var anyValidationMessages = EditContext.GetValidationMessages(new FieldIdentifier(TeamMember, field)).Any();
+        
+        return !anyValidationMessages;
+    }
+
+}

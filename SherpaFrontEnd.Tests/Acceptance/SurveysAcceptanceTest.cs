@@ -8,6 +8,7 @@ using Moq;
 using Moq.Protected;
 using SherpaFrontEnd;
 using SherpaFrontEnd.Dtos.Survey;
+using SherpaFrontEnd.Dtos.Team;
 using SherpaFrontEnd.Model;
 using SherpaFrontEnd.Services;
 
@@ -20,7 +21,6 @@ public class SurveysAcceptanceTest
     private readonly Mock<HttpMessageHandler> _httpHandlerMock;
     private readonly FakeNavigationManager _navMan;
     private readonly TeamServiceHttpClient _teamsService;
-    private readonly Mock<IAssessmentsDataService> _assessmentsService;
     private readonly Mock<IHttpClientFactory> _factoryHttpClient;
     private readonly SurveyService _surveyService;
 
@@ -33,11 +33,9 @@ public class SurveysAcceptanceTest
         
         _factoryHttpClient = new Mock<IHttpClientFactory>();
         _teamsService = new TeamServiceHttpClient(_factoryHttpClient.Object);
-        _assessmentsService = new Mock<IAssessmentsDataService>();
         _surveyService = new SurveyService(_factoryHttpClient.Object);
         _testCtx.Services.AddSingleton<ITeamDataService>(_teamsService);
         _testCtx.Services.AddSingleton<IGuidService>(_guidService.Object);
-        _testCtx.Services.AddSingleton<IAssessmentsDataService>(_assessmentsService.Object);
         _testCtx.Services.AddSingleton<ISurveyService>(_surveyService);
         const string baseUrl = "http://localhost";
         var httpClient = new HttpClient(_httpHandlerMock.Object, false) { BaseAddress = new Uri(baseUrl) };

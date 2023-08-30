@@ -25,13 +25,11 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<ITeamRepository, InMemoryTeamRepository>(
     _ => new InMemoryTeamRepository(new List<Team>()));
 builder.Services.AddSingleton<ITeamService, TeamService>();
+builder.Services.AddSingleton<ITeamMemberService, TeamMemberService>();
 
 builder.Services.AddSingleton<ITemplateRepository, InMemoryFilesTemplateRepository>(_ =>
     new InMemoryFilesTemplateRepository("Templates"));
 builder.Services.AddSingleton<ITemplateService, TemplateService>();
-
-builder.Services.AddSingleton<IAssessmentRepository, InMemoryAssessmentRepository>();
-builder.Services.AddSingleton<IAssessmentService, AssessmentService>();
 
 builder.Services.AddSingleton<ISurveyRepository, InMemorySurveyRepository>();
 builder.Services.AddSingleton<ISurveyService, SurveyService>();

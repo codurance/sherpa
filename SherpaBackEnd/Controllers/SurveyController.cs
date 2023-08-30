@@ -25,7 +25,6 @@ public class SurveyController
         try
         {
             await _surveyService.CreateSurvey(createSurveyDto);
-
             return new CreatedResult("", null);
         }
         catch (Exception error)

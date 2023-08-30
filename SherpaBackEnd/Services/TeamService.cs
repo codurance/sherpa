@@ -12,31 +12,10 @@ public class TeamService : ITeamService
     {
         _teamRepository = teamRepository;
     }
-
-    public async Task<IEnumerable<Team>> DeprecatedGetAllTeamsAsync()
-    {
-        var teams = await _teamRepository.DeprecatedGetAllTeams();
-        return teams.Where(g => !g.IsDeleted).ToList();
-    }
-
-    public async Task<Team> DeprecatedAddTeamAsync(Team team)
-    {
-        return await _teamRepository.DeprecatedAddTeamAsync(team);
-    }
-
-    public async Task<Team?> DeprecatedGetTeamByIdAsync(Guid guid)
-    {
-        return await _teamRepository.DeprecatedGetTeamByIdAsync(guid);
-    }
     
     public async Task<Team?> GetTeamByIdAsync(Guid guid)
     {
         return await _teamRepository.GetTeamByIdAsync(guid);
-    }
-
-    public async Task<Team?> UpdateTeamByIdAsync(Team team)
-    {
-        return await _teamRepository.UpdateTeamByIdAsync(team);
     }
 
     public async Task AddTeamAsync(Team newTeam)

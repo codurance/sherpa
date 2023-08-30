@@ -1,7 +1,5 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
-using System.Text.Json;
-using AngleSharp.Dom;
 using Blazored.Modal;
 using Bunit;
 using Bunit.TestDoubles;
@@ -9,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Moq.Protected;
 using SherpaFrontEnd;
-using SherpaFrontEnd.Model;
+using SherpaFrontEnd.Dtos.Team;
 using SherpaFrontEnd.Pages;
 using SherpaFrontEnd.Services;
 using Xunit.Abstractions;
@@ -25,7 +23,6 @@ public class TeamsAcceptanceTest
     private readonly FakeNavigationManager _navMan;
     private readonly Mock<IGuidService> _guidService;
     private ITestOutputHelper _output;
-    private readonly Mock<IAssessmentsDataService> _assessmentsService;
     private readonly ISurveyService _surveyService;
 
     public TeamsAcceptanceTest(ITestOutputHelper output)
@@ -39,10 +36,8 @@ public class TeamsAcceptanceTest
         _teamsService = new TeamServiceHttpClient(_factoryHttpClient.Object);
         _surveyService = new SurveyService(_factoryHttpClient.Object);
         _guidService = new Mock<IGuidService>();
-        _assessmentsService = new Mock<IAssessmentsDataService>();
         _testCtx.Services.AddSingleton<ITeamDataService>(_teamsService);
         _testCtx.Services.AddSingleton<IGuidService>(_guidService.Object);
-        _testCtx.Services.AddSingleton<IAssessmentsDataService>(_assessmentsService.Object);
         _testCtx.Services.AddSingleton<ISurveyService>(_surveyService);
         const string baseUrl = "http://localhost";
         var httpClient = new HttpClient(_httpHandlerMock.Object, false) { BaseAddress = new Uri(baseUrl) };

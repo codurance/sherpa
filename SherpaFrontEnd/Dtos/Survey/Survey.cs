@@ -1,5 +1,3 @@
-using SherpaFrontEnd.Model;
-
 namespace SherpaFrontEnd.Dtos.Survey;
 
 public class Survey
@@ -11,10 +9,10 @@ public class Survey
     public string Title { get; set; }
     public string? Description { get; set; }
     public Response[] Responses { get; set; }
-    public Team Team { get; set; }
+    public Team.Team Team { get; set; }
     public Template Template { get; set; }
 
-    public Survey(Guid id, User coach, Status status, DateTime? deadline, string title, string? description, Response [] responses, Team team, Template template)
+    public Survey(Guid id, User coach, Status status, DateTime? deadline, string title, string? description, Response [] responses, Team.Team team, Template template)
     {
         Id = id;
         Coach = coach;
