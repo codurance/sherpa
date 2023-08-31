@@ -1,10 +1,9 @@
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using SherpaBackEnd.Dtos;
-using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Model;
 
-namespace SherpaBackEnd.Repositories.Team;
+namespace SherpaBackEnd.Repositories.Mongo;
 
 public class MongoTeamRepository : ITeamRepository
 {
@@ -14,8 +13,7 @@ public class MongoTeamRepository : ITeamRepository
     public MongoTeamRepository(
         IOptions<DatabaseSettings> databaseSettings)
     {
-        var mongoClient = new MongoClient(
-            Environment.GetEnvironmentVariable("CONNECTION_STRING"));
+        var mongoClient = new MongoClient(databaseSettings.Value.ConnectionString);
 
         var mongoDatabase = mongoClient.GetDatabase(
             databaseSettings.Value.DatabaseName);

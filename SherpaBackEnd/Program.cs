@@ -2,7 +2,7 @@ using SherpaBackEnd.Dtos;
 using SherpaBackEnd.Model;
 using SherpaBackEnd.Model.Template;
 using SherpaBackEnd.Repositories;
-using SherpaBackEnd.Repositories.Team;
+using SherpaBackEnd.Repositories.Mongo;
 using SherpaBackEnd.Serializers;
 using SherpaBackEnd.Services;
 using SherpaBackEnd.Services.Email;

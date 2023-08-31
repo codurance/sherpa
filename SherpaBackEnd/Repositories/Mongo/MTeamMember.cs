@@ -1,7 +1,7 @@
 using MongoDB.Bson.Serialization.Attributes;
 using SherpaBackEnd.Dtos;
 
-namespace SherpaBackEnd.Repositories;
+namespace SherpaBackEnd.Repositories.Mongo;
 
 internal class MTeamMember
 {

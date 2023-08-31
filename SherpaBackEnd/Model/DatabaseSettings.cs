@@ -7,4 +7,6 @@ public class DatabaseSettings
     public string TeamsCollectionName { get; set; } = null!;
     
     public string TeamMembersCollectionName { get; set; } = null!;
+    
+    public string? ConnectionString { get; set; } = Environment.GetEnvironmentVariable("CONNECTION_STRING");
 }
