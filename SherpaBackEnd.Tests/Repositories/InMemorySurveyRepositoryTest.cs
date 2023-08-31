@@ -14,7 +14,7 @@ public class InMemorySurveyRepositoryTest
         var inMemorySurveyRepository = new InMemorySurveyRepository();
         var survey = new Survey(Guid.NewGuid(), new User(Guid.NewGuid(), "Lucia"), Status.Draft,
             DateTime.Parse("2023-08-09T07:38:04+0000"), "Title", "description", Array.Empty<Response>(),
-            new Team(Guid.NewGuid(), "team name"), new Template("Template name", Array.Empty<IQuestion>(), 1));
+            new Dtos.Team(Guid.NewGuid(), "team name"), new Template("Template name", Array.Empty<IQuestion>(), 1));
         await inMemorySurveyRepository.CreateSurvey(survey);
 
         var retrievedSurvey = await inMemorySurveyRepository.GetSurveyById(survey.Id);
@@ -27,11 +27,11 @@ public class InMemorySurveyRepositoryTest
     {
         var teamOneId = Guid.NewGuid();
         const string teamOneName = "Team One";
-        var teamOne = new Team(teamOneId, teamOneName);
+        var teamOne = new Dtos.Team(teamOneId, teamOneName);
         
         var teamTwoId = Guid.NewGuid();
         const string teamTwoName = "Team Two";
-        var teamTwo = new Team(teamTwoId, teamTwoName);
+        var teamTwo = new Dtos.Team(teamTwoId, teamTwoName);
 
         var userOne = new User(Guid.NewGuid(), "User One");
         var hackManTemplate = new Template("HackMan Template", new IQuestion[] { }, 3600);
@@ -55,11 +55,11 @@ public class InMemorySurveyRepositoryTest
     {
         var teamOneId = Guid.NewGuid();
         const string teamOneName = "Team One";
-        var teamOne = new Team(teamOneId, teamOneName);
+        var teamOne = new Dtos.Team(teamOneId, teamOneName);
         
         var teamTwoId = Guid.NewGuid();
         const string teamTwoName = "Team Two";
-        var teamTwo = new Team(teamTwoId, teamTwoName);
+        var teamTwo = new Dtos.Team(teamTwoId, teamTwoName);
 
         var userOne = new User(Guid.NewGuid(), "User One");
         var hackManTemplate = new Template("HackMan Template", new IQuestion[] { }, 3600);
