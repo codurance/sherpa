@@ -1,0 +1,2641 @@
+[
+  {
+    "name": "Hackman Model",
+    "minutesToComplete": 30,
+    "questions": [
+      {
+        "statement": {
+          "SPANISH": "La pertenencia al equipo es muy clara. Todo el mundo sabe exactamente quién está y quién no en este equipo",
+          "ENGLISH": "Team membership is quite clear--everybody knows exactly who is and isn’t on this team."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Real Team",
+        "subcategory": "Delimited",
+        "subcomponent": null,
+        "position": 1
+      },
+      {
+        "statement": {
+          "SPANISH": "Hay tanta ambigüedad sobre quién está en este equipo que sería casi imposible generar una lista de personas que forman parte de él.",
+          "ENGLISH": "There is so much ambiguity about who is on this team that it would be nearly impossible to generate an accurate membership list."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": true,
+        "component": "Real Team",
+        "subcategory": "Delimited",
+        "subcomponent": null,
+        "position": 5
+      },
+      {
+        "statement": {
+          "SPANISH": "Cualquier persona que conozca este equipo podría nombrar a todos sus miembros de forma precisa.",
+          "ENGLISH": "Anyone who knows this team could accurately name all its members"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Real Team",
+        "subcategory": "Delimited",
+        "subcomponent": null,
+        "position": 9
+      },
+      {
+        "statement": {
+          "SPANISH": "Los miembros de este equipo hacen sus tareas de forma individual, con poca necesidad de trabajar juntos.",
+          "ENGLISH": "Members of this team have their own individual jobs to do, with little need for them to work together."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": true,
+        "component": "Real Team",
+        "subcategory": "Interdependent",
+        "subcomponent": null,
+        "position": 13
+      },
+      {
+        "statement": {
+          "SPANISH": "Este equipo requiere de una gran dosis de comunicación y coordinación entre sus miembros para sacar adelante el trabajo.",
+          "ENGLISH": "Generating the outcome or product of this team requires a great deal of communication and coordination among members"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Real Team",
+        "subcategory": "Interdependent",
+        "subcomponent": null,
+        "position": 17
+      },
+      {
+        "statement": {
+          "SPANISH": "Los miembros de este equipo dependen mucho entre sí para sacar adelante el trabajo",
+          "ENGLISH": "Members of this team have to depend heavily on one another to get the team’s work done."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Real Team",
+        "subcategory": "Interdependent",
+        "subcomponent": null,
+        "position": 20
+      },
+      {
+        "statement": {
+          "SPANISH": "Constantemente están entrando y saliendo personas de este equipo",
+          "ENGLISH": "Different people are constantly joining and leaving this team."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": true,
+        "component": "Real Team",
+        "subcategory": "Stable",
+        "subcomponent": null,
+        "position": 23
+      },
+      {
+        "statement": {
+          "SPANISH": "Este equipo es bastante estable, con pocos cambios en sus miembros",
+          "ENGLISH": "This team is quite stable, with few changes in membership"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Real Team",
+        "subcategory": "Stable",
+        "subcomponent": null,
+        "position": 26
+      },
+      {
+        "statement": {
+          "SPANISH": "Hay una gran incertidumbre y ambigüedad sobre qué es lo que se supone que este equipo debe conseguir.",
+          "ENGLISH": "There is great uncertainty and ambiguity about what this team is supposed to accomplish"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": true,
+        "component": "Compelling Direction",
+        "subcategory": "Clear",
+        "subcomponent": null,
+        "position": 29
+      },
+      {
+        "statement": {
+          "SPANISH": "Los propósitos de este equipo están tan claramente especificados que todos los miembros deberían saber exactamente cual es el motivo de su existencia.",
+          "ENGLISH": "This team’s purposes are specified so clearly that all members should know exactly what the team exists to accomplish"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Compelling Direction",
+        "subcategory": "Clear",
+        "subcomponent": null,
+        "position": 32
+      },
+      {
+        "statement": {
+          "SPANISH": "Los propósitos de este equipo resultan ser un desafío tan intenso que los miembros deben mejorar para conseguirlo.",
+          "ENGLISH": "This team’s purposes are so challenging that members have to stretch to accomplish them"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Compelling Direction",
+        "subcategory": "Challenging",
+        "subcomponent": null,
+        "position": 35
+      },
+      {
+        "statement": {
+          "SPANISH": "Los propósitos de este equipo no son especialmente desafiantes -- conseguirlos está fácilmente al alcance",
+          "ENGLISH": "This team’s purposes are not especially challenging--achieving them is well within reach"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": true,
+        "component": "Compelling Direction",
+        "subcategory": "Challenging",
+        "subcomponent": null,
+        "position": 38
+      },
+      {
+        "statement": {
+          "SPANISH": "El propósito de este equipo no le importa a nadie",
+          "ENGLISH": "The purposes of this team doesn’t make much of a difference to anybody else"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": true,
+        "component": "Compelling Direction",
+        "subcategory": "Consecuential",
+        "subcomponent": null,
+        "position": 41
+      },
+      {
+        "statement": {
+          "SPANISH": "El propósito de este equipo tiene consecuencias importantes para aquellos a quién servimos.",
+          "ENGLISH": "This team’s purposes are of great consequence for those we serve"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Compelling Direction",
+        "subcategory": "Consecuential",
+        "subcomponent": null,
+        "position": 44
+      },
+      {
+        "statement": {
+          "SPANISH": "En este equipo:",
+          "ENGLISH": "In this team:"
+        },
+        "responses": {
+          "SPANISH": [
+            "El propósito de nuestro equipo es especificado por otros pero los medios y los procesos que usamos para cumplirlos están en nuestras manos.",
+            "Los medios y los procesos que se supone que debemos usar en nuestro trabajo están especificados detalladamente por otros pero el propósito de nuestro equipo está en nuestras manos.",
+            "Tanto el propósito del equipo como los medios y los procesos que se supone que debemos usar en nuestro trabajo están especificados detalladamente por otros. ",
+            "Ni los propósitos ni los medios de nuestro equipo son especificados por otras personas."
+          ],
+          "ENGLISH": [
+            "The purposes of our team are specified by others, but the means and procedures we use to accomplish them are left to us.",
+            "The means or procedures we are supposed to use in our work are specified in detail by others, but the purposes of our team are left unstated. ",
+            "Both the purposes of our team and the means or procedures we are supposed to use in our work are specified in detail by others.",
+            "Neither the purposes nor the means are specified by others for our team."
+          ]
+        },
+        "reverse": false,
+        "component": "Compelling Direction",
+        "subcategory": "Ends Vs Means",
+        "subcomponent": null,
+        "position": 76
+      },
+      {
+        "statement": {
+          "SPANISH": "Este equipo es más grande de lo que necesita",
+          "ENGLISH": "This team is larger than it needs to be"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": true,
+        "component": "Enabling Structure",
+        "subcategory": "Team Composition",
+        "subcomponent": "Size",
+        "position": 2
+      },
+      {
+        "statement": {
+          "SPANISH": "Este equipo tiene pocos miembros para lo que tiene que conseguir",
+          "ENGLISH": "This team has too few members for what it has to accomplish"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": true,
+        "component": "Enabling Structure",
+        "subcategory": "Team Composition",
+        "subcomponent": "Size",
+        "position": 6
+      },
+      {
+        "statement": {
+          "SPANISH": "Este equipo tiene el tamaño adecuado para conseguir sus propósitos",
+          "ENGLISH": "This team is just the right size to accomplish its purposes"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Enabling Structure",
+        "subcategory": "Team Composition",
+        "subcomponent": "Size",
+        "position": 10
+      },
+      {
+        "statement": {
+          "SPANISH": "Los miembros de este equipo son demasiado diferentes como para trabajar bien juntos",
+          "ENGLISH": "Members of this team are too dissimilar to work together well"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": true,
+        "component": "Enabling Structure",
+        "subcategory": "Team Composition",
+        "subcomponent": "Diversity",
+        "position": 14
+      },
+      {
+        "statement": {
+          "SPANISH": "Este equipo no cuenta con un rango de experiencias y perspectivas suficientemente variadas como para conseguir su propósito",
+          "ENGLISH": "This team does not have a broad enough range of experiences and perspectives to accomplish its purposes"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": true,
+        "component": "Enabling Structure",
+        "subcategory": "Team Composition",
+        "subcomponent": "Diversity",
+        "position": 18
+      },
+      {
+        "statement": {
+          "SPANISH": "Este equipo tiene la mezcla ideal de miembros: un conjunto diverso de personas que aportan distintas perspectivas y experiencias al trabajo",
+          "ENGLISH": "This team has a nearly ideal “mix” of members--a diverse set of people who bring different perspectives and experiences to the work"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Enabling Structure",
+        "subcategory": "Team Composition",
+        "subcomponent": "Diversity",
+        "position": 21
+      },
+      {
+        "statement": {
+          "SPANISH": "Los miembros de este equipo tienen talento y experiencia más que suficientes para el tipo de trabajo que realizamos",
+          "ENGLISH": "Members of this work team have more than enough talent and experience for the kind of work that we do"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Enabling Structure",
+        "subcategory": "Team Composition",
+        "subcomponent": "Skills",
+        "position": 24
+      },
+      {
+        "statement": {
+          "SPANISH": "Todos en este equipo tienen las habilidades especiales que son necesarias para el trabajo del equipo",
+          "ENGLISH": "Everyone in this team has the special skills that are needed for team’s work"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Enabling Structure",
+        "subcategory": "Team Composition",
+        "subcomponent": "Skills",
+        "position": 27
+      },
+      {
+        "statement": {
+          "SPANISH": "A algunos miembros de este equipo les falta el conocimiento y las habilidades necesarias para hacer su parte del trabajo del equipo",
+          "ENGLISH": "Some members of this team lack the knowledge and skills that they need to do their parts of the team’s work"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": true,
+        "component": "Enabling Structure",
+        "subcategory": "Team Composition",
+        "subcomponent": "Skills",
+        "position": 30
+      },
+      {
+        "statement": {
+          "SPANISH": "Realizamos una pieza de trabajo completa e identificable",
+          "ENGLISH": "We do a whole, identifiable piece of work"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Enabling Structure",
+        "subcategory": "Team Task Design",
+        "subcomponent": "Whole Task",
+        "position": 33
+      },
+      {
+        "statement": {
+          "SPANISH": "Nuestro equipo hace una parte tan pequeña de toda la tarea que es difícil identificar específicamente nuestra contribución",
+          "ENGLISH": "Our team does such a small part of the overall task that it is hard to point specifically to our special contribution"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": true,
+        "component": "Enabling Structure",
+        "subcategory": "Team Task Design",
+        "subcomponent": "Whole Task",
+        "position": 36
+      },
+      {
+        "statement": {
+          "SPANISH": "El trabajo de este equipo es inherentemente significativo",
+          "ENGLISH": "This team’s work is inherently meaningful"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Enabling Structure",
+        "subcategory": "Team Task Design",
+        "subcomponent": "Whole Task",
+        "position": 39
+      },
+      {
+        "statement": {
+          "SPANISH": "El trabajo de este equipo deja poco espacio para el juicio o la iniciativa propia",
+          "ENGLISH": "The work of this team leaves little room for the exercise of judgment or initiative"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": true,
+        "component": "Enabling Structure",
+        "subcategory": "Team Task Design",
+        "subcomponent": "Autonomy",
+        "position": 42
+      },
+      {
+        "statement": {
+          "SPANISH": "El trabajo que hacemos requiere que el equipo tome muchas decisiones de juicio mientras lo estamos realizando",
+          "ENGLISH": "The work we do requires the team to make many “judgment calls” as we carry it out."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Enabling Structure",
+        "subcategory": "Team Task Design",
+        "subcomponent": "Autonomy",
+        "position": 45
+      },
+      {
+        "statement": {
+          "SPANISH": "Realizar el trabajo de nuestro equipo automáticamente genera indicadores de confianza sobre que tan bien lo estamos haciendo",
+          "ENGLISH": "Carrying out our team’s task automatically generates trustworthy indicators of how well we are doing"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Enabling Structure",
+        "subcategory": "Team Task Design",
+        "subcomponent": "Knowledge of Results",
+        "position": 47
+      },
+      {
+        "statement": {
+          "SPANISH": "El trabajo en sí mismo no aporta prácticamente ningún feedback confiable sobre el desempeño del equipo",
+          "ENGLISH": "The work itself provides almost no trustworthy feedback about our team’s performance"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": true,
+        "component": "Enabling Structure",
+        "subcategory": "Team Task Design",
+        "subcomponent": "Knowledge of Results",
+        "position": 49
+      },
+      {
+        "statement": {
+          "SPANISH": "La única forma por la cual conocemos nuestro desempeño es que otras personas dentro de la organización nos lo digan",
+          "ENGLISH": "The only way we can figure out how well we are performing is for other people in the organization to tell us"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": true,
+        "component": "Enabling Structure",
+        "subcategory": "Team Task Design",
+        "subcomponent": "Knowledge of Results",
+        "position": 51
+      },
+      {
+        "statement": {
+          "SPANISH": "Las normas de comportamiento en este equipo son vagas y poco claras",
+          "ENGLISH": "Standards for member behavior in this team are vague and unclear"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": true,
+        "component": "Enabling Structure",
+        "subcategory": "Team Task Design",
+        "subcomponent": "Group Norms",
+        "position": 53
+      },
+      {
+        "statement": {
+          "SPANISH": "Está claro cual es y cual no es un comportamiento aceptable en este equipo",
+          "ENGLISH": "It is clear what is--and what is not--acceptable member behavior in this team"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Enabling Structure",
+        "subcategory": "Team Task Design",
+        "subcomponent": "Group Norms",
+        "position": 55
+      },
+      {
+        "statement": {
+          "SPANISH": "Los miembros de este equipo están de acuerdo sobre cómo se espera que sea su comportamiento",
+          "ENGLISH": "Members of this team agree about how members are expected to behave"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Enabling Structure",
+        "subcategory": "Team Task Design",
+        "subcomponent": "Group Norms",
+        "position": 57
+      },
+      {
+        "statement": {
+          "SPANISH": "Un desempeño excelente del equipo es reconocido dentro de la organización",
+          "ENGLISH": "Excellent team performance pays off in this organization"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Supportive Organizational Context",
+        "subcategory": "Rewards/Recognition",
+        "subcomponent": null,
+        "position": 59
+      },
+      {
+        "statement": {
+          "SPANISH": "Hasta los equipos que hacen un trabajo sobresaliente no son reconocidos o recompensados dentro de la organización",
+          "ENGLISH": "Even teams that do an especially good job are not recognized or rewarded by the organization"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": true,
+        "component": "Supportive Organizational Context",
+        "subcategory": "Rewards/Recognition",
+        "subcomponent": null,
+        "position": 61
+      },
+      {
+        "statement": {
+          "SPANISH": "Esta organización reconoce y refuerza los equipos de buen desempeño",
+          "ENGLISH": "This organization recognizes and reinforces teams that perform well"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Supportive Organizational Context",
+        "subcategory": "Rewards/Recognition",
+        "subcomponent": null,
+        "position": 63
+      },
+      {
+        "statement": {
+          "SPANISH": "Es fácil para los equipos en esta organización conseguir cualquier información necesaria para que sus miembros puedan desarrollar su trabajo",
+          "ENGLISH": "It is easy for teams in this organization to get any data or forecasts that members need to do their work"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Supportive Organizational Context",
+        "subcategory": "Information",
+        "subcomponent": null,
+        "position": 65
+      },
+      {
+        "statement": {
+          "SPANISH": "Esta organización oculta información relevante a sus equipos, que podría afectar sus planes de trabajo",
+          "ENGLISH": "This organization keeps its teams in the dark about information that could affect their work plans"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": true,
+        "component": "Supportive Organizational Context",
+        "subcategory": "Information",
+        "subcomponent": null,
+        "position": 67
+      },
+      {
+        "statement": {
+          "SPANISH": "Los equipos dentro de la organización pueden conseguir cualquier información necesaria para poder planear su trabajo",
+          "ENGLISH": "Teams in this organization can get whatever information they need to plan their work"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Supportive Organizational Context",
+        "subcategory": "Information",
+        "subcomponent": null,
+        "position": 69
+      },
+      {
+        "statement": {
+          "SPANISH": "Los equipos dentro de la organización tienen que adaptarse a la experiencia que sus miembros poseen - El soporte y entrenamiento técnico no están disponibles cuando es necesario",
+          "ENGLISH": "Teams in this organization have to make do with whatever expertise members already have-- technical training and support are not available even when needed"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": true,
+        "component": "Supportive Organizational Context",
+        "subcategory": "Education/Consultation",
+        "subcomponent": null,
+        "position": 71
+      },
+      {
+        "statement": {
+          "SPANISH": "Cuando surge un requerimiento que los miembros del equipo no saben cómo solucionar, es fácil para ellos obtener el entrenamiento o consejo técnico que necesitan",
+          "ENGLISH": "When something comes up that team members do not know how to handle, it is easy for them to obtain the training or technical advice they need"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Supportive Organizational Context",
+        "subcategory": "Education/Consultation",
+        "subcomponent": null,
+        "position": 73
+      },
+      {
+        "statement": {
+          "SPANISH": "En esta organización, los equipos no reciben el entrenamiento adecuado para el trabajo que tienen que desempeñar",
+          "ENGLISH": "In this organization, teams do not receive adequate training for the work they have to do"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": true,
+        "component": "Supportive Organizational Context",
+        "subcategory": "Education/Consultation",
+        "subcomponent": null,
+        "position": 75
+      },
+      {
+        "statement": {
+          "SPANISH": "Los equipos en esta organización consiguen todos los recursos que necesitan para poder desarrollar su trabajo",
+          "ENGLISH": "Teams in this organization can readily obtain all the material resources that they need for their work"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Supportive Organizational Context",
+        "subcategory": "Material/Resources",
+        "subcomponent": null,
+        "position": 72
+      },
+      {
+        "statement": {
+          "SPANISH": "La escasez de recursos es un problema real para los equipos en esta organización",
+          "ENGLISH": "Scarcity of resources is a real problem for teams in this organization"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": true,
+        "component": "Supportive Organizational Context",
+        "subcategory": "Material/Resources",
+        "subcomponent": null,
+        "position": 74
+      },
+      {
+        "statement": {
+          "SPANISH": "Rankea la frecuencia relativa en la que el líder del equipo se ocupa de esta actividad: Coaching individual con miembros del equipo.",
+          "ENGLISH": "Rank the relative frequency with which their team leader engages in this activity: Coaching individual team members."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Expert Coaching",
+        "subcategory": "Focus of Leader’s Attention",
+        "subcomponent": null,
+        "position": 77
+      },
+      {
+        "statement": {
+          "SPANISH": "Rankea la frecuencia relativa en la que el líder del equipo se ocupa de esta actividad: Ayudando a los miembros del equipo a aprender cómo trabajar bien juntos.",
+          "ENGLISH": "Rank the relative frequency with which their team leader engages in this activity: Helping team members learn how to work well together."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Expert Coaching",
+        "subcategory": "Focus of Leader’s Attention",
+        "subcomponent": null,
+        "position": 78
+      },
+      {
+        "statement": {
+          "SPANISH": "Rankea la frecuencia relativa en la que el líder del equipo se ocupa de esta actividad: Inicializando y preparando el equipo -- Clarificando su propósito, eligiendo sus miembros, estructurando las tareas, explicitando expectativas, y así sucesivamente.",
+          "ENGLISH": "Rank the relative frequency with which their team leader engages in this activity: Getting the team set up right--clarifying its purpose, picking members, structuring the task, setting expectations, and so on."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Expert Coaching",
+        "subcategory": "Focus of Leader’s Attention",
+        "subcomponent": null,
+        "position": 79
+      },
+      {
+        "statement": {
+          "SPANISH": "Rankea la frecuencia relativa en la que el líder del equipo se ocupa de esta actividad: Encargándose de interferencias externas para el equipo -- obteniendo recursos, asegurando asistencia externa, quitando bloqueos, y así sucesivamente",
+          "ENGLISH": "Rank the relative frequency with which their team leader engages in this activity: Running external interference for the team--getting resources, securing outside assistance, removing roadblocks, and so on."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Expert Coaching",
+        "subcategory": "Focus of Leader’s Attention",
+        "subcomponent": null,
+        "position": 80
+      },
+      {
+        "statement": {
+          "SPANISH": "Cuando miembros de equipos en la organización tienen problemas trabajando juntos no hay nadie disponible para ayudarles.",
+          "ENGLISH": "When members of teams in this organization have trouble working together, there is no one available to help them out. (R)"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": true,
+        "component": "Expert Coaching",
+        "subcategory": "Coaching Availability",
+        "subcomponent": null,
+        "position": 3
+      },
+      {
+        "statement": {
+          "SPANISH": "Los equipos en esta organización tiene acceso a coaches que les pueden ayudar a aprender sobre sus logros y errores.",
+          "ENGLISH": "Teams in this organization have access to “coaches” who can help them learn from their successes and mistakes. (R)"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": true,
+        "component": "Expert Coaching",
+        "subcategory": "Coaching Availability",
+        "subcomponent": null,
+        "position": 7
+      },
+      {
+        "statement": {
+          "SPANISH": "Hay coaches fácilmente disponibles para los equipos de la organización.",
+          "ENGLISH": "Expert coaches are readily available to teams in this organization."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Expert Coaching",
+        "subcategory": "Coaching Availability",
+        "subcomponent": null,
+        "position": 11
+      },
+      {
+        "statement": {
+          "SPANISH": "¿En general, de cuánta ayuda és el líder del equipo a la hora de construir las capacidades del equipo?",
+          "ENGLISH": "Overall, how helpful is your team leader in building your team’s capabilities?"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Expert Coaching",
+        "subcategory": "Helpfulness of team leader coaching",
+        "subcomponent": "Overall",
+        "position": 15
+      },
+      {
+        "statement": {
+          "SPANISH": "El líder del equipo ayuda al equipo a construir un alto compromiso colectivo con sus propósitos.",
+          "ENGLISH": "The team leader helps the team build a high shared commitment to its purposes."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        "reverse": false,
+        "component": "Expert Coaching",
+        "subcategory": "Helpfulness of team leader coaching",
+        "subcomponent": "Task-Focused Coaching",
+        "position": 81
+      },
+      {
+        "statement": {
+          "SPANISH": "El líder del equipo ayuda al equipo a mantener la motivación de todos sus miembros.",
+          "ENGLISH": "The team leader helps the team sustain the motivation of all members."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        "reverse": false,
+        "component": "Expert Coaching",
+        "subcategory": "Helpfulness of team leader coaching",
+        "subcomponent": "Task-Focused Coaching",
+        "position": 82
+      },
+      {
+        "statement": {
+          "SPANISH": "El líder del equipo trabaja con el equipo para desarrollar el mejor enfoque posible en su trabajo.",
+          "ENGLISH": "The team leader works with the team to develop the best-possible approach to its work."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        "reverse": false,
+        "component": "Expert Coaching",
+        "subcategory": "Helpfulness of team leader coaching",
+        "subcomponent": "Task-Focused Coaching",
+        "position": 83
+      },
+      {
+        "statement": {
+          "SPANISH": "El líder del equipo mantiene al equipo alerta respecto a cualquier cosa que pueda requerir un cambio en la estrategia de trabajo.",
+          "ENGLISH": "The team leader keeps the team alert to anything that might require a change of work strategy."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        "reverse": false,
+        "component": "Expert Coaching",
+        "subcategory": "Helpfulness of team leader coaching",
+        "subcomponent": "Task-Focused Coaching",
+        "position": 84
+      },
+      {
+        "statement": {
+          "SPANISH": "El líder del equipo ayuda al equipo a aprender uno del otro y de las experiencias de trabajo conjuntas.",
+          "ENGLISH": "The team leader helps members learn from one another and from the team’s work experiences."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        "reverse": false,
+        "component": "Expert Coaching",
+        "subcategory": "Helpfulness of team leader coaching",
+        "subcomponent": "Task-Focused Coaching",
+        "position": 85
+      },
+      {
+        "statement": {
+          "SPANISH": "El líder del equipo ayuda al equipo a identificar y usar adecuadamente cada uno de los talentos únicos de sus miembros.",
+          "ENGLISH": "The team leader helps the team identify and use well each member’s unique talents."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        "reverse": false,
+        "component": "Expert Coaching",
+        "subcategory": "Helpfulness of team leader coaching",
+        "subcomponent": "Task-Focused Coaching",
+        "position": 86
+      },
+      {
+        "statement": {
+          "SPANISH": "El líder del equipo Da feedback positivo cuando el equipo se comporta o desempeña bien.",
+          "ENGLISH": "The team leader provides positive feedback when the team behaves or performs well."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        "reverse": false,
+        "component": "Expert Coaching",
+        "subcategory": "Helpfulness of team leader coaching",
+        "subcomponent": "Operant Coaching",
+        "position": 87
+      },
+      {
+        "statement": {
+          "SPANISH": "El líder del equipo Da feedback correctivo cuando es necesario.",
+          "ENGLISH": "The team leader provides corrective feedback when needed."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        "reverse": false,
+        "component": "Expert Coaching",
+        "subcategory": "Helpfulness of team leader coaching",
+        "subcomponent": "Operant Coaching",
+        "position": 88
+      },
+      {
+        "statement": {
+          "SPANISH": "El líder del equipo Da críticas o elogios inapropiados o no merecidos.",
+          "ENGLISH": "The team leader gives inappropriate or undeserved praise or criticism."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        "reverse": true,
+        "component": "Expert Coaching",
+        "subcategory": "Helpfulness of team leader coaching",
+        "subcomponent": "Operant Coaching",
+        "position": 89
+      },
+      {
+        "statement": {
+          "SPANISH": "El líder del equipo ayuda a los miembros a resolver cualquier conflicto que pueda surgir entre ellos.",
+          "ENGLISH": "The team leader helps members resolve any conflicts that may develop among them."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        "reverse": false,
+        "component": "Expert Coaching",
+        "subcategory": "Helpfulness of team leader coaching",
+        "subcomponent": "Interpersonal Coaching",
+        "position": 90
+      },
+      {
+        "statement": {
+          "SPANISH": "El líder del equipo ayuda a los miembros a trabajar en la mejora de sus relaciones interpersonales.",
+          "ENGLISH": "The team leader helps members work on improving their interpersonal relationships."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        "reverse": false,
+        "component": "Expert Coaching",
+        "subcategory": "Helpfulness of team leader coaching",
+        "subcomponent": "Interpersonal Coaching",
+        "position": 91
+      },
+      {
+        "statement": {
+          "SPANISH": "El líder del equipo hace micromanagement sobre el contenido y proceso de las discusiones del equipo.",
+          "ENGLISH": "The team leader micromanages the content and process of team discussions."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        "reverse": true,
+        "component": "Expert Coaching",
+        "subcategory": "Helpfulness of team leader coaching",
+        "subcomponent": "Unhelpful Directives",
+        "position": 92
+      },
+      {
+        "statement": {
+          "SPANISH": "El líder del equipo le dice al equipo en detalle sobre cómo resolver sus problemas.",
+          "ENGLISH": "The team leader instructs the team in detail about how to solve its problems."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        "reverse": true,
+        "component": "Expert Coaching",
+        "subcategory": "Helpfulness of team leader coaching",
+        "subcomponent": "Unhelpful Directives",
+        "position": 93
+      },
+      {
+        "statement": {
+          "SPANISH": "El líder del equipo le dice al equipo todo lo que está haciendo mal.",
+          "ENGLISH": "The team leader tells the team everything it is doing wrong. "
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        "reverse": true,
+        "component": "Expert Coaching",
+        "subcategory": "Helpfulness of team leader coaching",
+        "subcomponent": "Unhelpful Directives",
+        "position": 94
+      },
+      {
+        "statement": {
+          "SPANISH": "Los miembros regulares del equipo toman la iniciativa para promover una alta motivación y compromiso",
+          "ENGLISH": "Regular team members take initiatives to promote high shared motivation and commitment. "
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        "reverse": false,
+        "component": "Expert Coaching",
+        "subcategory": "Extent and focus of coaching provided by peers.",
+        "subcomponent": "Task-Focused Peer Coaching",
+        "position": 95
+      },
+      {
+        "statement": {
+          "SPANISH": "Los miembros regulares del equipo toman la iniciativa para asegurarse de que el equipo se desarrolle y use el mejor enfoque en su trabajo",
+          "ENGLISH": "Regular team members take initiatives to make sure the team develops and uses the best possible approach to its work. "
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        "reverse": false,
+        "component": "Expert Coaching",
+        "subcategory": "Extent and focus of coaching provided by peers.",
+        "subcomponent": "Task-Focused Peer Coaching",
+        "position": 96
+      },
+      {
+        "statement": {
+          "SPANISH": "Los miembros regulares del equipo toman la iniciativa para ayudar a la construcción y uso del conocimiento y habilidades del equipo",
+          "ENGLISH": "Regular team members take initiatives to help the team build and use well members’ knowledge and skills."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        "reverse": false,
+        "component": "Expert Coaching",
+        "subcategory": "Extent and focus of coaching provided by peers.",
+        "subcomponent": "Task-Focused Peer Coaching",
+        "position": 97
+      },
+      {
+        "statement": {
+          "SPANISH": "Los miembros regulares del equipo toman la iniciativa para resolver constructivamente los problemas o conflictos que puedan surgir entre los miembros del equipo",
+          "ENGLISH": "Regular team members take initiatives to constructively resolve any problems or conflicts that develop among members."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        "reverse": false,
+        "component": "Expert Coaching",
+        "subcategory": "Extent and focus of coaching provided by peers.",
+        "subcomponent": "Interpersonal Peer Coaching",
+        "position": 98
+      },
+      {
+        "statement": {
+          "SPANISH": "Los miembros regulares del equipo le dicen a los otros que hacer y cómo lo deberían hacer",
+          "ENGLISH": "Regular team members tell other members what to do and how they should do it. "
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        },
+        "reverse": true,
+        "component": "Expert Coaching",
+        "subcategory": "Extent and focus of coaching provided by peers.",
+        "subcomponent": "Unhelpful Peer Interventions",
+        "position": 99
+      },
+      {
+        "statement": {
+          "SPANISH": "Los miembros demuestran su compromiso con el equipo al poner tiempo y esfuerzo extra para conseguir que sea exitoso",
+          "ENGLISH": "Members demonstrate their commitment to our team by putting in extra time and effort to help it succeed."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Expert Coaching",
+        "subcategory": "Effort-Related Process Criteria",
+        "subcomponent": null,
+        "position": 4
+      },
+      {
+        "statement": {
+          "SPANISH": "Todos en el equipo están motivados para hacer que sea exitoso",
+          "ENGLISH": "Everyone on this team is motivated to have the team succeed."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Expert Coaching",
+        "subcategory": "Effort-Related Process Criteria",
+        "subcomponent": null,
+        "position": 8
+      },
+      {
+        "statement": {
+          "SPANISH": "Algunos miembros del equipo no asumen una parte justa de la carga de trabajo total.",
+          "ENGLISH": "Some members of our team do not carry their fair share of the overall workload."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": true,
+        "component": "Expert Coaching",
+        "subcategory": "Effort-Related Process Criteria",
+        "subcomponent": null,
+        "position": 12
+      },
+      {
+        "statement": {
+          "SPANISH": "Nuestro equipo con frecuencia idea formas innovadoras de proceder con el trabajo que resultan ser justo lo que era necesario",
+          "ENGLISH": "Our team often comes up with innovative ways of proceeding with the work that turn out to be just what is needed."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Expert Coaching",
+        "subcategory": "Strategy-Related Process Criteria",
+        "subcomponent": null,
+        "position": 16
+      },
+      {
+        "statement": {
+          "SPANISH": "Nuestro equipo con frecuencia cae en rutinas sin sentido, sin darse cuenta de los cambios que pueden haber ocurrido en nuestra situación",
+          "ENGLISH": "Our team often falls into mindless routines, without noticing any changes that may have occurred in our situation. (R)"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": true,
+        "component": "Expert Coaching",
+        "subcategory": "Strategy-Related Process Criteria",
+        "subcomponent": null,
+        "position": 19
+      },
+      {
+        "statement": {
+          "SPANISH": "Nuestro equipo tiene una gran dificultad a la hora de implementar los planes que hacemos para proceder con una tarea",
+          "ENGLISH": "Our team has a great deal of difficulty actually carrying out the plans we make for how we will proceed with the task. (R)"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": true,
+        "component": "Expert Coaching",
+        "subcategory": "Strategy-Related Process Criteria",
+        "subcomponent": null,
+        "position": 22
+      },
+      {
+        "statement": {
+          "SPANISH": "La seriedad con la que son tomadas las ideas de un miembro del equipo por los otros depende más de quién es esa persona, que de qué tanto sabe en realidad.",
+          "ENGLISH": "How seriously a member’s ideas are taken by others on our team often depends more on who the person is than on how much he or she actually knows."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": true,
+        "component": "Expert Coaching",
+        "subcategory": "Knowledge-and-Skill-Related Process Criteria",
+        "subcomponent": null,
+        "position": 25
+      },
+      {
+        "statement": {
+          "SPANISH": "Los miembros de nuestro equipo comparten activamente su conocimiento y experiencia entre ellos",
+          "ENGLISH": "Members of our team actively share their special knowledge and expertise with one another."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Expert Coaching",
+        "subcategory": "Knowledge-and-Skill-Related Process Criteria",
+        "subcomponent": null,
+        "position": 28
+      },
+      {
+        "statement": {
+          "SPANISH": " Nuestro equipo es lo suficientemente habilidoso para capturar las lecciones que pueden ser aprendidas de nuestras experiencias de trabajo",
+          "ENGLISH": "Our team is quite skilled at capturing the lessons that can be learned from our work experiences."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Expert Coaching",
+        "subcategory": "Knowledge-and-Skill-Related Process Criteria",
+        "subcomponent": null,
+        "position": 31
+      },
+      {
+        "statement": {
+          "SPANISH": "Hay un ambiente desagradable entre los miembros de este equipo",
+          "ENGLISH": "There is a lot of unpleasantness among members of this team."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": true,
+        "component": "Expert Coaching",
+        "subcategory": "Quality of Team Interaction",
+        "subcomponent": null,
+        "position": 34
+      },
+      {
+        "statement": {
+          "SPANISH": "Entre más trabajamos juntos, peor nos va.",
+          "ENGLISH": "The longer we work together as a team, the less well we do."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": true,
+        "component": "Expert Coaching",
+        "subcategory": "Quality of Team Interaction",
+        "subcomponent": null,
+        "position": 37
+      },
+      {
+        "statement": {
+          "SPANISH": "Trabajar juntos energiza y motiva a los miembros de nuestro equipo",
+          "ENGLISH": "Working together energizes and uplifts members of our team."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Expert Coaching",
+        "subcategory": "Quality of Team Interaction",
+        "subcomponent": null,
+        "position": 40
+      },
+      {
+        "statement": {
+          "SPANISH": "Cada vez que alguien intenta corregir a un miembro del equipo cuyo comportamiento no es aceptable, las cosas parecen empeorar en vez de mejorar",
+          "ENGLISH": "Every time someone attempts to correct a team member whose behavior is not acceptable, things seem to get worse rather than better."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": true,
+        "component": "Expert Coaching",
+        "subcategory": "Quality of Team Interaction",
+        "subcomponent": null,
+        "position": 43
+      },
+      {
+        "statement": {
+          "SPANISH": "Mis relaciones con otros miembros del equipo están en tensión",
+          "ENGLISH": "My relations with other team members are strained."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": true,
+        "component": "Expert Coaching",
+        "subcategory": "Satisfaction with Team Relationships",
+        "subcomponent": null,
+        "position": 46
+      },
+      {
+        "statement": {
+          "SPANISH": "Disfruto mucho hablar y trabajar con mis compañeros de equipo",
+          "ENGLISH": "I very much enjoy talking and working with my teammates. "
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Expert Coaching",
+        "subcategory": "Satisfaction with Team Relationships",
+        "subcomponent": null,
+        "position": 48
+      },
+      {
+        "statement": {
+          "SPANISH": " La oportunidad de poder conocer a mis compañeros es una de las mejores cosas de trabajar en este equipo",
+          "ENGLISH": "The chance to get to know my teammates is one of the best parts of working on this team."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Expert Coaching",
+        "subcategory": "Satisfaction with Team Relationships",
+        "subcomponent": null,
+        "position": 50
+      },
+      {
+        "statement": {
+          "SPANISH": "Me da satisfacción personal cuando nuestro equipo tiene un buen desempeño.",
+          "ENGLISH": "I feel a real sense of personal satisfaction when our team does well."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Expert Coaching",
+        "subcategory": "Internal Work Motivation",
+        "subcomponent": null,
+        "position": 52
+      },
+      {
+        "statement": {
+          "SPANISH": "Me siento mal e infeliz cuando el desempeño de nuestro equipo es malo",
+          "ENGLISH": "I feel bad and unhappy when our team has performed poorly."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Expert Coaching",
+        "subcategory": "Internal Work Motivation",
+        "subcomponent": null,
+        "position": 54
+      },
+      {
+        "statement": {
+          "SPANISH": "Mis sentimientos no se ven afectados de una forma u otra por cuán bueno es el desempeño de nuestro equipo",
+          "ENGLISH": "My own feelings are not affected one way or the other by how well our team performs."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": true,
+        "component": "Expert Coaching",
+        "subcategory": "Internal Work Motivation",
+        "subcomponent": null,
+        "position": 56
+      },
+      {
+        "statement": {
+          "SPANISH": " Cuando nuestro equipo ha hecho las cosas bien, yo lo he hecho bien",
+          "ENGLISH": "When our team has done well, I have done well."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Expert Coaching",
+        "subcategory": "Internal Work Motivation",
+        "subcomponent": null,
+        "position": 58
+      },
+      {
+        "statement": {
+          "SPANISH": "Aprendo mucho de mi trabajo en este equipo",
+          "ENGLISH": "I learn a great deal from my work on this team."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Expert Coaching",
+        "subcategory": "Satisfaction with Group Opportunities",
+        "subcomponent": null,
+        "position": 60
+      },
+      {
+        "statement": {
+          "SPANISH": "Mi creatividad e iniciativa son reprimidas por este equipo",
+          "ENGLISH": "My own creativity and initiative are suppressed by this team."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": true,
+        "component": "Expert Coaching",
+        "subcategory": "Satisfaction with Group Opportunities",
+        "subcomponent": null,
+        "position": 62
+      },
+      {
+        "statement": {
+          "SPANISH": "Trabajar con este equipo amplía mis habilidades y conocimientos.",
+          "ENGLISH": "Working on this team stretches my personal knowledge and skills."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Expert Coaching",
+        "subcategory": "Satisfaction with Group Opportunities",
+        "subcomponent": null,
+        "position": 64
+      },
+      {
+        "statement": {
+          "SPANISH": "Disfruto el tipo de trabajo que hacemos en este equipo",
+          "ENGLISH": "I enjoy the kind of work we do in this team"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Expert Coaching",
+        "subcategory": "General Satisfaction",
+        "subcomponent": null,
+        "position": 66
+      },
+      {
+        "statement": {
+          "SPANISH": "Trabajar en este equipo es un ejercicio de frustración",
+          "ENGLISH": "Working on this team is an exercise in frustration."
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": true,
+        "component": "Expert Coaching",
+        "subcategory": "General Satisfaction",
+        "subcomponent": null,
+        "position": 68
+      },
+      {
+        "statement": {
+          "SPANISH": "En términos generales, estoy muy satisfecho con este equipo",
+          "ENGLISH": "Generally speaking, I am very satisfied with this team"
+        },
+        "responses": {
+          "SPANISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "ENGLISH": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ]
+        },
+        "reverse": false,
+        "component": "Expert Coaching",
+        "subcategory": "General Satisfaction",
+        "subcomponent": null,
+        "position": 70
+      }
+    ]
+  }
+]

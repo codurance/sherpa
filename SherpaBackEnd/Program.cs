@@ -30,8 +30,7 @@ builder.Services.AddSingleton<ITeamRepository, MongoTeamRepository>();
 builder.Services.AddSingleton<ITeamService, TeamService>();
 builder.Services.AddSingleton<ITeamMemberService, TeamMemberService>();
 
-builder.Services.AddSingleton<ITemplateRepository, InMemoryFilesTemplateRepository>(_ =>
-    new InMemoryFilesTemplateRepository("Templates"));
+builder.Services.AddSingleton<ITemplateRepository, MongoTemplateRepository>();
 builder.Services.AddSingleton<ITemplateService, TemplateService>();
 
 builder.Services.AddSingleton<ISurveyRepository, InMemorySurveyRepository>();

@@ -9,4 +9,5 @@ public class DatabaseSettings
     public string TeamMembersCollectionName { get; set; } = null!;
     
     public string? ConnectionString { get; set; } = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+    public string TemplateCollectionName { get; set; } = null!;
 }

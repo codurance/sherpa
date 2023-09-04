@@ -77,13 +77,7 @@ public class MongoTeamRepository : ITeamRepository
     public async Task<IEnumerable<TeamMember>?> GetAllTeamMembersAsync(Guid teamId)
     {
         var team = await GetTeamByIdAsync(teamId);
-        if (team == null)
-        {
-            return null;
-        }
-        var teamMembersIds = team.Members.Select(member => member.Id.ToString());
-        var mTeamMembers = await PopulateTeamMembers(teamMembersIds);
-        return mTeamMembers;
+        return team?.Members;
     }
 
     private async Task<List<TeamMember>> PopulateTeamMembers(IEnumerable<string> teamMembersIds)
