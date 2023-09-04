@@ -1,5 +1,7 @@
 using Microsoft.Extensions.Options;
+using MongoDB.Bson;
 using MongoDB.Driver;
+using SherpaBackEnd.Dtos;
 using SherpaBackEnd.Model;
 using SherpaBackEnd.Model.Survey;
 
@@ -8,6 +10,9 @@ namespace SherpaBackEnd.Repositories.Mongo;
 public class MongoSurveyRepository: ISurveyRepository
 {
     private readonly IMongoCollection<MSurvey> _surveyCollection;
+    private IMongoCollection<BsonDocument> _templateCollection;
+    private IMongoCollection<MTeam> _teamCollection;
+    private IMongoCollection<MTeamMember> _teamMemberCollection;
 
     public MongoSurveyRepository(
         IOptions<DatabaseSettings> databaseSettings)
@@ -19,6 +24,15 @@ public class MongoSurveyRepository: ISurveyRepository
 
         _surveyCollection = mongoDatabase.GetCollection<MSurvey>(
             databaseSettings.Value.SurveyCollectionName);
+
+        _templateCollection = mongoDatabase.GetCollection<BsonDocument>(
+            databaseSettings.Value.TemplateCollectionName);
+
+        _teamCollection = mongoDatabase.GetCollection<MTeam>(
+            databaseSettings.Value.TemplateCollectionName);
+
+        _teamMemberCollection = mongoDatabase.GetCollection<MTeamMember>(
+            databaseSettings.Value.TemplateCollectionName);
     }
     
     public Task<IEnumerable<SurveyTemplate>> DeprecatedGetTemplates()
@@ -31,18 +45,42 @@ public class MongoSurveyRepository: ISurveyRepository
         throw new NotImplementedException();
     }
 
-    public Task CreateSurvey(Survey survey)
+    public async Task CreateSurvey(Survey survey)
     {
-        throw new NotImplementedException();
+        await _surveyCollection.InsertOneAsync(MSurvey.FromSurvey(survey));
     }
 
-    public Task<IEnumerable<Survey>> GetAllSurveysFromTeam(Guid teamId)
+    public async Task<IEnumerable<Survey>> GetAllSurveysFromTeam(Guid teamId)
     {
-        throw new NotImplementedException();
+        var mSurveys = await _surveyCollection.Find(survey => survey.Team == teamId).ToListAsync();
+        
+        return mSurveys == null ? new List<Survey>() : mSurveys.Select(PopulateMSurvey).Select(task => task.Result).Where(survey => survey != null).Select(survey => survey!);
     }
 
-    public Task<Survey?> GetSurveyById(Guid surveyId)
+    public async Task<Survey?> GetSurveyById(Guid surveyId)
     {
-        throw new NotImplementedException();
+        var mSurvey = await _surveyCollection.Find(survey => survey.Id == surveyId).FirstOrDefaultAsync();
+        
+        if (mSurvey == null)
+        {
+            return null;
+        }
+        
+        return await PopulateMSurvey(mSurvey);
+    }
+
+    private async Task<Survey?> PopulateMSurvey(MSurvey mSurvey)
+    {
+        var surveyMTeam = await _teamCollection.Find(team => team.Id == mSurvey.Team).FirstOrDefaultAsync();
+        var surveyRawTemplate = await _templateCollection.Find(template => template["name"] == mSurvey.Template)
+            .FirstOrDefaultAsync();
+
+        var mTeamMembers = await _teamMemberCollection
+            .FindAsync(Builders<MTeamMember>.Filter.In("_id", surveyMTeam.Members)).Result.ToListAsync();
+
+        var surveyTemplate = MTemplate.ParseTemplate(mSurvey.Template, surveyRawTemplate);
+        var surveyTeam = MTeam.ToTeam(surveyMTeam, mTeamMembers.Select(MTeamMember.ToTeamMember).ToList());
+
+        return MSurvey.ToSurvey(mSurvey, surveyTeam, surveyTemplate);
     }
 }
