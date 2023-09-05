@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using Moq;
 using Newtonsoft.Json;
@@ -20,9 +21,19 @@ namespace SherpaBackEnd.Tests.Acceptance;
 
 public class TemplatesAcceptanceTests : IDisposable
 {
-    private readonly Template _hackmanTemplate;
-    private readonly ILogger<TemplateController> _logger;
-    private const string TestFolder = "test/acceptance";
+    private ILogger<TemplateController> _logger;
+
+    private readonly IContainer _mongoDbContainer = new ContainerBuilder()
+        .WithImage("mongodb/mongodb-community-server:latest")
+        .WithPortBinding(27017, true).Build();
+
+    private IOptions<DatabaseSettings> _databaseSettings;
+    private IMongoCollection<BsonDocument> _surveyCollection;
+    private IMongoCollection<BsonDocument> _teamCollection;
+    private IMongoCollection<BsonDocument> _teamMemberCollection;
+    private IMongoCollection<BsonDocument> _templateCollection;
+    private Template _hackmanTemplate;
+
     private const string QuestionInSpanish = "Question in spanish";
     private const string QuestionInEnglish = "Question in english";
     private const string ResponseSpanish1 = "SPA_1";
@@ -33,19 +44,10 @@ public class TemplatesAcceptanceTests : IDisposable
     private const string ResponseEnglish3 = "ENG_3";
     private const int Position = 1;
     private const bool Reverse = false;
-    
-    private readonly IContainer _mongoDbContainer = new ContainerBuilder()
-        .WithImage("mongodb/mongodb-community-server:latest")
-        .WithPortBinding(27017, true).Build();
 
-    private readonly IOptions<DatabaseSettings> _databaseSettings;
-    private readonly IMongoCollection<BsonDocument> _surveyCollection;
-    private readonly IMongoCollection<BsonDocument> _teamCollection;
-    private readonly IMongoCollection<BsonDocument> _teamMemberCollection;
-    private readonly IMongoCollection<BsonDocument> _templateCollection;
-
-    public TemplatesAcceptanceTests()
+    private async Task InitializeDbClientAndCollections()
     {
+        await _mongoDbContainer.StartAsync();
         _databaseSettings = Options.Create(new DatabaseSettings
         {
             DatabaseName = "Sherpa",
@@ -55,14 +57,11 @@ public class TemplatesAcceptanceTests : IDisposable
             TemplateCollectionName = "Templates",
             ConnectionString = $"mongodb://localhost:{_mongoDbContainer.GetMappedPublicPort(27017)}"
         });
-        
+
         var mongoClient = new MongoClient(_databaseSettings.Value.ConnectionString);
 
         var mongoDatabase = mongoClient.GetDatabase(
             _databaseSettings.Value.DatabaseName);
-
-        _surveyCollection = mongoDatabase.GetCollection<BsonDocument>(
-            _databaseSettings.Value.SurveyCollectionName);
 
         _teamCollection = mongoDatabase.GetCollection<BsonDocument>(
             _databaseSettings.Value.TeamsCollectionName);
@@ -72,13 +71,9 @@ public class TemplatesAcceptanceTests : IDisposable
 
         _templateCollection = mongoDatabase.GetCollection<BsonDocument>(
             _databaseSettings.Value.TemplateCollectionName);
-        
-        Directory.CreateDirectory(TestFolder);
-        var contents =
-            $@"position|responses_english|responses_spanish|question_english|question_spanish|reverse|component|subcategory|subcomponent
-{Position}|{ResponseEnglish1} // {ResponseEnglish2} // {ResponseEnglish3}|{ResponseSpanish1} // {ResponseSpanish2} // {ResponseSpanish3}|{QuestionInEnglish}|{QuestionInSpanish}|{Reverse.ToString()}|{HackmanComponent.INTERPERSONAL_PEER_COACHING}|{HackmanSubcategory.DELIMITED}|{HackmanSubcomponent.SENSE_OF_URGENCY}
-";
-        File.WriteAllText($"{TestFolder}/hackman.csv", contents);
+
+        _surveyCollection = mongoDatabase.GetCollection<BsonDocument>(
+            _databaseSettings.Value.SurveyCollectionName);
 
         var questions = new IQuestion[]
         {
@@ -105,7 +100,20 @@ public class TemplatesAcceptanceTests : IDisposable
     [Fact]
     public async Task controller_returns_templates_list_with_hackman_template_inside()
     {
+        await InitializeDbClientAndCollections();
         // GIVEN a frontend that uses the template controller
+
+        await _templateCollection.InsertOneAsync(new BsonDocument
+        {
+            { "name", "Hackman Model" },
+            {
+                "questions", new BsonArray()
+                {
+                    BsonDocument.Parse(JsonConvert.SerializeObject(_hackmanTemplate.Questions.First()))
+                }
+            },
+            { "minutesToComplete", 30 }
+        });
 
         ITemplateRepository templateRepository = new MongoTemplateRepository(_databaseSettings);
         var templateService = new TemplateService(templateRepository);
@@ -118,6 +126,7 @@ public class TemplatesAcceptanceTests : IDisposable
         var templatesResult = Assert.IsType<OkObjectResult>(actualResponse.Result);
         var actualTemplates = Assert.IsAssignableFrom<IEnumerable<Template>>(templatesResult.Value);
 
+
         CustomAssertions.StringifyEquals(new[]
             {
                 _hackmanTemplate
@@ -128,7 +137,15 @@ public class TemplatesAcceptanceTests : IDisposable
     [Fact]
     public async Task controller_returns_status_code_500_if_there_is_an_error()
     {
+        await InitializeDbClientAndCollections();
         // GIVEN a frontend that uses the template controller
+
+        await _templateCollection.InsertOneAsync(new BsonDocument
+        {
+            { "name", "Non existing template" },
+            { "questions", new BsonArray() },
+            { "minutesToComplete", 30 }
+        });
 
         ITemplateRepository templateRepository = new MongoTemplateRepository(_databaseSettings);
         var templateService = new TemplateService(templateRepository);
@@ -142,9 +159,8 @@ public class TemplatesAcceptanceTests : IDisposable
         Assert.Equal(StatusCodes.Status500InternalServerError, templatesResult.StatusCode);
     }
 
-    public void Dispose()
+    public async void Dispose()
     {
-        File.Delete($"{TestFolder}/hackman.csv");
-        Directory.Delete(TestFolder);
+        await _mongoDbContainer.StopAsync();
     }
 }

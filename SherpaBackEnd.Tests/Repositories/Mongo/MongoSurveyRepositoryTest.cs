@@ -104,7 +104,7 @@ public class MongoSurveyRepositoryTest : IDisposable
         var survey2 = new Survey(Guid.NewGuid(), new User(Guid.NewGuid(), "Demo coach"), Status.Draft, DateTime.Now,
             "Survey title", "Survey Description", new List<Response>(), team, template);
 
-        teamMemberCollection.InsertOne(new BsonDocument
+        await teamMemberCollection.InsertOneAsync(new BsonDocument
         {
             { "_id", teamMemberId.ToString() },
             { "FullName", teamMember.FullName },
@@ -112,7 +112,7 @@ public class MongoSurveyRepositoryTest : IDisposable
             { "Email", teamMember.Email },
         });
 
-        teamCollection.InsertOne(new BsonDocument
+        await teamCollection.InsertOneAsync(new BsonDocument
         {
             { "_id", teamId.ToString() },
             { "Name", team.Name },
@@ -120,14 +120,14 @@ public class MongoSurveyRepositoryTest : IDisposable
             { "IsDeleted", team.IsDeleted }
         });
 
-        templateCollection.InsertOne(new BsonDocument
+        await templateCollection.InsertOneAsync(new BsonDocument
         {
             { "name", template.Name },
             { "questions", new BsonArray() },
             { "minutesToComplete", template.MinutesToComplete }
         });
 
-        surveyCollection.InsertMany(new List<BsonDocument>()
+        await surveyCollection.InsertManyAsync(new List<BsonDocument>()
         {
             new BsonDocument
             {
