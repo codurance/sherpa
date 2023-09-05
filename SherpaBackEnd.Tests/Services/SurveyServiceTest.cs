@@ -40,7 +40,7 @@ public class SurveyServiceTest
         var createSurveyDto = new CreateSurveyDto(Guid.NewGuid(), team.Id, template.Name, "Title", "Description", DateTime.Parse("2023-08-09T07:38:04+0000") );
         await service.CreateSurvey(createSurveyDto);
         
-        var expectedSurvey = new Survey(createSurveyDto.SurveyId, new User(service.DefaultUserId, "Lucia"), Status.Draft, createSurveyDto.Deadline, createSurveyDto.Title, createSurveyDto.Description, Array.Empty<Response>(), team, template);
+        var expectedSurvey = new Survey(createSurveyDto.SurveyId, new User(service.DefaultUserId, "Lucia"), Status.Draft, createSurveyDto.Deadline, createSurveyDto.Title, createSurveyDto.Description, new List<Response>(), team, template);
         var surveyRepoInvocation = _surveyRepo.Invocations[0];
         var actualSurvey = surveyRepoInvocation.Arguments[0];
         CustomAssertions.StringifyEquals(expectedSurvey, actualSurvey);
@@ -51,7 +51,7 @@ public class SurveyServiceTest
     {
         var surveyId = Guid.NewGuid();
         var service = new SurveyService(_surveyRepo.Object, _teamRepo.Object, _templateRepo.Object);
-        var expectedSurvey = new Survey(Guid.NewGuid(), new User(service.DefaultUserId, "Lucia"), Status.Draft, DateTime.Parse("2023-08-09T07:38:04+0000"), "Title", "Description", Array.Empty<Response>(), new Team(Guid.NewGuid(), "Demo team"), new Template("demo", Array.Empty<IQuestion>(), 30));
+        var expectedSurvey = new Survey(Guid.NewGuid(), new User(service.DefaultUserId, "Lucia"), Status.Draft, DateTime.Parse("2023-08-09T07:38:04+0000"), "Title", "Description", new List<Response>(), new Team(Guid.NewGuid(), "Demo team"), new Template("demo", Array.Empty<IQuestion>(), 30));
         _surveyRepo.Setup(repository => repository.GetSurveyById(surveyId)).ReturnsAsync(expectedSurvey);
         
         var receivedSurvey = await service.GetSurveyById(surveyId);

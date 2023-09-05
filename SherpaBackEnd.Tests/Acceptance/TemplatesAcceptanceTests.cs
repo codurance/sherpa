@@ -1,12 +1,19 @@
+using DotNet.Testcontainers.Builders;
+using DotNet.Testcontainers.Containers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using MongoDB.Bson;
+using MongoDB.Driver;
 using Moq;
 using Newtonsoft.Json;
 using Shared.Test.Helpers;
 using SherpaBackEnd.Controllers;
+using SherpaBackEnd.Model;
 using SherpaBackEnd.Model.Template;
 using SherpaBackEnd.Repositories;
+using SherpaBackEnd.Repositories.Mongo;
 using SherpaBackEnd.Services;
 
 namespace SherpaBackEnd.Tests.Acceptance;
@@ -26,9 +33,46 @@ public class TemplatesAcceptanceTests : IDisposable
     private const string ResponseEnglish3 = "ENG_3";
     private const int Position = 1;
     private const bool Reverse = false;
+    
+    private readonly IContainer _mongoDbContainer = new ContainerBuilder()
+        .WithImage("mongodb/mongodb-community-server:latest")
+        .WithPortBinding(27017, true).Build();
+
+    private readonly IOptions<DatabaseSettings> _databaseSettings;
+    private readonly IMongoCollection<BsonDocument> _surveyCollection;
+    private readonly IMongoCollection<BsonDocument> _teamCollection;
+    private readonly IMongoCollection<BsonDocument> _teamMemberCollection;
+    private readonly IMongoCollection<BsonDocument> _templateCollection;
 
     public TemplatesAcceptanceTests()
     {
+        _databaseSettings = Options.Create(new DatabaseSettings
+        {
+            DatabaseName = "Sherpa",
+            TeamsCollectionName = "Teams",
+            TeamMembersCollectionName = "TeamMembers",
+            SurveyCollectionName = "Surveys",
+            TemplateCollectionName = "Templates",
+            ConnectionString = $"mongodb://localhost:{_mongoDbContainer.GetMappedPublicPort(27017)}"
+        });
+        
+        var mongoClient = new MongoClient(_databaseSettings.Value.ConnectionString);
+
+        var mongoDatabase = mongoClient.GetDatabase(
+            _databaseSettings.Value.DatabaseName);
+
+        _surveyCollection = mongoDatabase.GetCollection<BsonDocument>(
+            _databaseSettings.Value.SurveyCollectionName);
+
+        _teamCollection = mongoDatabase.GetCollection<BsonDocument>(
+            _databaseSettings.Value.TeamsCollectionName);
+
+        _teamMemberCollection = mongoDatabase.GetCollection<BsonDocument>(
+            _databaseSettings.Value.TeamMembersCollectionName);
+
+        _templateCollection = mongoDatabase.GetCollection<BsonDocument>(
+            _databaseSettings.Value.TemplateCollectionName);
+        
         Directory.CreateDirectory(TestFolder);
         var contents =
             $@"position|responses_english|responses_spanish|question_english|question_spanish|reverse|component|subcategory|subcomponent
@@ -63,7 +107,7 @@ public class TemplatesAcceptanceTests : IDisposable
     {
         // GIVEN a frontend that uses the template controller
 
-        ITemplateRepository templateRepository = new InMemoryFilesTemplateRepository(TestFolder);
+        ITemplateRepository templateRepository = new MongoTemplateRepository(_databaseSettings);
         var templateService = new TemplateService(templateRepository);
         var templateController = new TemplateController(templateService, _logger);
 
@@ -86,7 +130,7 @@ public class TemplatesAcceptanceTests : IDisposable
     {
         // GIVEN a frontend that uses the template controller
 
-        ITemplateRepository templateRepository = new InMemoryFilesTemplateRepository("folder_that_doesnt_exist");
+        ITemplateRepository templateRepository = new MongoTemplateRepository(_databaseSettings);
         var templateService = new TemplateService(templateRepository);
         var templateController = new TemplateController(templateService, _logger);
 

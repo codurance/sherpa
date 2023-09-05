@@ -7,12 +7,12 @@ using SherpaBackEnd.Model.Survey;
 
 namespace SherpaBackEnd.Repositories.Mongo;
 
-public class MongoSurveyRepository: ISurveyRepository
+public class MongoSurveyRepository : ISurveyRepository
 {
     private readonly IMongoCollection<MSurvey> _surveyCollection;
-    private IMongoCollection<BsonDocument> _templateCollection;
-    private IMongoCollection<MTeam> _teamCollection;
-    private IMongoCollection<MTeamMember> _teamMemberCollection;
+    private readonly IMongoCollection<BsonDocument> _templateCollection;
+    private readonly IMongoCollection<MTeam> _teamCollection;
+    private readonly IMongoCollection<MTeamMember> _teamMemberCollection;
 
     public MongoSurveyRepository(
         IOptions<DatabaseSettings> databaseSettings)
@@ -34,16 +34,6 @@ public class MongoSurveyRepository: ISurveyRepository
         _teamMemberCollection = mongoDatabase.GetCollection<MTeamMember>(
             databaseSettings.Value.TemplateCollectionName);
     }
-    
-    public Task<IEnumerable<SurveyTemplate>> DeprecatedGetTemplates()
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool DeprecatedIsTemplateExist(Guid templateId)
-    {
-        throw new NotImplementedException();
-    }
 
     public async Task CreateSurvey(Survey survey)
     {
@@ -53,25 +43,30 @@ public class MongoSurveyRepository: ISurveyRepository
     public async Task<IEnumerable<Survey>> GetAllSurveysFromTeam(Guid teamId)
     {
         var mSurveys = await _surveyCollection.Find(survey => survey.Team == teamId).ToListAsync();
-        
-        return mSurveys == null ? new List<Survey>() : mSurveys.Select(PopulateMSurvey).Select(task => task.Result).Where(survey => survey != null).Select(survey => survey!);
+
+        return mSurveys == null
+            ? new List<Survey>()
+            : mSurveys.Select(PopulateMSurvey).Select(task => task.Result).Where(survey => survey != null)
+                .Select(survey => survey!);
     }
 
     public async Task<Survey?> GetSurveyById(Guid surveyId)
     {
         var mSurvey = await _surveyCollection.Find(survey => survey.Id == surveyId).FirstOrDefaultAsync();
-        
+
         if (mSurvey == null)
         {
             return null;
         }
-        
+
         return await PopulateMSurvey(mSurvey);
     }
 
     private async Task<Survey?> PopulateMSurvey(MSurvey mSurvey)
     {
-        var surveyMTeam = await _teamCollection.Find(team => team.Id == mSurvey.Team).FirstOrDefaultAsync();
+        var surveyMTeam = await _teamCollection.Find(Builders<MTeam>.Filter.Eq("_id", mSurvey.Team.ToString()))
+            .FirstOrDefaultAsync();
+
         var surveyRawTemplate = await _templateCollection.Find(template => template["name"] == mSurvey.Template)
             .FirstOrDefaultAsync();
 

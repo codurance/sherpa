@@ -3,7 +3,7 @@ using SherpaBackEnd.Dtos;
 
 namespace SherpaBackEnd.Repositories.Mongo;
 
-internal class MTeamMember
+public class MTeamMember
 {
     [BsonId]
     [BsonRepresentation(MongoDB.Bson.BsonType.String)]

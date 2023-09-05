@@ -1,6 +1,11 @@
+using DotNet.Testcontainers.Builders;
+using DotNet.Testcontainers.Containers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using MongoDB.Bson;
+using MongoDB.Driver;
 using Moq;
 using Shared.Test.Helpers;
 using SherpaBackEnd.Controllers;
@@ -9,12 +14,23 @@ using SherpaBackEnd.Model;
 using SherpaBackEnd.Model.Survey;
 using SherpaBackEnd.Model.Template;
 using SherpaBackEnd.Repositories;
+using SherpaBackEnd.Repositories.Mongo;
 using SherpaBackEnd.Services;
 
 namespace SherpaBackEnd.Tests.Acceptance;
 
 public class SurveyAcceptanceTest
 {
+    private readonly IContainer _mongoDbContainer = new ContainerBuilder()
+        .WithImage("mongodb/mongodb-community-server:latest")
+        .WithPortBinding(27017, true).Build();
+
+    private readonly IOptions<DatabaseSettings> _databaseSettings;
+    private readonly IMongoCollection<BsonDocument> _surveyCollection;
+    private readonly IMongoCollection<BsonDocument> _teamCollection;
+    private readonly IMongoCollection<BsonDocument> _teamMemberCollection;
+    private readonly IMongoCollection<BsonDocument> _templateCollection;
+    
     private ILogger<SurveyController> _logger = new Mock<ILogger<SurveyController>>().Object;
     private const string TestFolder = "test/unit";
     private const string QuestionInSpanish = "Question in spanish";
@@ -30,6 +46,33 @@ public class SurveyAcceptanceTest
 
     public SurveyAcceptanceTest()
     {
+        _databaseSettings = Options.Create(new DatabaseSettings
+        {
+            DatabaseName = "Sherpa",
+            TeamsCollectionName = "Teams",
+            TeamMembersCollectionName = "TeamMembers",
+            SurveyCollectionName = "Surveys",
+            TemplateCollectionName = "Templates",
+            ConnectionString = $"mongodb://localhost:{_mongoDbContainer.GetMappedPublicPort(27017)}"
+        });
+        
+        var mongoClient = new MongoClient(_databaseSettings.Value.ConnectionString);
+
+        var mongoDatabase = mongoClient.GetDatabase(
+            _databaseSettings.Value.DatabaseName);
+
+        _surveyCollection = mongoDatabase.GetCollection<BsonDocument>(
+            _databaseSettings.Value.SurveyCollectionName);
+
+        _teamCollection = mongoDatabase.GetCollection<BsonDocument>(
+            _databaseSettings.Value.TeamsCollectionName);
+
+        _teamMemberCollection = mongoDatabase.GetCollection<BsonDocument>(
+            _databaseSettings.Value.TeamMembersCollectionName);
+
+        _templateCollection = mongoDatabase.GetCollection<BsonDocument>(
+            _databaseSettings.Value.TemplateCollectionName);
+        
         Directory.CreateDirectory(TestFolder);
         var contents =
             $@"position|responses_english|responses_spanish|question_english|question_spanish|reverse|component|subcategory|subcomponent
@@ -63,19 +106,19 @@ public class SurveyAcceptanceTest
                 HackmanSubcategory.DELIMITED, HackmanSubcomponent.SENSE_OF_URGENCY, Position)
         };
 
-        var template = new Template(InMemoryFilesTemplateRepository.HackmanModel, questions, 30);
-        var inMemoryTemplateRepository = new InMemoryFilesTemplateRepository(TestFolder);
+        var template = new Template("Hackman Model", questions, 30);
+        var inMemoryTemplateRepository = new MongoTemplateRepository(_databaseSettings);
         
         var team = new Team(Guid.NewGuid(), "Team Test");
-        var inMemoryTeamRepository = new InMemoryTeamRepository(new List<Team>() { team });
+        var inMemoryTeamRepository = new MongoTeamRepository(_databaseSettings);
 
-        var inMemorySurveyRepository = new InMemorySurveyRepository();
+        var inMemorySurveyRepository = new MongoSurveyRepository(_databaseSettings);
         var surveysService = new SurveyService(inMemorySurveyRepository, inMemoryTeamRepository, inMemoryTemplateRepository);
         var surveyController = new SurveyController(surveysService, _logger);
         var createSurveyDto = new CreateSurveyDto(Guid.NewGuid(), team.Id, template.Name, "survey title",
             "Description", DateTime.Parse("2023-08-09T07:38:04+0000"));
         var expectedSurvey = new Survey(createSurveyDto.SurveyId, new User(surveysService.DefaultUserId, "Lucia"), Status.Draft,
-            createSurveyDto.Deadline, createSurveyDto.Title, createSurveyDto.Description, Array.Empty<Response>(),
+            createSurveyDto.Deadline, createSurveyDto.Title, createSurveyDto.Description, new List<Response>(),
             team, template);
 
         //When: they create a new Survey 
@@ -96,12 +139,12 @@ public class SurveyAcceptanceTest
     {
         //Given: A user interacting with the backend API
 
-        var inMemoryTemplateRepository = new InMemoryFilesTemplateRepository(TestFolder);
+        var inMemoryTemplateRepository = new MongoTemplateRepository(_databaseSettings);
         
         var teamId = Guid.NewGuid();
         var emptySurveyList = new List<Survey>() { };
-        var inMemorySurveyRepository = new InMemorySurveyRepository(emptySurveyList);
-        ITeamRepository inMemoryTeamRepository = new InMemoryTeamRepository();
+        var inMemorySurveyRepository = new MongoSurveyRepository(_databaseSettings);
+        ITeamRepository inMemoryTeamRepository = new MongoTeamRepository(_databaseSettings);
         var surveysService = new SurveyService(inMemorySurveyRepository, inMemoryTeamRepository, inMemoryTemplateRepository);
         
         var surveyController = new SurveyController(surveysService, _logger);

@@ -80,7 +80,7 @@ public class SurveyControllerTest
     public async Task ShouldReturnTheSurveyGivenByTheServiceWhenCallingGetSurveyById()
     {
         var expectedSurvey = new Survey(Guid.NewGuid(), new User(Guid.NewGuid(), "Lucia"), Status.Draft,
-            DateTime.Parse("2023-08-09T07:38:04+0000"), "Title", "description", Array.Empty<Response>(),
+            DateTime.Parse("2023-08-09T07:38:04+0000"), "Title", "description", new List<Response>(),
             new Team(Guid.NewGuid(), "team name"), new Template("Template name", Array.Empty<IQuestion>(), 1));
         var controller = new SurveyController(_serviceMock.Object, _logger);
         _serviceMock.Setup(service => service.GetSurveyById(expectedSurvey.Id)).ReturnsAsync(expectedSurvey);
