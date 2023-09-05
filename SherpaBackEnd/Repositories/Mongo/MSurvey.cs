@@ -1,3 +1,4 @@
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using SherpaBackEnd.Dtos;
 using SherpaBackEnd.Model;

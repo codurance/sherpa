@@ -29,10 +29,10 @@ public class MongoSurveyRepository : ISurveyRepository
             databaseSettings.Value.TemplateCollectionName);
 
         _teamCollection = mongoDatabase.GetCollection<MTeam>(
-            databaseSettings.Value.TemplateCollectionName);
+            databaseSettings.Value.TeamsCollectionName);
 
         _teamMemberCollection = mongoDatabase.GetCollection<MTeamMember>(
-            databaseSettings.Value.TemplateCollectionName);
+            databaseSettings.Value.TeamMembersCollectionName);
     }
 
     public async Task CreateSurvey(Survey survey)
@@ -47,7 +47,7 @@ public class MongoSurveyRepository : ISurveyRepository
         return mSurveys == null
             ? new List<Survey>()
             : mSurveys.Select(PopulateMSurvey).Select(task => task.Result).Where(survey => survey != null)
-                .Select(survey => survey!);
+                .Select(survey => survey!).ToList();
     }
 
     public async Task<Survey?> GetSurveyById(Guid surveyId)

@@ -11,7 +11,7 @@ using SherpaBackEnd.Repositories.Mongo;
 
 namespace SherpaBackEnd.Tests.Repositories.Mongo;
 
-public class MongoSurveyRepositoryTest: IDisposable
+public class MongoSurveyRepositoryTest : IDisposable
 {
     private readonly IContainer _mongoDbContainer = new ContainerBuilder()
         .WithImage("mongodb/mongodb-community-server:latest")
@@ -26,7 +26,7 @@ public class MongoSurveyRepositoryTest: IDisposable
     public async Task ShouldBeAbleToCreateSurvey()
     {
         await _mongoDbContainer.StartAsync();
-        
+
         var databaseSettings = Options.Create(new DatabaseSettings
         {
             DatabaseName = "Sherpa",
@@ -36,7 +36,7 @@ public class MongoSurveyRepositoryTest: IDisposable
             TemplateCollectionName = "Templates",
             ConnectionString = $"mongodb://localhost:{_mongoDbContainer.GetMappedPublicPort(27017)}"
         });
-        
+
         var mongoClient = new MongoClient(databaseSettings.Value.ConnectionString);
 
         var mongoDatabase = mongoClient.GetDatabase(
@@ -64,7 +64,7 @@ public class MongoSurveyRepositoryTest: IDisposable
     public async Task ShouldReturnAllSurveysFromTeam()
     {
         await _mongoDbContainer.StartAsync();
-        
+
         var databaseSettings = Options.Create(new DatabaseSettings
         {
             DatabaseName = "Sherpa",
@@ -74,7 +74,7 @@ public class MongoSurveyRepositoryTest: IDisposable
             TemplateCollectionName = "Templates",
             ConnectionString = $"mongodb://localhost:{_mongoDbContainer.GetMappedPublicPort(27017)}"
         });
-        
+
         var mongoClient = new MongoClient(databaseSettings.Value.ConnectionString);
 
         var mongoDatabase = mongoClient.GetDatabase(
@@ -88,7 +88,7 @@ public class MongoSurveyRepositoryTest: IDisposable
 
         var templateCollection = mongoDatabase.GetCollection<BsonDocument>(
             databaseSettings.Value.TemplateCollectionName);
-        
+
         var surveyCollection = mongoDatabase.GetCollection<BsonDocument>(
             databaseSettings.Value.SurveyCollectionName);
 
@@ -132,7 +132,13 @@ public class MongoSurveyRepositoryTest: IDisposable
             new BsonDocument
             {
                 { "_id", survey.Id.ToString() },
-                { "Coach", survey.Coach.Id.ToString() },
+                {
+                    "Coach", new BsonDocument
+                    {
+                        { "_id", survey.Coach.Id.ToString() },
+                        { "Name", survey.Coach.Name }
+                    }
+                },
                 { "Status", survey.Status.ToString() },
                 { "Title", survey.Title },
                 { "Description", survey.Description },
@@ -143,7 +149,13 @@ public class MongoSurveyRepositoryTest: IDisposable
             new BsonDocument
             {
                 { "_id", survey2.Id.ToString() },
-                { "Coach", survey2.Coach.Id.ToString() },
+                {
+                    "Coach", new BsonDocument
+                    {
+                        { "_id", survey.Coach.Id.ToString() },
+                        { "Name", survey.Coach.Name }
+                    }
+                },
                 { "Status", survey2.Status.ToString() },
                 { "Title", survey2.Title },
                 { "Description", survey2.Description },
@@ -165,7 +177,7 @@ public class MongoSurveyRepositoryTest: IDisposable
     public async Task ShouldReturnEmptyListOfSurveysIfNotFoundAnyMatchingByTeamId()
     {
         await _mongoDbContainer.StartAsync();
-        
+
         var databaseSettings = Options.Create(new DatabaseSettings
         {
             DatabaseName = "Sherpa",
@@ -175,7 +187,7 @@ public class MongoSurveyRepositoryTest: IDisposable
             TemplateCollectionName = "Templates",
             ConnectionString = $"mongodb://localhost:{_mongoDbContainer.GetMappedPublicPort(27017)}"
         });
-        
+
         var mongoClient = new MongoClient(databaseSettings.Value.ConnectionString);
 
         var mongoDatabase = mongoClient.GetDatabase(
@@ -191,7 +203,7 @@ public class MongoSurveyRepositoryTest: IDisposable
         {
             { "_id", teamId.ToString() },
             { "Name", team.Name },
-            { "Members", new BsonArray()},
+            { "Members", new BsonArray() },
             { "IsDeleted", team.IsDeleted }
         });
 
