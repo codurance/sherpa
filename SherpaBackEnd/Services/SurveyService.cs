@@ -31,7 +31,7 @@ public class SurveyService : ISurveyService
         if (team == null) throw new NotFoundException("Team not found");
         if (template == null) throw new NotFoundException("Template not found");
         
-        var survey = new Survey(createSurveyDto.SurveyId, new User(DefaultUserId, "Lucia"), Status.Draft, createSurveyDto.Deadline, createSurveyDto.Title, createSurveyDto.Description, Array.Empty<Response>(), team, template);
+        var survey = new Survey(createSurveyDto.SurveyId, new User(DefaultUserId, "Lucia"), Status.Draft, createSurveyDto.Deadline, createSurveyDto.Title, createSurveyDto.Description, new List<Response>(), team, template);
         
         await _surveyRepository.CreateSurvey(survey);
     }

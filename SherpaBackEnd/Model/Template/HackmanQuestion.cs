@@ -1,3 +1,5 @@
+using MongoDB.Bson.Serialization.Attributes;
+
 namespace SherpaBackEnd.Model.Template;
 
 public class HackmanQuestion : IQuestion

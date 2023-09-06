@@ -2,6 +2,7 @@ using SherpaBackEnd.Dtos;
 using SherpaBackEnd.Model;
 using SherpaBackEnd.Model.Template;
 using SherpaBackEnd.Repositories;
+using SherpaBackEnd.Repositories.Mongo;
 using SherpaBackEnd.Serializers;
 using SherpaBackEnd.Services;
 using SherpaBackEnd.Services.Email;
@@ -14,6 +15,9 @@ builder.Services.AddControllers()
     .AddJsonOptions(options => { options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter()); })
     .AddNewtonsoftJson();
 
+builder.Services.Configure<DatabaseSettings>(
+    builder.Configuration.GetSection("Database"));
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -22,16 +26,14 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddSingleton<ITeamRepository, InMemoryTeamRepository>(
-    _ => new InMemoryTeamRepository(new List<Team>()));
+builder.Services.AddSingleton<ITeamRepository, MongoTeamRepository>();
 builder.Services.AddSingleton<ITeamService, TeamService>();
 builder.Services.AddSingleton<ITeamMemberService, TeamMemberService>();
 
-builder.Services.AddSingleton<ITemplateRepository, InMemoryFilesTemplateRepository>(_ =>
-    new InMemoryFilesTemplateRepository("Templates"));
+builder.Services.AddSingleton<ITemplateRepository, MongoTemplateRepository>();
 builder.Services.AddSingleton<ITemplateService, TemplateService>();
 
-builder.Services.AddSingleton<ISurveyRepository, InMemorySurveyRepository>();
+builder.Services.AddSingleton<ISurveyRepository, MongoSurveyRepository>();
 builder.Services.AddSingleton<ISurveyService, SurveyService>();
 
 builder.Services.AddSingleton<IEmailService, SesEmailService>(provider =>

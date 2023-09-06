@@ -1,6 +1,11 @@
+using DotNet.Testcontainers.Builders;
+using DotNet.Testcontainers.Containers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using MongoDB.Bson;
+using MongoDB.Driver;
 using Moq;
 using Shared.Test.Helpers;
 using SherpaBackEnd.Controllers;
@@ -8,80 +13,108 @@ using SherpaBackEnd.Dtos;
 using SherpaBackEnd.Model;
 using SherpaBackEnd.Model.Survey;
 using SherpaBackEnd.Model.Template;
-using SherpaBackEnd.Repositories;
+using SherpaBackEnd.Repositories.Mongo;
 using SherpaBackEnd.Services;
 
 namespace SherpaBackEnd.Tests.Acceptance;
 
-public class SurveyAcceptanceTest
+public class SurveyAcceptanceTest: IDisposable
 {
-    private ILogger<SurveyController> _logger = new Mock<ILogger<SurveyController>>().Object;
-    private const string TestFolder = "test/unit";
-    private const string QuestionInSpanish = "Question in spanish";
-    private const string QuestionInEnglish = "Question in english";
-    private const string ResponseSpanish1 = "SPA_1";
-    private const string ResponseSpanish2 = "SPA_2";
-    private const string ResponseSpanish3 = "SPA_3";
-    private const string ResponseEnglish1 = "ENG_1";
-    private const string ResponseEnglish2 = "ENG_2";
-    private const string ResponseEnglish3 = "ENG_3";
-    private const int Position = 1;
-    private const bool Reverse = false;
+    private readonly IContainer _mongoDbContainer = new ContainerBuilder()
+        .WithImage("mongodb/mongodb-community-server:latest")
+        .WithPortBinding(27017, true).Build();
 
-    public SurveyAcceptanceTest()
+    private readonly ILogger<SurveyController> _logger = new Mock<ILogger<SurveyController>>().Object;
+    private IOptions<DatabaseSettings> _databaseSettings;
+    private IMongoCollection<BsonDocument> _teamCollection;
+    private IMongoCollection<BsonDocument> _teamMemberCollection;
+    private IMongoCollection<BsonDocument> _templateCollection;
+    private IMongoCollection<BsonDocument> _surveyCollection;
+
+    private async Task InitializeDbClientAndCollections()
     {
-        Directory.CreateDirectory(TestFolder);
-        var contents =
-            $@"position|responses_english|responses_spanish|question_english|question_spanish|reverse|component|subcategory|subcomponent
-{Position}|{ResponseEnglish1} // {ResponseEnglish2} // {ResponseEnglish3}|{ResponseSpanish1} // {ResponseSpanish2} // {ResponseSpanish3}|{QuestionInEnglish}|{QuestionInSpanish}|{Reverse.ToString()}|{HackmanComponent.INTERPERSONAL_PEER_COACHING}|{HackmanSubcategory.DELIMITED}|{HackmanSubcomponent.SENSE_OF_URGENCY}
-";
-        File.WriteAllText($"{TestFolder}/hackman.csv", contents);
+        await _mongoDbContainer.StartAsync();
+        _databaseSettings = Options.Create(new DatabaseSettings
+        {
+            DatabaseName = "Sherpa",
+            TeamsCollectionName = "Teams",
+            TeamMembersCollectionName = "TeamMembers",
+            SurveyCollectionName = "Surveys",
+            TemplateCollectionName = "Templates",
+            ConnectionString = $"mongodb://localhost:{_mongoDbContainer.GetMappedPublicPort(27017)}"
+        });
+
+        var mongoClient = new MongoClient(_databaseSettings.Value.ConnectionString);
+
+        var mongoDatabase = mongoClient.GetDatabase(
+            _databaseSettings.Value.DatabaseName);
+
+        _teamCollection = mongoDatabase.GetCollection<BsonDocument>(
+            _databaseSettings.Value.TeamsCollectionName);
+
+        _teamMemberCollection = mongoDatabase.GetCollection<BsonDocument>(
+            _databaseSettings.Value.TeamMembersCollectionName);
+
+        _templateCollection = mongoDatabase.GetCollection<BsonDocument>(
+            _databaseSettings.Value.TemplateCollectionName);
         
-        
+        _surveyCollection = mongoDatabase.GetCollection<BsonDocument>(
+            _databaseSettings.Value.SurveyCollectionName);
     }
 
     [Fact]
     public async Task UserShouldBeAbleToCreateASurveyAndRetrieveItByItsIdLater()
     {
-        //Given: A user interacting with the backend API
-        var questions = new IQuestion[]
+        await InitializeDbClientAndCollections();
+        var teamMemberId = Guid.NewGuid();
+        var teamMember = new TeamMember(teamMemberId, "Some name", "Some position", "some@email.com");
+        var teamId = Guid.NewGuid();
+        var team = new Team(teamId, "Some team name", new List<TeamMember> { teamMember });
+        var template = new Template("Hackman Model", new List<IQuestion>(), 10);
+
+        await _teamMemberCollection.InsertOneAsync(new BsonDocument
         {
-            new HackmanQuestion(new Dictionary<string, string>()
-                {
-                    { Languages.SPANISH, QuestionInSpanish },
-                    { Languages.ENGLISH, QuestionInEnglish },
-                }, new Dictionary<string, string[]>()
-                {
-                    {
-                        Languages.SPANISH, new[] { ResponseSpanish1, ResponseSpanish2, ResponseSpanish3 }
-                    },
-                    {
-                        Languages.ENGLISH, new[] { ResponseEnglish1, ResponseEnglish2, ResponseEnglish3 }
-                    }
-                }, Reverse,
-                HackmanComponent.INTERPERSONAL_PEER_COACHING,
-                HackmanSubcategory.DELIMITED, HackmanSubcomponent.SENSE_OF_URGENCY, Position)
-        };
+            { "_id", teamMemberId.ToString() },
+            { "FullName", teamMember.FullName },
+            { "Position", teamMember.Position },
+            { "Email", teamMember.Email },
+        });
 
-        var template = new Template(InMemoryFilesTemplateRepository.HackmanModel, questions, 30);
-        var inMemoryTemplateRepository = new InMemoryFilesTemplateRepository(TestFolder);
-        
-        var team = new Team(Guid.NewGuid(), "Team Test");
-        var inMemoryTeamRepository = new InMemoryTeamRepository(new List<Team>() { team });
+        await _teamCollection.InsertOneAsync(new BsonDocument
+        {
+            { "_id", teamId.ToString() },
+            { "Name", team.Name },
+            { "Members", new BsonArray() { teamMemberId.ToString() } },
+            { "IsDeleted", team.IsDeleted }
+        });
 
-        var inMemorySurveyRepository = new InMemorySurveyRepository();
-        var surveysService = new SurveyService(inMemorySurveyRepository, inMemoryTeamRepository, inMemoryTemplateRepository);
+        await _templateCollection.InsertOneAsync(new BsonDocument
+        {
+            { "name", template.Name },
+            { "questions", new BsonArray() },
+            { "minutesToComplete", template.MinutesToComplete }
+        });
+
+        var templateRepository = new MongoTemplateRepository(_databaseSettings);
+        var teamRepository = new MongoTeamRepository(_databaseSettings);
+        var surveyRepository = new MongoSurveyRepository(_databaseSettings);
+
+        var surveysService = new SurveyService(surveyRepository, teamRepository, templateRepository);
+
         var surveyController = new SurveyController(surveysService, _logger);
+
         var createSurveyDto = new CreateSurveyDto(Guid.NewGuid(), team.Id, template.Name, "survey title",
-            "Description", DateTime.Parse("2023-08-09T07:38:04+0000"));
-        var expectedSurvey = new Survey(createSurveyDto.SurveyId, new User(surveysService.DefaultUserId, "Lucia"), Status.Draft,
-            createSurveyDto.Deadline, createSurveyDto.Title, createSurveyDto.Description, Array.Empty<Response>(),
+            "Description", DateTime.Parse("2023-08-09T07:38:04+0000").ToUniversalTime());
+
+        var expectedSurvey = new Survey(createSurveyDto.SurveyId, new User(surveysService.DefaultUserId, "Lucia"),
+            Status.Draft,
+            createSurveyDto.Deadline, createSurveyDto.Title, createSurveyDto.Description, new List<Response>(),
             team, template);
 
         //When: they create a new Survey 
         var actionResult = await surveyController.CreateSurvey(createSurveyDto);
         Assert.IsType<CreatedResult>(actionResult);
-        
+
         //And: they get it back later
         var retrievedSurvey = await surveyController.GetSurveyById(createSurveyDto.SurveyId);
 
@@ -90,32 +123,104 @@ public class SurveyAcceptanceTest
         Assert.Equal(StatusCodes.Status200OK, okObjectResult.StatusCode);
         CustomAssertions.StringifyEquals(expectedSurvey, okObjectResult.Value);
     }
-    
+
     [Fact]
     public async Task ShouldBeAbleToRetrieveATeamSurveys()
     {
+        await InitializeDbClientAndCollections();
+
+        var teamMemberId = Guid.NewGuid();
+        var teamMember = new TeamMember(teamMemberId, "Some name", "Some position", "some@email.com");
+        var teamId = Guid.NewGuid();
+        var team = new Team(teamId, "Some team name", new List<TeamMember> { teamMember });
+        var template = new Template("Hackman Model", new List<IQuestion>(), 10);
+        var survey = new Survey(Guid.NewGuid(), new User(Guid.NewGuid(), "Demo coach"), Status.Draft, DateTime.Now.ToUniversalTime(),
+            "Survey title", "Survey Description", new List<Response>(), team, template);
+
+        var survey2 = new Survey(Guid.NewGuid(), new User(Guid.NewGuid(), "Demo coach"), Status.Draft, DateTime.Now.ToUniversalTime(),
+            "Survey title", "Survey Description", new List<Response>(), team, template);
+
+        await _teamMemberCollection.InsertOneAsync(new BsonDocument
+        {
+            { "_id", teamMemberId.ToString() },
+            { "FullName", teamMember.FullName },
+            { "Position", teamMember.Position },
+            { "Email", teamMember.Email },
+        });
+
+        await _teamCollection.InsertOneAsync(new BsonDocument
+        {
+            { "_id", teamId.ToString() },
+            { "Name", team.Name },
+            { "Members", new BsonArray() { teamMemberId.ToString() } },
+            { "IsDeleted", team.IsDeleted }
+        });
+
+        await _templateCollection.InsertOneAsync(new BsonDocument
+        {
+            { "name", template.Name },
+            { "questions", new BsonArray() },
+            { "minutesToComplete", template.MinutesToComplete }
+        });
+
+        await _surveyCollection.InsertManyAsync(new List<BsonDocument>()
+        {
+            new BsonDocument
+            {
+                { "_id", survey.Id.ToString() },
+                {
+                    "Coach", new BsonDocument
+                    {
+                        { "_id", survey.Coach.Id.ToString() },
+                        { "Name", survey.Coach.Name }
+                    }
+                },
+                { "Status", survey.Status.ToString() },
+                { "Title", survey.Title },
+                { "Description", survey.Description },
+                { "Responses", new BsonArray() },
+                { "Team", survey.Team.Id.ToString() },
+                { "Template", survey.Template.Name }
+            },
+            new BsonDocument
+            {
+                { "_id", survey2.Id.ToString() },
+                {
+                    "Coach", new BsonDocument
+                    {
+                        { "_id", survey.Coach.Id.ToString() },
+                        { "Name", survey.Coach.Name }
+                    }
+                },
+                { "Status", survey2.Status.ToString() },
+                { "Title", survey2.Title },
+                { "Description", survey2.Description },
+                { "Responses", new BsonArray() },
+                { "Team", survey2.Team.Id.ToString() },
+                { "Template", survey2.Template.Name }
+            }
+        });
+
         //Given: A user interacting with the backend API
 
-        var inMemoryTemplateRepository = new InMemoryFilesTemplateRepository(TestFolder);
-        
-        var teamId = Guid.NewGuid();
-        var emptySurveyList = new List<Survey>() { };
-        var inMemorySurveyRepository = new InMemorySurveyRepository(emptySurveyList);
-        ITeamRepository inMemoryTeamRepository = new InMemoryTeamRepository();
-        var surveysService = new SurveyService(inMemorySurveyRepository, inMemoryTeamRepository, inMemoryTemplateRepository);
-        
+        var templateRepository = new MongoTemplateRepository(_databaseSettings);
+
+        var surveyRepository = new MongoSurveyRepository(_databaseSettings);
+        ITeamRepository teamRepository = new MongoTeamRepository(_databaseSettings);
+        var surveysService = new SurveyService(surveyRepository, teamRepository, templateRepository);
+
         var surveyController = new SurveyController(surveysService, _logger);
 
         var teamSurveys = await surveyController.GetAllSurveysFromTeam(teamId);
 
         var resultObject = Assert.IsType<OkObjectResult>(teamSurveys.Result);
         Assert.Equal(StatusCodes.Status200OK, resultObject.StatusCode);
-        Assert.Equal(emptySurveyList, resultObject.Value);
+        var surveys = Assert.IsType<List<Survey>>(resultObject.Value);
+        Assert.Equal(2, surveys.Count);
     }
-    
+
     public void Dispose()
     {
-        File.Delete($"{TestFolder}/hackman.csv");
-        Directory.Delete(TestFolder);
+        _mongoDbContainer.StopAsync();
     }
 }

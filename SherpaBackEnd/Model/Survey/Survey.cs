@@ -10,11 +10,11 @@ public class Survey
     public DateTime? Deadline {get; set;}
     public string Title {get; set;}
     public string? Description {get; set;}
-    public Response[] Responses {get; set;}
+    public List<Response> Responses {get; set;}
     public Team Team {get; set;}
     public Template.Template Template {get; set;}
 
-    public Survey(Guid id, User coach, Status status, DateTime? deadline, string title, string? description, Response [] responses, Team team, Template.Template template)
+    public Survey(Guid id, User coach, Status status, DateTime? deadline, string title, string? description, List<Response> responses, Team team, Template.Template template)
     {
         Id = id;
         Coach = coach;

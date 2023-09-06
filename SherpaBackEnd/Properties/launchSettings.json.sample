@@ -18,7 +18,8 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "AWS_SES_ACCESS_KEY": "",
-        "AWS_SES_SECRET_KEY": ""
+        "AWS_SES_SECRET_KEY": "",
+        "CONNECTION_STRING": ""
       },
       "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}"
     },
