@@ -61,6 +61,6 @@ public class SurveyService : ISurveyService
 
     public Task<IEnumerable<IQuestion>> GetSurveyQuestionsBySurveyId(Guid expectedSurveyId)
     {
-        throw new NotImplementedException();
+        return new Task<IEnumerable<IQuestion>>(() => new List<IQuestion>());
     }
 }
