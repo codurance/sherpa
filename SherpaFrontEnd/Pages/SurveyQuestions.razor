@@ -1,0 +1,9 @@
+﻿@page "/answer-survey/{surveyId:guid}"
+<h1>SurveyQuestions</h1>
+<h3>SurveyId: @SurveyId</h3>
+
+
+@code {
+    [Parameter]
+    public Guid SurveyId { get; set; }
+}
