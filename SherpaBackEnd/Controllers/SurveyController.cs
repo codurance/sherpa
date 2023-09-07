@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using SherpaBackEnd.Dtos;
 using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Model.Survey;
+using SherpaBackEnd.Model.Template;
 using SherpaBackEnd.Services;
 
 namespace SherpaBackEnd.Controllers;
@@ -78,5 +79,10 @@ public class SurveyController
                 _ => new ObjectResult(error) { StatusCode = StatusCodes.Status500InternalServerError }
             };
         }
+    }
+
+    public async Task<ActionResult<IEnumerable<IQuestion>>> GetSurveyQuestionsBySurveyId(Guid surveyId)
+    {
+        return new ActionResult<IEnumerable<IQuestion>>(await _surveyService.GetSurveyQuestionsBySurveyId(surveyId));
     }
 }

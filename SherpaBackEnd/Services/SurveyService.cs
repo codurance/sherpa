@@ -58,4 +58,9 @@ public class SurveyService : ISurveyService
         }
         return surveyById;
     }
+
+    public Task<IEnumerable<IQuestion>> GetSurveyQuestionsBySurveyId(Guid expectedSurveyId)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -1,4 +1,3 @@
-
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -77,7 +76,7 @@ public class SurveyControllerTest
     }
 
     [Fact]
-    public async Task ShouldReturnTheSurveyGivenByTheServiceWhenCallingGetSurveyById()
+    public async Task ShouldReturnTheSurveyWithoutQuestionsGivenByTheServiceWhenCallingGetSurveyById()
     {
         var expectedSurvey = new Survey(Guid.NewGuid(), new User(Guid.NewGuid(), "Lucia"), Status.Draft,
             DateTime.Parse("2023-08-09T07:38:04+0000"), "Title", "description", new List<Response>(),
@@ -90,6 +89,54 @@ public class SurveyControllerTest
         var okObjectResult = Assert.IsType<OkObjectResult>(surveyById.Result);
 
         Assert.Equal(expectedSurvey, okObjectResult.Value);
+    }
+
+    [Fact]
+    public async Task ShouldReturnTheSurveyQuestionsGivenByTheSurveyServiceWhenCallingGetSurveyQuestionsBySurveyId()
+    {
+        var team = new Team(Guid.NewGuid(), "team name");
+
+        var QuestionInSpanish = "Question in spanish";
+        var QuestionInEnglish = "Question in english";
+        var ResponseSpanish1 = "SPA_1";
+        var ResponseSpanish2 = "SPA_2";
+        var ResponseSpanish3 = "SPA_3";
+        var ResponseEnglish1 = "ENG_1";
+        var ResponseEnglish2 = "ENG_2";
+        var ResponseEnglish3 = "ENG_3";
+        var Position = 1;
+        var Reverse = false;
+
+        var hackmanQuestion = new HackmanQuestion(new Dictionary<string, string>()
+            {
+                { Languages.SPANISH, QuestionInSpanish },
+                { Languages.ENGLISH, QuestionInEnglish },
+            }, new Dictionary<string, string[]>()
+            {
+                {
+                    Languages.SPANISH, new[] { ResponseSpanish1, ResponseSpanish2, ResponseSpanish3 }
+                },
+                {
+                    Languages.ENGLISH, new[] { ResponseEnglish1, ResponseEnglish2, ResponseEnglish3 }
+                }
+            }, Reverse,
+            HackmanComponent.INTERPERSONAL_PEER_COACHING,
+            HackmanSubcategory.DELIMITED, HackmanSubcomponent.SENSE_OF_URGENCY, Position);
+
+        var template = new Template("Template name", new List<IQuestion>() { hackmanQuestion }, 1);
+        var expectedSurvey = new Survey(Guid.NewGuid(), new User(Guid.NewGuid(), "Lucia"), Status.Draft,
+            DateTime.Parse("2023-08-09T07:38:04+0000"), "Title", "description", new List<Response>(),
+            team, template);
+        var controller = new SurveyController(_serviceMock.Object, _logger);
+        _serviceMock.Setup(service => service.GetSurveyById(expectedSurvey.Id)).ReturnsAsync(expectedSurvey);
+        
+        var questionsFromSurvey = await controller.GetSurveyQuestionsBySurveyId(expectedSurvey.Id);
+        
+        _serviceMock.Verify(_ => _.GetSurveyQuestionsBySurveyId(expectedSurvey.Id), Times.Once());
+
+        var okObjectResult = Assert.IsType<OkObjectResult>(questionsFromSurvey.Result);
+
+        Assert.Contains(hackmanQuestion, (IEnumerable<IQuestion>) okObjectResult.Value);
     }
 
     [Fact]
@@ -107,6 +154,7 @@ public class SurveyControllerTest
 
         Assert.Equal(StatusCodes.Status404NotFound, okObjectResult.StatusCode);
     }
+
     [Fact]
     public async Task ShouldReturn500IfServiceThrowsNotPredefinedCustomExceptionWhenCallingGetSurveyById()
     {
@@ -122,15 +170,16 @@ public class SurveyControllerTest
 
         Assert.Equal(StatusCodes.Status500InternalServerError, okObjectResult.StatusCode);
     }
+
     [Fact]
     public async Task ShouldReturnOkObjectResultIfNoErrorsFoundWhenGettingAllSurveysFromTeam()
     {
         var teamId = Guid.NewGuid();
         var surveyService = new Mock<ISurveyService>();
-        
+
         var logger = Mock.Of<ILogger<TeamController>>();
         var surveyController = new SurveyController(surveyService.Object, _logger);
-        
+
         var allSurveysFromTeam = await surveyController.GetAllSurveysFromTeam(teamId);
         Assert.IsType<OkObjectResult>(allSurveysFromTeam.Result);
     }
@@ -140,10 +189,10 @@ public class SurveyControllerTest
     {
         var teamId = Guid.NewGuid();
         var surveyService = new Mock<ISurveyService>();
-        
+
         var logger = Mock.Of<ILogger<TeamController>>();
         var surveyController = new SurveyController(surveyService.Object, _logger);
-        
+
         var allSurveysFromTeam = await surveyController.GetAllSurveysFromTeam(teamId);
         var responseObject = Assert.IsType<OkObjectResult>(allSurveysFromTeam.Result);
         Assert.IsAssignableFrom<IEnumerable<Survey>>(responseObject.Value);
@@ -157,28 +206,29 @@ public class SurveyControllerTest
         var surveyService = new Mock<ISurveyService>(MockBehavior.Strict);
 
         surveyService.Setup(_ => _.GetAllSurveysFromTeam(teamId)).ReturnsAsync(surveysEmptyList);
-        
+
         var logger = Mock.Of<ILogger<TeamController>>();
         var surveyController = new SurveyController(surveyService.Object, _logger);
-        
+
         var allSurveysFromTeam = await surveyController.GetAllSurveysFromTeam(teamId);
-        
+
         surveyService.Verify(_ => _.GetAllSurveysFromTeam(teamId), Times.Once());
         var responseObject = Assert.IsType<OkObjectResult>(allSurveysFromTeam.Result);
         var actualSurveys = Assert.IsAssignableFrom<IEnumerable<Survey>>(responseObject.Value);
-        
+
         Assert.Equal(JsonConvert.SerializeObject(surveysEmptyList), JsonConvert.SerializeObject(actualSurveys));
     }
-    
+
     [Fact]
     public async Task ShouldReturnErrorIfAllSurveysFromTeamCannotBeRetrieved()
     {
         var teamId = Guid.NewGuid();
         var surveyService = new Mock<ISurveyService>(MockBehavior.Strict);
-        var notSuccessfulGettingAllSurveysFromTeam = new ConnectionToRepositoryUnsuccessfulException("Cannot perform get all teams function.");
+        var notSuccessfulGettingAllSurveysFromTeam =
+            new ConnectionToRepositoryUnsuccessfulException("Cannot perform get all teams function.");
         surveyService.Setup(_ => _.GetAllSurveysFromTeam(teamId))
             .ThrowsAsync(notSuccessfulGettingAllSurveysFromTeam);
-        
+
         var logger = Mock.Of<ILogger<TeamController>>();
         var surveyController = new SurveyController(surveyService.Object, _logger);
 
