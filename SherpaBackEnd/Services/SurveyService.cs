@@ -59,8 +59,9 @@ public class SurveyService : ISurveyService
         return surveyById;
     }
 
-    public Task<IEnumerable<IQuestion>> GetSurveyQuestionsBySurveyId(Guid expectedSurveyId)
+    public async Task<IEnumerable<IQuestion>> GetSurveyQuestionsBySurveyId(Guid expectedSurveyId)
     {
-        return new Task<IEnumerable<IQuestion>>(() => new List<IQuestion>());
+        var surveyById = await GetSurveyById(expectedSurveyId);
+        return surveyById.Template.Questions;
     }
 }

@@ -140,7 +140,6 @@ public class SurveyServiceTest
         var questionsReceived = await service.GetSurveyQuestionsBySurveyId(surveyId);
 
         _surveyRepo.Verify(repository => repository.GetSurveyById(surveyId));
-
         Assert.Contains(hackmanQuestion, questionsReceived);
     }
 }

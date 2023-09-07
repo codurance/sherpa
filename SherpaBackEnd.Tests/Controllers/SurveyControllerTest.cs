@@ -128,11 +128,11 @@ public class SurveyControllerTest
             DateTime.Parse("2023-08-09T07:38:04+0000"), "Title", "description", new List<Response>(),
             team, template);
         var controller = new SurveyController(_serviceMock.Object, _logger);
-        _serviceMock.Setup(service => service.GetSurveyById(expectedSurvey.Id)).ReturnsAsync(expectedSurvey);
+        _serviceMock.Setup(service => service.GetSurveyQuestionsBySurveyId(expectedSurvey.Id)).ReturnsAsync(expectedSurvey.Template.Questions);
         
         var questionsFromSurvey = await controller.GetSurveyQuestionsBySurveyId(expectedSurvey.Id);
         
-        _serviceMock.Verify(_ => _.GetSurveyQuestionsBySurveyId(expectedSurvey.Id), Times.Once());
+        _serviceMock.Verify(_ => _.GetSurveyQuestionsBySurveyId(expectedSurvey.Id));
 
         var okObjectResult = Assert.IsType<OkObjectResult>(questionsFromSurvey.Result);
 
