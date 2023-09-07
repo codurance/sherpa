@@ -78,13 +78,13 @@ public class SurveyControllerTest
     [Fact]
     public async Task ShouldReturnTheSurveyWithoutQuestionsGivenByTheServiceWhenCallingGetSurveyById()
     {
-        var expectedSurvey = new Survey(Guid.NewGuid(), new User(Guid.NewGuid(), "Lucia"), Status.Draft,
+        var expectedSurvey = new SurveyWithoutQuestions(Guid.NewGuid(), new User(Guid.NewGuid(), "Lucia"), Status.Draft,
             DateTime.Parse("2023-08-09T07:38:04+0000"), "Title", "description", new List<Response>(),
-            new Team(Guid.NewGuid(), "team name"), new Template("Template name", Array.Empty<IQuestion>(), 1));
+            new Team(Guid.NewGuid(), "team name"), new TemplateWithoutQuestions("Template name", 1));
         var controller = new SurveyController(_serviceMock.Object, _logger);
-        _serviceMock.Setup(service => service.GetSurveyById(expectedSurvey.Id)).ReturnsAsync(expectedSurvey);
+        _serviceMock.Setup(service => service.GetSurveyWithoutQuestionsById(expectedSurvey.Id)).ReturnsAsync(expectedSurvey);
 
-        var surveyById = await controller.GetSurveyById(expectedSurvey.Id);
+        var surveyById = await controller.GetSurveyWithoutQuestionsById(expectedSurvey.Id);
 
         var okObjectResult = Assert.IsType<OkObjectResult>(surveyById.Result);
 
@@ -144,11 +144,11 @@ public class SurveyControllerTest
     {
         var surveyId = Guid.NewGuid();
 
-        _serviceMock.Setup(service => service.GetSurveyById(surveyId))
+        _serviceMock.Setup(service => service.GetSurveyWithoutQuestionsById(surveyId))
             .ThrowsAsync(new NotFoundException("Survey not found"));
 
         var controller = new SurveyController(_serviceMock.Object, _logger);
-        var surveyById = await controller.GetSurveyById(surveyId);
+        var surveyById = await controller.GetSurveyWithoutQuestionsById(surveyId);
 
         var okObjectResult = Assert.IsType<ObjectResult>(surveyById.Result);
 
@@ -160,11 +160,11 @@ public class SurveyControllerTest
     {
         var surveyId = Guid.NewGuid();
 
-        _serviceMock.Setup(service => service.GetSurveyById(surveyId))
+        _serviceMock.Setup(service => service.GetSurveyWithoutQuestionsById(surveyId))
             .ThrowsAsync(new Exception());
 
         var controller = new SurveyController(_serviceMock.Object, _logger);
-        var surveyById = await controller.GetSurveyById(surveyId);
+        var surveyById = await controller.GetSurveyWithoutQuestionsById(surveyId);
 
         var okObjectResult = Assert.IsType<ObjectResult>(surveyById.Result);
 

@@ -59,10 +59,10 @@ public class SurveyServiceTest
             new Team(Guid.NewGuid(), "Demo team"), new Template("demo", Array.Empty<IQuestion>(), 30));
         _surveyRepo.Setup(repository => repository.GetSurveyById(surveyId)).ReturnsAsync(expectedSurvey);
 
-        var receivedSurvey = await service.GetSurveyById(surveyId);
+        var receivedSurveyWithoutQuestions = await service.GetSurveyWithoutQuestionsById(surveyId);
 
         _surveyRepo.Verify(repository => repository.GetSurveyById(surveyId));
-        CustomAssertions.StringifyEquals(expectedSurvey, receivedSurvey);
+        Assert.Equal(expectedSurvey.Id, receivedSurveyWithoutQuestions.Id);
     }
 
     [Fact]
@@ -73,7 +73,7 @@ public class SurveyServiceTest
         _surveyRepo.Setup(repository => repository.GetSurveyById(surveyId)).ReturnsAsync((Survey?)null);
 
 
-        await Assert.ThrowsAsync<NotFoundException>(async () => await service.GetSurveyById(surveyId));
+        await Assert.ThrowsAsync<NotFoundException>(async () => await service.GetSurveyWithoutQuestionsById(surveyId));
     }
 
     [Fact]
@@ -102,7 +102,7 @@ public class SurveyServiceTest
     }
 
     [Fact]
-    public async Task ShouldCallGetSurveyById()
+    public async Task ShouldCallSurveyRepositoryToGetSurveyQuestionsBySurveyId()
     {
         var surveyId = Guid.NewGuid();
         var service = new SurveyService(_surveyRepo.Object, _teamRepo.Object, _templateRepo.Object);
