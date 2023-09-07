@@ -82,9 +82,9 @@ public class SurveyController
     }
 
     [HttpGet("survey/{guid:guid}/questions")]
-    public async Task<ActionResult<IEnumerable<IQuestion>>> GetSurveyQuestionsBySurveyId(Guid surveyId)
+    public async Task<ActionResult<IEnumerable<IQuestion>>> GetSurveyQuestionsBySurveyId(Guid guid)
     {
-        var surveysQuestions = await _surveyService.GetSurveyQuestionsBySurveyId(surveyId);
+        var surveysQuestions = await _surveyService.GetSurveyQuestionsBySurveyId(guid);
         return new OkObjectResult(surveysQuestions);
     }
 }
