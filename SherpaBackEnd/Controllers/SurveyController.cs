@@ -61,11 +61,11 @@ public class SurveyController
     }
 
     [HttpGet("survey/{guid:guid}")]
-    public async Task<ActionResult<Survey>> GetSurveyById(Guid guid)
+    public async Task<ActionResult<Survey>> GetSurveyWithoutQuestionsById(Guid guid)
     {
         try
         {
-            var surveyById = await _surveyService.GetSurveyById(guid);
+            var surveyById = await _surveyService.GetSurveyWithoutQuestionsById(guid);
             return new OkObjectResult(surveyById);
         }
         catch (Exception error)

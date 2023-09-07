@@ -27,15 +27,17 @@ public class SurveyService : ISurveyService
     {
         var team = await _teamRepository.GetTeamByIdAsync(createSurveyDto.TeamId);
         var template = await _templateRepository.GetTemplateByName(createSurveyDto.TemplateName);
-        
+
         if (team == null) throw new NotFoundException("Team not found");
         if (template == null) throw new NotFoundException("Template not found");
-        
-        var survey = new Survey(createSurveyDto.SurveyId, new User(DefaultUserId, "Lucia"), Status.Draft, createSurveyDto.Deadline, createSurveyDto.Title, createSurveyDto.Description, new List<Response>(), team, template);
-        
+
+        var survey = new Survey(createSurveyDto.SurveyId, new User(DefaultUserId, "Lucia"), Status.Draft,
+            createSurveyDto.Deadline, createSurveyDto.Title, createSurveyDto.Description, new List<Response>(), team,
+            template);
+
         await _surveyRepository.CreateSurvey(survey);
     }
-    
+
     public async Task<IEnumerable<Survey>> GetAllSurveysFromTeam(Guid teamId)
     {
         try
@@ -48,7 +50,7 @@ public class SurveyService : ISurveyService
         }
     }
 
-    public async Task<Survey> GetSurveyById(Guid expectedSurveyId)
+    public async Task<SurveyWithoutQuestions> GetSurveyWithoutQuestionsById(Guid expectedSurveyId)
     {
         var surveyById = await _surveyRepository.GetSurveyById(expectedSurveyId);
 
@@ -56,12 +58,15 @@ public class SurveyService : ISurveyService
         {
             throw new NotFoundException("Survey not found");
         }
-        return surveyById;
+
+        return new SurveyWithoutQuestions(surveyById.Id, surveyById.Coach, surveyById.Status, surveyById.Deadline,
+            surveyById.Title, surveyById.Description, surveyById.Responses, surveyById.Team,
+            new TemplateWithoutQuestions(surveyById.Template.Name, surveyById.Template.MinutesToComplete));
     }
 
     public async Task<IEnumerable<IQuestion>> GetSurveyQuestionsBySurveyId(Guid expectedSurveyId)
     {
-        var surveyById = await GetSurveyById(expectedSurveyId);
+        var surveyById = await _surveyRepository.GetSurveyById(expectedSurveyId);
         return surveyById.Template.Questions;
     }
 }
