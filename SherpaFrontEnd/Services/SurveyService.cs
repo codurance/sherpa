@@ -40,4 +40,10 @@ public class SurveyService : ISurveyService
         return JsonSerializer.Deserialize<List<Survey>>(
             responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
     }
+
+    public async Task<List<Question>?> GetSurveyQuestionsBySurveyId(Guid surveyId)
+    {
+        var client = _httpClientFactory.CreateClient(SherpaBackend);
+        return await client.GetFromJsonAsync<List<Question>>($"/survey/{surveyId.ToString()}/questions");
+    }
 }
