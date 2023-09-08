@@ -1,13 +1,38 @@
-﻿@inherits LayoutComponentBase
+﻿@inject NavigationManager NavigationManager
+
+@inherits LayoutComponentBase
 
 <div class="page">
-    <div class="sidebar">
-        <NavMenu/>
-    </div>
+    <AuthorizeView>
+        <Authorized>
+            <div class="sidebar">
+                <NavMenu/>
+            </div>
 
-    <main class="flex">
-        <article class="p-0 m-0 flex-1 flex flex-col">
-            @Body
-        </article>
-    </main>
+            <main class="flex flex-col">
+                <div class="flex gap-8 flex-row-reverse">
+                    <LoginDisplay/>
+                </div>
+                <article class="m-0 flex flex-1 flex-col p-0">
+                    @Body
+                </article>
+            </main>
+        </Authorized>
+        <NotAuthorized>
+            <p>You're logged out</p>
+            <button class="btn btn-primary" @onclick="RedirectToLogin">Log in</button>
+        </NotAuthorized>
+        <Authorizing>
+            <p>Trying to log in...</p>
+        </Authorizing>
+    </AuthorizeView>
 </div>
+
+@code
+{
+    private async Task RedirectToLogin()
+    {
+        NavigationManager.NavigateTo("authentication/login");
+    }
+}
+
