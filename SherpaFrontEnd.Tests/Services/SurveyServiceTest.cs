@@ -66,7 +66,7 @@ public class SurveyServiceTest
             .ReturnsAsync(surveyResponse);
 
         var surveyService = new SurveyService(_httpClientFactory.Object);
-        var actualSurvey = await surveyService.GetSurveyById(surveyId);
+        var actualSurvey = await surveyService.GetSurveyWithoutQuestionsById(surveyId);
         CustomAssertions.StringifyEquals(survey, actualSurvey);
     }
 

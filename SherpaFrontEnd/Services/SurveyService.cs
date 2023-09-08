@@ -22,7 +22,7 @@ public class SurveyService : ISurveyService
         await client.PostAsJsonAsync("/survey", createSurveyDto);
     }
 
-    public async Task<SurveyWithoutQuestions?> GetSurveyById(Guid id)
+    public async Task<SurveyWithoutQuestions?> GetSurveyWithoutQuestionsById(Guid id)
     {
         var client = _httpClientFactory.CreateClient(SherpaBackend);
         return await client.GetFromJsonAsync<SurveyWithoutQuestions>($"/survey/{id.ToString()}");

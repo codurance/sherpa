@@ -1,9 +1,40 @@
-﻿@page "/answer-survey/{surveyId:guid}"
-<h1>SurveyQuestions</h1>
-<h3>SurveyId: @SurveyId</h3>
+﻿@page "/answer-survey/{surveyId:guid}/{memberId:guid}"
+@using SherpaFrontEnd.Dtos
+@using SherpaFrontEnd.Services
+@inject ISurveyService SurveyService
+@inject NavigationManager NavigationManager
+
+<div>
+    <h2>Hello team!</h2>
+    @if (_survey != null)
+    {
+        <div>
+            <p>@_survey.Description</p>
+        </div>
+    }
+</div>
 
 
 @code {
+
     [Parameter]
     public Guid SurveyId { get; set; }
+
+    [Parameter]
+    public Guid MemberId { get; set; }
+
+    private SurveyWithoutQuestions? _survey;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _survey = await SurveyService.GetSurveyWithoutQuestionsById(SurveyId);
+        }
+        catch
+        {
+            NavigationManager.NavigateTo(NavigationManager.BaseUri + "error");
+        }
+    }
+
 }

@@ -44,7 +44,7 @@ public class SurveyDraftReviewTest
             templateWithoutQuestions);
         
         // template
-        _surveyService.Setup(service => service.GetSurveyById(_surveyId)).ReturnsAsync(survey);
+        _surveyService.Setup(service => service.GetSurveyWithoutQuestionsById(_surveyId)).ReturnsAsync(survey);
         
         var appComponent = _ctx.RenderComponent<SurveyDraftReview>(ComponentParameter.CreateParameter("SurveyId", _surveyId));
         var templateNameElement = appComponent.FindAll("p")
@@ -84,7 +84,7 @@ public class SurveyDraftReviewTest
     [Fact]
     public async Task ShouldRedirectToErrorPageIfThereIsAnErrorLoadingTheSurvey()
     {
-        _surveyService.Setup(service => service.GetSurveyById(_surveyId)).ThrowsAsync(new Exception());
+        _surveyService.Setup(service => service.GetSurveyWithoutQuestionsById(_surveyId)).ThrowsAsync(new Exception());
         
         var appComponent = _ctx.RenderComponent<SurveyDraftReview>(ComponentParameter.CreateParameter("SurveyId", _surveyId));
         
