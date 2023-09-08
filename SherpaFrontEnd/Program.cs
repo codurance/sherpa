@@ -1,7 +1,6 @@
 using System.Text.Json;
 using Blazored.Modal;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using SherpaFrontEnd;
 using SherpaFrontEnd.Serializers;
@@ -33,6 +32,5 @@ builder.Services.AddOidcAuthentication(options =>
     // For more information, see https://aka.ms/blazor-standalone-auth
     builder.Configuration.Bind("Cognito", options.ProviderOptions);
 });
-
 
 await builder.Build().RunAsync();

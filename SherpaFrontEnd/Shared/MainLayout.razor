@@ -19,11 +19,17 @@
             </main>
         </Authorized>
         <NotAuthorized>
-            <p>You're logged out</p>
-            <button class="btn btn-primary" @onclick="RedirectToLogin">Log in</button>
+            <div class="flex justify-center items-center w-screen h-screen">
+                <div class="flex flex-col items-center gap-2">
+                    <p>You're logged out</p>
+                    <button class="btn btn-primary" @onclick="RedirectToLogin">Log in</button>
+                </div>
+            </div>
         </NotAuthorized>
         <Authorizing>
-            <p>Trying to log in...</p>
+            <div class="flex justify-center items-center w-screen h-screen">
+                <Spinner/>
+            </div>
         </Authorizing>
     </AuthorizeView>
 </div>
@@ -35,4 +41,3 @@
         NavigationManager.NavigateTo("authentication/login");
     }
 }
-
