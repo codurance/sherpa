@@ -118,6 +118,10 @@ public class SurveyQuestionsTest
 
         var amountOfAvailableResponses = appComponent.FindAll("input[type=radio]").Count;
         Assert.Equal(questions[0].Responses[Languages.ENGLISH].Length, amountOfAvailableResponses);
+        
+        var submitButton = appComponent.FindAll("button")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Submit"));
+        Assert.NotNull(submitButton);
     }
     
     [Fact]
@@ -181,6 +185,10 @@ public class SurveyQuestionsTest
         var secondQuestionSpanishStatement = appComponent.FindAll("p")
             .FirstOrDefault(element => element.InnerHtml.Contains(questions[1].Statement[Languages.ENGLISH]));
         Assert.NotNull(secondQuestionSpanishStatement);
+        
+        var submitButton = appComponent.FindAll("button")
+            .FirstOrDefault(element => element.InnerHtml.Contains("Submit"));
+        Assert.NotNull(submitButton);
     }
 
     [Fact]
