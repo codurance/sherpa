@@ -28,9 +28,11 @@ builder.Services.AddBlazoredModal();
 
 builder.Services.AddOidcAuthentication(options =>
 {
-    // Configure your authentication provider options here.
-    // For more information, see https://aka.ms/blazor-standalone-auth
-    builder.Configuration.Bind("Cognito", options.ProviderOptions);
+    options.ProviderOptions.Authority = builder.Configuration["Cognito:Authority"];
+    options.ProviderOptions.ClientId = builder.Configuration["Cognito:ClientId"];
+    options.ProviderOptions.RedirectUri = builder.HostEnvironment.BaseAddress + builder.Configuration["Cognito:RedirectUri"];
+    options.ProviderOptions.PostLogoutRedirectUri = builder.HostEnvironment.BaseAddress + builder.Configuration["Cognito:PostLogoutRedirectUri"];
+    options.ProviderOptions.ResponseType = "code";
 });
 
 await builder.Build().RunAsync();

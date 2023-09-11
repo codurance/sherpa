@@ -1,7 +1,6 @@
 @page "/authentication/{action}"
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-@using System.Text.Json.Serialization
-@layout BlankLayout
+@layout PublicAccessLayout
 @inject NavigationManager NavigationManager
 @inject IConfiguration config
 <div class="flex justify-center items-center w-screen h-screen">
@@ -63,8 +62,8 @@
     private void LogoutFromCognito()
     {
         var cognitoClientId = config["Cognito:ClientId"];
+        var cognitoLogoutEndpoint = config["Cognito:UIEndpoint"];
         var redirectUrlAfterLogout = $"{NavigationManager.BaseUri}authentication/logged-out";
-        const string cognitoLogoutEndpoint = "https://sherpa.auth.eu-central-1.amazoncognito.com/logout";
 
         NavigationManager.NavigateTo(
             $"{cognitoLogoutEndpoint}?client_id={cognitoClientId}&logout_uri={Uri.EscapeDataString(redirectUrlAfterLogout)}");

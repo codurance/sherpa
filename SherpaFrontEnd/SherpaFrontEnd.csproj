@@ -29,7 +29,7 @@
       <Content Remove="Shared\Modals\CreateTeamOffcanvas 2.razor" />
       <Content Remove="Shared\Modals\AddTeamModal 2.razor" />
       <Content Remove="Pages\TeamsList 2.razor" />
-      <Content Update="wwwroot\appsettings.Development.json">
+      <Content Update="wwwroot\appsettings.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
     </ItemGroup>
