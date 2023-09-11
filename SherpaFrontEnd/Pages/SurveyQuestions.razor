@@ -15,14 +15,20 @@
     }
     @if (_questions != null)
     {
-        <label>
-            <p>
-                @_questions[0].Statement[Languages.ENGLISH]
-            </p>
-        </label>
-        @foreach (var response in _questions[0].Responses[Languages.ENGLISH])
+        @foreach (var question in _questions.OrderBy(_ => _.Position))
         {
-            <input type="radio" value="@response">
+            <label>
+                <p>
+                    @question.Statement[Languages.ENGLISH]
+                </p>
+            </label>
+            @foreach (var response in question.Responses[Languages.ENGLISH])
+            {
+                <div>
+                    <input type="radio" id="@question.Position-@Array.IndexOf(question.Responses[Languages.ENGLISH], @response)" name="@question.Position" value="@response">
+                    <label for="@question.Position-@Array.IndexOf(question.Responses[Languages.ENGLISH], @response)">@response</label>
+                </div>
+            }
         }
     }
 </div>

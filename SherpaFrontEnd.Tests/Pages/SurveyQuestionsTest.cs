@@ -119,6 +119,69 @@ public class SurveyQuestionsTest
         var amountOfAvailableResponses = appComponent.FindAll("input[type=radio]").Count;
         Assert.Equal(questions[0].Responses[Languages.ENGLISH].Length, amountOfAvailableResponses);
     }
+    
+    [Fact]
+    public async Task ShouldDisplayMultipleSurveyQuestionRetrievedFromSurveyService()
+    {
+        var ResponseSpanish1 = "SPA_1";
+        var ResponseSpanish2 = "SPA_2";
+        var ResponseSpanish3 = "SPA_3";
+        var ResponseEnglish1 = "ENG_1";
+        var ResponseEnglish2 = "ENG_2";
+        var ResponseEnglish3 = "ENG_3";
+        var Position = 1;
+        var Reverse = false;
+
+        var firstQuestion = new Question(new Dictionary<string, string>()
+            {
+                { Languages.SPANISH, "Primera pregunta en espanol" },
+                { Languages.ENGLISH, "First Question in english" },
+            }, new Dictionary<string, string[]>()
+            {
+                {
+                    Languages.SPANISH, new[] { ResponseSpanish1, ResponseSpanish2, ResponseSpanish3 }
+                },
+                {
+                    Languages.ENGLISH, new[] { ResponseEnglish1, ResponseEnglish2, ResponseEnglish3 }
+                }
+            }, Reverse,
+            HackmanComponent.INTERPERSONAL_PEER_COACHING,
+            HackmanSubcategory.DELIMITED, HackmanSubcomponent.SENSE_OF_URGENCY, Position);
+        
+        var secondQuestion = new Question(new Dictionary<string, string>()
+            {
+                { Languages.SPANISH, "Segunda pregunta en espanol" },
+                { Languages.ENGLISH, "Second Question in english" },
+            }, new Dictionary<string, string[]>()
+            {
+                {
+                    Languages.SPANISH, new[] { ResponseSpanish1, ResponseSpanish2, ResponseSpanish3 }
+                },
+                {
+                    Languages.ENGLISH, new[] { ResponseEnglish1, ResponseEnglish2, ResponseEnglish3 }
+                }
+            }, Reverse,
+            HackmanComponent.INTERPERSONAL_PEER_COACHING,
+            HackmanSubcategory.DELIMITED, HackmanSubcomponent.SENSE_OF_URGENCY, Position);
+
+        var questions = new List<Question>() { firstQuestion, secondQuestion };
+
+        _surveyService.Setup(service => service.GetSurveyQuestionsBySurveyId(_surveyId)).ReturnsAsync(questions);
+
+        var appComponent =
+            _ctx.RenderComponent<SurveyQuestions>(
+                ComponentParameter.CreateParameter("SurveyId", _surveyId),
+                ComponentParameter.CreateParameter("MemberId", _memberId)
+            );
+        
+        var firstQuestionSpanishStatement = appComponent.FindAll("p")
+            .FirstOrDefault(element => element.InnerHtml.Contains(questions[0].Statement[Languages.ENGLISH]));
+        Assert.NotNull(firstQuestionSpanishStatement);
+        
+        var secondQuestionSpanishStatement = appComponent.FindAll("p")
+            .FirstOrDefault(element => element.InnerHtml.Contains(questions[1].Statement[Languages.ENGLISH]));
+        Assert.NotNull(secondQuestionSpanishStatement);
+    }
 
     [Fact]
     public async Task ShouldRedirectToErrorPageIfThereIsAnErrorLoadingTheSurveyContent()
