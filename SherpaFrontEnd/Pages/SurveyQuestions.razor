@@ -5,9 +5,9 @@
 @inject NavigationManager NavigationManager
 
 <div>
-    <h2>Hello team!</h2>
     @if (_survey != null)
     {
+    <h2>@_survey.Title</h2>
         <div>
             <p>@_survey.Description</p>
         </div>
@@ -30,6 +30,7 @@
         try
         {
             _survey = await SurveyService.GetSurveyWithoutQuestionsById(SurveyId);
+            Console.WriteLine("monda" + _survey.ToString());
         }
         catch
         {

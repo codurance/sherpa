@@ -393,6 +393,5 @@ public class SurveyAcceptanceTest
         Assert.Contains("This field is mandatory", inputTitleGroup.ToMarkup());
 
         Assert.Contains("This field is mandatory", inputTeamGroup.ToMarkup());
-
     }
 }

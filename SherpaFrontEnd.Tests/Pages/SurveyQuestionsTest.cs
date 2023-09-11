@@ -46,25 +46,29 @@ public class SurveyQuestionsTest
         _surveyService.Setup(service => service.GetSurveyWithoutQuestionsById(_surveyId)).ReturnsAsync(survey);
 
         var appComponent =
-            _ctx.RenderComponent<SurveyQuestions>(ComponentParameter.CreateParameter("SurveyId", _surveyId),
-                ComponentParameter.CreateParameter("MemberId", _memberId));
-        
+            _ctx.RenderComponent<SurveyQuestions>(
+                ComponentParameter.CreateParameter("SurveyId", _surveyId),
+                ComponentParameter.CreateParameter("MemberId", _memberId)
+            );
+
         var surveyTitleElement = appComponent.FindAll("h2")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Hello team!"));
+            .FirstOrDefault(element => element.InnerHtml.Contains(survey.Title));
         Assert.NotNull(surveyTitleElement);
-        
+
         var surveyDescriptionElement = appComponent.FindAll("p")
             .FirstOrDefault(element => element.InnerHtml.Contains(survey.Description));
         Assert.NotNull(surveyDescriptionElement);
     }
-    
+
     [Fact]
     public async Task ShouldRedirectToErrorPageIfThereIsAnErrorLoadingTheSurveyContent()
     {
         _surveyService.Setup(service => service.GetSurveyWithoutQuestionsById(_surveyId)).ThrowsAsync(new Exception());
-        
-        var appComponent = _ctx.RenderComponent<SurveyQuestions>(ComponentParameter.CreateParameter("SurveyId", _surveyId), ComponentParameter.CreateParameter("MemberId", _memberId));
-        
+
+        var appComponent = _ctx.RenderComponent<SurveyQuestions>(
+            ComponentParameter.CreateParameter("SurveyId", _surveyId),
+            ComponentParameter.CreateParameter("MemberId", _memberId));
+
         appComponent.WaitForAssertion(() => Assert.Equal("http://localhost/error", _navigationManager.Uri));
     }
 }

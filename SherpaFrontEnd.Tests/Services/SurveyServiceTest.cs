@@ -228,7 +228,9 @@ public class SurveyServiceTest
             .ReturnsAsync(questionsListResponse);
 
         var surveyService = new SurveyService(_httpClientFactory.Object);
+        
         var surveyQuestions = await surveyService.GetSurveyQuestionsBySurveyId(surveyId);
+        
         Assert.Equal(JsonConvert.SerializeObject(questions), JsonConvert.SerializeObject(surveyQuestions));
     }
 }
