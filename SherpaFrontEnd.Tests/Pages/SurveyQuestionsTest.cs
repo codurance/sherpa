@@ -26,6 +26,18 @@ public class SurveyQuestionsTest
         _ctx.Services.AddSingleton<ISurveyService>(_surveyService.Object);
         _navigationManager = _ctx.Services.GetRequiredService<FakeNavigationManager>();
     }
+    
+    [Fact]
+    public void ShouldCallServiceMethodsWhenLoadingSurveyQuestions()
+    {
+            _ctx.RenderComponent<SurveyQuestions>(
+                ComponentParameter.CreateParameter("SurveyId", _surveyId),
+                ComponentParameter.CreateParameter("MemberId", _memberId)
+            );
+        
+        _surveyService.Verify(_ => _.GetSurveyWithoutQuestionsById(_surveyId), Times.Once);
+        _surveyService.Verify(_ => _.GetSurveyQuestionsBySurveyId(_surveyId), Times.Once);
+    }
 
     [Fact]
     public async Task ShouldDisplaySurveyInfoWithoutQuestionsRetrievedFromSurveyService()
@@ -50,7 +62,7 @@ public class SurveyQuestionsTest
                 ComponentParameter.CreateParameter("SurveyId", _surveyId),
                 ComponentParameter.CreateParameter("MemberId", _memberId)
             );
-
+        
         var surveyTitleElement = appComponent.FindAll("h2")
             .FirstOrDefault(element => element.InnerHtml.Contains(survey.Title));
         Assert.NotNull(surveyTitleElement);
@@ -58,6 +70,54 @@ public class SurveyQuestionsTest
         var surveyDescriptionElement = appComponent.FindAll("p")
             .FirstOrDefault(element => element.InnerHtml.Contains(survey.Description));
         Assert.NotNull(surveyDescriptionElement);
+    }
+    
+    [Fact]
+    public async Task ShouldDisplaySingleSurveyQuestionRetrievedFromSurveyService()
+    {
+        var QuestionInSpanish = "Question in spanish";
+        var QuestionInEnglish = "Question in english";
+        var ResponseSpanish1 = "SPA_1";
+        var ResponseSpanish2 = "SPA_2";
+        var ResponseSpanish3 = "SPA_3";
+        var ResponseEnglish1 = "ENG_1";
+        var ResponseEnglish2 = "ENG_2";
+        var ResponseEnglish3 = "ENG_3";
+        var Position = 1;
+        var Reverse = false;
+
+        var question = new Question(new Dictionary<string, string>()
+            {
+                { Languages.SPANISH, QuestionInSpanish },
+                { Languages.ENGLISH, QuestionInEnglish },
+            }, new Dictionary<string, string[]>()
+            {
+                {
+                    Languages.SPANISH, new[] { ResponseSpanish1, ResponseSpanish2, ResponseSpanish3 }
+                },
+                {
+                    Languages.ENGLISH, new[] { ResponseEnglish1, ResponseEnglish2, ResponseEnglish3 }
+                }
+            }, Reverse,
+            HackmanComponent.INTERPERSONAL_PEER_COACHING,
+            HackmanSubcategory.DELIMITED, HackmanSubcomponent.SENSE_OF_URGENCY, Position);
+
+        var questions = new List<Question>() { question };
+
+        _surveyService.Setup(service => service.GetSurveyQuestionsBySurveyId(_surveyId)).ReturnsAsync(questions);
+
+        var appComponent =
+            _ctx.RenderComponent<SurveyQuestions>(
+                ComponentParameter.CreateParameter("SurveyId", _surveyId),
+                ComponentParameter.CreateParameter("MemberId", _memberId)
+            );
+        
+        var questionSpanishStatement = appComponent.FindAll("p")
+            .FirstOrDefault(element => element.InnerHtml.Contains(questions[0].Statement[Languages.ENGLISH]));
+        Assert.NotNull(questionSpanishStatement);
+
+        var amountOfAvailableResponses = appComponent.FindAll("input[type=radio]").Count;
+        Assert.Equal(questions[0].Responses[Languages.ENGLISH].Length, amountOfAvailableResponses);
     }
 
     [Fact]

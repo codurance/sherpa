@@ -1,5 +1,6 @@
 ﻿@page "/answer-survey/{surveyId:guid}/{memberId:guid}"
 @using SherpaFrontEnd.Dtos
+@using SherpaFrontEnd.Dtos.Survey
 @using SherpaFrontEnd.Services
 @inject ISurveyService SurveyService
 @inject NavigationManager NavigationManager
@@ -7,10 +8,22 @@
 <div>
     @if (_survey != null)
     {
-    <h2>@_survey.Title</h2>
+        <h2>@_survey.Title</h2>
         <div>
             <p>@_survey.Description</p>
         </div>
+    }
+    @if (_questions != null)
+    {
+        <label>
+            <p>
+                @_questions[0].Statement[Languages.ENGLISH]
+            </p>
+        </label>
+        @foreach (var response in _questions[0].Responses[Languages.ENGLISH])
+        {
+            <input type="radio" value="@response">
+        }
     }
 </div>
 
@@ -24,12 +37,14 @@
     public Guid MemberId { get; set; }
 
     private SurveyWithoutQuestions? _survey;
+    private List<Question>? _questions;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
             _survey = await SurveyService.GetSurveyWithoutQuestionsById(SurveyId);
+            _questions = await SurveyService.GetSurveyQuestionsBySurveyId(SurveyId);
         }
         catch
         {
