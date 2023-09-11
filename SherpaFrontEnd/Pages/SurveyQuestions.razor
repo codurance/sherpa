@@ -30,8 +30,8 @@
                 @foreach (var response in question.Responses[_selectedLanguage])
                 {
                     <div>
-                        <input type="radio" id="@question.Position-@Array.IndexOf(question.Responses[_selectedLanguage], @response)" name="@question.Position" value="@response">
-                        <label for="@question.Position-@Array.IndexOf(question.Responses[_selectedLanguage], @response)">@response</label>
+                        <input class="hidden peer" type="radio" id="@question.Position-@Array.IndexOf(question.Responses[_selectedLanguage], @response)" name="@question.Position" value="@response">
+                        <label class="block peer-checked:text-red-500" for="@question.Position-@Array.IndexOf(question.Responses[_selectedLanguage], @response)">@response</label>
                     </div>
                 }
             }
