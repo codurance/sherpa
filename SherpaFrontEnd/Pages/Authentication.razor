@@ -69,14 +69,4 @@
         NavigationManager.NavigateTo(
             $"{cognitoLogoutEndpoint}?client_id={cognitoClientId}&logout_uri={Uri.EscapeDataString(redirectUrlAfterLogout)}");
     }
-
-    public class RevokeTokenDto
-    {
-        [JsonPropertyName("token")]
-        public string Token { get; set; } = "";
-
-        [JsonPropertyName("client_id")]
-        public string ClientId { get; set; } = "";
-    }
-
 }
