@@ -6,6 +6,10 @@
 @inject NavigationManager NavigationManager
 
 <div>
+    <select @bind="_selectedLanguage">
+        <option value="@Languages.ENGLISH">English</option>
+        <option value="@Languages.SPANISH">Spanish</option>
+    </select>
     @if (_survey != null)
     {
         <h2>@_survey.Title</h2>
@@ -15,21 +19,23 @@
     }
     @if (_questions != null)
     {
-        @foreach (var question in _questions.OrderBy(_ => _.Position))
-        {
-            <label>
-                <p>
-                    @question.Statement[Languages.ENGLISH]
-                </p>
-            </label>
-            @foreach (var response in question.Responses[Languages.ENGLISH])
+        <main>
+            @foreach (var question in _questions.OrderBy(_ => _.Position))
             {
-                <div>
-                    <input type="radio" id="@question.Position-@Array.IndexOf(question.Responses[Languages.ENGLISH], @response)" name="@question.Position" value="@response">
-                    <label for="@question.Position-@Array.IndexOf(question.Responses[Languages.ENGLISH], @response)">@response</label>
-                </div>
+                <label>
+                    <p>
+                        @question.Statement[_selectedLanguage]
+                    </p>
+                </label>
+                @foreach (var response in question.Responses[_selectedLanguage])
+                {
+                    <div>
+                        <input type="radio" id="@question.Position-@Array.IndexOf(question.Responses[_selectedLanguage], @response)" name="@question.Position" value="@response">
+                        <label for="@question.Position-@Array.IndexOf(question.Responses[_selectedLanguage], @response)">@response</label>
+                    </div>
+                }
             }
-        }
+        </main>
     }
 </div>
 
@@ -44,6 +50,7 @@
 
     private SurveyWithoutQuestions? _survey;
     private List<Question>? _questions;
+    private string _selectedLanguage = Languages.ENGLISH;
 
     protected override async Task OnInitializedAsync()
     {
