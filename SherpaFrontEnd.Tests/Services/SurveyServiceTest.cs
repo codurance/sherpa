@@ -193,7 +193,7 @@ public class SurveyServiceTest
         var Position = 1;
         var Reverse = false;
 
-        var hackmanQuestion = new HackmanQuestion(new Dictionary<string, string>()
+        var question = new Question(new Dictionary<string, string>()
             {
                 { Languages.SPANISH, QuestionInSpanish },
                 { Languages.ENGLISH, QuestionInEnglish },
@@ -209,7 +209,8 @@ public class SurveyServiceTest
             HackmanComponent.INTERPERSONAL_PEER_COACHING,
             HackmanSubcategory.DELIMITED, HackmanSubcomponent.SENSE_OF_URGENCY, Position);
 
-        var questionsListJson = await JsonContent.Create(new List<IQuestion>() { hackmanQuestion }).ReadAsStringAsync();
+        var questions = new List<IQuestion>() { question };
+        var questionsListJson = await JsonContent.Create(questions).ReadAsStringAsync();
         var questionsListResponse = new HttpResponseMessage
         {
             StatusCode = HttpStatusCode.OK,
@@ -228,6 +229,6 @@ public class SurveyServiceTest
 
         var surveyService = new SurveyService(_httpClientFactory.Object);
         var surveyQuestions = await surveyService.GetSurveyQuestionsBySurveyId(surveyId);
-        Assert.Equal(JsonConvert.SerializeObject(questionsListResponse), JsonConvert.SerializeObject(surveyQuestions));
+        Assert.Equal(JsonConvert.SerializeObject(questions), JsonConvert.SerializeObject(surveyQuestions));
     }
 }

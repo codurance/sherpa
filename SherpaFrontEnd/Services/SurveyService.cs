@@ -44,6 +44,12 @@ public class SurveyService : ISurveyService
     public async Task<List<Question>?> GetSurveyQuestionsBySurveyId(Guid surveyId)
     {
         var client = _httpClientFactory.CreateClient(SherpaBackend);
-        return await client.GetFromJsonAsync<List<Question>>($"/survey/{surveyId.ToString()}/questions");
+        var request = new HttpRequestMessage(HttpMethod.Get, $"/survey/{surveyId.ToString()}/questions");
+        var response = await client.SendAsync(request);
+        
+        var responseString = await response.Content.ReadAsStringAsync();
+        
+        return JsonSerializer.Deserialize<List<Question>>(
+            responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
     }
 }
