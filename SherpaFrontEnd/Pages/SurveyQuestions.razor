@@ -4,38 +4,41 @@
 @using SherpaFrontEnd.Services
 @inject ISurveyService SurveyService
 @inject NavigationManager NavigationManager
+@layout PublicAccessLayout
 
-<div>
-    <select @bind="_selectedLanguage">
-        <option value="@Languages.ENGLISH">English</option>
-        <option value="@Languages.SPANISH">Spanish</option>
+<div class="flex flex-col items-center">
+    <select @bind="_selectedLanguage" class="absolute top-2 right-2 border-0 bg-transparent">
+        <option value="@Languages.ENGLISH">🇬🇧 English</option>
+        <option value="@Languages.SPANISH">🇪🇸 Spanish</option>
     </select>
     @if (_survey != null)
     {
-        <h2>@_survey.Title</h2>
-        <div>
-            <p>@_survey.Description</p>
+        <div class="mt-6 mb-8 flex w-3/4 flex-col rounded-lg border bg-white px-16 py-10 max-w-[740px] border-primary-dark-100">
+            <h2 class="mb-2 text-2xl text-primary-dark-principal">@_survey.Title</h2>
+            <p class="text-primary-dark-principal">@_survey.Description</p>
         </div>
     }
     @if (_questions != null)
     {
-        <main>
-            @foreach (var question in _questions.OrderBy(_ => _.Position))
+        <div class="flex w-3/4 flex-col items-center rounded-lg border bg-white px-16 py-2 pb-10 max-w-[740px] border-primary-dark-100">
+            @foreach (var question in _questions.OrderBy(q => q.Position))
             {
                 <label>
-                    <p>
-                        @question.Statement[_selectedLanguage]
+                    <p class="font-bold text-[#1D233C] mb-4 mt-8 text-center">
+                        @(_questions.OrderBy(q => q.Position).ToList().IndexOf(question) + 1). @question.Statement[_selectedLanguage]
                     </p>
                 </label>
-                @foreach (var response in question.Responses[_selectedLanguage])
-                {
-                    <div>
-                        <input class="hidden peer" type="radio" id="@question.Position-@Array.IndexOf(question.Responses[_selectedLanguage], @response)" name="@question.Position" value="@response">
-                        <label class="block peer-checked:text-red-500" for="@question.Position-@Array.IndexOf(question.Responses[_selectedLanguage], @response)">@response</label>
-                    </div>
-                }
+                <div class=@($"flex {@GetFlexDirection(question)} w-full justify-between p-1 border border-primary-dark-200 rounded-md divide-x divide-primary-dark-100")>
+                    @foreach (var response in question.Responses[_selectedLanguage])
+                    {
+                        <div class="flex flex-1">
+                            <input class="hidden peer" type="radio" id="@question.Position-@Array.IndexOf(question.Responses[_selectedLanguage], @response)" name="@question.Position" value="@response">
+                            <label class="flex-1 py-2 px-2 text-primary-dark-principal peer-checked:text-white hover:bg-primary-dark-100 peer-checked:bg-[#1D233C] rounded-md text-center" for="@question.Position-@Array.IndexOf(question.Responses[_selectedLanguage], @response)">@response</label>
+                        </div>
+                    }
+                </div>
             }
-        </main>
+        </div>
         <button>Submit</button>
     }
 </div>
@@ -64,6 +67,11 @@
         {
             NavigationManager.NavigateTo(NavigationManager.BaseUri + "error");
         }
+    }
+
+    private string GetFlexDirection(IQuestion question)
+    {
+        return question.Responses[_selectedLanguage][0].Length > 5 ? "flex-col" : "flex-row";
     }
 
 }
