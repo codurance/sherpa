@@ -66,6 +66,6 @@
         var redirectUrlAfterLogout = $"{NavigationManager.BaseUri}authentication/logged-out";
 
         NavigationManager.NavigateTo(
-            $"{cognitoLogoutEndpoint}logout?client_id={cognitoClientId}&logout_uri={Uri.EscapeDataString(redirectUrlAfterLogout)}");
+            $"{cognitoLogoutEndpoint}/logout?client_id={cognitoClientId}&logout_uri={Uri.EscapeDataString(redirectUrlAfterLogout)}");
     }
 }
