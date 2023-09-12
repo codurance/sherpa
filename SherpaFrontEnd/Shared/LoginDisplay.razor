@@ -1,0 +1,27 @@
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using System.Security.Claims
+
+@inject NavigationManager Navigation
+@inject SignOutSessionStateManager SignOutManager
+
+<AuthorizeView>
+    <Authorized>
+        <div class="flex gap-8 p-2">
+            <p>@context.User.Claims.Where(_ => _.Type == "username").First().Value</p>
+            <button class="text-red-500" @onclick="BeginSignOut">Log out</button>
+        </div>
+
+    </Authorized>
+</AuthorizeView>
+
+@code{
+
+    private string? Email;
+    
+    private async Task BeginSignOut(MouseEventArgs args)
+    {
+        await SignOutManager.SetSignOutState();
+        Navigation.NavigateTo($"authentication/logout");
+    }
+}

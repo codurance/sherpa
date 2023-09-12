@@ -1,0 +1,71 @@
+@page "/authentication/{action}"
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@layout PublicAccessLayout
+@inject NavigationManager NavigationManager
+@inject IConfiguration config
+<div class="flex justify-center items-center w-screen h-screen">
+    <RemoteAuthenticatorView Action="@Action">
+        <LogOutSucceeded>
+            <div class="flex flex-col items-center gap-2">
+
+                <p>Successfully logged out</p>
+                <a class="text-blue-500 hover:text-blue-700" href="/">Go to main page</a>
+            </div>
+        </LogOutSucceeded>
+        <LoggingIn>
+            <Spinner/>
+        </LoggingIn>
+        <CompletingLoggingIn>
+            <Spinner/>
+        </CompletingLoggingIn>
+        <LogInFailed>
+            <Spinner/>
+        </LogInFailed>
+        <LogOut>
+            <Spinner/>
+        </LogOut>
+        <CompletingLogOut>
+            <Spinner/>
+        </CompletingLogOut>
+        <LogOutFailed>
+            <Spinner/>
+        </LogOutFailed>
+        <UserProfile>
+            <Spinner/>
+        </UserProfile>
+        <Registering>
+            <Spinner/>
+        </Registering>
+    </RemoteAuthenticatorView>
+</div>
+
+
+@code{
+
+    [Parameter]
+    public string? Action { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        switch (Action)
+        {
+            case "logout":
+            {
+                LogoutFromCognito();
+            }
+                break;
+        }
+        await base.OnInitializedAsync();
+    }
+
+    private void LogoutFromCognito()
+    {
+        var cognitoClientId = config["Cognito:ClientId"];
+        var cognitoLogoutEndpoint = config["Cognito:UIEndpoint"];
+        var redirectUrlAfterLogout = $"{NavigationManager.BaseUri}authentication/logged-out";
+
+        NavigationManager.NavigateTo(
+            $"{cognitoLogoutEndpoint}/logout?client_id={cognitoClientId}&logout_uri={Uri.EscapeDataString(redirectUrlAfterLogout)}");
+    }
+}
