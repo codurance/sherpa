@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Security.Claims;
 using AngleSharp.Dom;
 using Blazored.Modal;
 using Bunit;
@@ -52,6 +53,9 @@ public class SurveyAcceptanceTest
         _guidService = new Mock<IGuidService>();
         _testCtx.Services.AddSingleton<IGuidService>(_guidService.Object);
         _guidService.Setup(service => service.GenerateRandomGuid()).Returns(_surveyId);
+        var auth = _testCtx.AddTestAuthorization();
+        auth.SetAuthorized("Demo user");
+        auth.SetClaims(new []{new Claim("username", "Demo user")});
         _navManager = _testCtx.Services.GetRequiredService<FakeNavigationManager>();
     }
 

@@ -12,6 +12,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddHttpClient("SherpaBackEnd", client =>
     client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
 builder.Services.Configure<JsonSerializerOptions>(options =>
 {
@@ -23,7 +24,15 @@ builder.Services.AddScoped<ITeamDataService, TeamServiceHttpClient>();
 builder.Services.AddScoped<ITemplateService, TemplateService>();
 builder.Services.AddScoped<IGuidService, GuidService>();
 builder.Services.AddScoped<ISurveyService, SurveyService>();
-
 builder.Services.AddBlazoredModal();
+
+builder.Services.AddOidcAuthentication(options =>
+{
+    options.ProviderOptions.Authority = builder.Configuration["Cognito:Authority"];
+    options.ProviderOptions.ClientId = builder.Configuration["Cognito:ClientId"];
+    options.ProviderOptions.RedirectUri = builder.HostEnvironment.BaseAddress + builder.Configuration["Cognito:RedirectUri"];
+    options.ProviderOptions.PostLogoutRedirectUri = builder.HostEnvironment.BaseAddress + builder.Configuration["Cognito:PostLogoutRedirectUri"];
+    options.ProviderOptions.ResponseType = "code";
+});
 
 await builder.Build().RunAsync();

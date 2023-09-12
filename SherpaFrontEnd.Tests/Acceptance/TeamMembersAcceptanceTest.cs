@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Security.Claims;
 using AngleSharp.Dom;
 using Blazored.Modal;
 using Bunit;
@@ -43,6 +44,9 @@ public class TeamMembersAcceptanceTest
         const string baseUrl = "http://localhost";
         var httpClient = new HttpClient(_httpHandlerMock.Object, false) { BaseAddress = new Uri(baseUrl) };
         _factoryHttpClient.Setup(_ => _.CreateClient("SherpaBackEnd")).Returns(httpClient);
+        var auth = _testCtx.AddTestAuthorization();
+        auth.SetAuthorized("Demo user");
+        auth.SetClaims(new []{new Claim("username", "Demo user")});
 
         _navMan = _testCtx.Services.GetRequiredService<FakeNavigationManager>();
     }
