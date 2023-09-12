@@ -14,7 +14,7 @@
     @if (_survey != null)
     {
         <div class="mt-6 mb-8 flex w-3/4 flex-col rounded-lg border bg-white px-16 py-10 max-w-[740px] border-primary-dark-100">
-            <h2 class="mb-2 text-2xl text-primary-dark-principal">@_survey.Title</h2>
+            <h2 class="mb-2 text-2xl text-primary-dark-principal font-semibold">@_survey.Title</h2>
             <p class="text-primary-dark-principal">@_survey.Description</p>
         </div>
     }
@@ -24,7 +24,7 @@
             @foreach (var question in _questions.OrderBy(q => q.Position))
             {
                 <label>
-                    <p class="font-bold text-[#1D233C] mb-4 mt-8 text-center">
+                    <p class="font-medium text-[#1D233C] mb-4 mt-14 text-center">
                         @(_questions.OrderBy(q => q.Position).ToList().IndexOf(question) + 1). @question.Statement[_selectedLanguage]
                     </p>
                 </label>
@@ -39,8 +39,8 @@
                 </div>
             }
         </div>
-        <div class="flex flex-row-reverse py-6 w-3/4 max-w-[740px]"> 
-            <button class="bg-primary-red-principal-800 hover:bg-primary-red-900 rounded-lg px-6 text-white text-base py-2">Submit</button>
+        <div class="flex justify-center py-6 w-3/4 max-w-[740px]"> 
+            <button class="bg-primary-red-principal-800 hover:bg-primary-red-900 rounded-lg px-6 text-white text-base font-bold py-2">Submit</button>
         </div>
     }
 </div>
