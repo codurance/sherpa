@@ -86,15 +86,28 @@
     private IEnumerable<string> GetFootLabels(Question question)
     {
         var isShortAnswer = question.Responses[Languages.ENGLISH][0].Length < 5;
-
-        if (isShortAnswer && question.Responses[Languages.ENGLISH].Length == 5)
+        var questionHasFiveAnswers = question.Responses[Languages.ENGLISH].Length == 5;
+        var questionHasFourAnswers = question.Responses[Languages.ENGLISH].Length == 4;
+        
+        
+        if (isShortAnswer && questionHasFiveAnswers && _selectedLanguage == Languages.ENGLISH)
         {
             return new[] { "Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree" };
         }
-
-        if (isShortAnswer && question.Responses[Languages.ENGLISH].Length == 4)
+        
+        if (isShortAnswer && questionHasFiveAnswers && _selectedLanguage == Languages.SPANISH)
+        {
+            return new[] { "Totalmente en desacuerdo", "En desacuerdo", "Neutral", "De acuerdo", "Totalmente de acuerdo" };
+        }
+        
+        if (isShortAnswer && questionHasFourAnswers && _selectedLanguage == Languages.ENGLISH)
         {
             return new[] { "Strongly Disagree", "Disagree", "Agree", "Strongly Agree" };
+        }
+        
+        if (isShortAnswer && questionHasFourAnswers && _selectedLanguage == Languages.SPANISH)
+        {
+            return new[] { "Totalmente en desacuerdo", "En desacuerdo", "De acuerdo", "Totalmente de acuerdo" };
         }
 
         return Array.Empty<string>();
