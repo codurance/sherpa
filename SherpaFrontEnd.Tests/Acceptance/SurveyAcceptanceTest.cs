@@ -8,12 +8,10 @@ using Bunit;
 using Bunit.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using Moq.Protected;
 using SherpaFrontEnd;
 using SherpaFrontEnd.Dtos;
 using SherpaFrontEnd.Dtos.Survey;
 using SherpaFrontEnd.Dtos.Team;
-using SherpaFrontEnd.Model;
 using SherpaFrontEnd.Services;
 using Xunit.Abstractions;
 
@@ -69,15 +67,8 @@ public class SurveyAcceptanceTest
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(templatesJson),
         };
-
-        _handlerMock
-            .Protected()
-            .Setup<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get) && m.RequestUri!.AbsoluteUri.Contains("template")),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(responseWithTemplates);
+        
+        _handlerMock.SetupRequest(HttpMethod.Get, "template", responseWithTemplates);
 
         var appComponent = _testCtx.RenderComponent<App>();
 
@@ -120,15 +111,8 @@ public class SurveyAcceptanceTest
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(teamsJson),
         };
-
-        _handlerMock
-            .Protected()
-            .Setup<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get) && m.RequestUri!.AbsoluteUri.Contains("team")),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(responseWithTeams);
+        
+        _handlerMock.SetupRequest(HttpMethod.Get, "team", responseWithTeams);
 
         // WHEN he clicks on “Launch this template“
         var launchTemplateButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Launch this template");
@@ -177,22 +161,15 @@ public class SurveyAcceptanceTest
     {
         // GIVEN that an Org coach is on the Delivery settings page for creating a survey
         // and he filled in all fields
-        
+        _guidService.Setup(service => service.GenerateRandomGuid()).Returns(_surveyId);
         var teamsJson = await JsonContent.Create(_teams).ReadAsStringAsync();
         var responseWithTeams = new HttpResponseMessage
         {
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(teamsJson),
         };
-
-        _handlerMock
-            .Protected()
-            .Setup<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get) && m.RequestUri!.AbsoluteUri.Contains("team")),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(responseWithTeams);
+        
+        _handlerMock.SetupRequest(HttpMethod.Get, "team", responseWithTeams);
         
         var appComponent = _testCtx.RenderComponent<App>();
 
@@ -205,20 +182,13 @@ public class SurveyAcceptanceTest
         {
             StatusCode = HttpStatusCode.Created,
         };
-
-        _handlerMock
-            .Protected()
-            .Setup<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Post) && m.RequestUri!.AbsoluteUri.Contains("survey")),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(surveyCreationResponse);
+        
+        _handlerMock.SetupRequest(HttpMethod.Post, "survey", surveyCreationResponse);
 
         var deadline = DateTime.Now;
         var templateWithoutQuestions = new TemplateWithoutQuestions("Hackman Model", 30);
         var survey = new SurveyWithoutQuestions(
-            Guid.NewGuid(), 
+            _surveyId, 
             new User(Guid.NewGuid(), "Lucia"), 
             Status.Draft, 
             deadline, 
@@ -234,15 +204,8 @@ public class SurveyAcceptanceTest
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(surveyJson)
         };
-
-        _handlerMock
-            .Protected()
-            .Setup<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get) && m.RequestUri!.AbsoluteUri.Contains("survey")),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(surveyResponse);
+        
+        _handlerMock.SetupRequest(HttpMethod.Get, $"survey/{_surveyId}", surveyResponse);
         
 
         appComponent.WaitForAssertion(() =>
@@ -331,14 +294,9 @@ public class SurveyAcceptanceTest
             Content = new StringContent(emptyTeamsList),
         };
 
-        _handlerMock
-            .Protected()
-            .Setup<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get) && m.RequestUri!.AbsoluteUri.Contains("team")),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(responseWithEmptyTeamsList);
+    
+        
+        _handlerMock.SetupRequest(HttpMethod.Get, "team", responseWithEmptyTeamsList);
         
         var appComponent = _testCtx.RenderComponent<App>();
 

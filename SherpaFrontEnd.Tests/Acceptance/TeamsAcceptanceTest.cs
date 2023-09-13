@@ -60,19 +60,11 @@ public class TeamsAcceptanceTest
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(emptyTeamListJson)
         };
-
-        _httpHandlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get)),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(responseEmpty);
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, "", responseEmpty);
 
         var appComponent = _testCtx.RenderComponent<App>();
-
-
+        
         var targetPage = "teams-list-page";
         var teamsPageLink = appComponent.Find($"a[href='{targetPage}']");
         Assert.NotNull(teamsPageLink);
@@ -97,15 +89,8 @@ public class TeamsAcceptanceTest
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(reamListJson)
         };
-
-        _httpHandlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get)),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(response);
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, "", response);
 
         var appComponent = _testCtx.RenderComponent<App>();
 
@@ -139,15 +124,8 @@ public class TeamsAcceptanceTest
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(emptyTeamListJson)
         };
-
-        _httpHandlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get)),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(responseEmpty);
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, "", responseEmpty);
 
         var teamsListComponent = _testCtx.RenderComponent<TeamsList>();
 
@@ -185,29 +163,15 @@ public class TeamsAcceptanceTest
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(emptyTeamListJson)
         };
-
-        _httpHandlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get)),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(responseEmpty);
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, "", responseEmpty);
 
         var creationResponse = new HttpResponseMessage()
         {
             StatusCode = HttpStatusCode.Created,
         };
-
-        _httpHandlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Post)),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(creationResponse);
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Post, "", creationResponse);
 
         var teamsListComponent = _testCtx.RenderComponent<App>();
 
@@ -235,32 +199,16 @@ public class TeamsAcceptanceTest
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(newTeamAsJson)
         };
-
-        _httpHandlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get) &&
-                         m.RequestUri.AbsoluteUri.Contains($"/team/{teamId.ToString()}")),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(teamResponse); 
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, $"/team/{teamId.ToString()}", teamResponse);
         
         var teamSurveysResponse = new HttpResponseMessage()
         {
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(emptyTeamListJson)
         };
-
-        _httpHandlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get) &&
-                         m.RequestUri.AbsoluteUri.Contains($"/team/{teamId.ToString()}/surveys")),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(teamSurveysResponse);
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, $"/team/{teamId.ToString()}/surveys", teamSurveysResponse);
 
         var teamNameLabel = teamsListComponent.FindElementByCssSelectorAndTextContent("label", "Team's name");
         var teamNameInputId = teamNameLabel.Attributes.GetNamedItem("for");
@@ -372,15 +320,8 @@ public class TeamsAcceptanceTest
         };
 
         // and he has already created a team
-
-        _httpHandlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get)),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(teamListResponse);
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, "", teamListResponse);
 
         var singleTeamJson = await JsonContent.Create(team).ReadAsStringAsync();
         var singleTeamResponse = new HttpResponseMessage()
@@ -388,32 +329,16 @@ public class TeamsAcceptanceTest
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(singleTeamJson)
         };
-
-        _httpHandlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get) &&
-                         m.RequestUri.AbsoluteUri.Contains($"/team/{teamId.ToString()}")),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(singleTeamResponse);
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, $"/team/{teamId.ToString()}", singleTeamResponse);
         
         var teamSurveysResponse = new HttpResponseMessage()
         {
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent("[]")
         };
-
-        _httpHandlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get) &&
-                         m.RequestUri.AbsoluteUri.Contains($"/team/{teamId.ToString()}/surveys")),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(teamSurveysResponse);
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, $"/team/{teamId.ToString()}/surveys", teamSurveysResponse);
 
         var appComponent = _testCtx.RenderComponent<App>();
 
@@ -445,15 +370,8 @@ public class TeamsAcceptanceTest
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(teamListJson)
         };
-
-        _httpHandlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get)),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(teamListResponse);
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, "", teamListResponse);
 
         var singleTeamJson = await JsonContent.Create(team).ReadAsStringAsync();
         var singleTeamResponse = new HttpResponseMessage()
@@ -461,30 +379,15 @@ public class TeamsAcceptanceTest
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(singleTeamJson)
         };
-
-        _httpHandlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get) &&
-                         m.RequestUri.AbsoluteUri.Contains($"/team/{teamId.ToString()}")),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(singleTeamResponse);
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Post, $"/team/{teamId.ToString()}", singleTeamResponse);
 
         var creationResponse = new HttpResponseMessage()
         {
             StatusCode = HttpStatusCode.InternalServerError,
         };
-
-        _httpHandlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Post)),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(creationResponse);
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Post, "", creationResponse);
 
         var appComponent = _testCtx.RenderComponent<App>();
 
@@ -533,15 +436,8 @@ public class TeamsAcceptanceTest
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(teamListJson)
         };
-
-        _httpHandlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get)),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(teamListResponse);
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, "", teamListResponse);
 
         var appComponent = _testCtx.RenderComponent<App>();
 
@@ -585,15 +481,8 @@ public class TeamsAcceptanceTest
         {
             StatusCode = HttpStatusCode.InternalServerError
         };
-
-        _httpHandlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get)),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(teamListResponse);
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, "", teamListResponse);
 
         var appComponent = _testCtx.RenderComponent<App>();
 

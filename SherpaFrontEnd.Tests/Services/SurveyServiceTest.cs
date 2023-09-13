@@ -10,7 +10,6 @@ using Newtonsoft.Json;
 using SherpaFrontEnd.Dtos.Survey;
 using SherpaFrontEnd.Dtos.Team;
 using HackmanComponent = SherpaFrontEnd.Dtos.Survey.HackmanComponent;
-using HackmanQuestion = SherpaFrontEnd.Dtos.Survey.HackmanQuestion;
 using HackmanSubcategory = SherpaFrontEnd.Dtos.Survey.HackmanSubcategory;
 using HackmanSubcomponent = SherpaFrontEnd.Dtos.Survey.HackmanSubcomponent;
 using IQuestion = SherpaFrontEnd.Dtos.Survey.IQuestion;
@@ -60,16 +59,8 @@ public class SurveyServiceTest
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(surveyJson)
         };
-
-        _handlerMock
-            .Protected()
-            .Setup<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get) &&
-                         m.RequestUri!.AbsoluteUri.Contains($"/survey/{surveyId.ToString()}")),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(surveyResponse);
+        
+        _handlerMock.SetupRequest(HttpMethod.Get, $"/survey/{surveyId.ToString()}", surveyResponse);
 
         var surveyService = new SurveyService(_httpClientFactory.Object);
         var actualSurvey = await surveyService.GetSurveyWithoutQuestionsById(surveyId);
@@ -90,15 +81,8 @@ public class SurveyServiceTest
         {
             StatusCode = HttpStatusCode.Created,
         };
-
-        _handlerMock
-            .Protected()
-            .Setup<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Post) && m.RequestUri!.AbsoluteUri.Contains("/survey")),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(createSurveyResponse);
+        
+        _handlerMock.SetupRequest(HttpMethod.Post, "/survey", createSurveyResponse);
 
         var surveyService = new SurveyService(_httpClientFactory.Object);
         await surveyService.CreateSurvey(createSurveyDto);
@@ -121,16 +105,8 @@ public class SurveyServiceTest
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(surveysJson),
         };
-
-        _handlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get) &&
-                         m.RequestUri!.AbsoluteUri.Contains($"team/{teamId.ToString()}/surveys")),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(emptySurveyListResponse);
+        
+        _handlerMock.SetupRequest(HttpMethod.Get, $"/team/{teamId.ToString()}/surveys", emptySurveyListResponse);
 
 
         var surveyService = new SurveyService(_httpClientFactory.Object);
@@ -216,16 +192,8 @@ public class SurveyServiceTest
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(questionsListJson)
         };
-
-        _handlerMock
-            .Protected()
-            .Setup<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get) &&
-                         m.RequestUri!.AbsoluteUri.Contains($"/survey/{surveyId.ToString()}/questions")),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(questionsListResponse);
+        
+        _handlerMock.SetupRequest(HttpMethod.Get, $"/survey/{surveyId.ToString()}/questions", questionsListResponse);
 
         var surveyService = new SurveyService(_httpClientFactory.Object);
         

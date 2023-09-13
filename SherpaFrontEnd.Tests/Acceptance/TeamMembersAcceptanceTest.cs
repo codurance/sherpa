@@ -8,11 +8,8 @@ using Bunit;
 using Bunit.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using Moq.Protected;
 using SherpaFrontEnd;
-using SherpaFrontEnd.Dtos.Survey;
 using SherpaFrontEnd.Dtos.Team;
-using SherpaFrontEnd.Model;
 using SherpaFrontEnd.Services;
 using Xunit.Abstractions;
 
@@ -86,16 +83,8 @@ public class TeamMembersAcceptanceTest
         };
         
         _guidService.Setup(service => service.GenerateRandomGuid()).Returns(teamMember.Id);
-
-        _httpHandlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get) &&
-                         m.RequestUri.AbsoluteUri.EndsWith($"/team/{teamId.ToString()}")),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(teamResponse).ReturnsAsync(teamWithNewMemberResponse);
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, $"/team/{teamId.ToString()}", teamResponse, teamWithNewMemberResponse);
 
         var emptySurveyResponse = new HttpResponseMessage()
         {
@@ -103,24 +92,9 @@ public class TeamMembersAcceptanceTest
             Content = new StringContent("[]")
         };
         
-        _httpHandlerMock
-            .Protected()
-            .Setup<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get) &&
-                         m.RequestUri.AbsoluteUri.EndsWith($"/team/{teamId.ToString()}/surveys")),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(emptySurveyResponse);
-
-        _httpHandlerMock
-            .Protected()
-            .Setup<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Patch)),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(creationResponse);
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, $"/team/{teamId.ToString()}/surveys", emptySurveyResponse);
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Patch, "", creationResponse);
 
         var appComponent = _testCtx.RenderComponent<App>();
         _navMan.NavigateTo($"/team-content/{teamId}");

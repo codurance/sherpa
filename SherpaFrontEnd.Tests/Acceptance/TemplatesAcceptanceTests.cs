@@ -7,7 +7,6 @@ using Bunit;
 using Bunit.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using Moq.Protected;
 using SherpaFrontEnd;
 using SherpaFrontEnd.Services;
 
@@ -53,15 +52,8 @@ public class TemplatesAcceptanceTests
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(templatesJson),
         };
-
-        _handlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get) && m.RequestUri!.AbsoluteUri.Contains("template")),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(responseWithTemplates);
+        
+        _handlerMock.SetupRequest(HttpMethod.Get, "template", responseWithTemplates);
         
 
         var component = _ctx.RenderComponent<App>();
@@ -85,16 +77,8 @@ public class TemplatesAcceptanceTests
     public async Task The_user_will_see_an_error_message_if_there_is_an_error_fetching_the_templates()
     {
         // GIVEN that an Org coach have a menu on the left
-        var templatesJson = await JsonContent.Create(_templates).ReadAsStringAsync();
         
-        _handlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get) && m.RequestUri!.AbsoluteUri.Contains("template")),
-                ItExpr.IsAny<CancellationToken>())
-            .ThrowsAsync(new Exception());
+        _handlerMock.SetupRequestWithException(HttpMethod.Get, "template", new Exception());
 
         var component = _ctx.RenderComponent<App>();
 

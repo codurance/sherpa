@@ -32,14 +32,7 @@ public class TemplateServiceTest
             Content = new StringContent(templatesJson),
         };
         
-        _handlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get) && m.RequestUri!.AbsoluteUri.Contains("template")),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(responseWithTemplates);
+        _handlerMock.SetupRequest(HttpMethod.Get, "template", responseWithTemplates);
         
 
         ITemplateService templateService = new TemplateService(_httpClientFactory.Object);
