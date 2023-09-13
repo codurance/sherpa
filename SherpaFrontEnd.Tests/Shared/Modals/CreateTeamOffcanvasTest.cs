@@ -1,5 +1,6 @@
 using AngleSharp.Common;
 using BlazorApp.Tests.Acceptance;
+
 using Bunit;
 using Bunit.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,16 +41,16 @@ public class CreateTeamOffcanvasTest
     {
         var component = _testCtx.RenderComponent<CreateTeamOffcanvas>();
         
-        var createNewTeamTitle = component.FindAll("h1,h2,h3").FirstOrDefault(element => element.InnerHtml.Contains("Create new team"));
+        var createNewTeamTitle = component.FindElementByCssSelectorAndTextContent("h1,h2,h3", "Create new team");
         Assert.NotNull(createNewTeamTitle);
         
-        var teamNameLabel = component.FindAll("label").FirstOrDefault(element => element.InnerHtml.Contains("Team's name"));
+        var teamNameLabel = component.FindElementByCssSelectorAndTextContent("label", "Team's name");
         var teamNameInputId = teamNameLabel.Attributes.GetNamedItem("for");
         var teamNameInput = component.FindAll($"#{teamNameInputId.TextContent}");
         Assert.NotNull(teamNameInput);
         
-        var continueButton = component.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Confirm"));
-        var cancelButton = component.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Cancel"));
+        var continueButton = component.FindElementByCssSelectorAndTextContent("button", "Confirm");
+        var cancelButton = component.FindElementByCssSelectorAndTextContent("button", "Cancel");
         
         Assert.NotNull(continueButton);
         Assert.NotNull(cancelButton);
@@ -60,7 +61,7 @@ public class CreateTeamOffcanvasTest
     {
         var component = _testCtx.RenderComponent<CreateTeamOffcanvas>();
         
-        var teamNameLabel = component.FindAll("label").FirstOrDefault(element => element.InnerHtml.Contains("Team's name"));
+        var teamNameLabel = component.FindElementByCssSelectorAndTextContent("label", "Team's name");
         var teamNameInputId = teamNameLabel.Attributes.GetNamedItem("for");
         var teamNameInput = component.Find($"#{teamNameInputId.TextContent}");
         Assert.NotNull(teamNameInput);
@@ -68,7 +69,7 @@ public class CreateTeamOffcanvasTest
         const string teamName = "Demo team";
         teamNameInput.Change(teamName);
         
-        var confirmButton = component.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Confirm"));
+        var confirmButton = component.FindElementByCssSelectorAndTextContent("button", "Confirm");
         Assert.NotNull(confirmButton);
         
         confirmButton.Click();
@@ -84,7 +85,7 @@ public class CreateTeamOffcanvasTest
         _testCtx.JSInterop.SetupVoid("hideOffCanvas", "create-new-team-form").SetVoidResult();
         
         var cancelButton
-            = component.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Cancel"));
+            = component.FindElementByCssSelectorAndTextContent("button", "Cancel");
         Assert.NotNull(cancelButton);
         
         cancelButton.Click();
@@ -102,7 +103,7 @@ public class CreateTeamOffcanvasTest
         
         var component = _testCtx.RenderComponent<CreateTeamOffcanvas>();
         
-        var teamNameLabel = component.FindAll("label").FirstOrDefault(element => element.InnerHtml.Contains("Team's name"));
+        var teamNameLabel = component.FindElementByCssSelectorAndTextContent("label", "Team's name");
         var teamNameInputId = teamNameLabel.Attributes.GetNamedItem("for");
         var teamNameInput = component.Find($"#{teamNameInputId.TextContent}");
         Assert.NotNull(teamNameInput);
@@ -110,7 +111,7 @@ public class CreateTeamOffcanvasTest
         const string teamName = "Demo team";
         teamNameInput.Change(teamName);
         
-        var confirmButton = component.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Confirm"));
+        var confirmButton = component.FindElementByCssSelectorAndTextContent("button", "Confirm");
         Assert.NotNull(confirmButton);
         
         confirmButton.Click();
@@ -125,14 +126,14 @@ public class CreateTeamOffcanvasTest
         
         var component = _testCtx.RenderComponent<CreateTeamOffcanvas>();
         
-        var confirmButton = component.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Confirm"));
+        var confirmButton = component.FindElementByCssSelectorAndTextContent("button", "Confirm");
         Assert.NotNull(confirmButton);
         
         confirmButton.Click();
 
         component.WaitForElement(".validation-message");
         
-        var teamNameLabelAfterClick = component.FindAll("label").FirstOrDefault(element => element.InnerHtml.Contains("Team's name"));
+        var teamNameLabelAfterClick = component.FindElementByCssSelectorAndTextContent("label", "Team's name");
         var inputGroup = teamNameLabelAfterClick.Parent;
         
         Assert.Contains("This field is mandatory", inputGroup.ToMarkup());

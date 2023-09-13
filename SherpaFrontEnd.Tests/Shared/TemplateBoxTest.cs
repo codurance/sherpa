@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+
 using Bunit;
 using Bunit.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,8 +25,7 @@ public class TemplateBoxTest
     {
         var page = _testContext.RenderComponent<TemplateBox>(ComponentParameter.CreateParameter("Name","Hackman Model"));
 
-        var existingSurveyElement = page.FindAll("h2")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Hackman Model"));
+        var existingSurveyElement = page.FindElementByCssSelectorAndTextContent("h2", "Hackman Model");
         Assert.NotNull(existingSurveyElement);
         
         existingSurveyElement.Click();

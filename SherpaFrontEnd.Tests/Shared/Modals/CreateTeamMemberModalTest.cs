@@ -1,3 +1,4 @@
+
 using BlazorApp.Tests.Helpers.Interfaces;
 using Bunit;
 using Bunit.TestDoubles;
@@ -30,39 +31,31 @@ public class CreateTeamMemberModalTest
     {
         var cut = _ctx.RenderComponent<CreateTeamMemberModal>(ComponentParameter.CreateParameter("Show", true));
 
-        var addMemberTitle = cut.FindAll("h3")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Add member"));
+        var addMemberTitle = cut.FindElementByCssSelectorAndTextContent("h3", "Add member");
         Assert.NotNull(addMemberTitle);
 
-        var addMemberDescription = cut.FindAll("p")
-            .FirstOrDefault(element =>
-                element.InnerHtml.Contains("Add team member by filling in the required information"));
+        var addMemberDescription = cut.FindElementByCssSelectorAndTextContent("p", "Add team member by filling in the required information");
         Assert.NotNull(addMemberDescription);
 
-        var fullNameLabel = cut.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Full name"));
+        var fullNameLabel = cut.FindElementByCssSelectorAndTextContent("label", "Full name");
         var fullNameInputId = fullNameLabel.Attributes.GetNamedItem("for");
         var teamNameInput = cut.FindAll($"#{fullNameInputId.TextContent}");
         Assert.NotNull(teamNameInput);
 
-        var positionLabel = cut.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Position"));
+        var positionLabel = cut.FindElementByCssSelectorAndTextContent("label", "Position");
         var positionInputId = positionLabel.Attributes.GetNamedItem("for");
         var positionInput = cut.FindAll($"#{positionInputId.TextContent}");
         Assert.NotNull(positionInput);
 
-        var emailLabel = cut.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Email"));
+        var emailLabel = cut.FindElementByCssSelectorAndTextContent("label", "Email");
         var emailInputId = emailLabel.Attributes.GetNamedItem("for");
         var emailInput = cut.FindAll($"#{emailInputId.TextContent}");
         Assert.NotNull(emailInput);
 
-        var addMemberButton = cut.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Add member"));
+        var addMemberButton = cut.FindElementByCssSelectorAndTextContent("button", "Add member");
         Assert.NotNull(addMemberButton);
 
-        var cancelButton = cut.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Cancel"));
+        var cancelButton = cut.FindElementByCssSelectorAndTextContent("button", "Cancel");
         Assert.NotNull(cancelButton);
     }
 
@@ -86,29 +79,25 @@ public class CreateTeamMemberModalTest
                 EventCallback.Factory.Create(this, () => mockWithCloseModal.Object.CloseModal())
             ));
 
-        var fullNameLabel = cut.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Full name"));
+        var fullNameLabel = cut.FindElementByCssSelectorAndTextContent("label", "Full name");
         var fullNameInputId = fullNameLabel.Attributes.GetNamedItem("for");
         var teamMemberNameInput = cut.Find($"#{fullNameInputId.TextContent}");
         Assert.NotNull(teamMemberNameInput);
         teamMemberNameInput.Change(teamMember.FullName);
 
-        var positionLabel = cut.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Position"));
+        var positionLabel = cut.FindElementByCssSelectorAndTextContent("label", "Position");
         var positionInputId = positionLabel.Attributes.GetNamedItem("for");
         var positionInput = cut.Find($"#{positionInputId.TextContent}");
         Assert.NotNull(positionInput);
         positionInput.Change(teamMember.Position);
 
-        var emailLabel = cut.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Email"));
+        var emailLabel = cut.FindElementByCssSelectorAndTextContent("label", "Email");
         var emailInputId = emailLabel.Attributes.GetNamedItem("for");
         var emailInput = cut.Find($"#{emailInputId.TextContent}");
         Assert.NotNull(emailInput);
         emailInput.Change(teamMember.Email);
 
-        var addMemberButton = cut.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Add member"));
+        var addMemberButton = cut.FindElementByCssSelectorAndTextContent("button", "Add member");
         Assert.NotNull(addMemberButton);
 
         addMemberButton.Click();
@@ -142,8 +131,7 @@ public class CreateTeamMemberModalTest
                 EventCallback.Factory.Create(this, () => mockWithCloseModal.Object.CloseModal())
             ));
 
-        var closeModalButton = cut.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Close modal"));
+        var closeModalButton = cut.FindElementByCssSelectorAndTextContent("button", "Close modal");
         Assert.NotNull(closeModalButton);
 
         closeModalButton.Click();
@@ -171,8 +159,7 @@ public class CreateTeamMemberModalTest
                 EventCallback.Factory.Create(this, () => mockWithCloseModal.Object.CloseModal())
             ));
 
-        var cancelButton = cut.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Cancel"));
+        var cancelButton = cut.FindElementByCssSelectorAndTextContent("button", "Cancel");
         Assert.NotNull(cancelButton);
 
         cancelButton.Click();
@@ -200,51 +187,44 @@ public class CreateTeamMemberModalTest
                 EventCallback.Factory.Create(this, () => mockWithCloseModal.Object.CloseModal())
             ));
 
-        var fullNameLabel = cut.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Full name"));
+        var fullNameLabel = cut.FindElementByCssSelectorAndTextContent("label", "Full name");
         var fullNameInputId = fullNameLabel.Attributes.GetNamedItem("for");
         var teamMemberNameInput = cut.Find($"#{fullNameInputId.TextContent}");
         Assert.NotNull(teamMemberNameInput);
         teamMemberNameInput.Change(teamMember.FullName);
 
-        var positionLabel = cut.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Position"));
+        var positionLabel = cut.FindElementByCssSelectorAndTextContent("label", "Position");
         var positionInputId = positionLabel.Attributes.GetNamedItem("for");
         var positionInput = cut.Find($"#{positionInputId.TextContent}");
         Assert.NotNull(positionInput);
         positionInput.Change(teamMember.Position);
 
-        var emailLabel = cut.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Email"));
+        var emailLabel = cut.FindElementByCssSelectorAndTextContent("label", "Email");
         var emailInputId = emailLabel.Attributes.GetNamedItem("for");
         var emailInput = cut.Find($"#{emailInputId.TextContent}");
         Assert.NotNull(emailInput);
         emailInput.Change(teamMember.Email);
 
-        var addMemberButton = cut.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Add member"));
+        var addMemberButton = cut.FindElementByCssSelectorAndTextContent("button", "Add member");
         Assert.NotNull(addMemberButton);
 
         addMemberButton.Click();
 
         cut.WaitForAssertion(() =>
         {
-            fullNameLabel = cut.FindAll("label")
-                .FirstOrDefault(element => element.InnerHtml.Contains("Full name"));
+            fullNameLabel = cut.FindElementByCssSelectorAndTextContent("label", "Full name");
             fullNameInputId = fullNameLabel.Attributes.GetNamedItem("for");
             teamMemberNameInput = cut.Find($"#{fullNameInputId.TextContent}");
             Assert.NotNull(teamMemberNameInput);
             Assert.Equal("", teamMemberNameInput.GetAttribute("value"));
         });
         
-        positionLabel = cut.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Position"));
+        positionLabel = cut.FindElementByCssSelectorAndTextContent("label", "Position");
         positionInputId = positionLabel.Attributes.GetNamedItem("for");
         positionInput = cut.Find($"#{positionInputId.TextContent}");
         Assert.NotNull(positionInput);
 
-        emailLabel = cut.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Email"));
+        emailLabel = cut.FindElementByCssSelectorAndTextContent("label", "Email");
         emailInputId = emailLabel.Attributes.GetNamedItem("for");
         emailInput = cut.Find($"#{emailInputId.TextContent}");
         Assert.NotNull(emailInput);
@@ -273,51 +253,44 @@ public class CreateTeamMemberModalTest
                 EventCallback.Factory.Create(this, () => mockWithCloseModal.Object.CloseModal())
             ));
 
-        var fullNameLabel = cut.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Full name"));
+        var fullNameLabel = cut.FindElementByCssSelectorAndTextContent("label", "Full name");
         var fullNameInputId = fullNameLabel.Attributes.GetNamedItem("for");
         var teamMemberNameInput = cut.Find($"#{fullNameInputId.TextContent}");
         Assert.NotNull(teamMemberNameInput);
         teamMemberNameInput.Change(teamMember.FullName);
 
-        var positionLabel = cut.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Position"));
+        var positionLabel = cut.FindElementByCssSelectorAndTextContent("label", "Position");
         var positionInputId = positionLabel.Attributes.GetNamedItem("for");
         var positionInput = cut.Find($"#{positionInputId.TextContent}");
         Assert.NotNull(positionInput);
         positionInput.Change(teamMember.Position);
 
-        var emailLabel = cut.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Email"));
+        var emailLabel = cut.FindElementByCssSelectorAndTextContent("label", "Email");
         var emailInputId = emailLabel.Attributes.GetNamedItem("for");
         var emailInput = cut.Find($"#{emailInputId.TextContent}");
         Assert.NotNull(emailInput);
         emailInput.Change(teamMember.Email);
 
-        var cancelButton = cut.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Cancel"));
+        var cancelButton = cut.FindElementByCssSelectorAndTextContent("button", "Cancel");
         Assert.NotNull(cancelButton);
 
         cancelButton.Click();
 
         cut.WaitForAssertion(() =>
         {
-            fullNameLabel = cut.FindAll("label")
-                .FirstOrDefault(element => element.InnerHtml.Contains("Full name"));
+            fullNameLabel = cut.FindElementByCssSelectorAndTextContent("label", "Full name");
             fullNameInputId = fullNameLabel.Attributes.GetNamedItem("for");
             teamMemberNameInput = cut.Find($"#{fullNameInputId.TextContent}");
             Assert.NotNull(teamMemberNameInput);
             Assert.Equal("", teamMemberNameInput.GetAttribute("value"));
         });
         
-        positionLabel = cut.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Position"));
+        positionLabel = cut.FindElementByCssSelectorAndTextContent("label", "Position");
         positionInputId = positionLabel.Attributes.GetNamedItem("for");
         positionInput = cut.Find($"#{positionInputId.TextContent}");
         Assert.NotNull(positionInput);
 
-        emailLabel = cut.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Email"));
+        emailLabel = cut.FindElementByCssSelectorAndTextContent("label", "Email");
         emailInputId = emailLabel.Attributes.GetNamedItem("for");
         emailInput = cut.Find($"#{emailInputId.TextContent}");
         Assert.NotNull(emailInput);
@@ -346,25 +319,20 @@ public class CreateTeamMemberModalTest
                 EventCallback.Factory.Create(this, () => mockWithCloseModal.Object.CloseModal())
             ));
         
-        var addMemberButton = cut.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Add member"));
+        var addMemberButton = cut.FindElementByCssSelectorAndTextContent("button", "Add member");
         Assert.NotNull(addMemberButton);
 
         addMemberButton.Click();
         
-        cut.WaitForAssertion(() => Assert.NotNull(cut.FindAll(".validation-message")
-            .FirstOrDefault(element => element.InnerHtml.Contains("This field is mandatory"))));
+        cut.WaitForAssertion(() => Assert.NotNull(cut.FindElementByCssSelectorAndTextContent(".validation-message", "This field is mandatory")));
         
-        var fullNameLabel = cut.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Full name"));
+        var fullNameLabel = cut.FindElementByCssSelectorAndTextContent("label", "Full name");
         Assert.Contains("This field is mandatory", fullNameLabel.Parent.ToMarkup());
 
-        var positionLabel = cut.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Position"));
+        var positionLabel = cut.FindElementByCssSelectorAndTextContent("label", "Position");
         Assert.Contains("This field is mandatory", positionLabel.Parent.ToMarkup());
 
-        var emailLabel = cut.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Email"));
+        var emailLabel = cut.FindElementByCssSelectorAndTextContent("label", "Email");
         Assert.Contains("This field is mandatory", emailLabel.Parent.ToMarkup());
     }
     
@@ -390,29 +358,25 @@ public class CreateTeamMemberModalTest
                 EventCallback.Factory.Create(this, () => mockWithCloseModal.Object.CloseModal())
             ));
 
-        var fullNameLabel = cut.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Full name"));
+        var fullNameLabel = cut.FindElementByCssSelectorAndTextContent("label", "Full name");
         var fullNameInputId = fullNameLabel.Attributes.GetNamedItem("for");
         var teamMemberNameInput = cut.Find($"#{fullNameInputId.TextContent}");
         Assert.NotNull(teamMemberNameInput);
         teamMemberNameInput.Change(teamMember.FullName);
 
-        var positionLabel = cut.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Position"));
+        var positionLabel = cut.FindElementByCssSelectorAndTextContent("label", "Position");
         var positionInputId = positionLabel.Attributes.GetNamedItem("for");
         var positionInput = cut.Find($"#{positionInputId.TextContent}");
         Assert.NotNull(positionInput);
         positionInput.Change(teamMember.Position);
 
-        var emailLabel = cut.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Email"));
+        var emailLabel = cut.FindElementByCssSelectorAndTextContent("label", "Email");
         var emailInputId = emailLabel.Attributes.GetNamedItem("for");
         var emailInput = cut.Find($"#{emailInputId.TextContent}");
         Assert.NotNull(emailInput);
         emailInput.Change(teamMember.Email);
 
-        var addMemberButton = cut.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Add member"));
+        var addMemberButton = cut.FindElementByCssSelectorAndTextContent("button", "Add member");
         Assert.NotNull(addMemberButton);
 
         addMemberButton.Click();

@@ -1,3 +1,4 @@
+
 using Blazored.Modal;
 using Bunit;
 using Bunit.TestDoubles;
@@ -33,9 +34,8 @@ public class TemplatesTest
         _mockService.Setup(service => service.GetAllTemplates()).ReturnsAsync(_templates);
         var component = _testContext.RenderComponent<Templates>();
 
-        var titleElement = component.FindAll("h2")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Hackman Model"));
-        var timeElement = component.FindAll("p").FirstOrDefault(element => element.InnerHtml.Contains("30 min"));
+        var titleElement = component.FindElementByCssSelectorAndTextContent("h2", "Hackman Model");
+        var timeElement = component.FindElementByCssSelectorAndTextContent("p", "30 min");
 
 
         Assert.NotNull(titleElement);
@@ -49,8 +49,7 @@ public class TemplatesTest
         _mockService.Setup(service => service.GetAllTemplates()).ReturnsAsync(_templates);
         var page = _testContext.RenderComponent<Templates>();
 
-        var existingSurveyElement = page.FindAll("h2")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Hackman Model"));
+        var existingSurveyElement = page.FindElementByCssSelectorAndTextContent("h2", "Hackman Model");
         Assert.NotNull(existingSurveyElement);
 
         existingSurveyElement.Click();

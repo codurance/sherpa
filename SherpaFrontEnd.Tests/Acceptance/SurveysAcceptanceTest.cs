@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
 using System.Security.Claims;
+
 using Blazored.Modal;
 using Bunit;
 using Bunit.TestDoubles;
@@ -134,38 +135,34 @@ public class SurveysAcceptanceTest
         _navMan.NavigateTo($"/{teamsListPage}");
         appComponent.WaitForAssertion(() => Assert.Equal($"http://localhost/teams-list-page", _navMan.Uri));
 
-        var createNewTeamButton = appComponent.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Create new team"));
+        var createNewTeamButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Create new team");
         Assert.NotNull(createNewTeamButton);
 
         createNewTeamButton.Click();
         
-        var teamNameLabel = appComponent.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Team's name"));
+        var teamNameLabel = appComponent.FindElementByCssSelectorAndTextContent("label", "Team's name");
         var teamNameInputId = teamNameLabel.Attributes.GetNamedItem("for");
         var teamNameInput = appComponent.Find($"#{teamNameInputId.TextContent}");
         Assert.NotNull(teamNameInput);
 
         teamNameInput.Change(newTeamName);
         
-        var confirmButton = appComponent.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Confirm"));
+        var confirmButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Confirm");
         Assert.NotNull(confirmButton);
 
         confirmButton.Click();
         
         appComponent.WaitForAssertion(() => Assert.Equal($"http://localhost/team-content/{newTeamId.ToString()}", _navMan.Uri));
-        Assert.NotNull(appComponent.FindAll("h3").FirstOrDefault(element => element.InnerHtml.Contains(newTeamName)));
+        Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("h3", newTeamName));
 
-        var teamSurveysTabPage = appComponent.FindAll("a:not(a[href])")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Surveys"));
+        var teamSurveysTabPage = appComponent.FindElementByCssSelectorAndTextContent("a:not(a[href])", "Surveys");
         Assert.NotNull(teamSurveysTabPage);
         
         teamSurveysTabPage.Click();
         
-        appComponent.WaitForAssertion(() => Assert.NotNull(appComponent.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Send first survey"))));
-        Assert.NotNull(appComponent.FindAll("p").FirstOrDefault(element => element.InnerHtml.Contains("You don’t have any surveys yet")));
-        Assert.NotNull(appComponent.FindAll("p").FirstOrDefault(element => element.InnerHtml.Contains("Let's begin the journey towards a stronger, more effective team!")));
+        appComponent.WaitForAssertion(() => Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("button", "Send first survey")));
+        Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("p", "You don’t have any surveys yet"));
+        Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("p", "Let's begin the journey towards a stronger, more effective team!"));
     }
 
     [Fact]
@@ -258,35 +255,31 @@ public class SurveysAcceptanceTest
         _navMan.NavigateTo($"/{teamsListPage}");
         appComponent.WaitForAssertion(() => Assert.Equal($"http://localhost/teams-list-page", _navMan.Uri));
 
-        var createNewTeamButton = appComponent.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Create new team"));
+        var createNewTeamButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Create new team");
         Assert.NotNull(createNewTeamButton);
 
         createNewTeamButton.Click();
         
-        var teamNameLabel = appComponent.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Team's name"));
+        var teamNameLabel = appComponent.FindElementByCssSelectorAndTextContent("label", "Team's name");
         var teamNameInputId = teamNameLabel.Attributes.GetNamedItem("for");
         var teamNameInput = appComponent.Find($"#{teamNameInputId.TextContent}");
         Assert.NotNull(teamNameInput);
 
         teamNameInput.Change(newTeamName);
         
-        var confirmButton = appComponent.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Confirm"));
+        var confirmButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Confirm");
         Assert.NotNull(confirmButton);
 
         confirmButton.Click();
         
         appComponent.WaitForAssertion(() => Assert.Equal($"http://localhost/team-content/{newTeamId.ToString()}", _navMan.Uri));
         
-        var teamSurveysTabPage = appComponent.FindAll("a:not(a[href])")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Surveys"));
+        var teamSurveysTabPage = appComponent.FindElementByCssSelectorAndTextContent("a:not(a[href])", "Surveys");
         Assert.NotNull(teamSurveysTabPage);
         
         teamSurveysTabPage.Click();
         
-        appComponent.WaitForAssertion(() => Assert.NotNull(appComponent.FindAll("h3").FirstOrDefault(element => element.InnerHtml.Contains("All Surveys"))));
-        Assert.NotNull(appComponent.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Send new survey")));
+        appComponent.WaitForAssertion(() => Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("h3", "All Surveys")));
+        Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("button", "Send new survey"));
     }
 }

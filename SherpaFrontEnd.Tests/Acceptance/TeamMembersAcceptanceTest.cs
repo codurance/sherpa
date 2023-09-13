@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Security.Claims;
 using AngleSharp.Dom;
+
 using Blazored.Modal;
 using Bunit;
 using Bunit.TestDoubles;
@@ -125,8 +126,7 @@ public class TeamMembersAcceptanceTest
         _navMan.NavigateTo($"/team-content/{teamId}");
         appComponent.WaitForAssertion(() => Assert.Equal($"http://localhost/team-content/{teamId}", _navMan.Uri));
 
-        var membersTab = appComponent.FindAll("a:not(a[href])")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Members"));
+        var membersTab = appComponent.FindElementByCssSelectorAndTextContent("a:not(a[href])", "Members");
 
         Assert.NotNull(membersTab);
         membersTab.Click();
@@ -134,11 +134,9 @@ public class TeamMembersAcceptanceTest
         // WHEN he clicks on “Add member“
 
         appComponent.WaitForAssertion(() =>
-            Assert.NotNull(appComponent.FindAll("button")
-                .FirstOrDefault(element => element.InnerHtml.Contains("Add member"))));
+            Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("button", "Add member")));
 
-        var addTeamMemberButton = appComponent.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Add member"));
+        var addTeamMemberButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Add member");
         Assert.NotNull(addTeamMemberButton);
 
         addTeamMemberButton.Click();
@@ -149,56 +147,45 @@ public class TeamMembersAcceptanceTest
         // email (email should be validated) - mandatory
         // Position - text field - mandatory
 
-        var addMemberTitle = appComponent.FindAll("h3")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Add member"));
+        var addMemberTitle = appComponent.FindElementByCssSelectorAndTextContent("h3", "Add member");
         Assert.NotNull(addMemberTitle);
 
-        var addMemberDescription = appComponent.FindAll("p")
-            .FirstOrDefault(element =>
-                element.InnerHtml.Contains("Add team member by filling in the required information"));
+        var addMemberDescription = appComponent.FindElementByCssSelectorAndTextContent("p", "Add team member by filling in the required information");
         Assert.NotNull(addMemberDescription);
 
-        var fullNameLabel = appComponent.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Full name"));
+        var fullNameLabel = appComponent.FindElementByCssSelectorAndTextContent("label", "Full name");
         var fullNameInputId = fullNameLabel.Attributes.GetNamedItem("for");
         var teamMemberNameInput = appComponent.Find($"#{fullNameInputId.TextContent}");
         Assert.NotNull(teamMemberNameInput);
         teamMemberNameInput.Change(teamMember.FullName);
 
-        var positionLabel = appComponent.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Position"));
+        var positionLabel = appComponent.FindElementByCssSelectorAndTextContent("label", "Position");
         var positionInputId = positionLabel.Attributes.GetNamedItem("for");
         var positionInput = appComponent.Find($"#{positionInputId.TextContent}");
         Assert.NotNull(positionInput);
         positionInput.Change(teamMember.Position);
 
-        var emailLabel = appComponent.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Email"));
+        var emailLabel = appComponent.FindElementByCssSelectorAndTextContent("label", "Email");
         var emailInputId = emailLabel.Attributes.GetNamedItem("for");
         var emailInput = appComponent.Find($"#{emailInputId.TextContent}");
         Assert.NotNull(emailInput);
         emailInput.Change(teamMember.Email);
 
-        var addMemberButton = appComponent.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Add member"));
+        var addMemberButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Add member");
         Assert.NotNull(addMemberButton);
         
         // AND WHEN clicking on Add member
 
         addMemberButton.Click();
         
-        appComponent.WaitForAssertion(() =>  Assert.Null(appComponent.FindAll("h3")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Add member"))));
+        appComponent.WaitForAssertion(() =>  Assert.Null(appComponent.FindElementByCssSelectorAndTextContent("h3", "Add member")));
         
         // THEN the created member should be in the members table
 
-        appComponent.WaitForAssertion(() => Assert.NotNull(appComponent.FindAll("td")
-            .FirstOrDefault(element => element.InnerHtml.Contains(teamMember.FullName))));
+        appComponent.WaitForAssertion(() => Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("td", teamMember.FullName)));
         
-        Assert.NotNull(appComponent.FindAll("td")
-            .FirstOrDefault(element => element.InnerHtml.Contains(teamMember.Position)));
+        Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("td", teamMember.Position));
         
-        Assert.NotNull(appComponent.FindAll("td")
-            .FirstOrDefault(element => element.InnerHtml.Contains(teamMember.Email)));
+        Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("td", teamMember.Email));
     }
 }

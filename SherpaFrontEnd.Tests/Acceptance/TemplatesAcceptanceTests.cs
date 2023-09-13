@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Security.Claims;
+
 using Blazored.Modal;
 using Bunit;
 using Bunit.TestDoubles;
@@ -75,8 +76,7 @@ public class TemplatesAcceptanceTests
         _nav.NavigateTo($"http://localhost/{templatesPage}");
 
         // THEN he should open Template page with 1 pre-created Hackman template
-        var elementWithText = component.FindAll("h2")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Hackman Model"));
+        var elementWithText = component.FindElementByCssSelectorAndTextContent("h2", "Hackman Model");
 
         Assert.NotNull(elementWithText);
     }
@@ -108,8 +108,7 @@ public class TemplatesAcceptanceTests
         _nav.NavigateTo($"http://localhost/{templatesPage}");
 
         // THEN he should open Template page with an error message
-        var elementWithText = component.FindAll("p").FirstOrDefault(element =>
-            element.InnerHtml.Contains("There has been an error loading the templates"));
+        var elementWithText = component.FindElementByCssSelectorAndTextContent("p", "There has been an error loading the templates");
 
         Assert.NotNull(elementWithText);
     }

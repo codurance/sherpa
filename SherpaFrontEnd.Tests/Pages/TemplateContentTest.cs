@@ -1,3 +1,4 @@
+
 using Bunit;
 using Bunit.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,9 +22,9 @@ public class TemplateContentTest
     {
         var component =
             _ctx.RenderComponent<TemplateContent>(ComponentParameter.CreateParameter("TemplateName", "Hackman Model"));
-        
-        Assert.NotNull(component.FindAll("h1").FirstOrDefault(element => element.InnerHtml.Contains("Hackman Model")));
-        Assert.NotNull(component.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Launch this template")));
+
+        Assert.NotNull(component.FindElementByCssSelectorAndTextContent("h1", "Hackman Model"));
+        Assert.NotNull(component.FindElementByCssSelectorAndTextContent("button", "Launch this template"));
     }
     
     [Fact]
@@ -32,7 +33,7 @@ public class TemplateContentTest
         var component =
             _ctx.RenderComponent<TemplateContent>(ComponentParameter.CreateParameter("TemplateName", "Hackman Model"));
 
-        var launchButton = component.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Launch this template"));
+        var launchButton = component.FindElementByCssSelectorAndTextContent("button", "Launch this template");
         Assert.NotNull(launchButton);
         
         launchButton.Click();
