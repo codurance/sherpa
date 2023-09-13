@@ -22,7 +22,7 @@ public class SurveyService : ISurveyService
         await client.PostAsJsonAsync("/survey", createSurveyDto);
     }
 
-    public async Task<SurveyWithoutQuestions?> GetSurveyById(Guid id)
+    public async Task<SurveyWithoutQuestions?> GetSurveyWithoutQuestionsById(Guid id)
     {
         var client = _httpClientFactory.CreateClient(SherpaBackend);
         return await client.GetFromJsonAsync<SurveyWithoutQuestions>($"/survey/{id.ToString()}");
@@ -38,6 +38,18 @@ public class SurveyService : ISurveyService
         var responseString = await response.Content.ReadAsStringAsync();
 
         return JsonSerializer.Deserialize<List<Survey>>(
+            responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+    }
+
+    public async Task<List<Question>?> GetSurveyQuestionsBySurveyId(Guid surveyId)
+    {
+        var client = _httpClientFactory.CreateClient(SherpaBackend);
+        var request = new HttpRequestMessage(HttpMethod.Get, $"/survey/{surveyId.ToString()}/questions");
+        var response = await client.SendAsync(request);
+        
+        var responseString = await response.Content.ReadAsStringAsync();
+        
+        return JsonSerializer.Deserialize<List<Question>>(
             responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
     }
 }

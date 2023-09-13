@@ -70,7 +70,7 @@ public class SurveyAcceptanceTest: IDisposable
         var teamMember = new TeamMember(teamMemberId, "Some name", "Some position", "some@email.com");
         var teamId = Guid.NewGuid();
         var team = new Team(teamId, "Some team name", new List<TeamMember> { teamMember });
-        var template = new Template("Hackman Model", new List<IQuestion>(), 10);
+        var template = new TemplateWithoutQuestions("Hackman Model", 10);
 
         await _teamMemberCollection.InsertOneAsync(new BsonDocument
         {
@@ -106,7 +106,7 @@ public class SurveyAcceptanceTest: IDisposable
         var createSurveyDto = new CreateSurveyDto(Guid.NewGuid(), team.Id, template.Name, "survey title",
             "Description", DateTime.Parse("2023-08-09T07:38:04+0000").ToUniversalTime());
 
-        var expectedSurvey = new Survey(createSurveyDto.SurveyId, new User(surveysService.DefaultUserId, "Lucia"),
+        var expectedSurvey = new SurveyWithoutQuestions(createSurveyDto.SurveyId, new User(surveysService.DefaultUserId, "Lucia"),
             Status.Draft,
             createSurveyDto.Deadline, createSurveyDto.Title, createSurveyDto.Description, new List<Response>(),
             team, template);
@@ -116,7 +116,7 @@ public class SurveyAcceptanceTest: IDisposable
         Assert.IsType<CreatedResult>(actionResult);
 
         //And: they get it back later
-        var retrievedSurvey = await surveyController.GetSurveyById(createSurveyDto.SurveyId);
+        var retrievedSurvey = await surveyController.GetSurveyWithoutQuestionsById(createSurveyDto.SurveyId);
 
         //Then: they should retrieve the same survey they have already created
         var okObjectResult = Assert.IsType<OkObjectResult>(retrievedSurvey.Result);

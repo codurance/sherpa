@@ -5,11 +5,17 @@ using Moq;
 using Moq.Protected;
 using Shared.Test.Helpers;
 using SherpaFrontEnd.Dtos;
-using SherpaFrontEnd.Model;
 using SherpaFrontEnd.Services;
 using Newtonsoft.Json;
 using SherpaFrontEnd.Dtos.Survey;
 using SherpaFrontEnd.Dtos.Team;
+using HackmanComponent = SherpaFrontEnd.Dtos.Survey.HackmanComponent;
+using HackmanQuestion = SherpaFrontEnd.Dtos.Survey.HackmanQuestion;
+using HackmanSubcategory = SherpaFrontEnd.Dtos.Survey.HackmanSubcategory;
+using HackmanSubcomponent = SherpaFrontEnd.Dtos.Survey.HackmanSubcomponent;
+using IQuestion = SherpaFrontEnd.Dtos.Survey.IQuestion;
+using Languages = SherpaFrontEnd.Dtos.Survey.Languages;
+using Template = SherpaFrontEnd.Dtos.Survey.Template;
 
 namespace BlazorApp.Tests.Services;
 
@@ -66,7 +72,7 @@ public class SurveyServiceTest
             .ReturnsAsync(surveyResponse);
 
         var surveyService = new SurveyService(_httpClientFactory.Object);
-        var actualSurvey = await surveyService.GetSurveyById(surveyId);
+        var actualSurvey = await surveyService.GetSurveyWithoutQuestionsById(surveyId);
         CustomAssertions.StringifyEquals(survey, actualSurvey);
     }
 
@@ -102,38 +108,39 @@ public class SurveyServiceTest
                 m => m.Method.Equals(HttpMethod.Post) && m.RequestUri!.AbsoluteUri.Contains("/survey")),
             ItExpr.IsAny<CancellationToken>());
     }
-    
+
     [Fact]
     public async Task ShouldReturnEmptyListOfSurveysFromTeam()
     {
         var teamId = Guid.NewGuid();
         var surveys = new List<Survey>() { };
         var surveysJson = await JsonContent.Create(surveys).ReadAsStringAsync();
-        
+
         var emptySurveyListResponse = new HttpResponseMessage
         {
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(surveysJson),
         };
-        
+
         _handlerMock
             .Protected()
             .SetupSequence<Task<HttpResponseMessage>>(
                 "SendAsync",
                 ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get)  && m.RequestUri!.AbsoluteUri.Contains($"team/{teamId.ToString()}/surveys")),
+                    m => m.Method.Equals(HttpMethod.Get) &&
+                         m.RequestUri!.AbsoluteUri.Contains($"team/{teamId.ToString()}/surveys")),
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(emptySurveyListResponse);
-        
+
 
         var surveyService = new SurveyService(_httpClientFactory.Object);
-        
+
         var actualResponse = await surveyService.GetAllSurveysByTeam(teamId);
-        
-        var expectedResponse = new List<Survey>{ };
+
+        var expectedResponse = new List<Survey> { };
         Assert.Equal(JsonConvert.SerializeObject(expectedResponse), JsonConvert.SerializeObject(actualResponse));
     }
-    
+
     [Fact]
     public async Task ShouldReturnExpectedListOfSurveysFromTeam()
     {
@@ -146,27 +153,84 @@ public class SurveyServiceTest
                 Array.Empty<Response>(), team, new Template("template"))
         };
         var surveysJson = await JsonContent.Create(surveys).ReadAsStringAsync();
-        
+
         var responseWithSurveys = new HttpResponseMessage
         {
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(surveysJson),
         };
-        
+
         _handlerMock
             .Protected()
             .SetupSequence<Task<HttpResponseMessage>>(
                 "SendAsync",
                 ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get)  && m.RequestUri!.AbsoluteUri.Contains($"team/{teamId.ToString()}/surveys")),
+                    m => m.Method.Equals(HttpMethod.Get) &&
+                         m.RequestUri!.AbsoluteUri.Contains($"team/{teamId.ToString()}/surveys")),
                 ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(responseWithSurveys);
-        
+
 
         var surveyService = new SurveyService(_httpClientFactory.Object);
-        
+
         var actualResponse = await surveyService.GetAllSurveysByTeam(teamId);
 
         Assert.Equal(JsonConvert.SerializeObject(surveys), JsonConvert.SerializeObject(actualResponse));
+    }
+
+    [Fact]
+    public async Task ShouldReturnSurveyQuestionsInHttpResponse()
+    {
+        var surveyId = Guid.NewGuid();
+        var QuestionInSpanish = "Question in spanish";
+        var QuestionInEnglish = "Question in english";
+        var ResponseSpanish1 = "SPA_1";
+        var ResponseSpanish2 = "SPA_2";
+        var ResponseSpanish3 = "SPA_3";
+        var ResponseEnglish1 = "ENG_1";
+        var ResponseEnglish2 = "ENG_2";
+        var ResponseEnglish3 = "ENG_3";
+        var Position = 1;
+        var Reverse = false;
+
+        var question = new Question(new Dictionary<string, string>()
+            {
+                { Languages.SPANISH, QuestionInSpanish },
+                { Languages.ENGLISH, QuestionInEnglish },
+            }, new Dictionary<string, string[]>()
+            {
+                {
+                    Languages.SPANISH, new[] { ResponseSpanish1, ResponseSpanish2, ResponseSpanish3 }
+                },
+                {
+                    Languages.ENGLISH, new[] { ResponseEnglish1, ResponseEnglish2, ResponseEnglish3 }
+                }
+            }, Reverse,
+            HackmanComponent.INTERPERSONAL_PEER_COACHING,
+            HackmanSubcategory.DELIMITED, HackmanSubcomponent.SENSE_OF_URGENCY, Position);
+
+        var questions = new List<IQuestion>() { question };
+        var questionsListJson = await JsonContent.Create(questions).ReadAsStringAsync();
+        var questionsListResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(questionsListJson)
+        };
+
+        _handlerMock
+            .Protected()
+            .Setup<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.Is<HttpRequestMessage>(
+                    m => m.Method.Equals(HttpMethod.Get) &&
+                         m.RequestUri!.AbsoluteUri.Contains($"/survey/{surveyId.ToString()}/questions")),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(questionsListResponse);
+
+        var surveyService = new SurveyService(_httpClientFactory.Object);
+        
+        var surveyQuestions = await surveyService.GetSurveyQuestionsBySurveyId(surveyId);
+        
+        Assert.Equal(JsonConvert.SerializeObject(questions), JsonConvert.SerializeObject(surveyQuestions));
     }
 }

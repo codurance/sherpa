@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using SherpaBackEnd.Dtos;
 using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Model.Survey;
+using SherpaBackEnd.Model.Template;
 using SherpaBackEnd.Services;
 
 namespace SherpaBackEnd.Controllers;
@@ -60,11 +61,11 @@ public class SurveyController
     }
 
     [HttpGet("survey/{guid:guid}")]
-    public async Task<ActionResult<Survey>> GetSurveyById(Guid guid)
+    public async Task<ActionResult<Survey>> GetSurveyWithoutQuestionsById(Guid guid)
     {
         try
         {
-            var surveyById = await _surveyService.GetSurveyById(guid);
+            var surveyById = await _surveyService.GetSurveyWithoutQuestionsById(guid);
             return new OkObjectResult(surveyById);
         }
         catch (Exception error)
@@ -78,5 +79,12 @@ public class SurveyController
                 _ => new ObjectResult(error) { StatusCode = StatusCodes.Status500InternalServerError }
             };
         }
+    }
+
+    [HttpGet("survey/{guid:guid}/questions")]
+    public async Task<ActionResult<IEnumerable<IQuestion>>> GetSurveyQuestionsBySurveyId(Guid guid)
+    {
+        var surveysQuestions = await _surveyService.GetSurveyQuestionsBySurveyId(guid);
+        return new OkObjectResult(surveysQuestions);
     }
 }
