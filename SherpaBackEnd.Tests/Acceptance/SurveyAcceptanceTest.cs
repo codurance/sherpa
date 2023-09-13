@@ -8,13 +8,17 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using Moq;
 using Shared.Test.Helpers;
-using SherpaBackEnd.Controllers;
-using SherpaBackEnd.Dtos;
-using SherpaBackEnd.Model;
-using SherpaBackEnd.Model.Survey;
-using SherpaBackEnd.Model.Template;
-using SherpaBackEnd.Repositories.Mongo;
-using SherpaBackEnd.Services;
+using SherpaBackEnd.Shared.Infrastructure.Persistence;
+using SherpaBackEnd.Survey.Application;
+using SherpaBackEnd.Survey.Domain;
+using SherpaBackEnd.Survey.Infrastructure.Http;
+using SherpaBackEnd.Survey.Infrastructure.Http.Dto;
+using SherpaBackEnd.Survey.Infrastructure.Persistence;
+using SherpaBackEnd.Team.Domain;
+using SherpaBackEnd.Team.Infrastructure.Persistence;
+using SherpaBackEnd.Template.Domain;
+using SherpaBackEnd.Template.Infrastructure.Http.Dto;
+using SherpaBackEnd.Template.Infrastructure.Persistence;
 
 namespace SherpaBackEnd.Tests.Acceptance;
 
@@ -69,7 +73,7 @@ public class SurveyAcceptanceTest: IDisposable
         var teamMemberId = Guid.NewGuid();
         var teamMember = new TeamMember(teamMemberId, "Some name", "Some position", "some@email.com");
         var teamId = Guid.NewGuid();
-        var team = new Team(teamId, "Some team name", new List<TeamMember> { teamMember });
+        var team = new Team.Domain.Team(teamId, "Some team name", new List<TeamMember> { teamMember });
         var template = new TemplateWithoutQuestions("Hackman Model", 10);
 
         await _teamMemberCollection.InsertOneAsync(new BsonDocument
@@ -106,9 +110,9 @@ public class SurveyAcceptanceTest: IDisposable
         var createSurveyDto = new CreateSurveyDto(Guid.NewGuid(), team.Id, template.Name, "survey title",
             "Description", DateTime.Parse("2023-08-09T07:38:04+0000").ToUniversalTime());
 
-        var expectedSurvey = new SurveyWithoutQuestions(createSurveyDto.SurveyId, new User(surveysService.DefaultUserId, "Lucia"),
-            Status.Draft,
-            createSurveyDto.Deadline, createSurveyDto.Title, createSurveyDto.Description, new List<Response>(),
+        var expectedSurvey = new SurveyWithoutQuestions(createSurveyDto.SurveyId, new User.Domain.User(surveysService.DefaultUserId, "Lucia"),
+            SurveyStatus.Draft,
+            createSurveyDto.Deadline, createSurveyDto.Title, createSurveyDto.Description, new List<SurveyResponse>(),
             team, template);
 
         //When: they create a new Survey 
@@ -132,13 +136,13 @@ public class SurveyAcceptanceTest: IDisposable
         var teamMemberId = Guid.NewGuid();
         var teamMember = new TeamMember(teamMemberId, "Some name", "Some position", "some@email.com");
         var teamId = Guid.NewGuid();
-        var team = new Team(teamId, "Some team name", new List<TeamMember> { teamMember });
-        var template = new Template("Hackman Model", new List<IQuestion>(), 10);
-        var survey = new Survey(Guid.NewGuid(), new User(Guid.NewGuid(), "Demo coach"), Status.Draft, DateTime.Now.ToUniversalTime(),
-            "Survey title", "Survey Description", new List<Response>(), team, template);
+        var team = new Team.Domain.Team(teamId, "Some team name", new List<TeamMember> { teamMember });
+        var template = new Template.Domain.Template("Hackman Model", new List<IQuestion>(), 10);
+        var survey = new Survey.Domain.Survey(Guid.NewGuid(), new User.Domain.User(Guid.NewGuid(), "Demo coach"), SurveyStatus.Draft, DateTime.Now.ToUniversalTime(),
+            "Survey title", "Survey Description", new List<SurveyResponse>(), team, template);
 
-        var survey2 = new Survey(Guid.NewGuid(), new User(Guid.NewGuid(), "Demo coach"), Status.Draft, DateTime.Now.ToUniversalTime(),
-            "Survey title", "Survey Description", new List<Response>(), team, template);
+        var survey2 = new Survey.Domain.Survey(Guid.NewGuid(), new User.Domain.User(Guid.NewGuid(), "Demo coach"), SurveyStatus.Draft, DateTime.Now.ToUniversalTime(),
+            "Survey title", "Survey Description", new List<SurveyResponse>(), team, template);
 
         await _teamMemberCollection.InsertOneAsync(new BsonDocument
         {
@@ -175,7 +179,7 @@ public class SurveyAcceptanceTest: IDisposable
                         { "Name", survey.Coach.Name }
                     }
                 },
-                { "Status", survey.Status.ToString() },
+                { "Status", survey.SurveyStatus.ToString() },
                 { "Title", survey.Title },
                 { "Description", survey.Description },
                 { "Responses", new BsonArray() },
@@ -192,7 +196,7 @@ public class SurveyAcceptanceTest: IDisposable
                         { "Name", survey.Coach.Name }
                     }
                 },
-                { "Status", survey2.Status.ToString() },
+                { "Status", survey2.SurveyStatus.ToString() },
                 { "Title", survey2.Title },
                 { "Description", survey2.Description },
                 { "Responses", new BsonArray() },
@@ -215,7 +219,7 @@ public class SurveyAcceptanceTest: IDisposable
 
         var resultObject = Assert.IsType<OkObjectResult>(teamSurveys.Result);
         Assert.Equal(StatusCodes.Status200OK, resultObject.StatusCode);
-        var surveys = Assert.IsType<List<Survey>>(resultObject.Value);
+        var surveys = Assert.IsType<List<Survey.Domain.Survey>>(resultObject.Value);
         Assert.Equal(2, surveys.Count);
     }
 

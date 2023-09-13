@@ -1,11 +1,15 @@
-using SherpaBackEnd.Dtos;
-using SherpaBackEnd.Model;
-using SherpaBackEnd.Model.Template;
-using SherpaBackEnd.Repositories;
-using SherpaBackEnd.Repositories.Mongo;
-using SherpaBackEnd.Serializers;
-using SherpaBackEnd.Services;
-using SherpaBackEnd.Services.Email;
+using SherpaBackEnd.Email.Application;
+using SherpaBackEnd.Shared.Infrastructure.Persistence;
+using SherpaBackEnd.Shared.Infrastructure.Serializers;
+using SherpaBackEnd.Survey.Application;
+using SherpaBackEnd.Survey.Domain.Persistence;
+using SherpaBackEnd.Survey.Infrastructure.Persistence;
+using SherpaBackEnd.Team.Application;
+using SherpaBackEnd.Team.Domain;
+using SherpaBackEnd.Team.Infrastructure.Persistence;
+using SherpaBackEnd.Template.Application;
+using SherpaBackEnd.Template.Domain;
+using SherpaBackEnd.Template.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using Bunit;
 using Bunit.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
+using SherpaFrontEnd.Pages.Templates.Components;
 using SherpaFrontEnd.Shared;
 
 namespace BlazorApp.Tests.Shared;

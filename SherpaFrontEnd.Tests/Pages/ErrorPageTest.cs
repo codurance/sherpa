@@ -1,6 +1,7 @@
 ﻿
 using Bunit;
 using SherpaFrontEnd.Pages;
+using SherpaFrontEnd.Pages.ErrorPage;
 
 namespace BlazorApp.Tests.Pages;
 

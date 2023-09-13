@@ -1,11 +1,12 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Moq;
-using SherpaBackEnd.Controllers;
-using SherpaBackEnd.Dtos;
-using SherpaBackEnd.Services;
 using Microsoft.AspNetCore.Mvc;
 using SherpaBackEnd.Exceptions;
+using SherpaBackEnd.Team.Application;
+using SherpaBackEnd.Team.Domain;
+using SherpaBackEnd.Team.Infrastructure.Http;
+using SherpaBackEnd.Team.Infrastructure.Http.Dto;
 
 namespace SherpaBackEnd.Tests.Controllers;
 

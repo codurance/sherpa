@@ -8,6 +8,8 @@ using SherpaFrontEnd.Dtos.Survey;
 using SherpaFrontEnd.Dtos.Team;
 using SherpaFrontEnd.Model;
 using SherpaFrontEnd.Pages;
+using SherpaFrontEnd.Pages.TeamContent;
+using SherpaFrontEnd.Pages.TeamContent.Components;
 using SherpaFrontEnd.Services;
 using Xunit.Abstractions;
 

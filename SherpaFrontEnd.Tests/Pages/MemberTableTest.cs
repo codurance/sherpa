@@ -1,13 +1,10 @@
-﻿using AngleSharp.Dom;
-
-using BlazorApp.Tests.Helpers.Interfaces;
+﻿using BlazorApp.Tests.Helpers.Interfaces;
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using SherpaFrontEnd.Dtos.Team;
-using SherpaFrontEnd.Model;
-using SherpaFrontEnd.Pages;
+using SherpaFrontEnd.Pages.TeamContent.Components;
 using SherpaFrontEnd.Services;
 
 namespace BlazorApp.Tests.Pages;

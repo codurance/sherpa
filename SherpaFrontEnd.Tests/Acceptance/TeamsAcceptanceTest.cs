@@ -11,6 +11,7 @@ using Moq.Protected;
 using SherpaFrontEnd;
 using SherpaFrontEnd.Dtos.Team;
 using SherpaFrontEnd.Pages;
+using SherpaFrontEnd.Pages.TeamList;
 using SherpaFrontEnd.Services;
 using Xunit.Abstractions;
 

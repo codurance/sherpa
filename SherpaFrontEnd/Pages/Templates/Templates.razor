@@ -1,0 +1,47 @@
+@page "/templates"
+@using SherpaFrontEnd.Services
+@using SherpaFrontEnd.Pages.Templates.Components
+@inject ITemplateService TemplateService
+
+<h3>Templates</h3>
+<ul class="template-box-list">
+
+    @foreach (var template in _templates)
+    {
+        <li>
+            <TemplateBox Name="@template.Name" MinutesToComplete="@template.MinutesToComplete"/>
+        </li>
+    }
+    @if (_errorFetchingTemplates)
+    {
+        <p>There has been an error loading the templates</p>
+    }
+</ul>
+
+@code {
+    private TemplateWithoutQuestions[] _templates = { };
+    private bool _errorFetchingTemplates = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await FetchTemplates();
+    }
+
+    private async Task FetchTemplates()
+    {
+        try
+        {
+            _errorFetchingTemplates = false;
+            var templates = await TemplateService.GetAllTemplates();
+            if (templates != null)
+            {
+                _templates = templates;
+            }
+        }
+        catch
+        {
+            _errorFetchingTemplates = true;
+        }
+    }
+
+}

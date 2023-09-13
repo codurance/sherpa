@@ -3,6 +3,7 @@ using Bunit;
 using Bunit.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
 using SherpaFrontEnd.Pages;
+using SherpaFrontEnd.Pages.TemplateContent;
 
 namespace BlazorApp.Tests.Pages;
 

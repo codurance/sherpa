@@ -1,6 +1,6 @@
 using Moq;
-using SherpaBackEnd.Model.Template;
-using SherpaBackEnd.Services;
+using SherpaBackEnd.Template.Application;
+using SherpaBackEnd.Template.Domain;
 
 namespace SherpaBackEnd.Tests.Services;
 
@@ -18,7 +18,7 @@ public class TemplateServiceTest
     {
         var actualResponse = new[]
         {
-            new Template("test", Array.Empty<IQuestion>(), 1)
+            new Template.Domain.Template("test", Array.Empty<IQuestion>(), 1)
         };
         
         _repository.Setup(templateRepository => templateRepository.GetAllTemplatesAsync()).ReturnsAsync(actualResponse);

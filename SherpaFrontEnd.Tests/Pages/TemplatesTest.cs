@@ -1,12 +1,11 @@
-
 using Blazored.Modal;
 using Bunit;
 using Bunit.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using SherpaFrontEnd;
-using SherpaFrontEnd.Pages;
+using SherpaFrontEnd.Pages.Templates;
 using SherpaFrontEnd.Services;
+
 
 namespace BlazorApp.Tests.Pages;
 

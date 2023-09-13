@@ -1,8 +1,8 @@
 using Moq;
-using SherpaBackEnd.Dtos;
 using SherpaBackEnd.Exceptions;
-using SherpaBackEnd.Model;
-using SherpaBackEnd.Services;
+using SherpaBackEnd.Team.Application;
+using SherpaBackEnd.Team.Domain;
+using SherpaBackEnd.Team.Infrastructure.Http.Dto;
 
 namespace SherpaBackEnd.Tests.Services;
 

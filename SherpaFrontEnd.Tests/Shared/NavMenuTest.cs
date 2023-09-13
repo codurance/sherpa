@@ -1,8 +1,5 @@
-using AngleSharp.Css.Dom;
-using AngleSharp.Dom;
-
 using Bunit;
-using SherpaFrontEnd.Shared;
+using SherpaFrontEnd.Core.NavMenu;
 
 namespace BlazorApp.Tests.Shared;
 

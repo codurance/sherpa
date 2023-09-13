@@ -8,6 +8,7 @@ using SherpaFrontEnd.Dtos.Survey;
 using SherpaFrontEnd.Dtos.Team;
 using SherpaFrontEnd.Model;
 using SherpaFrontEnd.Pages;
+using SherpaFrontEnd.Pages.SurveyDraftReview;
 using SherpaFrontEnd.Services;
 
 namespace BlazorApp.Tests.Pages;

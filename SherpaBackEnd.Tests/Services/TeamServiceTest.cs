@@ -1,8 +1,7 @@
 using Moq;
-using SherpaBackEnd.Dtos;
 using SherpaBackEnd.Exceptions;
-using SherpaBackEnd.Model;
-using SherpaBackEnd.Services;
+using SherpaBackEnd.Team.Application;
+using SherpaBackEnd.Team.Domain;
 
 namespace SherpaBackEnd.Tests.Services;
 
@@ -20,7 +19,7 @@ public class TeamServiceTest
     [Fact]
     public async Task ShouldCallAddTeamMethodFromRepository()
     {
-        var newTeam = new Team("Team name");
+        var newTeam = new Team.Domain.Team("Team name");
         await _teamService.AddTeamAsync(newTeam);
 
         _mockTeamRepository.Verify(_ => _.AddTeamAsync(newTeam), Times.Once());
@@ -37,7 +36,7 @@ public class TeamServiceTest
     [Fact]
     public async Task ShouldThrowErrorIfConnectionWithRepositoryFailsWhileAdding()
     {
-        var newTeam = new Team("New Team");
+        var newTeam = new Team.Domain.Team("New Team");
         _mockTeamRepository.Setup(_ => _.AddTeamAsync(newTeam)).ThrowsAsync(new Exception());
 
         var exceptionThrown = await Assert.ThrowsAsync<ConnectionToRepositoryUnsuccessfulException>(async () => await _teamService.AddTeamAsync(newTeam));
@@ -57,7 +56,7 @@ public class TeamServiceTest
     public async Task ShouldReturnTeamGivenByRepoWhenGettingById()
     {
         var teamId = Guid.NewGuid();
-        var expectedTeam = new Team(teamId, "Demo team");
+        var expectedTeam = new Team.Domain.Team(teamId, "Demo team");
         _mockTeamRepository.Setup(_ => _.GetTeamByIdAsync(teamId)).ReturnsAsync(expectedTeam);
 
         var actualTeam = await _teamService.GetTeamByIdAsync(teamId);
