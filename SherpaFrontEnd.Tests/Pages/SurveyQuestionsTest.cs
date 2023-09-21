@@ -1,3 +1,4 @@
+
 using Bunit;
 using Bunit.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
@@ -6,6 +7,7 @@ using SherpaFrontEnd.Dtos;
 using SherpaFrontEnd.Dtos.Survey;
 using SherpaFrontEnd.Dtos.Team;
 using SherpaFrontEnd.Pages;
+using SherpaFrontEnd.Pages.SurveyQuestions;
 using SherpaFrontEnd.Services;
 
 namespace BlazorApp.Tests.Pages;
@@ -63,12 +65,10 @@ public class SurveyQuestionsTest
                 ComponentParameter.CreateParameter("MemberId", _memberId)
             );
         
-        var surveyTitleElement = appComponent.FindAll("h2")
-            .FirstOrDefault(element => element.InnerHtml.Contains(survey.Title));
+        var surveyTitleElement = appComponent.FindElementByCssSelectorAndTextContent("h2", survey.Title);
         Assert.NotNull(surveyTitleElement);
 
-        var surveyDescriptionElement = appComponent.FindAll("p")
-            .FirstOrDefault(element => element.InnerHtml.Contains(survey.Description));
+        var surveyDescriptionElement = appComponent.FindElementByCssSelectorAndTextContent("p", survey.Description);
         Assert.NotNull(surveyDescriptionElement);
     }
     
@@ -112,15 +112,13 @@ public class SurveyQuestionsTest
                 ComponentParameter.CreateParameter("MemberId", _memberId)
             );
         
-        var questionSpanishStatement = appComponent.FindAll("p")
-            .FirstOrDefault(element => element.InnerHtml.Contains(questions[0].Statement[Languages.ENGLISH]));
+        var questionSpanishStatement = appComponent.FindElementByCssSelectorAndTextContent("p", questions[0].Statement[Languages.ENGLISH]);
         Assert.NotNull(questionSpanishStatement);
 
         var amountOfAvailableResponses = appComponent.FindAll("input[type=radio]").Count;
         Assert.Equal(questions[0].Responses[Languages.ENGLISH].Length, amountOfAvailableResponses);
         
-        var submitButton = appComponent.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Submit"));
+        var submitButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Submit");
         Assert.NotNull(submitButton);
     }
     
@@ -178,16 +176,13 @@ public class SurveyQuestionsTest
                 ComponentParameter.CreateParameter("MemberId", _memberId)
             );
         
-        var firstQuestionSpanishStatement = appComponent.FindAll("p")
-            .FirstOrDefault(element => element.InnerHtml.Contains(questions[0].Statement[Languages.ENGLISH]));
+        var firstQuestionSpanishStatement = appComponent.FindElementByCssSelectorAndTextContent("p", questions[0].Statement[Languages.ENGLISH]);
         Assert.NotNull(firstQuestionSpanishStatement);
         
-        var secondQuestionSpanishStatement = appComponent.FindAll("p")
-            .FirstOrDefault(element => element.InnerHtml.Contains(questions[1].Statement[Languages.ENGLISH]));
+        var secondQuestionSpanishStatement = appComponent.FindElementByCssSelectorAndTextContent("p", questions[1].Statement[Languages.ENGLISH]);
         Assert.NotNull(secondQuestionSpanishStatement);
         
-        var submitButton = appComponent.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Submit"));
+        var submitButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Submit");
         Assert.NotNull(submitButton);
     }
 

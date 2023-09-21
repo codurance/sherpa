@@ -1,16 +1,15 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
 using System.Security.Claims;
+
 using Blazored.Modal;
 using Bunit;
 using Bunit.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using Moq.Protected;
 using SherpaFrontEnd;
 using SherpaFrontEnd.Dtos.Survey;
 using SherpaFrontEnd.Dtos.Team;
-using SherpaFrontEnd.Model;
 using SherpaFrontEnd.Services;
 
 namespace BlazorApp.Tests.Acceptance;
@@ -65,30 +64,15 @@ public class SurveysAcceptanceTest
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(emptyTeamListJson)
         };
-
-        _httpHandlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get) &&
-                         m.RequestUri.AbsoluteUri.Contains($"/team")),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(emptyTeamsListResponse);
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, "/team", emptyTeamsListResponse);
         
         var creationResponse = new HttpResponseMessage()
         {
             StatusCode = HttpStatusCode.Created,
         };
-
-        _httpHandlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Post)),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(creationResponse);
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Post, "", creationResponse);
         
         var singleTeamJson = await JsonContent.Create(newTeam).ReadAsStringAsync();
         var singleTeamResponse = new HttpResponseMessage()
@@ -96,16 +80,8 @@ public class SurveysAcceptanceTest
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(singleTeamJson)
         };
-
-        _httpHandlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get) &&
-                         m.RequestUri.AbsoluteUri.Contains($"/team/{newTeamId.ToString()}")),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(singleTeamResponse);
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, $"/team/{newTeamId.ToString()}", singleTeamResponse);
 
         var emptySurveyList = new List<Survey>() {};
         var emptySurveyListJson = await JsonContent.Create(emptySurveyList).ReadAsStringAsync();
@@ -115,15 +91,7 @@ public class SurveysAcceptanceTest
             Content = new StringContent(emptySurveyListJson)
         };
         
-        _httpHandlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get) &&
-                         m.RequestUri.AbsoluteUri.EndsWith($"/team/{newTeamId.ToString()}/surveys")),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(emptySurveyListResponse);
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, $"/team/{newTeamId.ToString()}/surveys", emptySurveyListResponse);
 
         var appComponent = _testCtx.RenderComponent<App>();
         
@@ -134,38 +102,34 @@ public class SurveysAcceptanceTest
         _navMan.NavigateTo($"/{teamsListPage}");
         appComponent.WaitForAssertion(() => Assert.Equal($"http://localhost/teams-list-page", _navMan.Uri));
 
-        var createNewTeamButton = appComponent.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Create new team"));
+        var createNewTeamButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Create new team");
         Assert.NotNull(createNewTeamButton);
 
         createNewTeamButton.Click();
         
-        var teamNameLabel = appComponent.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Team's name"));
+        var teamNameLabel = appComponent.FindElementByCssSelectorAndTextContent("label", "Team's name");
         var teamNameInputId = teamNameLabel.Attributes.GetNamedItem("for");
         var teamNameInput = appComponent.Find($"#{teamNameInputId.TextContent}");
         Assert.NotNull(teamNameInput);
 
         teamNameInput.Change(newTeamName);
         
-        var confirmButton = appComponent.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Confirm"));
+        var confirmButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Confirm");
         Assert.NotNull(confirmButton);
 
         confirmButton.Click();
         
         appComponent.WaitForAssertion(() => Assert.Equal($"http://localhost/team-content/{newTeamId.ToString()}", _navMan.Uri));
-        Assert.NotNull(appComponent.FindAll("h3").FirstOrDefault(element => element.InnerHtml.Contains(newTeamName)));
+        Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("h3", newTeamName));
 
-        var teamSurveysTabPage = appComponent.FindAll("a:not(a[href])")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Surveys"));
+        var teamSurveysTabPage = appComponent.FindElementByCssSelectorAndTextContent("a:not(a[href])", "Surveys");
         Assert.NotNull(teamSurveysTabPage);
         
         teamSurveysTabPage.Click();
         
-        appComponent.WaitForAssertion(() => Assert.NotNull(appComponent.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Send first survey"))));
-        Assert.NotNull(appComponent.FindAll("p").FirstOrDefault(element => element.InnerHtml.Contains("You don’t have any surveys yet")));
-        Assert.NotNull(appComponent.FindAll("p").FirstOrDefault(element => element.InnerHtml.Contains("Let's begin the journey towards a stronger, more effective team!")));
+        appComponent.WaitForAssertion(() => Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("button", "Send first survey")));
+        Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("p", "You don’t have any surveys yet"));
+        Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("p", "Let's begin the journey towards a stronger, more effective team!"));
     }
 
     [Fact]
@@ -185,30 +149,15 @@ public class SurveysAcceptanceTest
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(emptyTeamListJson)
         };
-
-        _httpHandlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get) &&
-                         m.RequestUri.AbsoluteUri.Contains($"/team")),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(emptyTeamsListResponse);
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, "/team",emptyTeamsListResponse );
         
         var creationResponse = new HttpResponseMessage()
         {
             StatusCode = HttpStatusCode.Created,
         };
-
-        _httpHandlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Post)),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(creationResponse);
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Post,"",creationResponse);
         
         var singleTeamJson = await JsonContent.Create(newTeam).ReadAsStringAsync();
         var singleTeamResponse = new HttpResponseMessage()
@@ -216,16 +165,8 @@ public class SurveysAcceptanceTest
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(singleTeamJson)
         };
-
-        _httpHandlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get) &&
-                         m.RequestUri.AbsoluteUri.Contains($"/team/{newTeamId.ToString()}")),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(singleTeamResponse);
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, $"/team/{newTeamId.ToString()}", singleTeamResponse);
         
         var userOne = new User(Guid.NewGuid(), "user");
         var SurveyList = new List<Survey>()
@@ -239,15 +180,8 @@ public class SurveysAcceptanceTest
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(SurveyListJson)
         };
-        _httpHandlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get) &&
-                         m.RequestUri.AbsoluteUri.Contains($"/team/{newTeamId.ToString()}/surveys")),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(SurveyListResponse);
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, $"/team/{newTeamId.ToString()}/surveys",SurveyListResponse );
 
         var appComponent = _testCtx.RenderComponent<App>();
         
@@ -258,35 +192,31 @@ public class SurveysAcceptanceTest
         _navMan.NavigateTo($"/{teamsListPage}");
         appComponent.WaitForAssertion(() => Assert.Equal($"http://localhost/teams-list-page", _navMan.Uri));
 
-        var createNewTeamButton = appComponent.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Create new team"));
+        var createNewTeamButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Create new team");
         Assert.NotNull(createNewTeamButton);
 
         createNewTeamButton.Click();
         
-        var teamNameLabel = appComponent.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Team's name"));
+        var teamNameLabel = appComponent.FindElementByCssSelectorAndTextContent("label", "Team's name");
         var teamNameInputId = teamNameLabel.Attributes.GetNamedItem("for");
         var teamNameInput = appComponent.Find($"#{teamNameInputId.TextContent}");
         Assert.NotNull(teamNameInput);
 
         teamNameInput.Change(newTeamName);
         
-        var confirmButton = appComponent.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Confirm"));
+        var confirmButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Confirm");
         Assert.NotNull(confirmButton);
 
         confirmButton.Click();
         
         appComponent.WaitForAssertion(() => Assert.Equal($"http://localhost/team-content/{newTeamId.ToString()}", _navMan.Uri));
         
-        var teamSurveysTabPage = appComponent.FindAll("a:not(a[href])")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Surveys"));
+        var teamSurveysTabPage = appComponent.FindElementByCssSelectorAndTextContent("a:not(a[href])", "Surveys");
         Assert.NotNull(teamSurveysTabPage);
         
         teamSurveysTabPage.Click();
         
-        appComponent.WaitForAssertion(() => Assert.NotNull(appComponent.FindAll("h3").FirstOrDefault(element => element.InnerHtml.Contains("All Surveys"))));
-        Assert.NotNull(appComponent.FindAll("button").FirstOrDefault(element => element.InnerHtml.Contains("Send new survey")));
+        appComponent.WaitForAssertion(() => Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("h3", "All Surveys")));
+        Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("button", "Send new survey"));
     }
 }

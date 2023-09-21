@@ -1,7 +1,5 @@
-using AngleSharp.Css.Dom;
-using AngleSharp.Dom;
 using Bunit;
-using SherpaFrontEnd.Shared;
+using SherpaFrontEnd.Core.NavMenu;
 
 namespace BlazorApp.Tests.Shared;
 
@@ -24,8 +22,7 @@ public class NavMenuTest
         var ctx = new TestContext();
         var component = ctx.RenderComponent<NavMenu>();
 
-        var teamsElement = component.FindAll("a")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Teams"));
+        var teamsElement = component.FindElementByCssSelectorAndTextContent("a", "Teams");
         Assert.NotNull(teamsElement);
         Assert.Contains("teams-list-page", teamsElement.GetAttribute("href"));
     }

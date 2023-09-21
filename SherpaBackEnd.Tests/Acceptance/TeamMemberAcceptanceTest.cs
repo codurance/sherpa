@@ -7,11 +7,12 @@ using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Moq;
-using SherpaBackEnd.Controllers;
-using SherpaBackEnd.Dtos;
-using SherpaBackEnd.Model;
-using SherpaBackEnd.Repositories.Mongo;
-using SherpaBackEnd.Services;
+using SherpaBackEnd.Shared.Infrastructure.Persistence;
+using SherpaBackEnd.Team.Application;
+using SherpaBackEnd.Team.Domain;
+using SherpaBackEnd.Team.Infrastructure.Http;
+using SherpaBackEnd.Team.Infrastructure.Http.Dto;
+using SherpaBackEnd.Team.Infrastructure.Persistence;
 
 namespace SherpaBackEnd.Tests.Acceptance;
 

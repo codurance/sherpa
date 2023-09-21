@@ -21,6 +21,25 @@
     </ItemGroup>
 
     <ItemGroup>
+      <AdditionalFiles Include="Core\Layout\LoginDisplay.razor" />
+      <AdditionalFiles Include="Core\Layout\MainLayout.razor" />
+      <AdditionalFiles Include="Core\Layout\PublicAccessLayout.razor" />
+      <AdditionalFiles Include="Core\NavMenu\NavMenu.razor" />
+      <AdditionalFiles Include="Core\Tabs\TabControl.razor" />
+      <AdditionalFiles Include="Core\Tabs\TabPage.razor" />
+      <AdditionalFiles Include="Pages\Authentication\Authentication.razor" />
+      <AdditionalFiles Include="Pages\DeliverySettings\DeliverySettings.razor" />
+      <AdditionalFiles Include="Pages\ErrorPage\ErrorPage.razor" />
+      <AdditionalFiles Include="Pages\Index\Index.razor" />
+      <AdditionalFiles Include="Pages\SurveyDraftReview\SurveyDraftReview.razor" />
+      <AdditionalFiles Include="Pages\SurveyQuestions\SurveyQuestions.razor" />
+      <AdditionalFiles Include="Pages\TeamContent\Components\MemberTable.razor" />
+      <AdditionalFiles Include="Pages\TeamContent\Components\SurveyTable.razor" />
+      <AdditionalFiles Include="Pages\TeamContent\TeamContent.razor" />
+      <AdditionalFiles Include="Pages\TeamList\TeamsList.razor" />
+      <AdditionalFiles Include="Pages\TemplateContent\TemplateContent.razor" />
+      <AdditionalFiles Include="Pages\Templates\Components\TemplateBox.razor" />
+      <AdditionalFiles Include="Pages\Templates\Templates.razor" />
       <AdditionalFiles Include="Shared\Modals\AddTeamModal.razor" />
       <AdditionalFiles Include="Shared\Modals\ConfirmationModal.razor" />
     </ItemGroup>
@@ -36,6 +55,10 @@
 
     <ItemGroup>
       <None Remove="Pages\TeamsList.razor 2.css" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Pages\TeamsPage\TeamsPage.razor" />
     </ItemGroup>
     
     <Target Name="CompileTailwind" BeforeTargets="Build">

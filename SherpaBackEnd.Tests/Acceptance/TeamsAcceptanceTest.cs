@@ -8,11 +8,11 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using Moq;
 using Shared.Test.Helpers;
-using SherpaBackEnd.Controllers;
-using SherpaBackEnd.Dtos;
-using SherpaBackEnd.Model;
-using SherpaBackEnd.Repositories.Mongo;
-using SherpaBackEnd.Services;
+using SherpaBackEnd.Shared.Infrastructure.Persistence;
+using SherpaBackEnd.Team.Application;
+using SherpaBackEnd.Team.Domain;
+using SherpaBackEnd.Team.Infrastructure.Http;
+using SherpaBackEnd.Team.Infrastructure.Persistence;
 
 namespace SherpaBackEnd.Tests.Acceptance;
 
@@ -70,14 +70,14 @@ public class TeamsAcceptanceTest
         var teamController = new TeamController(teamService, logger);
 
         const string teamName = "New team";
-        var newTeam = new Team(teamName);
+        var newTeam = new Team.Domain.Team(teamName);
 
         await teamController.AddTeamAsync(newTeam);
 
         var actualTeams = await teamController.GetAllTeamsAsync();
         var okObjectResult = Assert.IsType<OkObjectResult>(actualTeams.Result);
         Assert.Equal(StatusCodes.Status200OK, okObjectResult.StatusCode);
-        var teams = Assert.IsAssignableFrom<IEnumerable<Team>>(okObjectResult.Value);
+        var teams = Assert.IsAssignableFrom<IEnumerable<Team.Domain.Team>>(okObjectResult.Value);
         Assert.Contains(teams, team => team.Id == newTeam.Id);
     }
     
@@ -101,7 +101,7 @@ public class TeamsAcceptanceTest
                 { "Email", newTeamMember.Email },
             });
         
-        var expectedTeam = new Team(teamId, teamName, new List<TeamMember>(){newTeamMember});
+        var expectedTeam = new Team.Domain.Team(teamId, teamName, new List<TeamMember>(){newTeamMember});
         
         await _teamCollection.InsertOneAsync(
             new BsonDocument

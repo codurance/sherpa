@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
-using SherpaBackEnd.Controllers;
-using SherpaBackEnd.Model.Template;
-using SherpaBackEnd.Services;
+using SherpaBackEnd.Template.Application;
+using SherpaBackEnd.Template.Domain;
+using SherpaBackEnd.Template.Infrastructure.Http;
 
 namespace SherpaBackEnd.Tests.Controllers;
 
@@ -22,14 +22,14 @@ public class TemplateControllerTest
     [Fact]
     public async Task Should_return_templates_returned_by_the_service()
     {
-        var template = new Template("test", Array.Empty<IQuestion>(), 10);
+        var template = new Template.Domain.Template("test", Array.Empty<IQuestion>(), 10);
         var arrayWithTemplate = new[] { template };
         
         _templateService.Setup(service => service.GetAllTemplatesAsync()).ReturnsAsync(arrayWithTemplate);
 
         var templatesRequest = await _templateController.GetAllTemplatesAsync();
         var templatesResult = Assert.IsType<OkObjectResult>(templatesRequest.Result);
-        var actualTemplates = Assert.IsAssignableFrom<IEnumerable<Template>>(templatesResult.Value);
+        var actualTemplates = Assert.IsAssignableFrom<IEnumerable<Template.Domain.Template>>(templatesResult.Value);
         Assert.Equal(arrayWithTemplate, actualTemplates);
     }
 

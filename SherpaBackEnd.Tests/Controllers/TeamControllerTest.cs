@@ -2,10 +2,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
-using SherpaBackEnd.Controllers;
-using SherpaBackEnd.Dtos;
 using SherpaBackEnd.Exceptions;
-using SherpaBackEnd.Services;
+using SherpaBackEnd.Team.Application;
+using SherpaBackEnd.Team.Infrastructure.Http;
 
 namespace SherpaBackEnd.Tests.Controllers;
 
@@ -26,7 +25,7 @@ public class TeamControllerTest
     public async Task ShouldCallAddTeamMethodFromService()
     {
         const string teamName = "Team name";
-        var newTeam = new Team(teamName);
+        var newTeam = new Team.Domain.Team(teamName);
 
         await _teamController.AddTeamAsync(newTeam);
         
@@ -36,14 +35,14 @@ public class TeamControllerTest
     [Fact]
     public async Task ShouldRetrieveOkWhenNoProblemsFoundWhileAdding()
     {
-        var newTeam = new Team("New Team");
+        var newTeam = new Team.Domain.Team("New Team");
         Assert.IsType<CreatedResult>(await _teamController.AddTeamAsync(newTeam));
     }
     
     [Fact]
     public async Task ShouldRetrieveErrorIfTeamCannotBeAdded()
     {
-        var newTeam = new Team("New Team");
+        var newTeam = new Team.Domain.Team("New Team");
         var notSuccessfulAdding = new ConnectionToRepositoryUnsuccessfulException("Cannot perform add team function.");
         _mockTeamService.Setup(_ => _.AddTeamAsync(newTeam))
             .ThrowsAsync(notSuccessfulAdding);
@@ -65,7 +64,7 @@ public class TeamControllerTest
     [Fact]
     public async Task ShouldReturnOkWhenEmptyTeamListRetrievedWhileGettingAllTeams()
     {
-        var emptyTeamsList = new List<Team>();
+        var emptyTeamsList = new List<Team.Domain.Team>();
         _mockTeamService.Setup(service => service.GetAllTeamsAsync())
             .ReturnsAsync(emptyTeamsList);
         var getAllTeamsAction = await _teamController.GetAllTeamsAsync();
@@ -76,10 +75,10 @@ public class TeamControllerTest
     [Fact]
     public async Task ShouldReturnOkWhenTeamListRetrievedWhileGettingAllTeams()
     {
-        var allTeamsList = new List<Team>()
+        var allTeamsList = new List<Team.Domain.Team>()
         {
-            new Team("Team one"),
-            new Team("Team two")
+            new Team.Domain.Team("Team one"),
+            new Team.Domain.Team("Team two")
         };
         _mockTeamService.Setup(service => service.GetAllTeamsAsync())
             .ReturnsAsync(allTeamsList);
@@ -106,7 +105,7 @@ public class TeamControllerTest
     {
         var teamId = Guid.NewGuid();
 
-        var expectedTeam = new Team(teamId, "Demo team");
+        var expectedTeam = new Team.Domain.Team(teamId, "Demo team");
         _mockTeamService.Setup(_ => _.GetTeamByIdAsync(teamId))
             .ReturnsAsync(expectedTeam);
 

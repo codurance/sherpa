@@ -3,11 +3,11 @@ using DotNet.Testcontainers.Containers;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using SherpaBackEnd.Dtos;
-using SherpaBackEnd.Model;
-using SherpaBackEnd.Model.Survey;
-using SherpaBackEnd.Model.Template;
-using SherpaBackEnd.Repositories.Mongo;
+using SherpaBackEnd.Shared.Infrastructure.Persistence;
+using SherpaBackEnd.Survey.Domain;
+using SherpaBackEnd.Survey.Infrastructure.Persistence;
+using SherpaBackEnd.Team.Domain;
+using SherpaBackEnd.Template.Domain;
 
 namespace SherpaBackEnd.Tests.Repositories.Mongo;
 
@@ -47,9 +47,9 @@ public class MongoSurveyRepositoryTest : IDisposable
 
         var surveyRepository = new MongoSurveyRepository(databaseSettings);
 
-        var survey = new Survey(Guid.NewGuid(), new User(Guid.NewGuid(), "Lucia"), Status.Draft,
-            DateTime.Parse("2023-08-09T07:38:04+0000"), "Title", "description", new List<Response>(),
-            new Dtos.Team(Guid.NewGuid(), "team name"), new Template("Template name", Array.Empty<IQuestion>(), 1));
+        var survey = new Survey.Domain.Survey(Guid.NewGuid(), new User.Domain.User(Guid.NewGuid(), "Lucia"), SurveyStatus.Draft,
+            DateTime.Parse("2023-08-09T07:38:04+0000"), "Title", "description", new List<SurveyResponse>(),
+            new Team.Domain.Team(Guid.NewGuid(), "team name"), new Template.Domain.Template("Template name", Array.Empty<IQuestion>(), 1));
 
         await surveyRepository.CreateSurvey(survey);
 
@@ -96,13 +96,13 @@ public class MongoSurveyRepositoryTest : IDisposable
         var teamMemberId = Guid.NewGuid();
         var teamMember = new TeamMember(teamMemberId, "Some name", "Some position", "some@email.com");
         var teamId = Guid.NewGuid();
-        var team = new Team(teamId, "Some team name", new List<TeamMember> { teamMember });
-        var template = new Template("Hackman Model", new List<IQuestion>(), 10);
-        var survey = new Survey(Guid.NewGuid(), new User(Guid.NewGuid(), "Demo coach"), Status.Draft, DateTime.Now,
-            "Survey title", "Survey Description", new List<Response>(), team, template);
+        var team = new Team.Domain.Team(teamId, "Some team name", new List<TeamMember> { teamMember });
+        var template = new Template.Domain.Template("Hackman Model", new List<IQuestion>(), 10);
+        var survey = new Survey.Domain.Survey(Guid.NewGuid(), new User.Domain.User(Guid.NewGuid(), "Demo coach"), SurveyStatus.Draft, DateTime.Now,
+            "Survey title", "Survey Description", new List<SurveyResponse>(), team, template);
 
-        var survey2 = new Survey(Guid.NewGuid(), new User(Guid.NewGuid(), "Demo coach"), Status.Draft, DateTime.Now,
-            "Survey title", "Survey Description", new List<Response>(), team, template);
+        var survey2 = new Survey.Domain.Survey(Guid.NewGuid(), new User.Domain.User(Guid.NewGuid(), "Demo coach"), SurveyStatus.Draft, DateTime.Now,
+            "Survey title", "Survey Description", new List<SurveyResponse>(), team, template);
 
         await teamMemberCollection.InsertOneAsync(new BsonDocument
         {
@@ -139,7 +139,7 @@ public class MongoSurveyRepositoryTest : IDisposable
                         { "Name", survey.Coach.Name }
                     }
                 },
-                { "Status", survey.Status.ToString() },
+                { "Status", survey.SurveyStatus.ToString() },
                 { "Title", survey.Title },
                 { "Description", survey.Description },
                 { "Responses", new BsonArray() },
@@ -156,7 +156,7 @@ public class MongoSurveyRepositoryTest : IDisposable
                         { "Name", survey.Coach.Name }
                     }
                 },
-                { "Status", survey2.Status.ToString() },
+                { "Status", survey2.SurveyStatus.ToString() },
                 { "Title", survey2.Title },
                 { "Description", survey2.Description },
                 { "Responses", new BsonArray() },
@@ -197,7 +197,7 @@ public class MongoSurveyRepositoryTest : IDisposable
             databaseSettings.Value.TeamsCollectionName);
 
         var teamId = Guid.NewGuid();
-        var team = new Team(teamId, "Some team name", new List<TeamMember> { });
+        var team = new Team.Domain.Team(teamId, "Some team name", new List<TeamMember> { });
 
         teamCollection.InsertOne(new BsonDocument
         {

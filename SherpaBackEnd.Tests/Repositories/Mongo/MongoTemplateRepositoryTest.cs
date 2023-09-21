@@ -3,8 +3,8 @@ using DotNet.Testcontainers.Containers;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using SherpaBackEnd.Model;
-using SherpaBackEnd.Repositories.Mongo;
+using SherpaBackEnd.Shared.Infrastructure.Persistence;
+using SherpaBackEnd.Template.Infrastructure.Persistence;
 
 namespace SherpaBackEnd.Tests.Repositories.Mongo;
 

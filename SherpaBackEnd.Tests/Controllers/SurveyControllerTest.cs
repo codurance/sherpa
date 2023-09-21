@@ -2,14 +2,15 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
-using SherpaBackEnd.Controllers;
-using SherpaBackEnd.Dtos;
 using SherpaBackEnd.Exceptions;
-using SherpaBackEnd.Model;
-using SherpaBackEnd.Model.Survey;
-using SherpaBackEnd.Model.Template;
-using SherpaBackEnd.Services;
 using Newtonsoft.Json;
+using SherpaBackEnd.Survey.Application;
+using SherpaBackEnd.Survey.Domain;
+using SherpaBackEnd.Survey.Infrastructure.Http;
+using SherpaBackEnd.Survey.Infrastructure.Http.Dto;
+using SherpaBackEnd.Team.Infrastructure.Http;
+using SherpaBackEnd.Template.Domain;
+using SherpaBackEnd.Template.Infrastructure.Http.Dto;
 
 namespace SherpaBackEnd.Tests.Controllers;
 
@@ -78,9 +79,9 @@ public class SurveyControllerTest
     [Fact]
     public async Task ShouldReturnTheSurveyWithoutQuestionsGivenByTheServiceWhenCallingGetSurveyById()
     {
-        var expectedSurvey = new SurveyWithoutQuestions(Guid.NewGuid(), new User(Guid.NewGuid(), "Lucia"), Status.Draft,
-            DateTime.Parse("2023-08-09T07:38:04+0000"), "Title", "description", new List<Response>(),
-            new Team(Guid.NewGuid(), "team name"), new TemplateWithoutQuestions("Template name", 1));
+        var expectedSurvey = new SurveyWithoutQuestions(Guid.NewGuid(), new User.Domain.User(Guid.NewGuid(), "Lucia"), SurveyStatus.Draft,
+            DateTime.Parse("2023-08-09T07:38:04+0000"), "Title", "description", new List<SurveyResponse>(),
+            new Team.Domain.Team(Guid.NewGuid(), "team name"), new TemplateWithoutQuestions("Template name", 1));
         var controller = new SurveyController(_serviceMock.Object, _logger);
         _serviceMock.Setup(service => service.GetSurveyWithoutQuestionsById(expectedSurvey.Id)).ReturnsAsync(expectedSurvey);
 
@@ -94,7 +95,7 @@ public class SurveyControllerTest
     [Fact]
     public async Task ShouldReturnTheSurveyQuestionsGivenByTheSurveyServiceWhenCallingGetSurveyQuestionsBySurveyId()
     {
-        var team = new Team(Guid.NewGuid(), "team name");
+        var team = new Team.Domain.Team(Guid.NewGuid(), "team name");
 
         var QuestionInSpanish = "Question in spanish";
         var QuestionInEnglish = "Question in english";
@@ -123,9 +124,9 @@ public class SurveyControllerTest
             HackmanComponent.INTERPERSONAL_PEER_COACHING,
             HackmanSubcategory.DELIMITED, HackmanSubcomponent.SENSE_OF_URGENCY, Position);
 
-        var template = new Template("Template name", new List<IQuestion>() { hackmanQuestion }, 1);
-        var expectedSurvey = new Survey(Guid.NewGuid(), new User(Guid.NewGuid(), "Lucia"), Status.Draft,
-            DateTime.Parse("2023-08-09T07:38:04+0000"), "Title", "description", new List<Response>(),
+        var template = new Template.Domain.Template("Template name", new List<IQuestion>() { hackmanQuestion }, 1);
+        var expectedSurvey = new Survey.Domain.Survey(Guid.NewGuid(), new User.Domain.User(Guid.NewGuid(), "Lucia"), SurveyStatus.Draft,
+            DateTime.Parse("2023-08-09T07:38:04+0000"), "Title", "description", new List<SurveyResponse>(),
             team, template);
         var controller = new SurveyController(_serviceMock.Object, _logger);
         _serviceMock.Setup(service => service.GetSurveyQuestionsBySurveyId(expectedSurvey.Id)).ReturnsAsync(expectedSurvey.Template.Questions);
@@ -195,13 +196,13 @@ public class SurveyControllerTest
 
         var allSurveysFromTeam = await surveyController.GetAllSurveysFromTeam(teamId);
         var responseObject = Assert.IsType<OkObjectResult>(allSurveysFromTeam.Result);
-        Assert.IsAssignableFrom<IEnumerable<Survey>>(responseObject.Value);
+        Assert.IsAssignableFrom<IEnumerable<Survey.Domain.Survey>>(responseObject.Value);
     }
 
     [Fact]
     public async Task ShouldSerializeCorrectlyListOfSurveysWhenCallingGetAllSurveysFromTeam()
     {
-        var surveysEmptyList = new List<Survey>();
+        var surveysEmptyList = new List<Survey.Domain.Survey>();
         var teamId = Guid.NewGuid();
         var surveyService = new Mock<ISurveyService>(MockBehavior.Strict);
 
@@ -214,7 +215,7 @@ public class SurveyControllerTest
 
         surveyService.Verify(_ => _.GetAllSurveysFromTeam(teamId), Times.Once());
         var responseObject = Assert.IsType<OkObjectResult>(allSurveysFromTeam.Result);
-        var actualSurveys = Assert.IsAssignableFrom<IEnumerable<Survey>>(responseObject.Value);
+        var actualSurveys = Assert.IsAssignableFrom<IEnumerable<Survey.Domain.Survey>>(responseObject.Value);
 
         Assert.Equal(JsonConvert.SerializeObject(surveysEmptyList), JsonConvert.SerializeObject(actualSurveys));
     }

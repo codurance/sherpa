@@ -1,0 +1,96 @@
+@using SherpaFrontEnd.Services
+@using SherpaFrontEnd.Core.Tabs
+@using SherpaFrontEnd.Dtos.Survey
+@using SherpaFrontEnd.Dtos.Team
+@using SherpaFrontEnd.Pages.TeamContent.Components
+@inject ITeamDataService TeamDataService
+@inject ISurveyService SurveyService
+
+@page "/team-content/{teamId:guid}"
+
+@if (Team != null && Surveys != null)
+{
+    <h3>
+        @Team.Name
+    </h3>
+
+
+<TabControl>
+    <TabPage Text="Analysis">
+        <button>Send a new survey</button>
+    </TabPage>
+    <TabPage Text="Surveys" Args="@Surveys">
+        @if (Surveys != null && Surveys.Count > 0)
+        {
+            <div class="py-5 flex justify-between items-center rounded-3xl gap-2.5" style="margin: 0 1cm">
+                <h3 class="flex-grow">All Surveys</h3>
+                <button type="button" class="flex items-center focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5">
+                    <img src="/img/button-paper-plane.svg" alt="Paper Plane Icon" class="w-4 h-4 mr-2">
+                    Send new survey
+                </button>
+            </div>
+            <SurveyTable Surveys="Surveys"/>
+        }
+        @if (Surveys != null && Surveys.Count == 0)
+        {
+            <div class="py-5 flex justify-center items-center flex-col bg-indigo-50 rounded-3xl gap-2.5">
+                <img src="/img/empty-survey-icon.svg" alt="Empty Survey Icon" class="w-8 h-8">
+                <p class="text-center text-primary-dark-principal text-xl font-semibold leading-tight mb-1">
+                    You don’t have any surveys yet
+                </p>
+                <p class="text-center text-gray-700 text-base">
+                    Let's begin the journey towards a stronger, more effective team!
+                </p>
+                <button type="button" class="flex items-center focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-4">
+                    <img src="/img/button-paper-plane.svg" alt="Paper Plane Icon" class="w-4 h-4 mr-2">
+                    Send first survey
+                </button>
+            </div>
+        }
+    </TabPage>
+    <TabPage Text="Members" Args="@Team.Members">
+        <MemberTable Team="Team" CreateTeamMember="@CreateTeamMember"/>
+    </TabPage>
+</TabControl>
+}
+@code {
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public Guid TeamId { get; set; }
+
+    public Team? Team { get; set; }
+
+    private List<string> Emails { get; set; } = new();
+
+    private List<Survey>? Surveys { get; set; }
+
+    [CascadingParameter]
+    public IModalService Modal { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await FetchTeam();
+        Emails = Team!.Members.Select(m => m.Email).ToList();
+        Surveys = await SurveyService.GetAllSurveysByTeam(TeamId);
+    }
+
+
+    private async Task FetchTeam()
+    {
+        Team = await TeamDataService.GetTeamById(TeamId);
+        StateHasChanged();
+    }
+
+    private async Task CreateTeamMember(AddTeamMemberDto addTeamMemberDto)
+    {
+        // Create member
+        await TeamDataService.AddTeamMember(addTeamMemberDto);
+        
+        // Re-fetch team
+        await FetchTeam();
+    }
+
+}

@@ -1,3 +1,4 @@
+
 using Bunit;
 using Bunit.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,6 +8,7 @@ using SherpaFrontEnd.Dtos.Survey;
 using SherpaFrontEnd.Dtos.Team;
 using SherpaFrontEnd.Model;
 using SherpaFrontEnd.Pages;
+using SherpaFrontEnd.Pages.SurveyDraftReview;
 using SherpaFrontEnd.Services;
 
 namespace BlazorApp.Tests.Pages;
@@ -47,38 +49,31 @@ public class SurveyDraftReviewTest
         _surveyService.Setup(service => service.GetSurveyWithoutQuestionsById(_surveyId)).ReturnsAsync(survey);
         
         var appComponent = _ctx.RenderComponent<SurveyDraftReview>(ComponentParameter.CreateParameter("SurveyId", _surveyId));
-        var templateNameElement = appComponent.FindAll("p")
-            .FirstOrDefault(element => element.InnerHtml.Contains(templateWithoutQuestions.Name));
+        var templateNameElement = appComponent.FindElementByCssSelectorAndTextContent("p", templateWithoutQuestions.Name);
         Assert.NotNull(templateNameElement);
         
         // title
-        var surveyTitleElement = appComponent.FindAll("p")
-            .FirstOrDefault(element => element.InnerHtml.Contains(survey.Title));
+        var surveyTitleElement = appComponent.FindElementByCssSelectorAndTextContent("p", survey.Title);
         Assert.NotNull(surveyTitleElement);
         
         // description
-        var surveyDescriptionElement = appComponent.FindAll("p")
-            .FirstOrDefault(element => element.InnerHtml.Contains(survey.Description));
+        var surveyDescriptionElement = appComponent.FindElementByCssSelectorAndTextContent("p", survey.Description);
         Assert.NotNull(surveyDescriptionElement);
         
         // deadline
-        var surveyDeadlineElement = appComponent.FindAll("li")
-            .FirstOrDefault(element => element.InnerHtml.Contains(survey.Deadline.Value.ToString("dd/MM/yyyy")));
+        var surveyDeadlineElement = appComponent.FindElementByCssSelectorAndTextContent("li", survey.Deadline.Value.ToString("dd/MM/yyyy"));
         Assert.NotNull(surveyDeadlineElement);
         
         // name of the team
-        var teamNameElement = appComponent.FindAll("p")
-            .FirstOrDefault(element => element.InnerHtml.Contains(survey.Team.Name));
+        var teamNameElement = appComponent.FindElementByCssSelectorAndTextContent("p", survey.Team.Name);
         Assert.NotNull(teamNameElement);
         
         // button Back
-        var finalBackButton = appComponent.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Preview"));
+        var finalBackButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Preview");
         Assert.NotNull(finalBackButton);
         
         // button Launch
-        var finalLaunchButton = appComponent.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Launch survey"));
+        var finalLaunchButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Launch survey");
         Assert.NotNull(finalLaunchButton);
     }
     [Fact]

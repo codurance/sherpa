@@ -5,17 +5,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using Moq;
 using Newtonsoft.Json;
 using Shared.Test.Helpers;
-using SherpaBackEnd.Controllers;
-using SherpaBackEnd.Model;
-using SherpaBackEnd.Model.Template;
-using SherpaBackEnd.Repositories;
-using SherpaBackEnd.Repositories.Mongo;
-using SherpaBackEnd.Services;
+using SherpaBackEnd.Shared.Infrastructure.Persistence;
+using SherpaBackEnd.Template.Application;
+using SherpaBackEnd.Template.Domain;
+using SherpaBackEnd.Template.Infrastructure.Http;
+using SherpaBackEnd.Template.Infrastructure.Persistence;
 
 namespace SherpaBackEnd.Tests.Acceptance;
 
@@ -28,11 +26,8 @@ public class TemplatesAcceptanceTests : IDisposable
         .WithPortBinding(27017, true).Build();
 
     private IOptions<DatabaseSettings> _databaseSettings;
-    private IMongoCollection<BsonDocument> _surveyCollection;
-    private IMongoCollection<BsonDocument> _teamCollection;
-    private IMongoCollection<BsonDocument> _teamMemberCollection;
     private IMongoCollection<BsonDocument> _templateCollection;
-    private Template _hackmanTemplate;
+    private Template.Domain.Template _hackmanTemplate;
 
     private const string QuestionInSpanish = "Question in spanish";
     private const string QuestionInEnglish = "Question in english";
@@ -63,17 +58,8 @@ public class TemplatesAcceptanceTests : IDisposable
         var mongoDatabase = mongoClient.GetDatabase(
             _databaseSettings.Value.DatabaseName);
 
-        _teamCollection = mongoDatabase.GetCollection<BsonDocument>(
-            _databaseSettings.Value.TeamsCollectionName);
-
-        _teamMemberCollection = mongoDatabase.GetCollection<BsonDocument>(
-            _databaseSettings.Value.TeamMembersCollectionName);
-
         _templateCollection = mongoDatabase.GetCollection<BsonDocument>(
             _databaseSettings.Value.TemplateCollectionName);
-
-        _surveyCollection = mongoDatabase.GetCollection<BsonDocument>(
-            _databaseSettings.Value.SurveyCollectionName);
 
         var questions = new IQuestion[]
         {
@@ -93,7 +79,7 @@ public class TemplatesAcceptanceTests : IDisposable
                 HackmanComponent.INTERPERSONAL_PEER_COACHING,
                 HackmanSubcategory.DELIMITED, HackmanSubcomponent.SENSE_OF_URGENCY, Position)
         };
-        _hackmanTemplate = new Template("Hackman Model", questions, 30);
+        _hackmanTemplate = new Template.Domain.Template("Hackman Model", questions, 30);
         _logger = Mock.Of<ILogger<TemplateController>>();
     }
 
@@ -124,7 +110,7 @@ public class TemplatesAcceptanceTests : IDisposable
 
         // THEN it should receive a list containing the hackman template
         var templatesResult = Assert.IsType<OkObjectResult>(actualResponse.Result);
-        var actualTemplates = Assert.IsAssignableFrom<IEnumerable<Template>>(templatesResult.Value);
+        var actualTemplates = Assert.IsAssignableFrom<IEnumerable<Template.Domain.Template>>(templatesResult.Value);
 
 
         CustomAssertions.StringifyEquals(new[]

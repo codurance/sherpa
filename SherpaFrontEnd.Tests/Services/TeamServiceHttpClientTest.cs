@@ -33,15 +33,8 @@ public class TeamServiceHttpClientTest
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(teamListJson)
         };
-
-        _httpHandlerMock
-            .Protected()
-            .Setup<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get)),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(response);
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, "", response);
 
         var teamService = new TeamServiceHttpClient(_factoryHttpClient.Object);
 
@@ -88,16 +81,8 @@ public class TeamServiceHttpClientTest
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(teamJson)
         };
-
-        _httpHandlerMock
-            .Protected()
-            .Setup<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get) &&
-                         m.RequestUri.AbsoluteUri.Contains($"/team/{teamId.ToString()}")),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(response);
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, $"/team/{teamId.ToString()}", response);
 
         var teamService = new TeamServiceHttpClient(_factoryHttpClient.Object);
 

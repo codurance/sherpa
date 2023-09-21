@@ -1,12 +1,10 @@
-﻿using AngleSharp.Dom;
-using BlazorApp.Tests.Helpers.Interfaces;
+﻿using BlazorApp.Tests.Helpers.Interfaces;
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using SherpaFrontEnd.Dtos.Team;
-using SherpaFrontEnd.Model;
-using SherpaFrontEnd.Pages;
+using SherpaFrontEnd.Pages.TeamContent.Components;
 using SherpaFrontEnd.Services;
 
 namespace BlazorApp.Tests.Pages;
@@ -37,20 +35,15 @@ public class MemberTableTest
         var teamMembersHeading = membersTableComponent.FindAll("h2.text-title-h2--semibold");
         Assert.NotNull(teamMembersHeading.FirstOrDefault(heading => heading.ToMarkup().Contains(team.Name)));
 
-        var removeTeamMemberButton = membersTableComponent.FindAll("button[disabled]")
-            .FirstOrDefault(button => button.ToMarkup().Contains("Remove"));
+        var removeTeamMemberButton = membersTableComponent.FindElementByCssSelectorAndTextContent("button[disabled]", "Remove");
         Assert.NotNull(removeTeamMemberButton);
 
-        var addTeamMemberButton = membersTableComponent.FindAll("button")
-            .FirstOrDefault(button => button.ToMarkup().Contains("Add member"));
+        var addTeamMemberButton = membersTableComponent.FindElementByCssSelectorAndTextContent("button", "Add member");
         Assert.NotNull(addTeamMemberButton);
 
-        var memberFullName = membersTableComponent.FindAll("th")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Full name"));
-        var memberEmail = membersTableComponent.FindAll("th")
-            .FirstOrDefault(element => element.InnerHtml.Contains("E-mail"));
-        var memberPosition = membersTableComponent.FindAll("th")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Position"));
+        var memberFullName = membersTableComponent.FindElementByCssSelectorAndTextContent("th", "Full name");
+        var memberEmail = membersTableComponent.FindElementByCssSelectorAndTextContent("th", "E-mail");
+        var memberPosition = membersTableComponent.FindElementByCssSelectorAndTextContent("th", "Position");
 
         Assert.NotNull(memberFullName);
         Assert.NotNull(memberEmail);
@@ -100,17 +93,14 @@ public class MemberTableTest
             ComponentParameter.CreateParameter("Team", team)
         );
 
-        var addTeamMemberButton = membersTableComponent.FindAll("button")
-            .FirstOrDefault(button => button.ToMarkup().Contains("Add member"));
+        var addTeamMemberButton = membersTableComponent.FindElementByCssSelectorAndTextContent("button", "Add member");
         Assert.NotNull(addTeamMemberButton);
 
-        membersTableComponent.WaitForAssertion(() => Assert.Null(membersTableComponent.FindAll("h3")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Add member"))));
+        membersTableComponent.WaitForAssertion(() => Assert.Null(membersTableComponent.FindElementByCssSelectorAndTextContent("h3", "Add member")));
 
         addTeamMemberButton.Click();
 
-        membersTableComponent.WaitForAssertion(() => Assert.NotNull(membersTableComponent.FindAll("h3")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Add member"))));
+        membersTableComponent.WaitForAssertion(() => Assert.NotNull(membersTableComponent.FindElementByCssSelectorAndTextContent("h3", "Add member")));
     }
 
     [Fact]
@@ -124,26 +114,21 @@ public class MemberTableTest
             ComponentParameter.CreateParameter("Team", team)
         );
 
-        var addTeamMemberButton = membersTableComponent.FindAll("button")
-            .FirstOrDefault(button => button.ToMarkup().Contains("Add member"));
+        var addTeamMemberButton = membersTableComponent.FindElementByCssSelectorAndTextContent("button", "Add member");
         Assert.NotNull(addTeamMemberButton);
 
-        membersTableComponent.WaitForAssertion(() => Assert.Null(membersTableComponent.FindAll("h3")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Add member"))));
+        membersTableComponent.WaitForAssertion(() => Assert.Null(membersTableComponent.FindElementByCssSelectorAndTextContent("h3", "Add member")));
 
         addTeamMemberButton.Click();
 
-        membersTableComponent.WaitForAssertion(() => Assert.NotNull(membersTableComponent.FindAll("h3")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Add member"))));
+        membersTableComponent.WaitForAssertion(() => Assert.NotNull(membersTableComponent.FindElementByCssSelectorAndTextContent("h3", "Add member")));
 
 
-        var closeModalButton = membersTableComponent.FindAll("button")
-            .FirstOrDefault(button => button.ToMarkup().Contains("Close modal"));
+        var closeModalButton = membersTableComponent.FindElementByCssSelectorAndTextContent("button", "Close modal");
 
         closeModalButton.Click();
 
-        membersTableComponent.WaitForAssertion(() => Assert.Null(membersTableComponent.FindAll("h3")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Add member"))));
+        membersTableComponent.WaitForAssertion(() => Assert.Null(membersTableComponent.FindElementByCssSelectorAndTextContent("h3", "Add member")));
     }
 
     [Fact]
@@ -163,43 +148,36 @@ public class MemberTableTest
             )
         );
 
-        var addTeamMemberButton = membersTableComponent.FindAll("button")
-            .FirstOrDefault(button => button.ToMarkup().Contains("Add member"));
+        var addTeamMemberButton = membersTableComponent.FindElementByCssSelectorAndTextContent("button", "Add member");
         Assert.NotNull(addTeamMemberButton);
 
         addTeamMemberButton.Click();
 
-        membersTableComponent.WaitForAssertion(() => Assert.NotNull(membersTableComponent.FindAll("h3")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Add member"))));
+        membersTableComponent.WaitForAssertion(() => Assert.NotNull(membersTableComponent.FindElementByCssSelectorAndTextContent("h3", "Add member")));
 
-        var fullNameLabel = membersTableComponent.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Full name"));
+        var fullNameLabel = membersTableComponent.FindElementByCssSelectorAndTextContent("label", "Full name");
         var fullNameInputId = fullNameLabel.Attributes.GetNamedItem("for");
         var teamMemberNameInput = membersTableComponent.Find($"#{fullNameInputId.TextContent}");
         Assert.NotNull(teamMemberNameInput);
         teamMemberNameInput.Change(teamMember.FullName);
 
-        var positionLabel = membersTableComponent.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Position"));
+        var positionLabel = membersTableComponent.FindElementByCssSelectorAndTextContent("label", "Position");
         var positionInputId = positionLabel.Attributes.GetNamedItem("for");
         var positionInput = membersTableComponent.Find($"#{positionInputId.TextContent}");
         Assert.NotNull(positionInput);
         positionInput.Change(teamMember.Position);
 
-        var emailLabel = membersTableComponent.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Email"));
+        var emailLabel = membersTableComponent.FindElementByCssSelectorAndTextContent("label", "Email");
         var emailInputId = emailLabel.Attributes.GetNamedItem("for");
         var emailInput = membersTableComponent.Find($"#{emailInputId.TextContent}");
         Assert.NotNull(emailInput);
         emailInput.Change(teamMember.Email);
 
-        var addMemberButton = membersTableComponent.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Add member"));
+        var addMemberButton = membersTableComponent.FindElementByCssSelectorAndTextContent("button", "Add member");
         Assert.NotNull(addMemberButton);
 
         addMemberButton.Click();
 
-        membersTableComponent.WaitForAssertion(() => Assert.Null(membersTableComponent.FindAll("h3")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Add member"))));
+        membersTableComponent.WaitForAssertion(() => Assert.Null(membersTableComponent.FindElementByCssSelectorAndTextContent("h3", "Add member")));
     }
 }

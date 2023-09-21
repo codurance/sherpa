@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
 using System.Security.Claims;
+
 using Blazored.Modal;
 using Bunit;
 using Bunit.TestDoubles;
@@ -10,6 +11,7 @@ using Moq.Protected;
 using SherpaFrontEnd;
 using SherpaFrontEnd.Dtos.Team;
 using SherpaFrontEnd.Pages;
+using SherpaFrontEnd.Pages.TeamList;
 using SherpaFrontEnd.Services;
 using Xunit.Abstractions;
 
@@ -59,31 +61,21 @@ public class TeamsAcceptanceTest
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(emptyTeamListJson)
         };
-
-        _httpHandlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get)),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(responseEmpty);
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, "", responseEmpty);
 
         var appComponent = _testCtx.RenderComponent<App>();
-
-
+        
         var targetPage = "teams-list-page";
         var teamsPageLink = appComponent.Find($"a[href='{targetPage}']");
         Assert.NotNull(teamsPageLink);
         var navManager = _testCtx.Services.GetRequiredService<FakeNavigationManager>();
         navManager.NavigateTo($"/{targetPage}");
 
-        var allTeamsTitle = appComponent.FindAll("h1,h2,h3")
-            .FirstOrDefault(element => element.InnerHtml.Contains("All teams"));
+        var allTeamsTitle = appComponent.FindElementByCssSelectorAndTextContent("h1,h2,h3", "All teams");
         Assert.NotNull(allTeamsTitle);
 
-        var createTeamButton = appComponent.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Create new team"));
+        var createTeamButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Create new team");
         Assert.NotNull(createTeamButton);
     }
 
@@ -98,15 +90,8 @@ public class TeamsAcceptanceTest
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(reamListJson)
         };
-
-        _httpHandlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get)),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(response);
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, "", response);
 
         var appComponent = _testCtx.RenderComponent<App>();
 
@@ -117,16 +102,14 @@ public class TeamsAcceptanceTest
         var navManager = _testCtx.Services.GetRequiredService<FakeNavigationManager>();
         navManager.NavigateTo($"/{targetPage}");
 
-        var allTeamsTitle = appComponent.FindAll("h1,h2,h3")
-            .FirstOrDefault(element => element.InnerHtml.Contains("All teams"));
+        var allTeamsTitle = appComponent.FindElementByCssSelectorAndTextContent("h1,h2,h3", "All teams");
         Assert.NotNull(allTeamsTitle);
 
-        var createTeamButton = appComponent.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Create new team"));
+        var createTeamButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Create new team");
         Assert.NotNull(createTeamButton);
 
         var teamNameElement =
-            appComponent.FindAll("h5").FirstOrDefault(element => element.InnerHtml.Contains(teamName));
+            appComponent.FindElementByCssSelectorAndTextContent("h5", teamName);
         Assert.NotNull(teamNameElement);
     }
 
@@ -142,21 +125,13 @@ public class TeamsAcceptanceTest
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(emptyTeamListJson)
         };
-
-        _httpHandlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get)),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(responseEmpty);
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, "", responseEmpty);
 
         var teamsListComponent = _testCtx.RenderComponent<TeamsList>();
 
         // WHEN he clicks on “+ Create a new team“
-        var createNewTeamButton = teamsListComponent.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Create new team"));
+        var createNewTeamButton = teamsListComponent.FindElementByCssSelectorAndTextContent("button", "Create new team");
         Assert.NotNull(createNewTeamButton);
 
         createNewTeamButton.Click();
@@ -165,19 +140,15 @@ public class TeamsAcceptanceTest
         // THEN he should be redirected on the page for creating a team
         //     with one mandatory text field “Team´s name”
         //     and 2 buttons Cancel and Confirm
-        var createNewTeamTitle = teamsListComponent.FindAll("h3")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Create new team"));
+        var createNewTeamTitle = teamsListComponent.FindElementByCssSelectorAndTextContent("h3", "Create new team");
         Assert.NotNull(createNewTeamTitle);
-        var teamNameLabel = teamsListComponent.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Team's name"));
+        var teamNameLabel = teamsListComponent.FindElementByCssSelectorAndTextContent("label", "Team's name");
         var teamNameInputId = teamNameLabel.Attributes.GetNamedItem("for");
         var teamNameInput = teamsListComponent.FindAll($"#{teamNameInputId.TextContent}");
         Assert.NotNull(teamNameInput);
-        var confirmButton = teamsListComponent.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Confirm"));
+        var confirmButton = teamsListComponent.FindElementByCssSelectorAndTextContent("button", "Confirm");
         Assert.NotNull(confirmButton);
-        var cancelButton = teamsListComponent.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Cancel"));
+        var cancelButton = teamsListComponent.FindElementByCssSelectorAndTextContent("button", "Cancel");
         Assert.NotNull(cancelButton);
     }
 
@@ -193,36 +164,21 @@ public class TeamsAcceptanceTest
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(emptyTeamListJson)
         };
-
-        _httpHandlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get)),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(responseEmpty);
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, "", responseEmpty);
 
         var creationResponse = new HttpResponseMessage()
         {
             StatusCode = HttpStatusCode.Created,
         };
-
-        _httpHandlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Post)),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(creationResponse);
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Post, "", creationResponse);
 
         var teamsListComponent = _testCtx.RenderComponent<App>();
 
         _navMan.NavigateTo("/teams-list-page");
 
-        var createNewTeamButton = teamsListComponent.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Create new team"));
+        var createNewTeamButton = teamsListComponent.FindElementByCssSelectorAndTextContent("button", "Create new team");
         Assert.NotNull(createNewTeamButton);
 
         createNewTeamButton.Click();
@@ -244,43 +200,25 @@ public class TeamsAcceptanceTest
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(newTeamAsJson)
         };
-
-        _httpHandlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get) &&
-                         m.RequestUri.AbsoluteUri.Contains($"/team/{teamId.ToString()}")),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(teamResponse); 
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, $"/team/{teamId.ToString()}", teamResponse);
         
         var teamSurveysResponse = new HttpResponseMessage()
         {
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(emptyTeamListJson)
         };
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, $"/team/{teamId.ToString()}/surveys", teamSurveysResponse);
 
-        _httpHandlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get) &&
-                         m.RequestUri.AbsoluteUri.Contains($"/team/{teamId.ToString()}/surveys")),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(teamSurveysResponse);
-
-        var teamNameLabel = teamsListComponent.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Team's name"));
+        var teamNameLabel = teamsListComponent.FindElementByCssSelectorAndTextContent("label", "Team's name");
         var teamNameInputId = teamNameLabel.Attributes.GetNamedItem("for");
         var teamNameInput = teamsListComponent.Find($"#{teamNameInputId.TextContent}");
         Assert.NotNull(teamNameInput);
 
         teamNameInput.Change("Demo team");
 
-        var confirmButton = teamsListComponent.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Confirm"));
+        var confirmButton = teamsListComponent.FindElementByCssSelectorAndTextContent("button", "Confirm");
         Assert.NotNull(confirmButton);
 
         confirmButton.Click();
@@ -295,15 +233,12 @@ public class TeamsAcceptanceTest
 
         _navMan.NavigateTo($"/team-content/{teamId.ToString()}");
         
-        teamsListComponent.WaitForAssertion(() => Assert.NotNull(teamsListComponent.FindAll("h3").FirstOrDefault(element => element.InnerHtml.Contains(teamName))));
+        teamsListComponent.WaitForAssertion(() => Assert.NotNull(teamsListComponent.FindElementByCssSelectorAndTextContent("h3", teamName)));
 
 
-        var teamNameElement = teamsListComponent.FindAll("h3")
-            .FirstOrDefault(element => element.InnerHtml.Contains(teamName));
-        var analysisTab = teamsListComponent.FindAll("li")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Analysis"));
-        var sendNewSurveyTeam = teamsListComponent.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Send a new survey"));
+        var teamNameElement = teamsListComponent.FindElementByCssSelectorAndTextContent("h3", teamName);
+        var analysisTab = teamsListComponent.FindElementByCssSelectorAndTextContent("li", "Analysis");
+        var sendNewSurveyTeam = teamsListComponent.FindElementByCssSelectorAndTextContent("button", "Send a new survey");
 
         Assert.NotNull(teamNameElement);
         Assert.NotNull(analysisTab);
@@ -337,8 +272,7 @@ public class TeamsAcceptanceTest
 
         _navMan.NavigateTo("/teams-list-page");
 
-        var createNewTeamButton = teamsListComponent.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Create new team"));
+        var createNewTeamButton = teamsListComponent.FindElementByCssSelectorAndTextContent("button", "Create new team");
         Assert.NotNull(createNewTeamButton);
 
         createNewTeamButton.Click();
@@ -350,8 +284,7 @@ public class TeamsAcceptanceTest
         _guidService.Setup(service => service.GenerateRandomGuid()
         ).Returns(teamId);
 
-        var teamNameLabel = teamsListComponent.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Team's name"));
+        var teamNameLabel = teamsListComponent.FindElementByCssSelectorAndTextContent("label", "Team's name");
         var teamNameInputId = teamNameLabel.Attributes.GetNamedItem("for");
         var teamNameInput = teamsListComponent.Find($"#{teamNameInputId.TextContent}");
         Assert.NotNull(teamNameInput);
@@ -360,8 +293,7 @@ public class TeamsAcceptanceTest
 
         // and clicks on Cancel
 
-        var cancelButton = teamsListComponent.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Cancel"));
+        var cancelButton = teamsListComponent.FindElementByCssSelectorAndTextContent("button", "Cancel");
         Assert.NotNull(cancelButton);
 
         cancelButton.Click();
@@ -389,15 +321,8 @@ public class TeamsAcceptanceTest
         };
 
         // and he has already created a team
-
-        _httpHandlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get)),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(teamListResponse);
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, "", teamListResponse);
 
         var singleTeamJson = await JsonContent.Create(team).ReadAsStringAsync();
         var singleTeamResponse = new HttpResponseMessage()
@@ -405,32 +330,16 @@ public class TeamsAcceptanceTest
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(singleTeamJson)
         };
-
-        _httpHandlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get) &&
-                         m.RequestUri.AbsoluteUri.Contains($"/team/{teamId.ToString()}")),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(singleTeamResponse);
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, $"/team/{teamId.ToString()}", singleTeamResponse);
         
         var teamSurveysResponse = new HttpResponseMessage()
         {
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent("[]")
         };
-
-        _httpHandlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get) &&
-                         m.RequestUri.AbsoluteUri.Contains($"/team/{teamId.ToString()}/surveys")),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(teamSurveysResponse);
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, $"/team/{teamId.ToString()}/surveys", teamSurveysResponse);
 
         var appComponent = _testCtx.RenderComponent<App>();
 
@@ -439,7 +348,7 @@ public class TeamsAcceptanceTest
         // and he can click on this team
 
         var existingTeamNameElement =
-            appComponent.FindAll("h5").FirstOrDefault(element => element.InnerHtml.Contains(teamName));
+            appComponent.FindElementByCssSelectorAndTextContent("h5", teamName);
         Assert.NotNull(existingTeamNameElement);
 
         existingTeamNameElement.Click();
@@ -462,15 +371,8 @@ public class TeamsAcceptanceTest
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(teamListJson)
         };
-
-        _httpHandlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get)),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(teamListResponse);
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, "", teamListResponse);
 
         var singleTeamJson = await JsonContent.Create(team).ReadAsStringAsync();
         var singleTeamResponse = new HttpResponseMessage()
@@ -478,45 +380,28 @@ public class TeamsAcceptanceTest
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(singleTeamJson)
         };
-
-        _httpHandlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get) &&
-                         m.RequestUri.AbsoluteUri.Contains($"/team/{teamId.ToString()}")),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(singleTeamResponse);
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Post, $"/team/{teamId.ToString()}", singleTeamResponse);
 
         var creationResponse = new HttpResponseMessage()
         {
             StatusCode = HttpStatusCode.InternalServerError,
         };
-
-        _httpHandlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Post)),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(creationResponse);
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Post, "", creationResponse);
 
         var appComponent = _testCtx.RenderComponent<App>();
 
         _navMan.NavigateTo("/teams-list-page");
 
-        var createNewTeamButton = appComponent.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Create new team"));
+        var createNewTeamButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Create new team");
         Assert.NotNull(createNewTeamButton);
 
         createNewTeamButton.Click();
 
         // WHEN he enters Teams name
 
-        var teamNameLabel = appComponent.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Team's name"));
+        var teamNameLabel = appComponent.FindElementByCssSelectorAndTextContent("label", "Team's name");
         var teamNameInputId = teamNameLabel.Attributes.GetNamedItem("for");
         var teamNameInput = appComponent.Find($"#{teamNameInputId.TextContent}");
         Assert.NotNull(teamNameInput);
@@ -525,8 +410,7 @@ public class TeamsAcceptanceTest
 
         //     and click on Confirm
 
-        var confirmButton = appComponent.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Confirm"));
+        var confirmButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Confirm");
         Assert.NotNull(confirmButton);
 
         confirmButton.Click();
@@ -536,8 +420,7 @@ public class TeamsAcceptanceTest
         appComponent.WaitForAssertion(() => Assert.Equal($"http://localhost/error", _navMan.Uri));
 
 
-        Assert.NotNull(appComponent.FindAll("p")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Something went wrong.")));
+        Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("p", "Something went wrong."));
     }
 
     [Fact]
@@ -554,22 +437,14 @@ public class TeamsAcceptanceTest
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(teamListJson)
         };
-
-        _httpHandlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get)),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(teamListResponse);
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, "", teamListResponse);
 
         var appComponent = _testCtx.RenderComponent<App>();
 
         _navMan.NavigateTo("/teams-list-page");
 
-        var createNewTeamButton = appComponent.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Create new team"));
+        var createNewTeamButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Create new team");
         Assert.NotNull(createNewTeamButton);
 
         createNewTeamButton.Click();
@@ -577,8 +452,7 @@ public class TeamsAcceptanceTest
         // WHEN he clicks on Confirm
         // and he didn't enter anything to the mandatory field Teams name
 
-        var confirmButton = appComponent.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Confirm"));
+        var confirmButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Confirm");
         Assert.NotNull(confirmButton);
 
         confirmButton.Click();
@@ -587,8 +461,7 @@ public class TeamsAcceptanceTest
 
         // THEN this field should be highlighted in read and at the top of the page he should see an error message that it's mandatory field.
 
-        var teamNameLabel = appComponent.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Team's name"));
+        var teamNameLabel = appComponent.FindElementByCssSelectorAndTextContent("label", "Team's name");
 
         var inputGroup = teamNameLabel.Parent;
 
@@ -609,15 +482,8 @@ public class TeamsAcceptanceTest
         {
             StatusCode = HttpStatusCode.InternalServerError
         };
-
-        _httpHandlerMock
-            .Protected()
-            .SetupSequence<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.Is<HttpRequestMessage>(
-                    m => m.Method.Equals(HttpMethod.Get)),
-                ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(teamListResponse);
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, "", teamListResponse);
 
         var appComponent = _testCtx.RenderComponent<App>();
 
@@ -628,8 +494,7 @@ public class TeamsAcceptanceTest
         // THEN he should see the error message “Something went wrong“ at the top of the page.
 
         Assert.Equal($"http://localhost/error", _navMan.Uri);
-        Assert.NotNull(appComponent.FindAll("p")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Something went wrong.")));
+        Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("p", "Something went wrong."));
     }
 
 }

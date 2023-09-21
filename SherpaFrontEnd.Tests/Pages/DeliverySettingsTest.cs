@@ -1,3 +1,4 @@
+
 using Bunit;
 using Bunit.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,6 +8,7 @@ using SherpaFrontEnd.Dtos;
 using SherpaFrontEnd.Dtos.Team;
 using SherpaFrontEnd.Model;
 using SherpaFrontEnd.Pages;
+using SherpaFrontEnd.Pages.DeliverySettings;
 using SherpaFrontEnd.Services;
 
 namespace BlazorApp.Tests.Pages;
@@ -44,32 +46,27 @@ public class DeliverySettingsTest
             _ctx.RenderComponent<DeliverySettings>(ComponentParameter.CreateParameter("Template", "Hackman Model"));
 
         var teamSelect = component
-            .FindAll("select")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Demo Team"));
+            .FindElementByCssSelectorAndTextContent("select", "Demo Team");
         Assert.NotNull(teamSelect);
 
-        var titleLabel = component.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Survey title"));
+        var titleLabel = component.FindElementByCssSelectorAndTextContent("label", "Survey title");
 
         var titleInput = component.Find($"input#{titleLabel!.Attributes.GetNamedItem("for").Value}");
 
         Assert.NotNull(titleInput);
 
-        var descriptionLabel = component.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Description"));
+        var descriptionLabel = component.FindElementByCssSelectorAndTextContent("label", "Description");
 
         var descriptionTextArea = component.Find($"textarea#{descriptionLabel!.Attributes.GetNamedItem("for").Value}");
         Assert.NotNull(descriptionTextArea);
 
-        var deadlineLabel = component.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("On a specific date"));
+        var deadlineLabel = component.FindElementByCssSelectorAndTextContent("label", "On a specific date");
 
         var deadlineInput = component.Find($"input#{deadlineLabel!.Attributes.GetNamedItem("for").Value}");
 
         Assert.NotNull(deadlineInput);
 
-        Assert.NotNull(component.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Continue")));
+        Assert.NotNull(component.FindElementByCssSelectorAndTextContent("button", "Continue"));
     }
 
     [Fact]
@@ -82,15 +79,13 @@ public class DeliverySettingsTest
             _ctx.RenderComponent<DeliverySettings>(ComponentParameter.CreateParameter("Template", templateName));
 
         var teamSelect = component
-            .FindAll("select")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Demo Team"));
+            .FindElementByCssSelectorAndTextContent("select", "Demo Team");
 
         Assert.NotNull(teamSelect);
         teamSelect.Change(_teams[0].Id);
 
         const string surveyTitle = "Survey title";
-        var titleLabel = component.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains(surveyTitle));
+        var titleLabel = component.FindElementByCssSelectorAndTextContent("label", surveyTitle);
 
         var titleInput = component.Find($"input#{titleLabel!.Attributes.GetNamedItem("for").Value}");
 
@@ -98,15 +93,13 @@ public class DeliverySettingsTest
         titleInput.Change(surveyTitle);
 
         const string surveyDescription = "Description";
-        var descriptionLabel = component.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains(surveyDescription));
+        var descriptionLabel = component.FindElementByCssSelectorAndTextContent("label", surveyDescription);
 
         var descriptionTextArea = component.Find($"textarea#{descriptionLabel!.Attributes.GetNamedItem("for").Value}");
         Assert.NotNull(descriptionTextArea);
         descriptionTextArea.Change(surveyDescription);
 
-        var deadlineLabel = component.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("On a specific date"));
+        var deadlineLabel = component.FindElementByCssSelectorAndTextContent("label", "On a specific date");
 
         var deadlineInput = component.Find($"input#{deadlineLabel!.Attributes.GetNamedItem("for").Value}");
         var deadline = DateTime.Parse("03/12/2020");
@@ -117,8 +110,7 @@ public class DeliverySettingsTest
 
         // WHEN he clicks on Continue
 
-        var continueButton = component.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Continue"));
+        var continueButton = component.FindElementByCssSelectorAndTextContent("button", "Continue");
         Assert.NotNull(continueButton);
 
         continueButton.Click();
@@ -141,15 +133,13 @@ public class DeliverySettingsTest
             _ctx.RenderComponent<DeliverySettings>(ComponentParameter.CreateParameter("Template", templateName));
 
         var teamSelect = component
-            .FindAll("select")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Demo Team"));
+            .FindElementByCssSelectorAndTextContent("select", "Demo Team");
 
         Assert.NotNull(teamSelect);
         teamSelect.Change(_teams[0].Id);
 
         const string surveyTitle = "Survey title";
-        var titleLabel = component.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains(surveyTitle));
+        var titleLabel = component.FindElementByCssSelectorAndTextContent("label", surveyTitle);
 
         var titleInput = component.Find($"input#{titleLabel!.Attributes.GetNamedItem("for").Value}");
 
@@ -157,15 +147,13 @@ public class DeliverySettingsTest
         titleInput.Change(surveyTitle);
 
         const string surveyDescription = "Description";
-        var descriptionLabel = component.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains(surveyDescription));
+        var descriptionLabel = component.FindElementByCssSelectorAndTextContent("label", surveyDescription);
 
         var descriptionTextArea = component.Find($"textarea#{descriptionLabel!.Attributes.GetNamedItem("for").Value}");
         Assert.NotNull(descriptionTextArea);
         descriptionTextArea.Change(surveyDescription);
 
-        var deadlineLabel = component.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("On a specific date"));
+        var deadlineLabel = component.FindElementByCssSelectorAndTextContent("label", "On a specific date");
 
         var deadlineInput = component.Find($"input#{deadlineLabel!.Attributes.GetNamedItem("for").Value}");
         var deadline = DateTime.Parse("03/12/2020");
@@ -176,8 +164,7 @@ public class DeliverySettingsTest
 
         // WHEN he clicks on Continue
 
-        var continueButton = component.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Continue"));
+        var continueButton = component.FindElementByCssSelectorAndTextContent("button", "Continue");
         Assert.NotNull(continueButton);
 
         continueButton.Click();
@@ -208,15 +195,13 @@ public class DeliverySettingsTest
             _ctx.RenderComponent<DeliverySettings>(ComponentParameter.CreateParameter("Template", templateName));
 
         var teamSelect = component
-            .FindAll("select")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Demo Team"));
+            .FindElementByCssSelectorAndTextContent("select", "Demo Team");
 
         Assert.NotNull(teamSelect);
         teamSelect.Change(_teams[0].Id);
 
         const string surveyTitle = "Survey title";
-        var titleLabel = component.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains(surveyTitle));
+        var titleLabel = component.FindElementByCssSelectorAndTextContent("label", surveyTitle);
 
         var titleInput = component.Find($"input#{titleLabel!.Attributes.GetNamedItem("for").Value}");
 
@@ -224,15 +209,13 @@ public class DeliverySettingsTest
         titleInput.Change(surveyTitle);
 
         const string surveyDescription = "Description";
-        var descriptionLabel = component.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains(surveyDescription));
+        var descriptionLabel = component.FindElementByCssSelectorAndTextContent("label", surveyDescription);
 
         var descriptionTextArea = component.Find($"textarea#{descriptionLabel!.Attributes.GetNamedItem("for").Value}");
         Assert.NotNull(descriptionTextArea);
         descriptionTextArea.Change(surveyDescription);
 
-        var deadlineLabel = component.FindAll("label")
-            .FirstOrDefault(element => element.InnerHtml.Contains("On a specific date"));
+        var deadlineLabel = component.FindElementByCssSelectorAndTextContent("label", "On a specific date");
 
         var deadlineInput = component.Find($"input#{deadlineLabel!.Attributes.GetNamedItem("for").Value}");
         var deadline = DateTime.Parse("03/12/2020");
@@ -243,8 +226,7 @@ public class DeliverySettingsTest
 
         // WHEN he clicks on Continue
 
-        var continueButton = component.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Continue"));
+        var continueButton = component.FindElementByCssSelectorAndTextContent("button", "Continue");
         Assert.NotNull(continueButton);
 
         _surveyService.Setup(service => service.CreateSurvey(It.IsAny<CreateSurveyDto>())).ThrowsAsync(new Exception());

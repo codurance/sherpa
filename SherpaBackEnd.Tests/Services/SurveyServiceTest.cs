@@ -1,13 +1,13 @@
 ﻿using Moq;
 using Shared.Test.Helpers;
-using SherpaBackEnd.Dtos;
 using SherpaBackEnd.Exceptions;
-using SherpaBackEnd.Model;
-using SherpaBackEnd.Model.Survey;
-using SherpaBackEnd.Model.Template;
-using SherpaBackEnd.Services;
+using SherpaBackEnd.Survey.Application;
+using SherpaBackEnd.Survey.Domain;
+using SherpaBackEnd.Survey.Infrastructure.Http.Dto;
+using SherpaBackEnd.Team.Domain;
+using SherpaBackEnd.Template.Domain;
 using Xunit.Abstractions;
-using ISurveyRepository = SherpaBackEnd.Model.ISurveyRepository;
+using ISurveyRepository = SherpaBackEnd.Survey.Domain.Persistence.ISurveyRepository;
 
 namespace SherpaBackEnd.Tests.Services;
 
@@ -29,8 +29,8 @@ public class SurveyServiceTest
     [Fact]
     public async Task ShouldRetrieveTemplateAndTeamFromTheirReposAndPersistSurveyOnSurveyRepoWhenCallingCreateSurvey()
     {
-        var team = new Team(Guid.NewGuid(), "Demo team");
-        var template = new Template("demo", Array.Empty<IQuestion>(), 30);
+        var team = new Team.Domain.Team(Guid.NewGuid(), "Demo team");
+        var template = new Template.Domain.Template("demo", Array.Empty<IQuestion>(), 30);
 
         var service = new SurveyService(_surveyRepo.Object, _teamRepo.Object, _templateRepo.Object);
 
@@ -41,9 +41,9 @@ public class SurveyServiceTest
             DateTime.Parse("2023-08-09T07:38:04+0000"));
         await service.CreateSurvey(createSurveyDto);
 
-        var expectedSurvey = new Survey(createSurveyDto.SurveyId, new User(service.DefaultUserId, "Lucia"),
-            Status.Draft, createSurveyDto.Deadline, createSurveyDto.Title, createSurveyDto.Description,
-            new List<Response>(), team, template);
+        var expectedSurvey = new Survey.Domain.Survey(createSurveyDto.SurveyId, new User.Domain.User(service.DefaultUserId, "Lucia"),
+            SurveyStatus.Draft, createSurveyDto.Deadline, createSurveyDto.Title, createSurveyDto.Description,
+            new List<SurveyResponse>(), team, template);
         var surveyRepoInvocation = _surveyRepo.Invocations[0];
         var actualSurvey = surveyRepoInvocation.Arguments[0];
         CustomAssertions.StringifyEquals(expectedSurvey, actualSurvey);
@@ -54,9 +54,9 @@ public class SurveyServiceTest
     {
         var surveyId = Guid.NewGuid();
         var service = new SurveyService(_surveyRepo.Object, _teamRepo.Object, _templateRepo.Object);
-        var expectedSurvey = new Survey(Guid.NewGuid(), new User(service.DefaultUserId, "Lucia"), Status.Draft,
-            DateTime.Parse("2023-08-09T07:38:04+0000"), "Title", "Description", new List<Response>(),
-            new Team(Guid.NewGuid(), "Demo team"), new Template("demo", Array.Empty<IQuestion>(), 30));
+        var expectedSurvey = new Survey.Domain.Survey(Guid.NewGuid(), new User.Domain.User(service.DefaultUserId, "Lucia"), SurveyStatus.Draft,
+            DateTime.Parse("2023-08-09T07:38:04+0000"), "Title", "Description", new List<SurveyResponse>(),
+            new Team.Domain.Team(Guid.NewGuid(), "Demo team"), new Template.Domain.Template("demo", Array.Empty<IQuestion>(), 30));
         _surveyRepo.Setup(repository => repository.GetSurveyById(surveyId)).ReturnsAsync(expectedSurvey);
 
         var receivedSurveyWithoutQuestions = await service.GetSurveyWithoutQuestionsById(surveyId);
@@ -70,7 +70,7 @@ public class SurveyServiceTest
     {
         var surveyId = Guid.NewGuid();
         var service = new SurveyService(_surveyRepo.Object, _teamRepo.Object, _templateRepo.Object);
-        _surveyRepo.Setup(repository => repository.GetSurveyById(surveyId)).ReturnsAsync((Survey?)null);
+        _surveyRepo.Setup(repository => repository.GetSurveyById(surveyId)).ReturnsAsync((Survey.Domain.Survey?)null);
 
 
         await Assert.ThrowsAsync<NotFoundException>(async () => await service.GetSurveyWithoutQuestionsById(surveyId));
@@ -132,9 +132,9 @@ public class SurveyServiceTest
             }, Reverse,
             HackmanComponent.INTERPERSONAL_PEER_COACHING,
             HackmanSubcategory.DELIMITED, HackmanSubcomponent.SENSE_OF_URGENCY, Position);
-        var expectedSurvey = new Survey(Guid.NewGuid(), new User(service.DefaultUserId, "Lucia"), Status.Draft,
-            DateTime.Parse("2023-08-09T07:38:04+0000"), "Title", "Description", new List<Response>(),
-            new Team(Guid.NewGuid(), "Demo team"), new Template("demo", new List<IQuestion>() { hackmanQuestion }, 30));
+        var expectedSurvey = new Survey.Domain.Survey(Guid.NewGuid(), new User.Domain.User(service.DefaultUserId, "Lucia"), SurveyStatus.Draft,
+            DateTime.Parse("2023-08-09T07:38:04+0000"), "Title", "Description", new List<SurveyResponse>(),
+            new Team.Domain.Team(Guid.NewGuid(), "Demo team"), new Template.Domain.Template("demo", new List<IQuestion>() { hackmanQuestion }, 30));
         _surveyRepo.Setup(repository => repository.GetSurveyById(surveyId)).ReturnsAsync(expectedSurvey);
 
         var questionsReceived = await service.GetSurveyQuestionsBySurveyId(surveyId);

@@ -3,9 +3,9 @@ using DotNet.Testcontainers.Containers;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using SherpaBackEnd.Dtos;
-using SherpaBackEnd.Model;
-using SherpaBackEnd.Repositories.Mongo;
+using SherpaBackEnd.Shared.Infrastructure.Persistence;
+using SherpaBackEnd.Team.Domain;
+using SherpaBackEnd.Team.Infrastructure.Persistence;
 
 namespace SherpaBackEnd.Tests.Repositories.Mongo;
 
@@ -103,7 +103,7 @@ public class MongoTeamRepositoryTest : IDisposable
         var mongoTeamRepository = new MongoTeamRepository(Options.Create(databaseSettings));
 
         await mongoTeamRepository.AddTeamAsync(
-            new Team(teamId, "Demo Team"));
+            new Team.Domain.Team(teamId, "Demo Team"));
 
         var mongoClient = new MongoClient(databaseSettings.ConnectionString);
 

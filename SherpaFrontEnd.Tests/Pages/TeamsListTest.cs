@@ -1,5 +1,6 @@
 using AngleSharp.Common;
 using BlazorApp.Tests.Acceptance;
+
 using Bunit;
 using Bunit.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,6 +10,7 @@ using Newtonsoft.Json;
 using SherpaFrontEnd.Dtos.Team;
 using SherpaFrontEnd.Model;
 using SherpaFrontEnd.Pages;
+using SherpaFrontEnd.Pages.TeamList;
 using SherpaFrontEnd.Services;
 using Xunit.Abstractions;
 
@@ -52,7 +54,7 @@ public class TeamListTest
         _mockTeamService.Setup(m => m.GetAllTeams()).ReturnsAsync(new List<Team>());
         var page = _testContext.RenderComponent<TeamsList>();
 
-        var allTeamsTitle = page.FindAll("h1,h2,h3").FirstOrDefault(element => element.InnerHtml.Contains("All teams"));
+        var allTeamsTitle = page.FindElementByCssSelectorAndTextContent("h1,h2,h3", "All teams");
         Assert.NotNull(allTeamsTitle);
     }
 
@@ -62,8 +64,7 @@ public class TeamListTest
         _mockTeamService.Setup(m => m.GetAllTeams()).ReturnsAsync(new List<Team>());
         var page = _testContext.RenderComponent<TeamsList>();
 
-        var addNewTeamButton = page.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Create new team"));
+        var addNewTeamButton = page.FindElementByCssSelectorAndTextContent("button", "Create new team");
         Assert.NotNull(addNewTeamButton);
     }
 
@@ -75,7 +76,7 @@ public class TeamListTest
             .ReturnsAsync(new List<Team>() { new Team(Guid.NewGuid(), teamName) });
         var page = _testContext.RenderComponent<TeamsList>();
 
-        var teamNameElement = page.FindAll("h5").FirstOrDefault(element => element.InnerHtml.Contains(teamName));
+        var teamNameElement = page.FindElementByCssSelectorAndTextContent("h5", teamName);
         Assert.NotNull(teamNameElement);
     }
 
@@ -87,8 +88,7 @@ public class TeamListTest
 
         var page = _testContext.RenderComponent<TeamsList>();
 
-        var createNewTeamButton = page.FindAll("button")
-            .FirstOrDefault(element => element.InnerHtml.Contains("Create new team"));
+        var createNewTeamButton = page.FindElementByCssSelectorAndTextContent("button", "Create new team");
         Assert.NotNull(createNewTeamButton);
 
         createNewTeamButton.Click();
@@ -109,8 +109,7 @@ public class TeamListTest
         _mockTeamService.Setup(m => m.GetTeamById(teamId)).ReturnsAsync(newTeam);
         var page = _testContext.RenderComponent<TeamsList>();
         
-        var existingTeamNameElement = page.FindAll("h5")
-            .FirstOrDefault(element => element.InnerHtml.Contains(teamName));
+        var existingTeamNameElement = page.FindElementByCssSelectorAndTextContent("h5", teamName);
         Assert.NotNull(existingTeamNameElement);
         
         existingTeamNameElement.Click();
