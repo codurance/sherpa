@@ -3,6 +3,7 @@
 @using SherpaFrontEnd.Shared.Modals
 @using Microsoft.AspNetCore.Components.WebAssembly.Infrastructure
 @using SherpaFrontEnd.Dtos.Team
+@using SherpaFrontEnd.Core.Components
 @inject ITeamDataService TeamDataService;
 
 @inject NavigationManager _nav
@@ -12,8 +13,8 @@
 @page "/teams-list-page"
 
 <div>
-
-    <h2>All teams</h2>
+    
+    <MainHeading>All teams</MainHeading>
 
     <CreateTeamOffcanvas CanvasId="@CanvasId"/>
 
