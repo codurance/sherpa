@@ -11,6 +11,7 @@ using SherpaBackEnd.Email.Application;
 using SherpaBackEnd.Shared.Infrastructure.Persistence;
 using SherpaBackEnd.Sur;
 using SherpaBackEnd.Survey.Infrastructure.Http;
+using SherpaBackEnd.SurveyNotification.Application;
 using SherpaBackEnd.SurveyNotification.Domain;
 
 namespace SherpaBackEnd.Tests.Acceptance;
@@ -64,9 +65,10 @@ public class LaunchSurveyAcceptanceTest: IDisposable
         await InitializeDbClientAndCollections();
         // Given that an Org.coach has created a survey
         var emailService = new Mock<IEmailService>();
-        var launchSurveyController = new LaunchSurveyController();
+        var surveyNotificationService = new SurveyNotificationService();
+        var launchSurveyController = new LaunchSurveyController(surveyNotificationService);
         
-        var launchSurveyDto = new LaunchSurveyDto();
+        var launchSurveyDto = new LaunchSurveyDto(Guid.NewGuid());
         // When they launch the survey
         
         var actionResult = await launchSurveyController.LaunchSurvey(launchSurveyDto);
@@ -84,6 +86,3 @@ public class LaunchSurveyAcceptanceTest: IDisposable
         _mongoDbContainer.StopAsync();
     }
 }
-
-
-
