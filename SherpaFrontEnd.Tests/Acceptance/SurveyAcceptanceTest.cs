@@ -2,7 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Security.Claims;
 using AngleSharp.Dom;
-
+using AngleSharp.Html.Dom;
 using Blazored.Modal;
 using Bunit;
 using Bunit.TestDoubles;
@@ -160,7 +160,8 @@ public class SurveyAcceptanceTest
     private async Task UserIsRedirectedToDraftReviewPageAfterCreatingASurvey()
     {
         // GIVEN that an Org coach is on the Delivery settings page for creating a survey
-        // and he filled in all fields
+        // And they filled in all fields
+        // And they use the default description
         _guidService.Setup(service => service.GenerateRandomGuid()).Returns(_surveyId);
         var teamsJson = await JsonContent.Create(_teams).ReadAsStringAsync();
         var responseWithTeams = new HttpResponseMessage
@@ -192,8 +193,18 @@ public class SurveyAcceptanceTest
             new User(Guid.NewGuid(), "Lucia"), 
             Status.Draft, 
             deadline, 
-            "Title", 
-            "Description", 
+            "Title",
+            @"Hi team! This questionnaire is part of an overall team assessment. It focuses on describing how we are currently working as a team. The important part about this survey is not the answers themselves, but the conversations that we can have around based on the results obtained. To consider:
+
+- It takes at least 30 min to complete
+- It contains around 100 questions, most of them on a scale of 1 to 5 that represents how much you disagree (""strongly disagree"") or agree (""strongly agree"") with what was stated.
+- Saving questions halfway is not allowed
+
+Please try to be as honest as possible. Your answers are very important and will help the team.
+
+Thank you!
+
+- Codurance Team", 
             Array.Empty<Response>(), 
             _teams[0], 
             templateWithoutQuestions);
@@ -229,7 +240,7 @@ public class SurveyAcceptanceTest
 
         var descriptionTextArea = appComponent.Find($"textarea#{descriptionLabel!.Attributes.GetNamedItem("for").Value}");
         Assert.NotNull(descriptionTextArea);
-        descriptionTextArea.Change("Description");
+        Assert.Equal(survey.Description, descriptionTextArea.GetAttribute("value"));
 
         var deadlineLabel = appComponent.FindElementByCssSelectorAndTextContent("label", "On a specific date");
 
@@ -265,6 +276,7 @@ public class SurveyAcceptanceTest
         // description
         var surveyDescriptionElement = appComponent.FindElementByCssSelectorAndTextContent("p", survey.Description);
         Assert.NotNull(surveyDescriptionElement);
+        Assert.Equal(survey.Description, surveyDescriptionElement.GetAttribute("value"));
         
         // deadline
         var surveyDeadlineElement = appComponent.FindElementByCssSelectorAndTextContent("li", survey.Deadline.Value.ToString("dd/MM/yyyy"));
