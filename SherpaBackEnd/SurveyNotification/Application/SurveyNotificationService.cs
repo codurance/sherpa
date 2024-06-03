@@ -1,11 +1,19 @@
+using SherpaBackEnd.Survey.Domain.Persistence;
 using SherpaBackEnd.SurveyNotification.Infrastructure.Http.Dto;
 
 namespace SherpaBackEnd.SurveyNotification.Application;
 
 public class SurveyNotificationService : ISurveyNotificationService
 {
-    public Task CreateNotificationsFor(CreateSurveyNotificationsDto surveyId)
+    private readonly ISurveyRepository _surveyRepositoryObject;
+
+    public SurveyNotificationService(ISurveyRepository surveyRepositoryObject)
     {
-        throw new NotImplementedException();
+        _surveyRepositoryObject = surveyRepositoryObject;
+    }
+
+    public async Task LaunchSurveyNotificationsFor(CreateSurveyNotificationsDto createSurveyNotificationsDto)
+    {
+        await _surveyRepositoryObject.GetSurveyById(createSurveyNotificationsDto.SurveyId);
     }
 }

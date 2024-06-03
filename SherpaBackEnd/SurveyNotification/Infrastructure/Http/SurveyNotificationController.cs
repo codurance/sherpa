@@ -20,7 +20,7 @@ public class SurveyNotificationController
     {
         try
         {
-            await _surveyNotificationService.CreateNotificationsFor(createSurveyNotificationsDto);
+            await _surveyNotificationService.LaunchSurveyNotificationsFor(createSurveyNotificationsDto);
             return new CreatedResult("", null);
         }
         catch (Exception e)
