@@ -1,21 +1,23 @@
 using JetBrains.Annotations;
 using Moq;
-using SherpaBackEnd.Sur;
+using SherpaBackEnd.SurveyNotification;
 using SherpaBackEnd.Survey.Infrastructure.Http;
 using SherpaBackEnd.SurveyNotification.Application;
+using SherpaBackEnd.SurveyNotification.Infrastructure.Http;
+using SherpaBackEnd.SurveyNotification.Infrastructure.Http.Dto;
 
 namespace SherpaBackEnd.Tests.Controllers;
 
-[TestSubject(typeof(LaunchSurveyController))]
-public class LaunchSurveyControllerTest
+[TestSubject(typeof(SurveyNotificationController))]
+public class SurveyNotificationControllerTest
 {
     [Fact]
     public async Task ShouldCreateNotificationsWithSurveyIdWithDtoFromBody()
     {
         var surveyNotificationService = new Mock<ISurveyNotificationService>();
-        var launchSurveyDto = new LaunchSurveyDto(Guid.NewGuid());
+        var launchSurveyDto = new CreateSurveyNotificationsDto(Guid.NewGuid());
 
-        var controller = new LaunchSurveyController(surveyNotificationService.Object);
+        var controller = new SurveyNotificationController(surveyNotificationService.Object);
 
         await controller.LaunchSurvey(launchSurveyDto);
         

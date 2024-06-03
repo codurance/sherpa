@@ -9,10 +9,12 @@ using MongoDB.Driver;
 using Moq;
 using SherpaBackEnd.Email.Application;
 using SherpaBackEnd.Shared.Infrastructure.Persistence;
-using SherpaBackEnd.Sur;
+using SherpaBackEnd.SurveyNotification;
 using SherpaBackEnd.Survey.Infrastructure.Http;
 using SherpaBackEnd.SurveyNotification.Application;
 using SherpaBackEnd.SurveyNotification.Domain;
+using SherpaBackEnd.SurveyNotification.Infrastructure.Http;
+using SherpaBackEnd.SurveyNotification.Infrastructure.Http.Dto;
 
 namespace SherpaBackEnd.Tests.Acceptance;
 
@@ -66,9 +68,9 @@ public class LaunchSurveyAcceptanceTest: IDisposable
         // Given that an Org.coach has created a survey
         var emailService = new Mock<IEmailService>();
         var surveyNotificationService = new SurveyNotificationService();
-        var launchSurveyController = new LaunchSurveyController(surveyNotificationService);
+        var launchSurveyController = new SurveyNotificationController(surveyNotificationService);
         
-        var launchSurveyDto = new LaunchSurveyDto(Guid.NewGuid());
+        var launchSurveyDto = new CreateSurveyNotificationsDto(Guid.NewGuid());
         // When they launch the survey
         
         var actionResult = await launchSurveyController.LaunchSurvey(launchSurveyDto);

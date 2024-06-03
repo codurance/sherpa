@@ -1,4 +1,4 @@
-using SherpaBackEnd.Sur;
+using SherpaBackEnd.SurveyNotification;
 
 namespace SherpaBackEnd.SurveyNotification.Application;
 
