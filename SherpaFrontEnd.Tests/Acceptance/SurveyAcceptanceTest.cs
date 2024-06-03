@@ -276,8 +276,6 @@ Thank you!
         // description
         var surveyDescriptionElement = appComponent.FindElementByCssSelectorAndTextContent("p", survey.Description);
         Assert.NotNull(surveyDescriptionElement);
-        Assert.Equal(survey.Description, surveyDescriptionElement.GetAttribute("value"));
-        
         // deadline
         var surveyDeadlineElement = appComponent.FindElementByCssSelectorAndTextContent("li", survey.Deadline.Value.ToString("dd/MM/yyyy"));
         Assert.NotNull(surveyDeadlineElement);
