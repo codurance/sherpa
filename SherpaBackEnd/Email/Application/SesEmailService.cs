@@ -2,6 +2,7 @@ using System.Net;
 using Amazon;
 using Amazon.Runtime;
 using Amazon.SimpleEmail;
+using SherpaBackEnd.SurveyNotification.Domain;
 
 namespace SherpaBackEnd.Email.Application;
 
@@ -78,5 +79,10 @@ public class SesEmailService : IEmailService
             Console.WriteLine(e);
             await CreatePendingSurveyTemplate();
         }
+    }
+
+    public Task<HttpStatusCode> SendTemplatedEmail<TemplateRequest>(TemplateRequest templateRequest)
+    {
+        throw new NotImplementedException();
     }
 }
