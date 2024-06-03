@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SherpaBackEnd.SurveyNotification.Application;
+using SherpaBackEnd.SurveyNotification.Infrastructure.Http.Dto;
 
 namespace SherpaBackEnd.SurveyNotification.Infrastructure.Http;
 
@@ -7,14 +8,25 @@ namespace SherpaBackEnd.SurveyNotification.Infrastructure.Http;
 [Route("survey-notifications")]
 public class SurveyNotificationController
 {
+    private readonly ISurveyNotificationService _surveyNotificationService;
+
     public SurveyNotificationController(ISurveyNotificationService surveyNotificationService)
     {
-        throw new NotImplementedException();
+        _surveyNotificationService = surveyNotificationService;
     }
     
-    
-    public async Task<object> LaunchSurvey(object launchSurveyDto)
+    [HttpPost]
+    public async Task<IActionResult> LaunchSurvey(CreateSurveyNotificationsDto createSurveyNotificationsDto)
     {
-        throw new NotImplementedException();
+        try
+        {
+            await _surveyNotificationService.CreateNotificationsFor(createSurveyNotificationsDto);
+            return new CreatedResult("", null);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 }

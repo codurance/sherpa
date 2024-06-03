@@ -1,4 +1,6 @@
 using JetBrains.Annotations;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using SherpaBackEnd.SurveyNotification;
 using SherpaBackEnd.Survey.Infrastructure.Http;
@@ -15,12 +17,16 @@ public class SurveyNotificationControllerTest
     public async Task ShouldCreateNotificationsWithSurveyIdWithDtoFromBody()
     {
         var surveyNotificationService = new Mock<ISurveyNotificationService>();
-        var launchSurveyDto = new CreateSurveyNotificationsDto(Guid.NewGuid());
+        var createSurveyNotificationDto = new CreateSurveyNotificationsDto(Guid.NewGuid());
 
         var controller = new SurveyNotificationController(surveyNotificationService.Object);
 
-        await controller.LaunchSurvey(launchSurveyDto);
+        var actionResult = await controller.LaunchSurvey(createSurveyNotificationDto);
         
-        surveyNotificationService.Verify(service => service.CreateNotificationsFor(launchSurveyDto.SurveyId));
+        surveyNotificationService.Verify(service => service.CreateNotificationsFor(createSurveyNotificationDto));
+
+        var createdResult = Assert.IsType<CreatedResult>(actionResult);
+        Assert.Equal(StatusCodes.Status201Created, createdResult.StatusCode);
+
     }
 }
