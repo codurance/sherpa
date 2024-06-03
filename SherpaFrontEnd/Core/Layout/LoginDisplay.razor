@@ -7,7 +7,7 @@
 
 <AuthorizeView>
     <Authorized>
-        <div class="flex gap-8 p-2">
+        <div class="flex gap-8">
             <p>@context.User.Claims.Where(_ => _.Type == "username").First().Value</p>
             <button class="text-red-500" @onclick="BeginSignOut">Log out</button>
         </div>
