@@ -9,12 +9,14 @@ public class SurveyNotificationService : ISurveyNotificationService
 {
     private readonly ISurveyRepository _surveyRepository;
     private readonly ISurveyNotificationsRepository _surveyNotificationsRepository;
+    private readonly IEmailTemplateFactory _emailTemplateFactory;
 
     public SurveyNotificationService(ISurveyRepository surveyRepository,
-        ISurveyNotificationsRepository surveyNotificationsRepository, EmailTemplateFactory emailTemplateFactory)
+        ISurveyNotificationsRepository surveyNotificationsRepository, IEmailTemplateFactory emailTemplateFactory)
     {
         _surveyRepository = surveyRepository;
         _surveyNotificationsRepository = surveyNotificationsRepository;
+        _emailTemplateFactory = emailTemplateFactory;
     }
 
     public async Task LaunchSurveyNotificationsFor(CreateSurveyNotificationsDto createSurveyNotificationsDto)
@@ -28,6 +30,8 @@ public class SurveyNotificationService : ISurveyNotificationService
                 new Domain.SurveyNotification(GenerateId(), survey, teamMember)));
             
             await _surveyNotificationsRepository.CreateManySurveyNotification(surveyNotifications);
+            
+            _emailTemplateFactory.CreateEmailTemplate(surveyNotifications);
         }
     }
 

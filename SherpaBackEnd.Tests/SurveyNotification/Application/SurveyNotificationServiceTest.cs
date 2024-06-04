@@ -20,13 +20,13 @@ public class SurveyNotificationServiceTest
     private CreateSurveyNotificationsDto _createSurveyNotificationsDto = new CreateSurveyNotificationsDto(_surveyId);
     private static Guid _surveyId = Guid.NewGuid();
     private Mock<ISurveyNotificationsRepository> _surveyNotificationsRepository;
-    private Mock<EmailTemplateFactory> _emailTemplateFactory;
+    private Mock<IEmailTemplateFactory> _emailTemplateFactory;
 
     public SurveyNotificationServiceTest()
     {
         _surveyRepository = new Mock<ISurveyRepository>();
         _surveyNotificationsRepository = new Mock<ISurveyNotificationsRepository>();
-        _emailTemplateFactory = new Mock<EmailTemplateFactory>();
+        _emailTemplateFactory = new Mock<IEmailTemplateFactory>();
         _surveyNotificationService = new SurveyNotificationService(_surveyRepository.Object, _surveyNotificationsRepository.Object, _emailTemplateFactory.Object);
     }
 
@@ -48,7 +48,7 @@ public class SurveyNotificationServiceTest
         var survey = ASurvey().WithId(_surveyId).WithTeam(team).Build();
         var surveyNotificationId = Guid.NewGuid();
         var surveyNotificationService =
-            new TestableSurveyNotificationService(_surveyRepository.Object, _surveyNotificationsRepository.Object, null)
+            new TestableSurveyNotificationService(_surveyRepository.Object, _surveyNotificationsRepository.Object, _emailTemplateFactory.Object)
                 {
                     SurveyNotificationId = surveyNotificationId
                 };
@@ -87,7 +87,7 @@ public class SurveyNotificationServiceTest
         _surveyRepository.Setup(repository => repository.GetSurveyById(_surveyId))
             .ReturnsAsync(survey);
         
-        await _surveyNotificationService.LaunchSurveyNotificationsFor(_createSurveyNotificationsDto);
+        await surveyNotificationService.LaunchSurveyNotificationsFor(_createSurveyNotificationsDto);
 
         _emailTemplateFactory.Verify(factory => factory.CreateEmailTemplate(surveyNotifications));
     }
@@ -96,7 +96,7 @@ public class SurveyNotificationServiceTest
     class TestableSurveyNotificationService :  SurveyNotificationService
     {
         public Guid SurveyNotificationId { get; set; }
-        public TestableSurveyNotificationService(ISurveyRepository surveyRepository, ISurveyNotificationsRepository surveyNotificationsRepository, EmailTemplateFactory emailTemplateFactory) : base(surveyRepository, surveyNotificationsRepository, emailTemplateFactory)
+        public TestableSurveyNotificationService(ISurveyRepository surveyRepository, ISurveyNotificationsRepository surveyNotificationsRepository, IEmailTemplateFactory emailTemplateFactory) : base(surveyRepository, surveyNotificationsRepository, emailTemplateFactory)
         {
         }
 
