@@ -70,8 +70,8 @@ public class SurveyService : ISurveyService
         return surveyById.Template.Questions;
     }
 
-    public Task AnswerSurvey(AnswerSurveyDto answerSurveyDto)
+    public async Task AnswerSurvey(AnswerSurveyDto answerSurveyDto)
     {
-        return null;
+        await _surveyRepository.GetSurveyById(answerSurveyDto.SurveyId);
     }
 }
