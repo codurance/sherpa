@@ -15,4 +15,5 @@ public class TeamMember
         Email = email;
         FullName = fullName;
     }
+
 }

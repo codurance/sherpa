@@ -16,6 +16,7 @@ using SherpaBackEnd.SurveyNotification.Application;
 using SherpaBackEnd.SurveyNotification.Domain;
 using SherpaBackEnd.SurveyNotification.Infrastructure.Http;
 using SherpaBackEnd.SurveyNotification.Infrastructure.Http.Dto;
+using SherpaBackEnd.SurveyNotification.Infrastructure.Persistence;
 
 namespace SherpaBackEnd.Tests.Acceptance;
 
@@ -69,7 +70,8 @@ public class LaunchSurveyAcceptanceTest: IDisposable
         // Given that an Org.coach has created a survey
         var emailService = new Mock<IEmailService>();
         var surveyRepository = new MongoSurveyRepository(_databaseSettings);
-        var surveyNotificationService = new SurveyNotificationService(surveyRepository);
+        var surveyNotificationRepository = new MongoSurveyNotificationRepository(_databaseSettings);
+        var surveyNotificationService = new SurveyNotificationService(surveyRepository, surveyNotificationRepository);
         var launchSurveyController = new SurveyNotificationController(surveyNotificationService);
         
         var launchSurveyDto = new CreateSurveyNotificationsDto(Guid.NewGuid());
