@@ -11,7 +11,7 @@ public class SurveyBuilder
     private SurveyStatus _status = SurveyStatus.Draft;
     private DateTime _deadline;
     private string _title = "Survey";
-    private string? _description;
+    private string? _description = "";
     private List<SurveyResponse> _responses = new List<SurveyResponse>();
     private Team.Domain.Team _team;
     private Template.Domain.Template _template;

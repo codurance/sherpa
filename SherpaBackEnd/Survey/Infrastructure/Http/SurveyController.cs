@@ -86,4 +86,10 @@ public class SurveyController
         var surveysQuestions = await _surveyService.GetSurveyQuestionsBySurveyId(guid);
         return new OkObjectResult(surveysQuestions);
     }
+
+    [HttpPost("/survey/{surveyId:guid}/team-members/{teamMembersId:guid}")]
+    public async Task<IActionResult> AnswerSurvey(AnswerSurveyDto answerSurveyDto)
+    {
+        throw new NotImplementedException();
+    }
 }
