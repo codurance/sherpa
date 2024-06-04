@@ -71,7 +71,8 @@ public class LaunchSurveyAcceptanceTest: IDisposable
         var emailService = new Mock<IEmailService>();
         var surveyRepository = new MongoSurveyRepository(_databaseSettings);
         var surveyNotificationRepository = new MongoSurveyNotificationRepository(_databaseSettings);
-        var surveyNotificationService = new SurveyNotificationService(surveyRepository, surveyNotificationRepository);
+        var emailTemplateFactory = new EmailTemplateFactory();
+        var surveyNotificationService = new SurveyNotificationService(surveyRepository, surveyNotificationRepository, emailTemplateFactory);
         var launchSurveyController = new SurveyNotificationController(surveyNotificationService);
         
         var launchSurveyDto = new CreateSurveyNotificationsDto(Guid.NewGuid());

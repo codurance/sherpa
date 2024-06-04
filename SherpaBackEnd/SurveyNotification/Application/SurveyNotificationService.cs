@@ -1,3 +1,4 @@
+using SherpaBackEnd.Email.Application;
 using SherpaBackEnd.Survey.Domain.Persistence;
 using SherpaBackEnd.SurveyNotification.Infrastructure.Http.Dto;
 using SherpaBackEnd.SurveyNotification.Infrastructure.Persistence;
@@ -10,7 +11,7 @@ public class SurveyNotificationService : ISurveyNotificationService
     private readonly ISurveyNotificationsRepository _surveyNotificationsRepository;
 
     public SurveyNotificationService(ISurveyRepository surveyRepository,
-        ISurveyNotificationsRepository surveyNotificationsRepository)
+        ISurveyNotificationsRepository surveyNotificationsRepository, EmailTemplateFactory emailTemplateFactory)
     {
         _surveyRepository = surveyRepository;
         _surveyNotificationsRepository = surveyNotificationsRepository;
