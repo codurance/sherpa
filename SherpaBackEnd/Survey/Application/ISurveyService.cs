@@ -9,4 +9,5 @@ public interface ISurveyService
     public Task<IEnumerable<Domain.Survey>> GetAllSurveysFromTeam(Guid teamId);
     public Task<SurveyWithoutQuestions> GetSurveyWithoutQuestionsById(Guid expectedSurveyId);
     public Task<IEnumerable<IQuestion>> GetSurveyQuestionsBySurveyId(Guid expectedSurveyId);
+    public Task AnswerSurvey(AnswerSurveyDto answerSurveyDto);
 }

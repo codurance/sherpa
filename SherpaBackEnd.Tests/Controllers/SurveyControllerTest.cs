@@ -11,6 +11,7 @@ using SherpaBackEnd.Survey.Infrastructure.Http.Dto;
 using SherpaBackEnd.Team.Infrastructure.Http;
 using SherpaBackEnd.Template.Domain;
 using SherpaBackEnd.Template.Infrastructure.Http.Dto;
+using SherpaBackEnd.Tests.Builders;
 
 namespace SherpaBackEnd.Tests.Controllers;
 
@@ -18,10 +19,12 @@ public class SurveyControllerTest
 {
     private Mock<ISurveyService> _serviceMock;
     private ILogger<SurveyController> _logger = new Mock<ILogger<SurveyController>>().Object;
+    private SurveyController _controller;
 
     public SurveyControllerTest()
     {
         _serviceMock = new Mock<ISurveyService>();
+        _controller = new SurveyController(_serviceMock.Object, _logger);
     }
 
     [Fact]
@@ -29,9 +32,8 @@ public class SurveyControllerTest
     {
         var createSurveyDto = new CreateSurveyDto(Guid.NewGuid(), Guid.NewGuid(), "template-name", "title",
             "description", DateTime.Parse("2023-08-09T07:38:04+0000"));
-        var controller = new SurveyController(_serviceMock.Object, _logger);
 
-        var actionResult = await controller.CreateSurvey(createSurveyDto);
+        var actionResult = await _controller.CreateSurvey(createSurveyDto);
 
         _serviceMock.Verify(service =>
             service.CreateSurvey(createSurveyDto)
@@ -46,11 +48,9 @@ public class SurveyControllerTest
     {
         var createSurveyDto = new CreateSurveyDto(Guid.NewGuid(), Guid.NewGuid(), "template-name", "title",
             "description", DateTime.Parse("2023-08-09T07:38:04+0000"));
-        var controller = new SurveyController(_serviceMock.Object, _logger);
-
         _serviceMock.Setup(service => service.CreateSurvey(It.IsAny<CreateSurveyDto>())).ThrowsAsync(new Exception());
 
-        var actionResult = await controller.CreateSurvey(createSurveyDto);
+        var actionResult = await _controller.CreateSurvey(createSurveyDto);
 
 
         var createdResult = Assert.IsType<ObjectResult>(actionResult);
@@ -62,13 +62,11 @@ public class SurveyControllerTest
     {
         var createSurveyDto = new CreateSurveyDto(Guid.NewGuid(), Guid.NewGuid(), "template-name", "title",
             "description", DateTime.Parse("2023-08-09T07:38:04+0000"));
-        var controller = new SurveyController(_serviceMock.Object, _logger);
-
         const string exceptionMessage = "test";
         _serviceMock.Setup(service => service.CreateSurvey(It.IsAny<CreateSurveyDto>()))
             .ThrowsAsync(new NotFoundException(exceptionMessage));
 
-        var actionResult = await controller.CreateSurvey(createSurveyDto);
+        var actionResult = await _controller.CreateSurvey(createSurveyDto);
 
 
         var createdResult = Assert.IsType<ObjectResult>(actionResult);
@@ -79,13 +77,14 @@ public class SurveyControllerTest
     [Fact]
     public async Task ShouldReturnTheSurveyWithoutQuestionsGivenByTheServiceWhenCallingGetSurveyById()
     {
-        var expectedSurvey = new SurveyWithoutQuestions(Guid.NewGuid(), new User.Domain.User(Guid.NewGuid(), "Lucia"), SurveyStatus.Draft,
+        var expectedSurvey = new SurveyWithoutQuestions(Guid.NewGuid(), new User.Domain.User(Guid.NewGuid(), "Lucia"),
+            SurveyStatus.Draft,
             DateTime.Parse("2023-08-09T07:38:04+0000"), "Title", "description", new List<SurveyResponse>(),
             new Team.Domain.Team(Guid.NewGuid(), "team name"), new TemplateWithoutQuestions("Template name", 1));
-        var controller = new SurveyController(_serviceMock.Object, _logger);
-        _serviceMock.Setup(service => service.GetSurveyWithoutQuestionsById(expectedSurvey.Id)).ReturnsAsync(expectedSurvey);
+        _serviceMock.Setup(service => service.GetSurveyWithoutQuestionsById(expectedSurvey.Id))
+            .ReturnsAsync(expectedSurvey);
 
-        var surveyById = await controller.GetSurveyWithoutQuestionsById(expectedSurvey.Id);
+        var surveyById = await _controller.GetSurveyWithoutQuestionsById(expectedSurvey.Id);
 
         var okObjectResult = Assert.IsType<OkObjectResult>(surveyById.Result);
 
@@ -125,19 +124,20 @@ public class SurveyControllerTest
             HackmanSubcategory.DELIMITED, HackmanSubcomponent.SENSE_OF_URGENCY, Position);
 
         var template = new Template.Domain.Template("Template name", new List<IQuestion>() { hackmanQuestion }, 1);
-        var expectedSurvey = new Survey.Domain.Survey(Guid.NewGuid(), new User.Domain.User(Guid.NewGuid(), "Lucia"), SurveyStatus.Draft,
+        var expectedSurvey = new Survey.Domain.Survey(Guid.NewGuid(), new User.Domain.User(Guid.NewGuid(), "Lucia"),
+            SurveyStatus.Draft,
             DateTime.Parse("2023-08-09T07:38:04+0000"), "Title", "description", new List<SurveyResponse>(),
             team, template);
-        var controller = new SurveyController(_serviceMock.Object, _logger);
-        _serviceMock.Setup(service => service.GetSurveyQuestionsBySurveyId(expectedSurvey.Id)).ReturnsAsync(expectedSurvey.Template.Questions);
-        
-        var questionsFromSurvey = await controller.GetSurveyQuestionsBySurveyId(expectedSurvey.Id);
-        
+        _serviceMock.Setup(service => service.GetSurveyQuestionsBySurveyId(expectedSurvey.Id))
+            .ReturnsAsync(expectedSurvey.Template.Questions);
+
+        var questionsFromSurvey = await _controller.GetSurveyQuestionsBySurveyId(expectedSurvey.Id);
+
         _serviceMock.Verify(_ => _.GetSurveyQuestionsBySurveyId(expectedSurvey.Id));
 
         var okObjectResult = Assert.IsType<OkObjectResult>(questionsFromSurvey.Result);
 
-        Assert.Contains(hackmanQuestion, (IEnumerable<IQuestion>) okObjectResult.Value);
+        Assert.Contains(hackmanQuestion, (IEnumerable<IQuestion>)okObjectResult.Value);
     }
 
     [Fact]
@@ -148,8 +148,7 @@ public class SurveyControllerTest
         _serviceMock.Setup(service => service.GetSurveyWithoutQuestionsById(surveyId))
             .ThrowsAsync(new NotFoundException("Survey not found"));
 
-        var controller = new SurveyController(_serviceMock.Object, _logger);
-        var surveyById = await controller.GetSurveyWithoutQuestionsById(surveyId);
+        var surveyById = await _controller.GetSurveyWithoutQuestionsById(surveyId);
 
         var okObjectResult = Assert.IsType<ObjectResult>(surveyById.Result);
 
@@ -164,8 +163,7 @@ public class SurveyControllerTest
         _serviceMock.Setup(service => service.GetSurveyWithoutQuestionsById(surveyId))
             .ThrowsAsync(new Exception());
 
-        var controller = new SurveyController(_serviceMock.Object, _logger);
-        var surveyById = await controller.GetSurveyWithoutQuestionsById(surveyId);
+        var surveyById = await _controller.GetSurveyWithoutQuestionsById(surveyId);
 
         var okObjectResult = Assert.IsType<ObjectResult>(surveyById.Result);
 
@@ -179,9 +177,8 @@ public class SurveyControllerTest
         var surveyService = new Mock<ISurveyService>();
 
         var logger = Mock.Of<ILogger<TeamController>>();
-        var surveyController = new SurveyController(surveyService.Object, _logger);
 
-        var allSurveysFromTeam = await surveyController.GetAllSurveysFromTeam(teamId);
+        var allSurveysFromTeam = await _controller.GetAllSurveysFromTeam(teamId);
         Assert.IsType<OkObjectResult>(allSurveysFromTeam.Result);
     }
 
@@ -192,9 +189,8 @@ public class SurveyControllerTest
         var surveyService = new Mock<ISurveyService>();
 
         var logger = Mock.Of<ILogger<TeamController>>();
-        var surveyController = new SurveyController(surveyService.Object, _logger);
 
-        var allSurveysFromTeam = await surveyController.GetAllSurveysFromTeam(teamId);
+        var allSurveysFromTeam = await _controller.GetAllSurveysFromTeam(teamId);
         var responseObject = Assert.IsType<OkObjectResult>(allSurveysFromTeam.Result);
         Assert.IsAssignableFrom<IEnumerable<Survey.Domain.Survey>>(responseObject.Value);
     }
@@ -237,5 +233,40 @@ public class SurveyControllerTest
 
         var resultObject = Assert.IsType<ObjectResult>(allSurveysFromTeam.Result);
         Assert.Equal(StatusCodes.Status500InternalServerError, resultObject.StatusCode);
+    }
+
+
+    [Fact]
+    public async Task ShouldCallServiceWithDTOFromBodyWhenCallingAnswerSurveyAndReturningCreatedResult()
+    {
+        var survey = SurveyBuilder.ASurvey().Build();
+        var teamMember = TeamMemberBuilder.ATeamMember().Build();
+        List<SurveyResponse> responses = new List<SurveyResponse>();
+        AnswerSurveyDto answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, responses);
+
+        var actionResult = await _controller.AnswerSurvey(answerSurveyDto);
+        Assert.IsType<CreatedResult>(actionResult);
+
+        _serviceMock.Verify(service => service.AnswerSurvey(answerSurveyDto));
+    }
+
+
+    [Fact]
+    public async Task ShouldReturnErrorIfSurveyResponseCouldNotBeCreated()
+    {
+        var survey = SurveyBuilder.ASurvey().Build();
+        var teamMember = TeamMemberBuilder.ATeamMember().Build();
+        List<SurveyResponse> responses = new List<SurveyResponse>();
+        AnswerSurveyDto answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, responses);
+        var connectionToRepositoryUnsuccessfulException =
+            new ConnectionToRepositoryUnsuccessfulException("Cannot create survey response.");
+        _serviceMock.Setup(service => service.AnswerSurvey(answerSurveyDto))
+            .ThrowsAsync(connectionToRepositoryUnsuccessfulException);
+
+        var actionResult = (ObjectResult)await _controller.AnswerSurvey(answerSurveyDto);
+        Assert.IsType<ObjectResult>(actionResult);
+
+        Assert.Equal(StatusCodes.Status500InternalServerError, actionResult.StatusCode);
+        Assert.Equal(connectionToRepositoryUnsuccessfulException.Message,actionResult.Value);
     }
 }

@@ -69,4 +69,9 @@ public class SurveyService : ISurveyService
         var surveyById = await _surveyRepository.GetSurveyById(expectedSurveyId);
         return surveyById.Template.Questions;
     }
+
+    public Task AnswerSurvey(AnswerSurveyDto answerSurveyDto)
+    {
+        throw new NotImplementedException();
+    }
 }

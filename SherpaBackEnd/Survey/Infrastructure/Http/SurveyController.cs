@@ -90,6 +90,16 @@ public class SurveyController
     [HttpPost("/survey/{surveyId:guid}/team-members/{teamMembersId:guid}")]
     public async Task<IActionResult> AnswerSurvey(AnswerSurveyDto answerSurveyDto)
     {
-        throw new NotImplementedException();
+        try
+        {
+            await _surveyService.AnswerSurvey(answerSurveyDto);
+            return new CreatedResult("", null);
+        }
+        catch (Exception exception)
+        {
+            Console.WriteLine(exception);
+            return new ObjectResult(exception)
+                { StatusCode = StatusCodes.Status500InternalServerError, Value = exception.Message };
+        }
     }
 }
