@@ -16,7 +16,6 @@ namespace SherpaBackEnd.Tests.SurveyNotification.Application;
 public class SurveyNotificationServiceTest
 {
     private Mock<ISurveyRepository> _surveyRepository;
-    private SurveyNotificationService _surveyNotificationService;
     private CreateSurveyNotificationsDto _createSurveyNotificationsDto = new CreateSurveyNotificationsDto(_surveyId);
     private static Guid _surveyId = Guid.NewGuid();
     private Mock<ISurveyNotificationsRepository> _surveyNotificationsRepository;
@@ -27,13 +26,18 @@ public class SurveyNotificationServiceTest
         _surveyRepository = new Mock<ISurveyRepository>();
         _surveyNotificationsRepository = new Mock<ISurveyNotificationsRepository>();
         _emailTemplateFactory = new Mock<IEmailTemplateFactory>();
-        _surveyNotificationService = new SurveyNotificationService(_surveyRepository.Object, _surveyNotificationsRepository.Object, _emailTemplateFactory.Object);
     }
 
     [Fact]
     public async Task ShouldRetrieveTheSurveyWithTheSurveyIdInTheDto()
     {
-        await _surveyNotificationService.LaunchSurveyNotificationsFor(_createSurveyNotificationsDto);
+        var surveyNotificationId = Guid.NewGuid();
+        var surveyNotificationService =
+            new TestableSurveyNotificationService(_surveyRepository.Object, _surveyNotificationsRepository.Object, _emailTemplateFactory.Object)
+            {
+                SurveyNotificationId = surveyNotificationId
+            };
+        await surveyNotificationService.LaunchSurveyNotificationsFor(_createSurveyNotificationsDto);
         
         _surveyRepository.Verify(repository => repository.GetSurveyById(_createSurveyNotificationsDto.SurveyId));
     }
