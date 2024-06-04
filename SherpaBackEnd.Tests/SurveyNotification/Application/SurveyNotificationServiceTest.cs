@@ -1,5 +1,6 @@
 using JetBrains.Annotations;
 using Moq;
+using SherpaBackEnd.Email.Application;
 using SherpaBackEnd.Survey.Domain.Persistence;
 using SherpaBackEnd.SurveyNotification.Application;
 using SherpaBackEnd.SurveyNotification.Infrastructure.Http.Dto;
@@ -34,12 +35,13 @@ public class SurveyNotificationServiceTest
         
         _surveyRepository.Verify(repository => repository.GetSurveyById(_createSurveyNotificationsDto.SurveyId));
     }
-
+    
     [Fact]
-    public async Task ShouldCreateSurveyNotificationForEachTeamMember()
+    public async Task ShouldCreateSurveyNotificationForTeamMembers()
     {
         var jane = ATeamMember().WithFullName("Jane Doe").Build();
-        var teamMembers = new List<TeamMember>(){jane};
+        var john = ATeamMember().WithFullName("John Doe").Build();
+        var teamMembers = new List<TeamMember>(){jane, john};
         var team = ATeam().WithTeamMembers(teamMembers).Build();
         var survey = ASurvey().WithId(_surveyId).WithTeam(team).Build();
         var surveyNotificationId = Guid.NewGuid();
@@ -48,15 +50,20 @@ public class SurveyNotificationServiceTest
                 {
                     SurveyNotificationId = surveyNotificationId
                 };
-        var surveyNotification = new SherpaBackEnd.SurveyNotification.Domain.SurveyNotification(surveyNotificationId, _surveyId, jane.Id);
+        var janeSurveyNotification = new SherpaBackEnd.SurveyNotification.Domain.SurveyNotification(surveyNotificationId, survey, jane);
+        var johnSurveyNotification = new SherpaBackEnd.SurveyNotification.Domain.SurveyNotification(surveyNotificationId, survey, john);
+        var surveyNotifications =
+            new List<SherpaBackEnd.SurveyNotification.Domain.SurveyNotification>(){janeSurveyNotification, johnSurveyNotification};
+        
         _surveyRepository.Setup(repository => repository.GetSurveyById(_surveyId))
             .ReturnsAsync(survey);
         
         await surveyNotificationService.LaunchSurveyNotificationsFor(_createSurveyNotificationsDto);
 
-        _surveyNotificationsRepository.Verify(repository => repository.CreateSurveyNotification(surveyNotification));
-
+        _surveyNotificationsRepository.Verify(repository => repository.CreateManySurveyNotification(surveyNotifications));
     }
+    
+    
 
     class TestableSurveyNotificationService :  SurveyNotificationService
     {

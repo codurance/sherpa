@@ -1,21 +1,23 @@
+using SherpaBackEnd.Team.Domain;
+
 namespace SherpaBackEnd.SurveyNotification.Domain;
 
 public class SurveyNotification
 {
-    private readonly Guid _surveyId;
-    private readonly Guid _janeId;
+    private readonly Survey.Domain.Survey _survey;
+    private readonly TeamMember _teamMember;
     private readonly Guid _id;
 
-    public SurveyNotification(Guid id, Guid surveyId, Guid janeId)
+    public SurveyNotification(Guid id, Survey.Domain.Survey survey, TeamMember teamMember)
     {
         _id = id;
-        _surveyId = surveyId;
-        _janeId = janeId;
+        _survey = survey;
+        _teamMember = teamMember;
     }
 
     protected bool Equals(SurveyNotification other)
     {
-        return _surveyId.Equals(other._surveyId) && _janeId.Equals(other._janeId) && _id.Equals(other._id);
+        return _id.Equals(other._id);
     }
 
     public override bool Equals(object? obj)
@@ -28,16 +30,6 @@ public class SurveyNotification
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(_surveyId, _janeId, _id);
-    }
-
-    public static bool operator ==(SurveyNotification? left, SurveyNotification? right)
-    {
-        return Equals(left, right);
-    }
-
-    public static bool operator !=(SurveyNotification? left, SurveyNotification? right)
-    {
-        return !Equals(left, right);
+        return _id.GetHashCode();
     }
 }
