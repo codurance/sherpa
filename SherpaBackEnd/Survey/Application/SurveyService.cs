@@ -72,6 +72,6 @@ public class SurveyService : ISurveyService
 
     public Task AnswerSurvey(AnswerSurveyDto answerSurveyDto)
     {
-        throw new NotImplementedException();
+        return null;
     }
 }

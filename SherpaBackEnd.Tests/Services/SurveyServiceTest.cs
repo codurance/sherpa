@@ -17,6 +17,7 @@ public class SurveyServiceTest
     private Mock<ITeamRepository> _teamRepo;
     private Mock<ITemplateRepository> _templateRepo;
     private readonly ITestOutputHelper output;
+    private SurveyService _service;
 
     public SurveyServiceTest(ITestOutputHelper output)
     {
@@ -24,6 +25,7 @@ public class SurveyServiceTest
         _surveyRepo = new Mock<ISurveyRepository>();
         _teamRepo = new Mock<ITeamRepository>();
         _templateRepo = new Mock<ITemplateRepository>();
+        _service = new SurveyService(_surveyRepo.Object, _teamRepo.Object, _templateRepo.Object);
     }
 
     [Fact]
@@ -32,16 +34,14 @@ public class SurveyServiceTest
         var team = new Team.Domain.Team(Guid.NewGuid(), "Demo team");
         var template = new Template.Domain.Template("demo", Array.Empty<IQuestion>(), 30);
 
-        var service = new SurveyService(_surveyRepo.Object, _teamRepo.Object, _templateRepo.Object);
-
         _teamRepo.Setup(repository => repository.GetTeamByIdAsync(team.Id)).ReturnsAsync(team);
         _templateRepo.Setup(repository => repository.GetTemplateByName(template.Name)).ReturnsAsync(template);
 
         var createSurveyDto = new CreateSurveyDto(Guid.NewGuid(), team.Id, template.Name, "Title", "Description",
             DateTime.Parse("2023-08-09T07:38:04+0000"));
-        await service.CreateSurvey(createSurveyDto);
+        await _service.CreateSurvey(createSurveyDto);
 
-        var expectedSurvey = new Survey.Domain.Survey(createSurveyDto.SurveyId, new User.Domain.User(service.DefaultUserId, "Lucia"),
+        var expectedSurvey = new Survey.Domain.Survey(createSurveyDto.SurveyId, new User.Domain.User(_service.DefaultUserId, "Lucia"),
             SurveyStatus.Draft, createSurveyDto.Deadline, createSurveyDto.Title, createSurveyDto.Description,
             new List<SurveyResponse>(), team, template);
         var surveyRepoInvocation = _surveyRepo.Invocations[0];
@@ -53,13 +53,12 @@ public class SurveyServiceTest
     public async Task ShouldReturnSurveyGivenByTheRepository()
     {
         var surveyId = Guid.NewGuid();
-        var service = new SurveyService(_surveyRepo.Object, _teamRepo.Object, _templateRepo.Object);
-        var expectedSurvey = new Survey.Domain.Survey(Guid.NewGuid(), new User.Domain.User(service.DefaultUserId, "Lucia"), SurveyStatus.Draft,
+        var expectedSurvey = new Survey.Domain.Survey(Guid.NewGuid(), new User.Domain.User(_service.DefaultUserId, "Lucia"), SurveyStatus.Draft,
             DateTime.Parse("2023-08-09T07:38:04+0000"), "Title", "Description", new List<SurveyResponse>(),
             new Team.Domain.Team(Guid.NewGuid(), "Demo team"), new Template.Domain.Template("demo", Array.Empty<IQuestion>(), 30));
         _surveyRepo.Setup(repository => repository.GetSurveyById(surveyId)).ReturnsAsync(expectedSurvey);
 
-        var receivedSurveyWithoutQuestions = await service.GetSurveyWithoutQuestionsById(surveyId);
+        var receivedSurveyWithoutQuestions = await _service.GetSurveyWithoutQuestionsById(surveyId);
 
         _surveyRepo.Verify(repository => repository.GetSurveyById(surveyId));
         Assert.Equal(expectedSurvey.Id, receivedSurveyWithoutQuestions.Id);
@@ -69,20 +68,18 @@ public class SurveyServiceTest
     public async Task ShouldThrowNotFoundExceptionIfRepoReturnsNull()
     {
         var surveyId = Guid.NewGuid();
-        var service = new SurveyService(_surveyRepo.Object, _teamRepo.Object, _templateRepo.Object);
         _surveyRepo.Setup(repository => repository.GetSurveyById(surveyId)).ReturnsAsync((Survey.Domain.Survey?)null);
 
 
-        await Assert.ThrowsAsync<NotFoundException>(async () => await service.GetSurveyWithoutQuestionsById(surveyId));
+        await Assert.ThrowsAsync<NotFoundException>(async () => await _service.GetSurveyWithoutQuestionsById(surveyId));
     }
 
     [Fact]
     public async Task ShouldCallSurveyRepositoryToGetAllSurveysFromTeam()
     {
         var teamId = Guid.NewGuid();
-        var service = new SurveyService(_surveyRepo.Object, _teamRepo.Object, _templateRepo.Object);
 
-        await service.GetAllSurveysFromTeam(teamId);
+        await _service.GetAllSurveysFromTeam(teamId);
 
         _surveyRepo.Verify(_ => _.GetAllSurveysFromTeam(teamId), Times.Once);
     }
@@ -91,13 +88,12 @@ public class SurveyServiceTest
     public async Task ShouldThrowErrorIfConnectionToRepositoryNotSuccessful()
     {
         var teamId = Guid.NewGuid();
-        var service = new SurveyService(_surveyRepo.Object, _teamRepo.Object, _templateRepo.Object);
 
         _surveyRepo.Setup(_ => _.GetAllSurveysFromTeam(teamId)).ThrowsAsync(new Exception());
 
         var exceptionThrown =
             await Assert.ThrowsAsync<ConnectionToRepositoryUnsuccessfulException>(async () =>
-                await service.GetAllSurveysFromTeam(teamId));
+                await _service.GetAllSurveysFromTeam(teamId));
         Assert.IsType<ConnectionToRepositoryUnsuccessfulException>(exceptionThrown);
     }
 
@@ -105,7 +101,6 @@ public class SurveyServiceTest
     public async Task ShouldCallSurveyRepositoryToGetSurveyQuestionsBySurveyId()
     {
         var surveyId = Guid.NewGuid();
-        var service = new SurveyService(_surveyRepo.Object, _teamRepo.Object, _templateRepo.Object);
         var QuestionInSpanish = "Question in spanish";
         var QuestionInEnglish = "Question in english";
         var ResponseSpanish1 = "SPA_1";
@@ -132,14 +127,21 @@ public class SurveyServiceTest
             }, Reverse,
             HackmanComponent.INTERPERSONAL_PEER_COACHING,
             HackmanSubcategory.DELIMITED, HackmanSubcomponent.SENSE_OF_URGENCY, Position);
-        var expectedSurvey = new Survey.Domain.Survey(Guid.NewGuid(), new User.Domain.User(service.DefaultUserId, "Lucia"), SurveyStatus.Draft,
+        var expectedSurvey = new Survey.Domain.Survey(Guid.NewGuid(), new User.Domain.User(_service.DefaultUserId, "Lucia"), SurveyStatus.Draft,
             DateTime.Parse("2023-08-09T07:38:04+0000"), "Title", "Description", new List<SurveyResponse>(),
             new Team.Domain.Team(Guid.NewGuid(), "Demo team"), new Template.Domain.Template("demo", new List<IQuestion>() { hackmanQuestion }, 30));
         _surveyRepo.Setup(repository => repository.GetSurveyById(surveyId)).ReturnsAsync(expectedSurvey);
 
-        var questionsReceived = await service.GetSurveyQuestionsBySurveyId(surveyId);
+        var questionsReceived = await _service.GetSurveyQuestionsBySurveyId(surveyId);
 
         _surveyRepo.Verify(repository => repository.GetSurveyById(surveyId));
         Assert.Contains(hackmanQuestion, questionsReceived);
+    }
+
+
+    [Fact]
+    public void METHOD()
+    {
+        
     }
 }
