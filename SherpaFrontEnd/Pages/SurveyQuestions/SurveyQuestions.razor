@@ -24,8 +24,8 @@
         <div class="flex w-3/4 flex-col items-center rounded-lg border bg-white px-16 py-2 pb-10 max-w-[740px] border-primary-dark-100">
             @foreach (var question in _questions.OrderBy(q => q.Position))
             {
-                <label>
-                    <p class="font-medium text-[#1D233C] mb-4 mt-14 text-center">
+                <label class="self-start">
+                    <p class="font-bold text-[#1D233C] mb-4 mt-14 text-left">
                         @(_questions.OrderBy(q => q.Position).ToList().IndexOf(question) + 1). @question.Statement[_selectedLanguage]
                     </p>
                 </label>
