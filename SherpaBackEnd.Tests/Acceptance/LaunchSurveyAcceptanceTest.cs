@@ -104,7 +104,7 @@ public class LaunchSurveyAcceptanceTest: IDisposable
         var surveyNotificationId = Guid.NewGuid();
         guidService.Setup(service => service.GenerateRandomGuid()).Returns(surveyNotificationId);
         var emailTemplateFactory = new EmailTemplateFactory();
-        var surveyNotificationService = new SurveyNotificationService(surveyRepository, surveyNotificationRepository, emailTemplateFactory, guidService.Object);
+        var surveyNotificationService = new SurveyNotificationService(surveyRepository, surveyNotificationRepository, emailTemplateFactory, emailService.Object, guidService.Object);
         var launchSurveyController = new SurveyNotificationController(surveyNotificationService);
         
         var launchSurveyDto = new CreateSurveyNotificationsDto(Guid.NewGuid());
@@ -116,9 +116,11 @@ public class LaunchSurveyAcceptanceTest: IDisposable
         var recipient = teamMember.Email;
         var url = "sherpa.com/answer-survey/"+surveyNotificationId;
 
-        var templateRequest = new EmailTemplateRequest(recipient, url);
+        var templateRequests = new List<EmailTemplateRequest>(){
+            new EmailTemplateRequest(recipient, url)
+        };
         Assert.IsType<CreatedResult>(actionResult);
-        emailService.Verify(service => service.SendEmailWith(templateRequest));
+        emailService.Verify(service => service.SendEmailWith(templateRequests));
     }
 
     public void Dispose()

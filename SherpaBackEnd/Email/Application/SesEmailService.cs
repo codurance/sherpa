@@ -51,7 +51,7 @@ public class SesEmailService : IEmailService
         return httpStatusCode;
     }
 
-    public Task<HttpStatusCode> SendEmailWith(EmailTemplateRequest templateRequest)
+    public async Task<HttpStatusCode> SendEmailWith(List<EmailTemplateRequest> templateRequest)
     {
         throw new NotImplementedException();
     }

@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices;
+using SherpaBackEnd.Email;
 using SherpaBackEnd.Email.Application;
 using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Shared.Services;
@@ -14,14 +15,17 @@ public class SurveyNotificationService : ISurveyNotificationService
     private readonly ISurveyNotificationsRepository _surveyNotificationsRepository;
     private readonly IEmailTemplateFactory _emailTemplateFactory;
     private readonly IGuidService? _guidService;
+    private readonly IEmailService _emailService;
 
     public SurveyNotificationService(ISurveyRepository surveyRepository,
-        ISurveyNotificationsRepository surveyNotificationsRepository, IEmailTemplateFactory emailTemplateFactory, [Optional] IGuidService? guidService)
+        ISurveyNotificationsRepository surveyNotificationsRepository, IEmailTemplateFactory emailTemplateFactory,
+        IEmailService emailService, [Optional] IGuidService? guidService)
     {
         _surveyRepository = surveyRepository;
         _surveyNotificationsRepository = surveyNotificationsRepository;
         _emailTemplateFactory = emailTemplateFactory;
         _guidService = guidService;
+        _emailService = emailService;
     }
 
     public async Task LaunchSurveyNotificationsFor(CreateSurveyNotificationsDto createSurveyNotificationsDto)
@@ -34,8 +38,9 @@ public class SurveyNotificationService : ISurveyNotificationService
             new Domain.SurveyNotification(GenerateId(), survey, teamMember)));
 
         await CreateManySurveyNotification(surveyNotifications);
-            
-        _emailTemplateFactory.CreateEmailTemplate(surveyNotifications);
+
+        var emailTemplateRequests = _emailTemplateFactory.CreateEmailTemplate(surveyNotifications);
+        await _emailService.SendEmailWith(emailTemplateRequests);
     }
 
     private async Task CreateManySurveyNotification(List<Domain.SurveyNotification> surveyNotifications)
@@ -71,6 +76,7 @@ public class SurveyNotificationService : ISurveyNotificationService
         return survey;
     }
 
+    // TODO remove method by implementing _guidService in tests
     protected virtual Guid GenerateId()
     {
         return _guidService?.GenerateRandomGuid() ?? Guid.NewGuid();

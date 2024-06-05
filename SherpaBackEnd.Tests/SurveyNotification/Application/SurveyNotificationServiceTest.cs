@@ -1,5 +1,6 @@
 using JetBrains.Annotations;
 using Moq;
+using SherpaBackEnd.Email;
 using SherpaBackEnd.Email.Application;
 using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Survey.Domain.Persistence;
@@ -22,15 +23,17 @@ public class SurveyNotificationServiceTest
     private Mock<ISurveyNotificationsRepository> _surveyNotificationsRepository;
     private Mock<IEmailTemplateFactory> _emailTemplateFactory;
     private SurveyNotificationService _surveyNotificationService;
+    private Mock<IEmailService> _emailService;
 
     public SurveyNotificationServiceTest()
     {
         _surveyRepository = new Mock<ISurveyRepository>();
         _surveyNotificationsRepository = new Mock<ISurveyNotificationsRepository>();
         _emailTemplateFactory = new Mock<IEmailTemplateFactory>();
+        _emailService = new Mock<IEmailService>();
         _surveyNotificationService = new SurveyNotificationService(_surveyRepository.Object,
             _surveyNotificationsRepository.Object,
-            _emailTemplateFactory.Object);
+            _emailTemplateFactory.Object, _emailService.Object);
     }
 
     [Fact]
@@ -57,7 +60,7 @@ public class SurveyNotificationServiceTest
         var surveyNotificationId = Guid.NewGuid();
         var testableSurveyNotificationService =
             new TestableSurveyNotificationService(_surveyRepository.Object, _surveyNotificationsRepository.Object,
-                _emailTemplateFactory.Object)
+                _emailTemplateFactory.Object, _emailService.Object)
             {
                 SurveyNotificationId = surveyNotificationId
             };
@@ -89,7 +92,7 @@ public class SurveyNotificationServiceTest
         var surveyNotificationId = Guid.NewGuid();
         var testableSurveyNotificationService =
             new TestableSurveyNotificationService(_surveyRepository.Object, _surveyNotificationsRepository.Object,
-                _emailTemplateFactory.Object)
+                _emailTemplateFactory.Object, _emailService.Object)
             {
                 SurveyNotificationId = surveyNotificationId
             };
@@ -110,6 +113,37 @@ public class SurveyNotificationServiceTest
     }
 
     [Fact]
+    public async Task ShouldSendEmailWithTemplateRequests()
+    {
+        var jane = ATeamMember().WithFullName("Jane Doe").Build();
+        var teamMembers = new List<TeamMember>() { jane };
+        var team = ATeam().WithTeamMembers(teamMembers).Build();
+        var survey = ASurvey().WithId(_surveyId).WithTeam(team).Build();
+        var surveyNotificationId = Guid.NewGuid();
+        var testableSurveyNotificationService =
+            new TestableSurveyNotificationService(_surveyRepository.Object, _surveyNotificationsRepository.Object,
+                _emailTemplateFactory.Object, _emailService.Object)
+            {
+                SurveyNotificationId = surveyNotificationId
+            };
+        var janeSurveyNotification =
+            new SherpaBackEnd.SurveyNotification.Domain.SurveyNotification(surveyNotificationId, survey, jane);
+        var surveyNotifications =
+            new List<SherpaBackEnd.SurveyNotification.Domain.SurveyNotification>()
+                { janeSurveyNotification };
+
+        _surveyRepository.Setup(repository => repository.GetSurveyById(_surveyId))
+            .ReturnsAsync(survey);
+        var templateRequests = new List<EmailTemplateRequest>();
+        _emailTemplateFactory.Setup(factory => factory.CreateEmailTemplate(surveyNotifications))
+            .Returns(templateRequests);
+
+        await testableSurveyNotificationService.LaunchSurveyNotificationsFor(_createSurveyNotificationsDto);
+
+        _emailService.Verify(service => service.SendEmailWith(templateRequests));
+    }
+
+    [Fact]
     public async Task ShouldThrowErrorIfGetSurveyByIdIsNotSuccessful()
     {
         _surveyRepository.Setup(repository =>
@@ -120,7 +154,6 @@ public class SurveyNotificationServiceTest
 
         Assert.IsType<ConnectionToRepositoryUnsuccessfulException>(exceptionThrown);
     }
-
 
     [Fact]
     public async Task ShouldThrowErrorIfGetSurveyByIdIsNotFound()
@@ -144,20 +177,20 @@ public class SurveyNotificationServiceTest
         _surveyNotificationsRepository
             .Setup(repository => repository.CreateManySurveyNotification(surveyNotifications))
             .ThrowsAsync(new Exception());
-        
+
         var exceptionThrown = await Assert.ThrowsAsync<ConnectionToRepositoryUnsuccessfulException>(async () =>
             await _surveyNotificationService.LaunchSurveyNotificationsFor(_createSurveyNotificationsDto));
         Assert.IsType<ConnectionToRepositoryUnsuccessfulException>(exceptionThrown);
     }
-    
+
     class TestableSurveyNotificationService : SurveyNotificationService
     {
         public Guid SurveyNotificationId { get; set; }
 
         public TestableSurveyNotificationService(ISurveyRepository surveyRepository,
             ISurveyNotificationsRepository surveyNotificationsRepository,
-            IEmailTemplateFactory emailTemplateFactory) : base(surveyRepository, surveyNotificationsRepository,
-            emailTemplateFactory)
+            IEmailTemplateFactory emailTemplateFactory, IEmailService emailService) : base(surveyRepository, surveyNotificationsRepository,
+            emailTemplateFactory, emailService)
         {
         }
 
