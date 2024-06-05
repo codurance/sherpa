@@ -24,4 +24,9 @@ public class Survey
         Team = team;
         Template = template;
     }
+
+    public void AnswerSurvey(SurveyResponse response)
+    {
+        Responses.Add(response);
+    }
 }

@@ -72,6 +72,8 @@ public class SurveyService : ISurveyService
 
     public async Task AnswerSurvey(AnswerSurveyDto answerSurveyDto)
     {
-        await _surveyRepository.GetSurveyById(answerSurveyDto.SurveyId);
+        var survey = await _surveyRepository.GetSurveyById(answerSurveyDto.SurveyId);
+        
+        survey.AnswerSurvey(answerSurveyDto.Response);
     }
 }
