@@ -95,6 +95,7 @@ public class SurveyService : ISurveyService
                 case NotFoundException:
                 case SurveyAlreadyAnsweredException:
                 case SurveyNotAssignedToTeamMemberException:
+                case SurveyNotCompleteException:
                     throw;
                 default:
                     throw new ConnectionToRepositoryUnsuccessfulException("Unable to update answered survey");

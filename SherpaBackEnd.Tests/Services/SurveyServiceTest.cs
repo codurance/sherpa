@@ -150,9 +150,10 @@ public class SurveyServiceTest
     [Fact]
     public async Task ShouldRetrieveSurveyWhenAnswerSurveyIsCalled()
     {
+        var template = TemplateBuilder.ATemplate().Build();
         var teamMember = TeamMemberBuilder.ATeamMember().Build();
-        var team = TeamBuilder.ATeam().WithTeamMembers(new List<TeamMember>(){teamMember}).Build();
-        var survey = SurveyBuilder.ASurvey().WithTeam(team).Build();
+        var team = TeamBuilder.ATeam().WithTeamMembers(new List<TeamMember>() { teamMember }).Build();
+        var survey = SurveyBuilder.ASurvey().WithTeam(team).WithTemplate(template).Build();
         var response = new SurveyResponse(teamMember.Id);
         var answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, response);
         _surveyRepository.Setup(repository => repository.GetSurveyById(survey.Id)).ReturnsAsync(survey);
@@ -165,10 +166,11 @@ public class SurveyServiceTest
     [Fact]
     public async Task ShouldAnswerSurveyWithResponseInDto()
     {
+        var template = TemplateBuilder.ATemplate().Build();
         var teamMember = TeamMemberBuilder.ATeamMember().Build();
-        var team = TeamBuilder.ATeam().WithTeamMembers(new List<TeamMember>(){teamMember}).Build();
-        var survey = SurveyBuilder.ASurvey().WithTeam(team).Build();
-        var response = new SurveyResponse(teamMember.Id);
+        var team = TeamBuilder.ATeam().WithTeamMembers(new List<TeamMember>() { teamMember }).Build();
+        var survey = SurveyBuilder.ASurvey().WithTeam(team).WithTemplate(template).Build();
+        var response = new SurveyResponse(teamMember.Id, new List<QuestionResponse>());
         var answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, response);
         _surveyRepository.Setup(repository => repository.GetSurveyById(survey.Id)).ReturnsAsync(survey);
 
@@ -180,9 +182,10 @@ public class SurveyServiceTest
     [Fact]
     public async Task ShouldSaveAnsweredSurveyInDatabase()
     {
+        var template = TemplateBuilder.ATemplate().Build();
         var teamMember = TeamMemberBuilder.ATeamMember().Build();
-        var team = TeamBuilder.ATeam().WithTeamMembers(new List<TeamMember>(){teamMember}).Build();
-        var survey = SurveyBuilder.ASurvey().WithTeam(team).Build();
+        var team = TeamBuilder.ATeam().WithTeamMembers(new List<TeamMember>() { teamMember }).Build();
+        var survey = SurveyBuilder.ASurvey().WithTeam(team).WithTemplate(template).Build();
         var response = new SurveyResponse(teamMember.Id);
         var answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, response);
         _surveyRepository.Setup(repository => repository.GetSurveyById(survey.Id)).ReturnsAsync(survey);
@@ -200,8 +203,9 @@ public class SurveyServiceTest
         var response = new SurveyResponse(teamMember.Id);
         var answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, response);
 
-        var notFoundException = await Assert.ThrowsAsync<NotFoundException>(async () => await _service.AnswerSurvey(answerSurveyDto));
-        
+        var notFoundException =
+            await Assert.ThrowsAsync<NotFoundException>(async () => await _service.AnswerSurvey(answerSurveyDto));
+
         Assert.Equal("Survey not found", notFoundException.Message);
     }
 
@@ -214,8 +218,10 @@ public class SurveyServiceTest
         var answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, response);
         _surveyRepository.Setup(repository => repository.GetSurveyById(survey.Id)).ThrowsAsync(new Exception());
 
-        var connectionToRepositoryUnsuccessfulException = await Assert.ThrowsAsync<ConnectionToRepositoryUnsuccessfulException>(async () => await _service.AnswerSurvey(answerSurveyDto));
-        
+        var connectionToRepositoryUnsuccessfulException =
+            await Assert.ThrowsAsync<ConnectionToRepositoryUnsuccessfulException>(async () =>
+                await _service.AnswerSurvey(answerSurveyDto));
+
         Assert.Equal("Unable to update answered survey", connectionToRepositoryUnsuccessfulException.Message);
     }
 
@@ -223,16 +229,17 @@ public class SurveyServiceTest
     public async Task ShouldThrowSurveyAlreadyAnsweredExceptionIfSurveyIsAlreadyAnswered()
     {
         var teamMember = TeamMemberBuilder.ATeamMember().Build();
-        var team = TeamBuilder.ATeam().WithTeamMembers(new List<TeamMember>(){teamMember}).Build();
+        var team = TeamBuilder.ATeam().WithTeamMembers(new List<TeamMember>() { teamMember }).Build();
         var response = new SurveyResponse(teamMember.Id);
-        var survey = SurveyBuilder.ASurvey().WithTeam(team).WithResponses(new List<SurveyResponse>(){response}).Build();
+        var survey = SurveyBuilder.ASurvey().WithTeam(team).WithResponses(new List<SurveyResponse>() { response })
+            .Build();
         var answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, response);
         _surveyRepository.Setup(repository => repository.GetSurveyById(survey.Id)).ReturnsAsync(survey);
 
 
         var surveyAlreadyAnsweredException = await Assert.ThrowsAsync<SurveyAlreadyAnsweredException>(async () =>
             await _service.AnswerSurvey(answerSurveyDto));
-        
+
         Assert.Equal($"Survey already answered by {teamMember.Id}", surveyAlreadyAnsweredException.Message);
     }
 
@@ -247,8 +254,65 @@ public class SurveyServiceTest
         _surveyRepository.Setup(repository => repository.GetSurveyById(survey.Id)).ReturnsAsync(survey);
 
 
-        var surveyNotAssignedToTeamMemberException = await Assert.ThrowsAsync<SurveyNotAssignedToTeamMemberException>(async () => await _service.AnswerSurvey(answerSurveyDto));
-        
+        var surveyNotAssignedToTeamMemberException =
+            await Assert.ThrowsAsync<SurveyNotAssignedToTeamMemberException>(async () =>
+                await _service.AnswerSurvey(answerSurveyDto));
+
         Assert.Equal($"{teamMember.Id} is not assigned to survey", surveyNotAssignedToTeamMemberException.Message);
+    }
+
+    [Fact]
+    public async Task ShouldThrowSurveyNotCompleteExceptionIfTeamMemberHasNotAnsweredAllQuestions()
+    {
+        var teamMember = TeamMemberBuilder.ATeamMember().Build();
+        var team = TeamBuilder.ATeam().WithTeamMembers(new List<TeamMember>() { teamMember }).Build();
+        IEnumerable<IQuestion> questions = new IQuestion[]
+        {
+            new HackmanQuestion(new Dictionary<string, string>()
+                {
+                    { Languages.SPANISH, "Pregunta 1" },
+                    { Languages.ENGLISH, "Question 1" },
+                }, new Dictionary<string, string[]>()
+                {
+                    { Languages.SPANISH, new[] { "1", "2", "3" } },
+                    { Languages.ENGLISH, new[] { "1", "2", "3" } }
+                }, false, HackmanComponent.INTERPERSONAL_PEER_COACHING, HackmanSubcategory.DELIMITED,
+                HackmanSubcomponent.SENSE_OF_URGENCY, 1
+            ),
+            new HackmanQuestion(new Dictionary<string, string>()
+                {
+                    { Languages.SPANISH, "Pregunta 2" },
+                    { Languages.ENGLISH, "Question 2" },
+                }, new Dictionary<string, string[]>()
+                {
+                    { Languages.SPANISH, new[] { "1", "2", "3" } },
+                    { Languages.ENGLISH, new[] { "1", "2", "3" } }
+                }, false, HackmanComponent.INTERPERSONAL_PEER_COACHING, HackmanSubcategory.DELIMITED,
+                HackmanSubcomponent.SENSE_OF_URGENCY, 2
+            ),
+            new HackmanQuestion(new Dictionary<string, string>()
+                {
+                    { Languages.SPANISH, "Pregunta 3" },
+                    { Languages.ENGLISH, "Question 3" },
+                }, new Dictionary<string, string[]>()
+                {
+                    { Languages.SPANISH, new[] { "1", "2", "3" } },
+                    { Languages.ENGLISH, new[] { "1", "2", "3" } }
+                }, false, HackmanComponent.INTERPERSONAL_PEER_COACHING, HackmanSubcategory.DELIMITED,
+                HackmanSubcomponent.SENSE_OF_URGENCY, 3
+            ),
+        };
+        var template = TemplateBuilder.ATemplate().WithQuestions(questions).Build();
+        var survey = SurveyBuilder.ASurvey().WithTeam(team).WithTemplate(template).Build();
+        var incompleteQuestionResponses = new List<QuestionResponse>()
+        {
+            new QuestionResponse(1, "1"),
+            new QuestionResponse(2, "2"),
+        };
+        var surveyResponse = new SurveyResponse(teamMember.Id, incompleteQuestionResponses);
+        var answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, surveyResponse);
+        _surveyRepository.Setup(repository => repository.GetSurveyById(survey.Id)).ReturnsAsync(survey);
+
+        await Assert.ThrowsAsync<SurveyNotCompleteException>(async () => await _service.AnswerSurvey(answerSurveyDto));
     }
 }

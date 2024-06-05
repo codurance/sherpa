@@ -327,12 +327,20 @@ public class AnswerSurveyQuestionsAcceptanceTest : IDisposable
         {
             { "name", template.Name },
             { "minutesToComplete", template.MinutesToComplete },
-            { "questions", new BsonArray(JsonConvert.SerializeObject(template.Questions)) }
+            {
+                "questions", new BsonArray()
+                {
+                    BsonDocument.Parse(JsonConvert.SerializeObject(template.Questions.ElementAt(0))),
+                    BsonDocument.Parse(JsonConvert.SerializeObject(template.Questions.ElementAt(1))),
+                    BsonDocument.Parse(JsonConvert.SerializeObject(template.Questions.ElementAt(2))),
+                }
+            }
         });
 
         // Given: A TeamMember hasn't completed all the answers
         var surveyResponse = new SurveyResponse(teamMemberId, incompleteQuestionResponses);
         var answerSurveyDto = new AnswerSurveyDto(surveyId, teamMemberId, surveyResponse);
+        var expectedMessage = new SurveyNotCompleteException().Message;
 
         // When: The response is submitted
         var actionResult = await surveyController.AnswerSurvey(answerSurveyDto);
@@ -340,7 +348,7 @@ public class AnswerSurveyQuestionsAcceptanceTest : IDisposable
         // Then: The controller should respond with BadRequest
         var badRequestResult = Assert.IsType<ObjectResult>(actionResult);
         Assert.Equal(StatusCodes.Status400BadRequest, badRequestResult.StatusCode);
-        Assert.Equal("All survey questions must be answered before submitting a response", badRequestResult.Value);
+        Assert.Equal(expectedMessage, badRequestResult.Value);
     }
 
     public void Dispose()
