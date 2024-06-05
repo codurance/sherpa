@@ -37,7 +37,7 @@ public class Survey
 
     private void CanAnswerSurvey(Guid teamMemberId)
     {
-        if (!Team.Members.Exists(member => member.Id.Equals(teamMemberId)))
+        if (!Team.IsMemberOfTeam(teamMemberId))
         {
             throw new SurveyNotAssignedToTeamMemberException($"{teamMemberId} is not assigned to survey");
         }

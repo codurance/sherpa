@@ -44,5 +44,9 @@ public class Team
     {
         IsDeleted = true;
     }
-    
+
+    public bool IsMemberOfTeam(Guid teamMemberId)
+    {
+        return this.Members.Exists(member => member.Id.Equals(teamMemberId));
+    }
 }
