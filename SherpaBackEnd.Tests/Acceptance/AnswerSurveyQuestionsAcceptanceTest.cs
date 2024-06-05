@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Moq;
+using Shared.Test.Helpers;
 using SherpaBackEnd.Shared.Infrastructure.Persistence;
 using SherpaBackEnd.Survey.Application;
 using SherpaBackEnd.Survey.Domain;
@@ -15,6 +16,7 @@ using SherpaBackEnd.Survey.Infrastructure.Persistence;
 using SherpaBackEnd.Team.Domain;
 using SherpaBackEnd.Team.Infrastructure.Persistence;
 using SherpaBackEnd.Template.Infrastructure.Persistence;
+using SherpaBackEnd.Tests.Builders;
 using static SherpaBackEnd.Tests.Builders.SurveyBuilder;
 using static SherpaBackEnd.Tests.Builders.TeamBuilder;
 using static SherpaBackEnd.Tests.Builders.TeamMemberBuilder;
@@ -66,7 +68,8 @@ public class AnswerSurveyQuestionsAcceptanceTest : IDisposable
         var surveyId = Guid.NewGuid();
         var teamMemberId = Guid.NewGuid();
         var teamId = Guid.NewGuid();
-
+        var coachId = Guid.NewGuid();
+        var coach = new User.Domain.User(coachId,"Lucia");
         var teamMember = ATeamMember()
             .WithId(teamMemberId)
             .Build();
@@ -80,6 +83,7 @@ public class AnswerSurveyQuestionsAcceptanceTest : IDisposable
             .WithId(surveyId)
             .WithTeam(team)
             .WithTemplate(template)
+            .WithCoach(coach)
             .Build();
 
         await teamRepository.AddTeamAsync(team);
@@ -96,6 +100,7 @@ public class AnswerSurveyQuestionsAcceptanceTest : IDisposable
         // Given: A TeamMember has responded to a survey
         var response = new SurveyResponse(teamMemberId);
         var answerSurveyDto = new AnswerSurveyDto(surveyId, teamMemberId, response);
+        Survey.Domain.Survey expectedSurvey = ASurvey().WithId(surveyId).WithTeam(team).WithTemplate(template).WithResponses(new List<SurveyResponse>(){response}).WithCoach(coach).Build();
 
         // When: The responses are submitted 
         var actionResult = await surveyController.AnswerSurvey(answerSurveyDto);
@@ -103,8 +108,9 @@ public class AnswerSurveyQuestionsAcceptanceTest : IDisposable
 
         // Then: The responses should be stored in the survey
         var retrievedSurvey = await surveyController.GetSurveyWithoutQuestionsById(surveyId);
-        Assert.NotNull(retrievedSurvey.Value);
-        Assert.Contains(response, retrievedSurvey.Value.Responses);
+        var okObjectResult = Assert.IsType<OkObjectResult>(retrievedSurvey.Result);
+        Assert.NotNull(okObjectResult.Value);
+        CustomAssertions.StringifyEquals(expectedSurvey,okObjectResult.Value);
     }
 
     public void Dispose()
