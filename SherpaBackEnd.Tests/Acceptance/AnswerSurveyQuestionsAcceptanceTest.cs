@@ -94,7 +94,7 @@ public class AnswerSurveyQuestionsAcceptanceTest : IDisposable
         });
 
         // Given: A TeamMember has responded to a survey
-        var response = new SurveyResponse();
+        var response = new SurveyResponse(teamMemberId);
         var answerSurveyDto = new AnswerSurveyDto(surveyId, teamMemberId, response);
 
         // When: The responses are submitted 

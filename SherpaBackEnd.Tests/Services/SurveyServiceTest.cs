@@ -3,6 +3,7 @@ using Shared.Test.Helpers;
 using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Survey.Application;
 using SherpaBackEnd.Survey.Domain;
+using SherpaBackEnd.Survey.Domain.Exceptions;
 using SherpaBackEnd.Survey.Infrastructure.Http.Dto;
 using SherpaBackEnd.Team.Domain;
 using SherpaBackEnd.Template.Domain;
@@ -151,8 +152,9 @@ public class SurveyServiceTest
     {
         var survey = SurveyBuilder.ASurvey().Build();
         var teamMember = TeamMemberBuilder.ATeamMember().Build();
-        var response = new SurveyResponse();
+        var response = new SurveyResponse(teamMember.Id);
         var answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, response);
+        _surveyRepository.Setup(repository => repository.GetSurveyById(survey.Id)).ReturnsAsync(survey);
 
         await _service.AnswerSurvey(answerSurveyDto);
 
@@ -164,7 +166,7 @@ public class SurveyServiceTest
     {
         var survey = SurveyBuilder.ASurvey().Build();
         var teamMember = TeamMemberBuilder.ATeamMember().Build();
-        var response = new SurveyResponse();
+        var response = new SurveyResponse(teamMember.Id);
         var answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, response);
         _surveyRepository.Setup(repository => repository.GetSurveyById(survey.Id)).ReturnsAsync(survey);
 
@@ -178,7 +180,7 @@ public class SurveyServiceTest
     {
         var survey = SurveyBuilder.ASurvey().Build();
         var teamMember = TeamMemberBuilder.ATeamMember().Build();
-        var response = new SurveyResponse();
+        var response = new SurveyResponse(teamMember.Id);
         var answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, response);
         _surveyRepository.Setup(repository => repository.GetSurveyById(survey.Id)).ReturnsAsync(survey);
 
@@ -192,9 +194,41 @@ public class SurveyServiceTest
     {
         var survey = SurveyBuilder.ASurvey().Build();
         var teamMember = TeamMemberBuilder.ATeamMember().Build();
-        var response = new SurveyResponse();
+        var response = new SurveyResponse(teamMember.Id);
         var answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, response);
 
-        await Assert.ThrowsAsync<NotFoundException>(async () => await _service.AnswerSurvey(answerSurveyDto));
+        var notFoundException = await Assert.ThrowsAsync<NotFoundException>(async () => await _service.AnswerSurvey(answerSurveyDto));
+        
+        Assert.Equal("Survey not found", notFoundException.Message);
+    }
+
+    [Fact]
+    public async Task ShouldThrowConnectionToDatabaseErrorIfSurveyCannotBeRetrieved()
+    {
+        var survey = SurveyBuilder.ASurvey().Build();
+        var teamMember = TeamMemberBuilder.ATeamMember().Build();
+        var response = new SurveyResponse(teamMember.Id);
+        var answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, response);
+        _surveyRepository.Setup(repository => repository.GetSurveyById(survey.Id)).ThrowsAsync(new Exception());
+
+        var connectionToRepositoryUnsuccessfulException = await Assert.ThrowsAsync<ConnectionToRepositoryUnsuccessfulException>(async () => await _service.AnswerSurvey(answerSurveyDto));
+        
+        Assert.Equal("Unable to update answered survey", connectionToRepositoryUnsuccessfulException.Message);
+    }
+
+    [Fact]
+    public async Task ShouldThrowSurveyAlreadyAnsweredExceptionIfSurveyIsAlreadyAnswered()
+    {
+        var teamMember = TeamMemberBuilder.ATeamMember().Build();
+        var response = new SurveyResponse(teamMember.Id);
+        var survey = SurveyBuilder.ASurvey().WithResponses(new List<SurveyResponse>(){response}).Build();
+        var answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, response);
+        _surveyRepository.Setup(repository => repository.GetSurveyById(survey.Id)).ReturnsAsync(survey);
+
+
+        var surveyAlreadyAnsweredException = await Assert.ThrowsAsync<SurveyAlreadyAnsweredException>(async () =>
+            await _service.AnswerSurvey(answerSurveyDto));
+        
+        Assert.Equal($"Survey already answered by {teamMember.Id}", surveyAlreadyAnsweredException.Message);
     }
 }

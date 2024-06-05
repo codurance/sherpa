@@ -12,7 +12,7 @@ public class SurveyBuilder
     private DateTime _deadline;
     private string _title = "Survey";
     private string? _description = "";
-    private List<SurveyResponse> _responses = new List<SurveyResponse>();
+    private List<SurveyResponse> _responses = new();
     private Team.Domain.Team _team;
     private Template.Domain.Template _template;
 

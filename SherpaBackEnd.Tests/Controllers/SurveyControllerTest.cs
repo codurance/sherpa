@@ -241,7 +241,7 @@ public class SurveyControllerTest
     {
         var survey = SurveyBuilder.ASurvey().Build();
         var teamMember = TeamMemberBuilder.ATeamMember().Build();
-        var response = new SurveyResponse();
+        var response = new SurveyResponse(teamMember.Id);
         var answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, response);
 
         var actionResult = await _controller.AnswerSurvey(answerSurveyDto);
@@ -256,7 +256,7 @@ public class SurveyControllerTest
     {
         var survey = SurveyBuilder.ASurvey().Build();
         var teamMember = TeamMemberBuilder.ATeamMember().Build();
-        var response = new SurveyResponse();
+        var response = new SurveyResponse(teamMember.Id);
         var answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, response);
         var connectionToRepositoryUnsuccessfulException =
             new ConnectionToRepositoryUnsuccessfulException("Cannot create survey response.");
