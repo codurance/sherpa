@@ -29,6 +29,13 @@ public class SurveyNotificationService : ISurveyNotificationService
         surveyNotifications.AddRange(survey.Team.Members.Select(teamMember =>
             new Domain.SurveyNotification(GenerateId(), survey, teamMember)));
 
+        await CreateManySurveyNotification(surveyNotifications);
+            
+        _emailTemplateFactory.CreateEmailTemplate(surveyNotifications);
+    }
+
+    private async Task CreateManySurveyNotification(List<Domain.SurveyNotification> surveyNotifications)
+    {
         try
         {
             await _surveyNotificationsRepository.CreateManySurveyNotification(surveyNotifications);
@@ -38,8 +45,6 @@ public class SurveyNotificationService : ISurveyNotificationService
             throw new ConnectionToRepositoryUnsuccessfulException("Unable to create Survey notifications in database",
                 e);
         }
-            
-        _emailTemplateFactory.CreateEmailTemplate(surveyNotifications);
     }
 
     private async Task<Survey.Domain.Survey> GetSurveyById(Guid surveyId)
