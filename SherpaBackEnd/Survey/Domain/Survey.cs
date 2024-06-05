@@ -42,9 +42,14 @@ public class Survey
             throw new SurveyNotAssignedToTeamMemberException($"{teamMemberId} is not assigned to survey");
         }
         
-        if (Responses.Exists(response => response.TeamMemberId.Equals(teamMemberId)))
+        if (HasAlreadyResponded(teamMemberId))
         {
             throw new SurveyAlreadyAnsweredException($"Survey already answered by {teamMemberId}");
         }
+    }
+
+    private bool HasAlreadyResponded(Guid teamMemberId)
+    {
+        return Responses.Exists(response => response.TeamMemberId.Equals(teamMemberId));
     }
 }
