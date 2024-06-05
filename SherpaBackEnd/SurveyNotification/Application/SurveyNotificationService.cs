@@ -26,15 +26,12 @@ public class SurveyNotificationService : ISurveyNotificationService
 
         var surveyNotifications = new List<Domain.SurveyNotification>();
 
-        if (survey != null)
-        {
-            surveyNotifications.AddRange(survey.Team.Members.Select(teamMember =>
-                new Domain.SurveyNotification(GenerateId(), survey, teamMember)));
+        surveyNotifications.AddRange(survey.Team.Members.Select(teamMember =>
+            new Domain.SurveyNotification(GenerateId(), survey, teamMember)));
             
-            await _surveyNotificationsRepository.CreateManySurveyNotification(surveyNotifications);
+        await _surveyNotificationsRepository.CreateManySurveyNotification(surveyNotifications);
             
-            _emailTemplateFactory.CreateEmailTemplate(surveyNotifications);
-        }
+        _emailTemplateFactory.CreateEmailTemplate(surveyNotifications);
     }
 
     private async Task<Survey.Domain.Survey> GetSurveyById(Guid surveyId)
