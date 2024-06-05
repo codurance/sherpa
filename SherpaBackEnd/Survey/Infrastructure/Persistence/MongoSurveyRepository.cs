@@ -61,9 +61,11 @@ public class MongoSurveyRepository : ISurveyRepository
         return await PopulateMSurvey(mSurvey);
     }
 
-    public Task<Domain.Survey?> Update(Domain.Survey survey)
+    public async Task Update(Domain.Survey survey)
     {
-        throw new NotImplementedException();
+        var mSurvey = MSurvey.FromSurvey(survey);
+        var filterDefinition = Builders<MSurvey>.Filter.Eq(s => s.Id, survey.Id);
+        await _surveyCollection.ReplaceOneAsync(filterDefinition, mSurvey);
     }
 
     private async Task<Domain.Survey?> PopulateMSurvey(MSurvey mSurvey)
