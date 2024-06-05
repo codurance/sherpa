@@ -21,12 +21,16 @@ public class SurveyNotificationServiceTest
     private CreateSurveyNotificationsDto _createSurveyNotificationsDto = new CreateSurveyNotificationsDto(_surveyId);
     private Mock<ISurveyNotificationsRepository> _surveyNotificationsRepository;
     private Mock<IEmailTemplateFactory> _emailTemplateFactory;
+    private SurveyNotificationService _surveyNotificationService;
 
     public SurveyNotificationServiceTest()
     {
         _surveyRepository = new Mock<ISurveyRepository>();
         _surveyNotificationsRepository = new Mock<ISurveyNotificationsRepository>();
         _emailTemplateFactory = new Mock<IEmailTemplateFactory>();
+        _surveyNotificationService = new SurveyNotificationService(_surveyRepository.Object,
+            _surveyNotificationsRepository.Object,
+            _emailTemplateFactory.Object);
     }
 
     [Fact]
@@ -34,11 +38,9 @@ public class SurveyNotificationServiceTest
     {
         var team = ATeam().Build();
         var survey = ASurvey().WithId(_surveyId).WithTeam(team).Build();
-        var surveyNotificationService = new SurveyNotificationService(_surveyRepository.Object,
-            _surveyNotificationsRepository.Object, _emailTemplateFactory.Object);
         _surveyRepository.Setup(repository => repository.GetSurveyById(_surveyId)).ReturnsAsync(survey);
 
-        await surveyNotificationService.LaunchSurveyNotificationsFor(_createSurveyNotificationsDto);
+        await _surveyNotificationService.LaunchSurveyNotificationsFor(_createSurveyNotificationsDto);
 
         _surveyRepository.Verify(repository => repository.GetSurveyById(_createSurveyNotificationsDto.SurveyId));
     }
@@ -110,14 +112,11 @@ public class SurveyNotificationServiceTest
     [Fact]
     public async Task ShouldThrowErrorIfGetSurveyByIdIsNotSuccessful()
     {
-        var surveyNotificationService =
-            new SurveyNotificationService(_surveyRepository.Object, _surveyNotificationsRepository.Object,
-                _emailTemplateFactory.Object);
         _surveyRepository.Setup(repository =>
             repository.GetSurveyById(_createSurveyNotificationsDto.SurveyId)).ThrowsAsync(new Exception());
 
         var exceptionThrown = await Assert.ThrowsAsync<ConnectionToRepositoryUnsuccessfulException>(async () =>
-            await surveyNotificationService.LaunchSurveyNotificationsFor(_createSurveyNotificationsDto));
+            await _surveyNotificationService.LaunchSurveyNotificationsFor(_createSurveyNotificationsDto));
 
         Assert.IsType<ConnectionToRepositoryUnsuccessfulException>(exceptionThrown);
     }
@@ -126,24 +125,17 @@ public class SurveyNotificationServiceTest
     [Fact]
     public async Task ShouldThrowErrorIfGetSurveyByIdIsNotFound()
     {
-        var surveyNotificationService =
-            new SurveyNotificationService(_surveyRepository.Object, _surveyNotificationsRepository.Object,
-                _emailTemplateFactory.Object);
-
         _surveyRepository.Setup(repository =>
             repository.GetSurveyById(_createSurveyNotificationsDto.SurveyId)).ReturnsAsync((Survey.Domain.Survey?)null);
 
         var exceptionThrown = await Assert.ThrowsAsync<NotFoundException>(async () =>
-            await surveyNotificationService.LaunchSurveyNotificationsFor(_createSurveyNotificationsDto));
+            await _surveyNotificationService.LaunchSurveyNotificationsFor(_createSurveyNotificationsDto));
         Assert.IsType<NotFoundException>(exceptionThrown);
     }
 
     [Fact]
     public async Task ShouldThrowErrorIfCreateManySurveyNotificationIsNotSuccessful()
     {
-        var surveyNotificationService = new SurveyNotificationService(_surveyRepository.Object,
-            _surveyNotificationsRepository.Object,
-            _emailTemplateFactory.Object);
         var surveyNotifications = new List<SherpaBackEnd.SurveyNotification.Domain.SurveyNotification>();
         var team = ATeam().Build();
         var survey = ASurvey().WithId(_surveyId).WithTeam(team).Build();
@@ -154,7 +146,7 @@ public class SurveyNotificationServiceTest
             .ThrowsAsync(new Exception());
         
         var exceptionThrown = await Assert.ThrowsAsync<ConnectionToRepositoryUnsuccessfulException>(async () =>
-            await surveyNotificationService.LaunchSurveyNotificationsFor(_createSurveyNotificationsDto));
+            await _surveyNotificationService.LaunchSurveyNotificationsFor(_createSurveyNotificationsDto));
         Assert.IsType<ConnectionToRepositoryUnsuccessfulException>(exceptionThrown);
     }
     
