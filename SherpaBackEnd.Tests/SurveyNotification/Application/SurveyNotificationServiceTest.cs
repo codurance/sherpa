@@ -107,34 +107,12 @@ public class SurveyNotificationServiceTest
         _emailTemplateFactory.Verify(factory => factory.CreateEmailTemplate(surveyNotifications));
     }
 
-
-    class TestableSurveyNotificationService : SurveyNotificationService
-    {
-        public Guid SurveyNotificationId { get; set; }
-
-        public TestableSurveyNotificationService(ISurveyRepository surveyRepository,
-            ISurveyNotificationsRepository surveyNotificationsRepository,
-            IEmailTemplateFactory emailTemplateFactory) : base(surveyRepository, surveyNotificationsRepository,
-            emailTemplateFactory)
-        {
-        }
-
-        protected override Guid GenerateId()
-        {
-            return SurveyNotificationId;
-        }
-    }
-
     [Fact]
     public async Task ShouldThrowErrorIfGetSurveyByIdIsNotSuccessful()
     {
-        var surveyNotificationId = Guid.NewGuid();
         var surveyNotificationService =
-            new TestableSurveyNotificationService(_surveyRepository.Object, _surveyNotificationsRepository.Object,
-                _emailTemplateFactory.Object)
-            {
-                SurveyNotificationId = surveyNotificationId
-            };
+            new SurveyNotificationService(_surveyRepository.Object, _surveyNotificationsRepository.Object,
+                _emailTemplateFactory.Object);
         _surveyRepository.Setup(repository =>
             repository.GetSurveyById(_createSurveyNotificationsDto.SurveyId)).ThrowsAsync(new Exception());
 
@@ -148,13 +126,9 @@ public class SurveyNotificationServiceTest
     [Fact]
     public async Task ShouldThrowErrorIfGetSurveyByIdIsNotFound()
     {
-        var surveyNotificationId = Guid.NewGuid();
         var surveyNotificationService =
-            new TestableSurveyNotificationService(_surveyRepository.Object, _surveyNotificationsRepository.Object,
-                _emailTemplateFactory.Object)
-            {
-                SurveyNotificationId = surveyNotificationId
-            };
+            new SurveyNotificationService(_surveyRepository.Object, _surveyNotificationsRepository.Object,
+                _emailTemplateFactory.Object);
 
         _surveyRepository.Setup(repository =>
             repository.GetSurveyById(_createSurveyNotificationsDto.SurveyId)).ReturnsAsync((Survey.Domain.Survey?)null);
@@ -182,5 +156,22 @@ public class SurveyNotificationServiceTest
         var exceptionThrown = await Assert.ThrowsAsync<ConnectionToRepositoryUnsuccessfulException>(async () =>
             await surveyNotificationService.LaunchSurveyNotificationsFor(_createSurveyNotificationsDto));
         Assert.IsType<ConnectionToRepositoryUnsuccessfulException>(exceptionThrown);
+    }
+    
+    class TestableSurveyNotificationService : SurveyNotificationService
+    {
+        public Guid SurveyNotificationId { get; set; }
+
+        public TestableSurveyNotificationService(ISurveyRepository surveyRepository,
+            ISurveyNotificationsRepository surveyNotificationsRepository,
+            IEmailTemplateFactory emailTemplateFactory) : base(surveyRepository, surveyNotificationsRepository,
+            emailTemplateFactory)
+        {
+        }
+
+        protected override Guid GenerateId()
+        {
+            return SurveyNotificationId;
+        }
     }
 }
