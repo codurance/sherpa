@@ -73,6 +73,11 @@ public class SurveyService : ISurveyService
     public async Task AnswerSurvey(AnswerSurveyDto answerSurveyDto)
     {
         var survey = await _surveyRepository.GetSurveyById(answerSurveyDto.SurveyId);
+
+        if (survey == null)
+        {
+            throw new NotFoundException("Survey not found");
+        }
         
         survey.AnswerSurvey(answerSurveyDto.Response);
 

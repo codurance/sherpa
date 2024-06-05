@@ -158,7 +158,7 @@ public class SurveyServiceTest
 
         _surveyRepository.Verify(repository => repository.GetSurveyById(survey.Id));
     }
-    
+
     [Fact]
     public async Task ShouldAnswerSurveyWithResponseInDto()
     {
@@ -185,5 +185,16 @@ public class SurveyServiceTest
         await _service.AnswerSurvey(answerSurveyDto);
 
         _surveyRepository.Verify(repository => repository.Update(survey));
+    }
+
+    [Fact]
+    public async Task ShouldThrowNotFoundErrorIfSurveyNotFound()
+    {
+        var survey = SurveyBuilder.ASurvey().Build();
+        var teamMember = TeamMemberBuilder.ATeamMember().Build();
+        var response = new SurveyResponse();
+        var answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, response);
+
+        await Assert.ThrowsAsync<NotFoundException>(async () => await _service.AnswerSurvey(answerSurveyDto));
     }
 }
