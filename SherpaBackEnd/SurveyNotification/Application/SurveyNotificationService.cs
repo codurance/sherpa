@@ -1,4 +1,5 @@
 using SherpaBackEnd.Email.Application;
+using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Survey.Domain.Persistence;
 using SherpaBackEnd.SurveyNotification.Infrastructure.Http.Dto;
 using SherpaBackEnd.SurveyNotification.Infrastructure.Persistence;
@@ -21,7 +22,8 @@ public class SurveyNotificationService : ISurveyNotificationService
 
     public async Task LaunchSurveyNotificationsFor(CreateSurveyNotificationsDto createSurveyNotificationsDto)
     {
-        var survey = await _surveyRepository.GetSurveyById(createSurveyNotificationsDto.SurveyId);
+        var survey = await GetSurveyById(createSurveyNotificationsDto.SurveyId);
+
         var surveyNotifications = new List<Domain.SurveyNotification>();
 
         if (survey != null)
@@ -33,6 +35,21 @@ public class SurveyNotificationService : ISurveyNotificationService
             
             _emailTemplateFactory.CreateEmailTemplate(surveyNotifications);
         }
+    }
+
+    private async Task<Survey.Domain.Survey> GetSurveyById(Guid surveyId)
+    {
+        Survey.Domain.Survey survey;
+        try
+        {
+            survey = await _surveyRepository.GetSurveyById(surveyId);
+        }
+        catch (Exception e)
+        {
+            throw new ConnectionToRepositoryUnsuccessfulException("Unable to retrieve Survey from database", e);
+        }
+
+        return survey;
     }
 
     protected virtual Guid GenerateId()
