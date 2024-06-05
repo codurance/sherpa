@@ -93,9 +93,7 @@ public class SurveyService : ISurveyService
             switch (e)
             {
                 case NotFoundException:
-                    throw;
                 case SurveyAlreadyAnsweredException:
-                    throw;
                 case SurveyNotAssignedToTeamMemberException:
                     throw;
                 default:
