@@ -238,7 +238,7 @@ public class SurveyControllerTest
 
 
     [Fact]
-    public async Task ShouldCallServiceWithDTOFromBodyWhenCallingAnswerSurveyAndReturningCreatedResult()
+    public async Task ShouldCallServiceWithDtoFromBodyWhenCallingAnswerSurveyAndReturningCreatedResult()
     {
         var survey = SurveyBuilder.ASurvey().Build();
         var teamMember = TeamMemberBuilder.ATeamMember().Build();
@@ -307,5 +307,23 @@ public class SurveyControllerTest
 
         Assert.Equal(StatusCodes.Status400BadRequest, actionResult.StatusCode);
         Assert.Equal(surveyNotAssignedToTeamMemberException.Message, actionResult.Value);
+    }
+
+    [Fact]
+    public async Task ShouldReturnBadRequestIfTeamMemberDoesNotAnswerAllQuestionsInSurvey()
+    {
+        var teamMember = TeamMemberBuilder.ATeamMember().Build();
+        var response = new SurveyResponse(teamMember.Id, new List<QuestionResponse>());
+        var survey = SurveyBuilder.ASurvey().Build();
+        var answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, response);
+        var surveyNotCompleteException = new SurveyNotCompleteException();
+        _serviceMock.Setup(service => service.AnswerSurvey(answerSurveyDto)).ThrowsAsync(surveyNotCompleteException);
+
+        var actionResult = await _controller.AnswerSurvey(answerSurveyDto);
+
+        var objectResult = Assert.IsType<ObjectResult>(actionResult);               
+
+        Assert.Equal(StatusCodes.Status400BadRequest, objectResult.StatusCode);
+        Assert.Equal(surveyNotCompleteException.Message, objectResult.Value);
     }
 }

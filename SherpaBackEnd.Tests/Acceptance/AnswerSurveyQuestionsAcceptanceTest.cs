@@ -1,3 +1,4 @@
+using System.Collections;
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
 using Microsoft.AspNetCore.Http;
@@ -5,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
+using MongoDB.Bson.IO;
 using MongoDB.Driver;
 using Moq;
 using Shared.Test.Helpers;
@@ -17,12 +19,14 @@ using SherpaBackEnd.Survey.Infrastructure.Http.Dto;
 using SherpaBackEnd.Survey.Infrastructure.Persistence;
 using SherpaBackEnd.Team.Domain;
 using SherpaBackEnd.Team.Infrastructure.Persistence;
+using SherpaBackEnd.Template.Domain;
 using SherpaBackEnd.Template.Infrastructure.Persistence;
-using SherpaBackEnd.Tests.Builders;
 using static SherpaBackEnd.Tests.Builders.SurveyBuilder;
 using static SherpaBackEnd.Tests.Builders.TeamBuilder;
 using static SherpaBackEnd.Tests.Builders.TeamMemberBuilder;
 using static SherpaBackEnd.Tests.Builders.TemplateBuilder;
+using Newtonsoft.Json;
+using JsonConvert = Newtonsoft.Json.JsonConvert;
 
 namespace SherpaBackEnd.Tests.Acceptance;
 
@@ -239,6 +243,104 @@ public class AnswerSurveyQuestionsAcceptanceTest : IDisposable
         var badRequestResult = Assert.IsType<ObjectResult>(actionResult);
         Assert.Equal(StatusCodes.Status400BadRequest, badRequestResult.StatusCode);
         Assert.Equal(expectedMessage, badRequestResult.Value);
+    }
+
+    [Fact]
+    public async Task TeamMemberCannotSaveResponseIfAllQuestionsAreNotAnswered()
+    {
+        await InitializeDbClientAndCollections();
+        var templateRepository = new MongoTemplateRepository(_databaseSettings);
+        var teamRepository = new MongoTeamRepository(_databaseSettings);
+        var surveyRepository = new MongoSurveyRepository(_databaseSettings);
+        var surveyService = new SurveyService(surveyRepository, teamRepository, templateRepository);
+        var surveyController = new SurveyController(surveyService, _logger);
+        var surveyId = Guid.NewGuid();
+        var teamMemberId = Guid.NewGuid();
+        var teamId = Guid.NewGuid();
+        var coachId = Guid.NewGuid();
+        var coach = new User.Domain.User(coachId, "Lucia");
+        var teamMember = ATeamMember()
+            .WithId(teamMemberId)
+            .Build();
+        var team = ATeam()
+            .WithId(teamId)
+            .WithTeamMembers(new List<TeamMember>() { teamMember })
+            .Build();
+        IEnumerable<IQuestion> questions = new IQuestion[]
+        {
+            new HackmanQuestion(new Dictionary<string, string>()
+                {
+                    { Languages.SPANISH, "Pregunta 1" },
+                    { Languages.ENGLISH, "Question 1" },
+                }, new Dictionary<string, string[]>()
+                {
+                    { Languages.SPANISH, new[] { "1", "2", "3" } },
+                    { Languages.ENGLISH, new[] { "1", "2", "3" } }
+                }, false, HackmanComponent.INTERPERSONAL_PEER_COACHING, HackmanSubcategory.DELIMITED,
+                HackmanSubcomponent.SENSE_OF_URGENCY, 1
+            ),
+            new HackmanQuestion(new Dictionary<string, string>()
+                {
+                    { Languages.SPANISH, "Pregunta 2" },
+                    { Languages.ENGLISH, "Question 2" },
+                }, new Dictionary<string, string[]>()
+                {
+                    { Languages.SPANISH, new[] { "1", "2", "3" } },
+                    { Languages.ENGLISH, new[] { "1", "2", "3" } }
+                }, false, HackmanComponent.INTERPERSONAL_PEER_COACHING, HackmanSubcategory.DELIMITED,
+                HackmanSubcomponent.SENSE_OF_URGENCY, 2
+            ),
+            new HackmanQuestion(new Dictionary<string, string>()
+                {
+                    { Languages.SPANISH, "Pregunta 3" },
+                    { Languages.ENGLISH, "Question 3" },
+                }, new Dictionary<string, string[]>()
+                {
+                    { Languages.SPANISH, new[] { "1", "2", "3" } },
+                    { Languages.ENGLISH, new[] { "1", "2", "3" } }
+                }, false, HackmanComponent.INTERPERSONAL_PEER_COACHING, HackmanSubcategory.DELIMITED,
+                HackmanSubcomponent.SENSE_OF_URGENCY, 3
+            ),
+        };
+        var template = ATemplate()
+            .WithQuestions(questions)
+            .Build();
+        var deadline = new DateTime(2024, 06, 24).ToUniversalTime();
+        var incompleteQuestionResponses = new List<QuestionResponse>()
+        {
+            new QuestionResponse(1, "1"),
+            new QuestionResponse(2, "2"),
+        };
+        var survey = ASurvey()
+            .WithId(surveyId)
+            .WithTeam(team)
+            .WithTemplate(template)
+            .WithDeadline(deadline)
+            .WithCoach(coach)
+            .Build();
+
+        await teamRepository.AddTeamAsync(team);
+        await teamRepository.AddTeamMemberToTeamAsync(team.Id, teamMember);
+        await surveyRepository.CreateSurvey(survey);
+
+        await _templateCollection.InsertOneAsync(new BsonDocument
+        {
+            { "name", template.Name },
+            { "minutesToComplete", template.MinutesToComplete },
+            { "questions", new BsonArray(JsonConvert.SerializeObject(template.Questions)) }
+        });
+
+        // Given: A TeamMember hasn't completed all the answers
+        var surveyResponse = new SurveyResponse(teamMemberId, incompleteQuestionResponses);
+        var answerSurveyDto = new AnswerSurveyDto(surveyId, teamMemberId, surveyResponse);
+
+        // When: The response is submitted
+        var actionResult = await surveyController.AnswerSurvey(answerSurveyDto);
+
+        // Then: The controller should respond with BadRequest
+        var badRequestResult = Assert.IsType<ObjectResult>(actionResult);
+        Assert.Equal(StatusCodes.Status400BadRequest, badRequestResult.StatusCode);
+        Assert.Equal("All survey questions must be answered before submitting a response", badRequestResult.Value);
     }
 
     public void Dispose()

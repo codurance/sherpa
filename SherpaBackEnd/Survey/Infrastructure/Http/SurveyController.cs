@@ -102,6 +102,7 @@ public class SurveyController
             return exception switch
             {
                 SurveyAlreadyAnsweredException or
+                    SurveyNotCompleteException or
                     SurveyNotAssignedToTeamMemberException => new ObjectResult(exception)
                     {
                         StatusCode = StatusCodes.Status400BadRequest, Value = exception.Message,

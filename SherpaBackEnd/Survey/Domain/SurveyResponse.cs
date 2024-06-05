@@ -3,10 +3,19 @@ namespace SherpaBackEnd.Survey.Domain;
 public class SurveyResponse
 {
     public Guid TeamMemberId { get; set; }
+    public List<QuestionResponse> Answers { get; set; }
 
+    public SurveyResponse(Guid teamMemberId, List<QuestionResponse> answers)
+    {
+        TeamMemberId = teamMemberId;
+        Answers = answers;
+    }
+
+    [Obsolete]
     public SurveyResponse(Guid teamMemberId)
     {
         TeamMemberId = teamMemberId;
+        Answers = new List<QuestionResponse>();
     }
 
     protected bool Equals(SurveyResponse other)
