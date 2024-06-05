@@ -55,7 +55,7 @@ public class SurveyNotificationServiceTest
         var team = ATeam().WithTeamMembers(teamMembers).Build();
         var survey = ASurvey().WithId(_surveyId).WithTeam(team).Build();
         var surveyNotificationId = Guid.NewGuid();
-        var surveyNotificationService =
+        var testableSurveyNotificationService =
             new TestableSurveyNotificationService(_surveyRepository.Object, _surveyNotificationsRepository.Object,
                 _emailTemplateFactory.Object)
             {
@@ -72,7 +72,7 @@ public class SurveyNotificationServiceTest
         _surveyRepository.Setup(repository => repository.GetSurveyById(_surveyId))
             .ReturnsAsync(survey);
 
-        await surveyNotificationService.LaunchSurveyNotificationsFor(_createSurveyNotificationsDto);
+        await testableSurveyNotificationService.LaunchSurveyNotificationsFor(_createSurveyNotificationsDto);
 
         _surveyNotificationsRepository.Verify(
             repository => repository.CreateManySurveyNotification(surveyNotifications));
@@ -87,7 +87,7 @@ public class SurveyNotificationServiceTest
         var team = ATeam().WithTeamMembers(teamMembers).Build();
         var survey = ASurvey().WithId(_surveyId).WithTeam(team).Build();
         var surveyNotificationId = Guid.NewGuid();
-        var surveyNotificationService =
+        var testableSurveyNotificationService =
             new TestableSurveyNotificationService(_surveyRepository.Object, _surveyNotificationsRepository.Object,
                 _emailTemplateFactory.Object)
             {
@@ -104,7 +104,7 @@ public class SurveyNotificationServiceTest
         _surveyRepository.Setup(repository => repository.GetSurveyById(_surveyId))
             .ReturnsAsync(survey);
 
-        await surveyNotificationService.LaunchSurveyNotificationsFor(_createSurveyNotificationsDto);
+        await testableSurveyNotificationService.LaunchSurveyNotificationsFor(_createSurveyNotificationsDto);
 
         _emailTemplateFactory.Verify(factory => factory.CreateEmailTemplate(surveyNotifications));
     }
