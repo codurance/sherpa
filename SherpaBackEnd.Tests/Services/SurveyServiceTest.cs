@@ -42,7 +42,8 @@ public class SurveyServiceTest
             DateTime.Parse("2023-08-09T07:38:04+0000"));
         await _service.CreateSurvey(createSurveyDto);
 
-        var expectedSurvey = new Survey.Domain.Survey(createSurveyDto.SurveyId, new User.Domain.User(_service.DefaultUserId, "Lucia"),
+        var expectedSurvey = new Survey.Domain.Survey(createSurveyDto.SurveyId,
+            new User.Domain.User(_service.DefaultUserId, "Lucia"),
             SurveyStatus.Draft, createSurveyDto.Deadline, createSurveyDto.Title, createSurveyDto.Description,
             new List<SurveyResponse>(), team, template);
         var surveyRepoInvocation = _surveyRepository.Invocations[0];
@@ -54,9 +55,11 @@ public class SurveyServiceTest
     public async Task ShouldReturnSurveyGivenByTheRepository()
     {
         var surveyId = Guid.NewGuid();
-        var expectedSurvey = new Survey.Domain.Survey(Guid.NewGuid(), new User.Domain.User(_service.DefaultUserId, "Lucia"), SurveyStatus.Draft,
+        var expectedSurvey = new Survey.Domain.Survey(Guid.NewGuid(),
+            new User.Domain.User(_service.DefaultUserId, "Lucia"), SurveyStatus.Draft,
             DateTime.Parse("2023-08-09T07:38:04+0000"), "Title", "Description", new List<SurveyResponse>(),
-            new Team.Domain.Team(Guid.NewGuid(), "Demo team"), new Template.Domain.Template("demo", Array.Empty<IQuestion>(), 30));
+            new Team.Domain.Team(Guid.NewGuid(), "Demo team"),
+            new Template.Domain.Template("demo", Array.Empty<IQuestion>(), 30));
         _surveyRepository.Setup(repository => repository.GetSurveyById(surveyId)).ReturnsAsync(expectedSurvey);
 
         var receivedSurveyWithoutQuestions = await _service.GetSurveyWithoutQuestionsById(surveyId);
@@ -69,7 +72,8 @@ public class SurveyServiceTest
     public async Task ShouldThrowNotFoundExceptionIfRepoReturnsNull()
     {
         var surveyId = Guid.NewGuid();
-        _surveyRepository.Setup(repository => repository.GetSurveyById(surveyId)).ReturnsAsync((Survey.Domain.Survey?)null);
+        _surveyRepository.Setup(repository => repository.GetSurveyById(surveyId))
+            .ReturnsAsync((Survey.Domain.Survey?)null);
 
 
         await Assert.ThrowsAsync<NotFoundException>(async () => await _service.GetSurveyWithoutQuestionsById(surveyId));
@@ -128,9 +132,11 @@ public class SurveyServiceTest
             }, Reverse,
             HackmanComponent.INTERPERSONAL_PEER_COACHING,
             HackmanSubcategory.DELIMITED, HackmanSubcomponent.SENSE_OF_URGENCY, Position);
-        var expectedSurvey = new Survey.Domain.Survey(Guid.NewGuid(), new User.Domain.User(_service.DefaultUserId, "Lucia"), SurveyStatus.Draft,
+        var expectedSurvey = new Survey.Domain.Survey(Guid.NewGuid(),
+            new User.Domain.User(_service.DefaultUserId, "Lucia"), SurveyStatus.Draft,
             DateTime.Parse("2023-08-09T07:38:04+0000"), "Title", "Description", new List<SurveyResponse>(),
-            new Team.Domain.Team(Guid.NewGuid(), "Demo team"), new Template.Domain.Template("demo", new List<IQuestion>() { hackmanQuestion }, 30));
+            new Team.Domain.Team(Guid.NewGuid(), "Demo team"),
+            new Template.Domain.Template("demo", new List<IQuestion>() { hackmanQuestion }, 30));
         _surveyRepository.Setup(repository => repository.GetSurveyById(surveyId)).ReturnsAsync(expectedSurvey);
 
         var questionsReceived = await _service.GetSurveyQuestionsBySurveyId(surveyId);
@@ -145,12 +151,11 @@ public class SurveyServiceTest
     {
         var survey = SurveyBuilder.ASurvey().Build();
         var teamMember = TeamMemberBuilder.ATeamMember().Build();
-        List<SurveyResponse> responses = new List<SurveyResponse>();
-        AnswerSurveyDto answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, responses);
-        
+        var response = new SurveyResponse();
+        var answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, response);
+
         await _service.AnswerSurvey(answerSurveyDto);
-        
+
         _surveyRepository.Verify(repository => repository.GetSurveyById(survey.Id));
-        
     }
 }

@@ -241,8 +241,8 @@ public class SurveyControllerTest
     {
         var survey = SurveyBuilder.ASurvey().Build();
         var teamMember = TeamMemberBuilder.ATeamMember().Build();
-        List<SurveyResponse> responses = new List<SurveyResponse>();
-        AnswerSurveyDto answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, responses);
+        var response = new SurveyResponse();
+        var answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, response);
 
         var actionResult = await _controller.AnswerSurvey(answerSurveyDto);
         Assert.IsType<CreatedResult>(actionResult);
@@ -256,8 +256,8 @@ public class SurveyControllerTest
     {
         var survey = SurveyBuilder.ASurvey().Build();
         var teamMember = TeamMemberBuilder.ATeamMember().Build();
-        List<SurveyResponse> responses = new List<SurveyResponse>();
-        AnswerSurveyDto answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, responses);
+        var response = new SurveyResponse();
+        var answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, response);
         var connectionToRepositoryUnsuccessfulException =
             new ConnectionToRepositoryUnsuccessfulException("Cannot create survey response.");
         _serviceMock.Setup(service => service.AnswerSurvey(answerSurveyDto))

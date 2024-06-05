@@ -94,8 +94,8 @@ public class AnswerSurveyQuestionsAcceptanceTest : IDisposable
         });
 
         // Given: A TeamMember has responded to a survey
-        var responses = new List<SurveyResponse>();
-        var answerSurveyDto = new AnswerSurveyDto(surveyId, teamMemberId, responses);
+        var response = new SurveyResponse();
+        var answerSurveyDto = new AnswerSurveyDto(surveyId, teamMemberId, response);
 
         // When: The responses are submitted 
         var actionResult = await surveyController.AnswerSurvey(answerSurveyDto);
@@ -104,7 +104,7 @@ public class AnswerSurveyQuestionsAcceptanceTest : IDisposable
         // Then: The responses should be stored in the survey
         var retrievedSurvey = await surveyController.GetSurveyWithoutQuestionsById(surveyId);
         Assert.NotNull(retrievedSurvey.Value);
-        Assert.Equal(responses, retrievedSurvey.Value.Responses);
+        Assert.Contains(response, retrievedSurvey.Value.Responses);
     }
 
     public void Dispose()
