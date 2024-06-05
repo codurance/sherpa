@@ -49,6 +49,11 @@ public class SurveyNotificationService : ISurveyNotificationService
             throw new ConnectionToRepositoryUnsuccessfulException("Unable to retrieve Survey from database", e);
         }
 
+        if (survey == null)
+        {
+            throw new NotFoundException("Survey not found");
+        }
+
         return survey;
     }
 
