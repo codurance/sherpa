@@ -97,7 +97,7 @@ public class SurveyController
         }
         catch (Exception exception)
         {
-            Console.WriteLine(exception);
+            _logger.LogError(exception.Message);
             return new ObjectResult(exception)
                 { StatusCode = StatusCodes.Status500InternalServerError, Value = exception.Message };
         }
