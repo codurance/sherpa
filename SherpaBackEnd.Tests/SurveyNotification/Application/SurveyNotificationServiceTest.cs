@@ -42,8 +42,8 @@ public class SurveyNotificationServiceTest
 
         _surveyRepository.Verify(repository => repository.GetSurveyById(_createSurveyNotificationsDto.SurveyId));
     }
-    
-    
+
+
     [Fact]
     public async Task ShouldCreateSurveyNotificationForTeamMembers()
     {
@@ -54,19 +54,22 @@ public class SurveyNotificationServiceTest
         var survey = ASurvey().WithId(_surveyId).WithTeam(team).Build();
         var surveyNotificationId = Guid.NewGuid();
         var surveyNotificationService =
-            new TestableSurveyNotificationService(_surveyRepository.Object, _surveyNotificationsRepository.Object, _emailTemplateFactory.Object)
-                {
-                    SurveyNotificationId = surveyNotificationId
-                };
-        var janeSurveyNotification = new SherpaBackEnd.SurveyNotification.Domain.SurveyNotification(surveyNotificationId, survey, jane);
-        var johnSurveyNotification = new SherpaBackEnd.SurveyNotification.Domain.SurveyNotification(surveyNotificationId, survey, john);
+            new TestableSurveyNotificationService(_surveyRepository.Object, _surveyNotificationsRepository.Object,
+                _emailTemplateFactory.Object)
+            {
+                SurveyNotificationId = surveyNotificationId
+            };
+        var janeSurveyNotification =
+            new SherpaBackEnd.SurveyNotification.Domain.SurveyNotification(surveyNotificationId, survey, jane);
+        var johnSurveyNotification =
+            new SherpaBackEnd.SurveyNotification.Domain.SurveyNotification(surveyNotificationId, survey, john);
         var surveyNotifications =
             new List<SherpaBackEnd.SurveyNotification.Domain.SurveyNotification>()
                 { janeSurveyNotification, johnSurveyNotification };
 
         _surveyRepository.Setup(repository => repository.GetSurveyById(_surveyId))
             .ReturnsAsync(survey);
-        
+
         await surveyNotificationService.LaunchSurveyNotificationsFor(_createSurveyNotificationsDto);
 
         _surveyNotificationsRepository.Verify(
@@ -83,19 +86,22 @@ public class SurveyNotificationServiceTest
         var survey = ASurvey().WithId(_surveyId).WithTeam(team).Build();
         var surveyNotificationId = Guid.NewGuid();
         var surveyNotificationService =
-            new TestableSurveyNotificationService(_surveyRepository.Object, _surveyNotificationsRepository.Object, _emailTemplateFactory.Object)
+            new TestableSurveyNotificationService(_surveyRepository.Object, _surveyNotificationsRepository.Object,
+                _emailTemplateFactory.Object)
             {
                 SurveyNotificationId = surveyNotificationId
             };
-        var janeSurveyNotification = new SherpaBackEnd.SurveyNotification.Domain.SurveyNotification(surveyNotificationId, survey, jane);
-        var johnSurveyNotification = new SherpaBackEnd.SurveyNotification.Domain.SurveyNotification(surveyNotificationId, survey, john);
+        var janeSurveyNotification =
+            new SherpaBackEnd.SurveyNotification.Domain.SurveyNotification(surveyNotificationId, survey, jane);
+        var johnSurveyNotification =
+            new SherpaBackEnd.SurveyNotification.Domain.SurveyNotification(surveyNotificationId, survey, john);
         var surveyNotifications =
             new List<SherpaBackEnd.SurveyNotification.Domain.SurveyNotification>()
                 { janeSurveyNotification, johnSurveyNotification };
 
         _surveyRepository.Setup(repository => repository.GetSurveyById(_surveyId))
             .ReturnsAsync(survey);
-        
+
         await surveyNotificationService.LaunchSurveyNotificationsFor(_createSurveyNotificationsDto);
 
         _emailTemplateFactory.Verify(factory => factory.CreateEmailTemplate(surveyNotifications));
@@ -124,13 +130,14 @@ public class SurveyNotificationServiceTest
     {
         var surveyNotificationId = Guid.NewGuid();
         var surveyNotificationService =
-            new TestableSurveyNotificationService(_surveyRepository.Object, _surveyNotificationsRepository.Object, _emailTemplateFactory.Object)
+            new TestableSurveyNotificationService(_surveyRepository.Object, _surveyNotificationsRepository.Object,
+                _emailTemplateFactory.Object)
             {
                 SurveyNotificationId = surveyNotificationId
             };
         _surveyRepository.Setup(repository =>
             repository.GetSurveyById(_createSurveyNotificationsDto.SurveyId)).ThrowsAsync(new Exception());
-        
+
         var exceptionThrown = await Assert.ThrowsAsync<ConnectionToRepositoryUnsuccessfulException>(async () =>
             await surveyNotificationService.LaunchSurveyNotificationsFor(_createSurveyNotificationsDto));
 
@@ -143,16 +150,37 @@ public class SurveyNotificationServiceTest
     {
         var surveyNotificationId = Guid.NewGuid();
         var surveyNotificationService =
-            new TestableSurveyNotificationService(_surveyRepository.Object, _surveyNotificationsRepository.Object, _emailTemplateFactory.Object)
+            new TestableSurveyNotificationService(_surveyRepository.Object, _surveyNotificationsRepository.Object,
+                _emailTemplateFactory.Object)
             {
                 SurveyNotificationId = surveyNotificationId
             };
-        
+
         _surveyRepository.Setup(repository =>
             repository.GetSurveyById(_createSurveyNotificationsDto.SurveyId)).ReturnsAsync((Survey.Domain.Survey?)null);
-        
+
         var exceptionThrown = await Assert.ThrowsAsync<NotFoundException>(async () =>
             await surveyNotificationService.LaunchSurveyNotificationsFor(_createSurveyNotificationsDto));
         Assert.IsType<NotFoundException>(exceptionThrown);
+    }
+
+    [Fact]
+    public async Task ShouldThrowErrorIfCreateManySurveyNotificationIsNotSuccessful()
+    {
+        var surveyNotificationService = new SurveyNotificationService(_surveyRepository.Object,
+            _surveyNotificationsRepository.Object,
+            _emailTemplateFactory.Object);
+        var surveyNotifications = new List<SherpaBackEnd.SurveyNotification.Domain.SurveyNotification>();
+        var team = ATeam().Build();
+        var survey = ASurvey().WithId(_surveyId).WithTeam(team).Build();
+        _surveyRepository.Setup(repository => repository.GetSurveyById(_surveyId)).ReturnsAsync(survey);
+
+        _surveyNotificationsRepository
+            .Setup(repository => repository.CreateManySurveyNotification(surveyNotifications))
+            .ThrowsAsync(new Exception());
+        
+        var exceptionThrown = await Assert.ThrowsAsync<ConnectionToRepositoryUnsuccessfulException>(async () =>
+            await surveyNotificationService.LaunchSurveyNotificationsFor(_createSurveyNotificationsDto));
+        Assert.IsType<ConnectionToRepositoryUnsuccessfulException>(exceptionThrown);
     }
 }
