@@ -11,4 +11,5 @@ public class DatabaseSettings
     public string? ConnectionString { get; set; } = Environment.GetEnvironmentVariable("CONNECTION_STRING");
     public string TemplateCollectionName { get; set; } = null!;
     public string SurveyCollectionName { get; set; } = null!;
+    public string SurveyNotificationCollectionName { get; set; } = null!;
 }

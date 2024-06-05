@@ -10,7 +10,7 @@ public class MongoSurveyNotificationRepository: ISurveyNotificationsRepository
         throw new NotImplementedException();
     }
 
-    public Task CreateManySurveyNotification(List<Domain.SurveyNotification> surveyNotification)
+    public async Task CreateManySurveyNotification(List<Domain.SurveyNotification> surveyNotification)
     {
         throw new NotImplementedException();
     }

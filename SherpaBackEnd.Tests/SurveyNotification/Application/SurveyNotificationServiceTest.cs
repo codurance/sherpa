@@ -182,7 +182,8 @@ public class SurveyNotificationServiceTest
             await _surveyNotificationService.LaunchSurveyNotificationsFor(_createSurveyNotificationsDto));
         Assert.IsType<ConnectionToRepositoryUnsuccessfulException>(exceptionThrown);
     }
-
+    
+    // TODO remove TestableSurveyNotificationService by implementing IGuidService mock in tests
     class TestableSurveyNotificationService : SurveyNotificationService
     {
         public Guid SurveyNotificationId { get; set; }
