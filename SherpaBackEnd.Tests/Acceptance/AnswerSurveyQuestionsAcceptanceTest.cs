@@ -79,10 +79,13 @@ public class AnswerSurveyQuestionsAcceptanceTest : IDisposable
             .Build();
         var template = ATemplate()
             .Build();
+        var templateWithoutQuestions = ATemplate().BuildWithoutQuestions();
+        var deadline = new DateTime(2024,06, 24).ToUniversalTime();
         var survey = ASurvey()
             .WithId(surveyId)
             .WithTeam(team)
             .WithTemplate(template)
+            .WithDeadline(deadline)
             .WithCoach(coach)
             .Build();
 
@@ -100,7 +103,14 @@ public class AnswerSurveyQuestionsAcceptanceTest : IDisposable
         // Given: A TeamMember has responded to a survey
         var response = new SurveyResponse(teamMemberId);
         var answerSurveyDto = new AnswerSurveyDto(surveyId, teamMemberId, response);
-        Survey.Domain.Survey expectedSurvey = ASurvey().WithId(surveyId).WithTeam(team).WithTemplate(template).WithResponses(new List<SurveyResponse>(){response}).WithCoach(coach).Build();
+        var expectedSurvey = ASurvey()
+            .WithId(surveyId)
+            .WithTeam(team)
+            .WithTemplateWithoutQuestions(templateWithoutQuestions)
+            .WithResponses(new List<SurveyResponse>(){response})
+            .WithCoach(coach)
+            .WithDeadline(deadline)
+            .BuildWithoutQuestions();
 
         // When: The responses are submitted 
         var actionResult = await surveyController.AnswerSurvey(answerSurveyDto);

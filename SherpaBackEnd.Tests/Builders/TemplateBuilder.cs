@@ -1,4 +1,5 @@
 using SherpaBackEnd.Template.Domain;
+using SherpaBackEnd.Template.Infrastructure.Http.Dto;
 
 namespace SherpaBackEnd.Tests.Builders;
 
@@ -34,5 +35,10 @@ public class TemplateBuilder
     public Template.Domain.Template Build()
     {
         return new Template.Domain.Template(_name, _questions, _minutesToComplete);
+    }
+
+    public TemplateWithoutQuestions BuildWithoutQuestions()
+    {
+        return new TemplateWithoutQuestions(_name, _minutesToComplete);
     }
 }

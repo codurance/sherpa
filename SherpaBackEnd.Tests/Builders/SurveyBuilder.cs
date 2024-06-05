@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.SignalR;
 using SherpaBackEnd.Survey.Domain;
+using SherpaBackEnd.Survey.Infrastructure.Http.Dto;
+using SherpaBackEnd.Template.Infrastructure.Http.Dto;
 using SherpaFrontEnd.Dtos.Survey;
 
 namespace SherpaBackEnd.Tests.Builders;
@@ -15,6 +17,7 @@ public class SurveyBuilder
     private List<SurveyResponse> _responses = new();
     private Team.Domain.Team _team;
     private Template.Domain.Template _template;
+    private TemplateWithoutQuestions _templateWithoutQuestions;
 
     public static SurveyBuilder ASurvey()
     {
@@ -75,9 +78,21 @@ public class SurveyBuilder
         return this;
     }
 
+    public SurveyBuilder WithTemplateWithoutQuestions(TemplateWithoutQuestions templateWithoutQuestions)
+    {
+        _templateWithoutQuestions = templateWithoutQuestions;
+        return this;
+    }
+
     public Survey.Domain.Survey Build()
     {
         return new Survey.Domain.Survey(_id, _coach, _status, _deadline, _title, _description, _responses, _team,
             _template);
+    }
+
+    public SurveyWithoutQuestions BuildWithoutQuestions()
+    {
+        return new SurveyWithoutQuestions(_id, _coach, _status, _deadline, _title, _description, _responses, _team,
+            _templateWithoutQuestions);
     }
 }
