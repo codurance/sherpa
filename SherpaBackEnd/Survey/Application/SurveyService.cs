@@ -96,6 +96,8 @@ public class SurveyService : ISurveyService
                     throw;
                 case SurveyAlreadyAnsweredException:
                     throw;
+                case SurveyNotAssignedToTeamMemberException:
+                    throw;
                 default:
                     throw new ConnectionToRepositoryUnsuccessfulException("Unable to update answered survey");
             }

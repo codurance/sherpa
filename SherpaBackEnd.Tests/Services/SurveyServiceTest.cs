@@ -150,8 +150,9 @@ public class SurveyServiceTest
     [Fact]
     public async Task ShouldRetrieveSurveyWhenAnswerSurveyIsCalled()
     {
-        var survey = SurveyBuilder.ASurvey().Build();
         var teamMember = TeamMemberBuilder.ATeamMember().Build();
+        var team = TeamBuilder.ATeam().WithTeamMembers(new List<TeamMember>(){teamMember}).Build();
+        var survey = SurveyBuilder.ASurvey().WithTeam(team).Build();
         var response = new SurveyResponse(teamMember.Id);
         var answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, response);
         _surveyRepository.Setup(repository => repository.GetSurveyById(survey.Id)).ReturnsAsync(survey);
@@ -164,8 +165,9 @@ public class SurveyServiceTest
     [Fact]
     public async Task ShouldAnswerSurveyWithResponseInDto()
     {
-        var survey = SurveyBuilder.ASurvey().Build();
         var teamMember = TeamMemberBuilder.ATeamMember().Build();
+        var team = TeamBuilder.ATeam().WithTeamMembers(new List<TeamMember>(){teamMember}).Build();
+        var survey = SurveyBuilder.ASurvey().WithTeam(team).Build();
         var response = new SurveyResponse(teamMember.Id);
         var answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, response);
         _surveyRepository.Setup(repository => repository.GetSurveyById(survey.Id)).ReturnsAsync(survey);
@@ -178,8 +180,9 @@ public class SurveyServiceTest
     [Fact]
     public async Task ShouldSaveAnsweredSurveyInDatabase()
     {
-        var survey = SurveyBuilder.ASurvey().Build();
         var teamMember = TeamMemberBuilder.ATeamMember().Build();
+        var team = TeamBuilder.ATeam().WithTeamMembers(new List<TeamMember>(){teamMember}).Build();
+        var survey = SurveyBuilder.ASurvey().WithTeam(team).Build();
         var response = new SurveyResponse(teamMember.Id);
         var answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, response);
         _surveyRepository.Setup(repository => repository.GetSurveyById(survey.Id)).ReturnsAsync(survey);
@@ -220,8 +223,9 @@ public class SurveyServiceTest
     public async Task ShouldThrowSurveyAlreadyAnsweredExceptionIfSurveyIsAlreadyAnswered()
     {
         var teamMember = TeamMemberBuilder.ATeamMember().Build();
+        var team = TeamBuilder.ATeam().WithTeamMembers(new List<TeamMember>(){teamMember}).Build();
         var response = new SurveyResponse(teamMember.Id);
-        var survey = SurveyBuilder.ASurvey().WithResponses(new List<SurveyResponse>(){response}).Build();
+        var survey = SurveyBuilder.ASurvey().WithTeam(team).WithResponses(new List<SurveyResponse>(){response}).Build();
         var answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, response);
         _surveyRepository.Setup(repository => repository.GetSurveyById(survey.Id)).ReturnsAsync(survey);
 
@@ -230,5 +234,21 @@ public class SurveyServiceTest
             await _service.AnswerSurvey(answerSurveyDto));
         
         Assert.Equal($"Survey already answered by {teamMember.Id}", surveyAlreadyAnsweredException.Message);
+    }
+
+    [Fact]
+    public async Task ShouldThrowSurveyNotAssignedToTeamMemberExceptionIfTeamMemberIsNotOnTeamAssignedToSurvey()
+    {
+        var teamMember = TeamMemberBuilder.ATeamMember().Build();
+        var team = TeamBuilder.ATeam().Build();
+        var response = new SurveyResponse(teamMember.Id);
+        var survey = SurveyBuilder.ASurvey().WithTeam(team).Build();
+        var answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, response);
+        _surveyRepository.Setup(repository => repository.GetSurveyById(survey.Id)).ReturnsAsync(survey);
+
+
+        var surveyNotAssignedToTeamMemberException = await Assert.ThrowsAsync<SurveyNotAssignedToTeamMemberException>(async () => await _service.AnswerSurvey(answerSurveyDto));
+        
+        Assert.Equal($"{teamMember.Id} is not assigned to survey", surveyNotAssignedToTeamMemberException.Message);
     }
 }

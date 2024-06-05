@@ -37,6 +37,11 @@ public class Survey
 
     private void CanAnswerSurvey(Guid teamMemberId)
     {
+        if (!Team.Members.Exists(member => member.Id.Equals(teamMemberId)))
+        {
+            throw new SurveyNotAssignedToTeamMemberException($"{teamMemberId} is not assigned to survey");
+        }
+        
         if (Responses.Exists(response => response.TeamMemberId.Equals(teamMemberId)))
         {
             throw new SurveyAlreadyAnsweredException($"Survey already answered by {teamMemberId}");
