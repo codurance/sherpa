@@ -6,6 +6,7 @@ using SherpaBackEnd.Exceptions;
 using Newtonsoft.Json;
 using SherpaBackEnd.Survey.Application;
 using SherpaBackEnd.Survey.Domain;
+using SherpaBackEnd.Survey.Domain.Exceptions;
 using SherpaBackEnd.Survey.Infrastructure.Http;
 using SherpaBackEnd.Survey.Infrastructure.Http.Dto;
 using SherpaBackEnd.Team.Infrastructure.Http;
@@ -268,5 +269,25 @@ public class SurveyControllerTest
 
         Assert.Equal(StatusCodes.Status500InternalServerError, actionResult.StatusCode);
         Assert.Equal(connectionToRepositoryUnsuccessfulException.Message,actionResult.Value);
+    }
+
+    [Fact]
+    public async Task ShouldReturnBadRequestIfSurveyHasAlreadyBeenAnsweredByTeamMembers()
+    {
+        var teamMember = TeamMemberBuilder.ATeamMember().Build();
+        var response = new SurveyResponse(teamMember.Id);
+        var survey = SurveyBuilder.ASurvey().Build();
+        var answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, response);
+        var surveyAlreadyAnsweredException =
+            new SurveyAlreadyAnsweredException(teamMember.Id);
+        _serviceMock.Setup(service => service.AnswerSurvey(answerSurveyDto))
+            .ThrowsAsync(surveyAlreadyAnsweredException);
+
+        var actionResult = (ObjectResult)await _controller.AnswerSurvey(answerSurveyDto);
+        Assert.IsType<ObjectResult>(actionResult);
+
+        Assert.Equal(StatusCodes.Status400BadRequest, actionResult.StatusCode);
+        Assert.Equal(surveyAlreadyAnsweredException.Message,actionResult.Value);
+
     }
 }

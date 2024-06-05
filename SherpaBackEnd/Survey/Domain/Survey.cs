@@ -44,7 +44,7 @@ public class Survey
         
         if (HasAlreadyResponded(teamMemberId))
         {
-            throw new SurveyAlreadyAnsweredException($"Survey already answered by {teamMemberId}");
+            throw new SurveyAlreadyAnsweredException(teamMemberId);
         }
     }
 

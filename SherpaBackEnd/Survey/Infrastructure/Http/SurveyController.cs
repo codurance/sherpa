@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Survey.Application;
+using SherpaBackEnd.Survey.Domain.Exceptions;
 using SherpaBackEnd.Survey.Infrastructure.Http.Dto;
 using SherpaBackEnd.Template.Domain;
 
@@ -98,8 +99,15 @@ public class SurveyController
         catch (Exception exception)
         {
             _logger.LogError(exception.Message);
-            return new ObjectResult(exception)
-                { StatusCode = StatusCodes.Status500InternalServerError, Value = exception.Message };
+            return exception switch
+            {
+                SurveyAlreadyAnsweredException => new ObjectResult(exception)
+                {
+                    StatusCode = StatusCodes.Status400BadRequest, Value = exception.Message,
+                },
+                _ => new ObjectResult(exception)
+                    { StatusCode = StatusCodes.Status500InternalServerError, Value = exception.Message },
+            };
         }
     }
 }
