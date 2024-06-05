@@ -75,5 +75,7 @@ public class SurveyService : ISurveyService
         var survey = await _surveyRepository.GetSurveyById(answerSurveyDto.SurveyId);
         
         survey.AnswerSurvey(answerSurveyDto.Response);
+
+        await _surveyRepository.Update(survey);
     }
 }

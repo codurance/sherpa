@@ -172,4 +172,18 @@ public class SurveyServiceTest
 
         Assert.Contains(response, survey.Responses);
     }
+
+    [Fact]
+    public async Task ShouldSaveAnsweredSurveyInDatabase()
+    {
+        var survey = SurveyBuilder.ASurvey().Build();
+        var teamMember = TeamMemberBuilder.ATeamMember().Build();
+        var response = new SurveyResponse();
+        var answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, response);
+        _surveyRepository.Setup(repository => repository.GetSurveyById(survey.Id)).ReturnsAsync(survey);
+
+        await _service.AnswerSurvey(answerSurveyDto);
+
+        _surveyRepository.Verify(repository => repository.Update(survey));
+    }
 }

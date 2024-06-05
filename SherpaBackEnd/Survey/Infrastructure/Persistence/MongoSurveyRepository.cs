@@ -61,6 +61,11 @@ public class MongoSurveyRepository : ISurveyRepository
         return await PopulateMSurvey(mSurvey);
     }
 
+    public Task<Domain.Survey?> Update(Domain.Survey survey)
+    {
+        throw new NotImplementedException();
+    }
+
     private async Task<Domain.Survey?> PopulateMSurvey(MSurvey mSurvey)
     {
         var surveyMTeam = await _teamCollection.Find(Builders<MTeam>.Filter.Eq("_id", mSurvey.Team.ToString()))
