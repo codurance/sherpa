@@ -140,9 +140,9 @@ public class TeamsAcceptanceTest
         // THEN he should be redirected on the page for creating a team
         //     with one mandatory text field “Team´s name”
         //     and 2 buttons Cancel and Confirm
-        var createNewTeamTitle = teamsListComponent.FindElementByCssSelectorAndTextContent("h3", "Create new team");
+        var createNewTeamTitle = teamsListComponent.FindElementByCssSelectorAndTextContent("h2", "Create new team");
         Assert.NotNull(createNewTeamTitle);
-        var teamNameLabel = teamsListComponent.FindElementByCssSelectorAndTextContent("label", "Team's name");
+        var teamNameLabel = teamsListComponent.FindElementByCssSelectorAndTextContent("label", "Team name");
         var teamNameInputId = teamNameLabel.Attributes.GetNamedItem("for");
         var teamNameInput = teamsListComponent.FindAll($"#{teamNameInputId.TextContent}");
         Assert.NotNull(teamNameInput);
@@ -211,7 +211,7 @@ public class TeamsAcceptanceTest
         
         _httpHandlerMock.SetupRequest(HttpMethod.Get, $"/team/{teamId.ToString()}/surveys", teamSurveysResponse);
 
-        var teamNameLabel = teamsListComponent.FindElementByCssSelectorAndTextContent("label", "Team's name");
+        var teamNameLabel = teamsListComponent.FindElementByCssSelectorAndTextContent("label", "Team name");
         var teamNameInputId = teamNameLabel.Attributes.GetNamedItem("for");
         var teamNameInput = teamsListComponent.Find($"#{teamNameInputId.TextContent}");
         Assert.NotNull(teamNameInput);
@@ -284,7 +284,7 @@ public class TeamsAcceptanceTest
         _guidService.Setup(service => service.GenerateRandomGuid()
         ).Returns(teamId);
 
-        var teamNameLabel = teamsListComponent.FindElementByCssSelectorAndTextContent("label", "Team's name");
+        var teamNameLabel = teamsListComponent.FindElementByCssSelectorAndTextContent("label", "Team name");
         var teamNameInputId = teamNameLabel.Attributes.GetNamedItem("for");
         var teamNameInput = teamsListComponent.Find($"#{teamNameInputId.TextContent}");
         Assert.NotNull(teamNameInput);
@@ -401,7 +401,7 @@ public class TeamsAcceptanceTest
 
         // WHEN he enters Teams name
 
-        var teamNameLabel = appComponent.FindElementByCssSelectorAndTextContent("label", "Team's name");
+        var teamNameLabel = appComponent.FindElementByCssSelectorAndTextContent("label", "Team name");
         var teamNameInputId = teamNameLabel.Attributes.GetNamedItem("for");
         var teamNameInput = appComponent.Find($"#{teamNameInputId.TextContent}");
         Assert.NotNull(teamNameInput);
@@ -461,7 +461,7 @@ public class TeamsAcceptanceTest
 
         // THEN this field should be highlighted in read and at the top of the page he should see an error message that it's mandatory field.
 
-        var teamNameLabel = appComponent.FindElementByCssSelectorAndTextContent("label", "Team's name");
+        var teamNameLabel = appComponent.FindElementByCssSelectorAndTextContent("label", "Team name");
 
         var inputGroup = teamNameLabel.Parent;
 

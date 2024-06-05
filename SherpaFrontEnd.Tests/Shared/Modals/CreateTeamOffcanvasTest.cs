@@ -44,7 +44,7 @@ public class CreateTeamOffcanvasTest
         var createNewTeamTitle = component.FindElementByCssSelectorAndTextContent("h1,h2,h3", "Create new team");
         Assert.NotNull(createNewTeamTitle);
         
-        var teamNameLabel = component.FindElementByCssSelectorAndTextContent("label", "Team's name");
+        var teamNameLabel = component.FindElementByCssSelectorAndTextContent("label", "Team name");
         var teamNameInputId = teamNameLabel.Attributes.GetNamedItem("for");
         var teamNameInput = component.FindAll($"#{teamNameInputId.TextContent}");
         Assert.NotNull(teamNameInput);
@@ -61,7 +61,7 @@ public class CreateTeamOffcanvasTest
     {
         var component = _testCtx.RenderComponent<CreateTeamOffcanvas>();
         
-        var teamNameLabel = component.FindElementByCssSelectorAndTextContent("label", "Team's name");
+        var teamNameLabel = component.FindElementByCssSelectorAndTextContent("label", "Team name");
         var teamNameInputId = teamNameLabel.Attributes.GetNamedItem("for");
         var teamNameInput = component.Find($"#{teamNameInputId.TextContent}");
         Assert.NotNull(teamNameInput);
@@ -103,7 +103,7 @@ public class CreateTeamOffcanvasTest
         
         var component = _testCtx.RenderComponent<CreateTeamOffcanvas>();
         
-        var teamNameLabel = component.FindElementByCssSelectorAndTextContent("label", "Team's name");
+        var teamNameLabel = component.FindElementByCssSelectorAndTextContent("label", "Team name");
         var teamNameInputId = teamNameLabel.Attributes.GetNamedItem("for");
         var teamNameInput = component.Find($"#{teamNameInputId.TextContent}");
         Assert.NotNull(teamNameInput);
@@ -133,7 +133,7 @@ public class CreateTeamOffcanvasTest
 
         component.WaitForElement(".validation-message");
         
-        var teamNameLabelAfterClick = component.FindElementByCssSelectorAndTextContent("label", "Team's name");
+        var teamNameLabelAfterClick = component.FindElementByCssSelectorAndTextContent("label", "Team name");
         var inputGroup = teamNameLabelAfterClick.Parent;
         
         Assert.Contains("This field is mandatory", inputGroup.ToMarkup());
