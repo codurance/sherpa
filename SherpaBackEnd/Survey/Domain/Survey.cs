@@ -39,7 +39,7 @@ public class Survey
     {
         if (!Team.IsMemberOfTeam(teamMemberId))
         {
-            throw new SurveyNotAssignedToTeamMemberException($"{teamMemberId} is not assigned to survey");
+            throw new SurveyNotAssignedToTeamMemberException(teamMemberId);
         }
         
         if (HasAlreadyResponded(teamMemberId))

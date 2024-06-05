@@ -268,7 +268,7 @@ public class SurveyControllerTest
         Assert.IsType<ObjectResult>(actionResult);
 
         Assert.Equal(StatusCodes.Status500InternalServerError, actionResult.StatusCode);
-        Assert.Equal(connectionToRepositoryUnsuccessfulException.Message,actionResult.Value);
+        Assert.Equal(connectionToRepositoryUnsuccessfulException.Message, actionResult.Value);
     }
 
     [Fact]
@@ -287,7 +287,25 @@ public class SurveyControllerTest
         Assert.IsType<ObjectResult>(actionResult);
 
         Assert.Equal(StatusCodes.Status400BadRequest, actionResult.StatusCode);
-        Assert.Equal(surveyAlreadyAnsweredException.Message,actionResult.Value);
+        Assert.Equal(surveyAlreadyAnsweredException.Message, actionResult.Value);
+    }
 
+    [Fact]
+    public async Task ShouldReturnBadRequestIfTeamMemberIsNotAssignedToSurvey()
+    {
+        var teamMember = TeamMemberBuilder.ATeamMember().Build();
+        var response = new SurveyResponse(teamMember.Id);
+        var survey = SurveyBuilder.ASurvey().Build();
+        var answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, response);
+        var surveyNotAssignedToTeamMemberException =
+            new SurveyNotAssignedToTeamMemberException(teamMember.Id);
+        _serviceMock.Setup(service => service.AnswerSurvey(answerSurveyDto))
+            .ThrowsAsync(surveyNotAssignedToTeamMemberException);
+
+        var actionResult = (ObjectResult)await _controller.AnswerSurvey(answerSurveyDto);
+        Assert.IsType<ObjectResult>(actionResult);
+
+        Assert.Equal(StatusCodes.Status400BadRequest, actionResult.StatusCode);
+        Assert.Equal(surveyNotAssignedToTeamMemberException.Message, actionResult.Value);
     }
 }

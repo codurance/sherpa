@@ -101,10 +101,11 @@ public class SurveyController
             _logger.LogError(exception.Message);
             return exception switch
             {
-                SurveyAlreadyAnsweredException => new ObjectResult(exception)
-                {
-                    StatusCode = StatusCodes.Status400BadRequest, Value = exception.Message,
-                },
+                SurveyAlreadyAnsweredException or
+                    SurveyNotAssignedToTeamMemberException => new ObjectResult(exception)
+                    {
+                        StatusCode = StatusCodes.Status400BadRequest, Value = exception.Message,
+                    },
                 _ => new ObjectResult(exception)
                     { StatusCode = StatusCodes.Status500InternalServerError, Value = exception.Message },
             };

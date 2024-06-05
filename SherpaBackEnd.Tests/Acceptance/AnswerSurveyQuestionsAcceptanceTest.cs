@@ -156,7 +156,7 @@ public class AnswerSurveyQuestionsAcceptanceTest : IDisposable
             .WithTeam(team)
             .WithTemplate(template)
             .WithDeadline(deadline)
-            .WithResponses(new List<SurveyResponse>(){firstResponse})
+            .WithResponses(new List<SurveyResponse>() { firstResponse })
             .WithCoach(coach)
             .Build();
 
@@ -178,10 +178,66 @@ public class AnswerSurveyQuestionsAcceptanceTest : IDisposable
 
         // When: A second response is submitted 
         var actionResult = await surveyController.AnswerSurvey(answerSurveyDto);
-        
+
         // Then: The controller should respond with bad request
         var badRequestResult = Assert.IsType<ObjectResult>(actionResult);
-        Assert.Equal(StatusCodes.Status400BadRequest,  badRequestResult.StatusCode);
+        Assert.Equal(StatusCodes.Status400BadRequest, badRequestResult.StatusCode);
+        Assert.Equal(expectedMessage, badRequestResult.Value);
+    }
+
+    [Fact]
+    public async Task TeamMemberShouldNotBeAbleToAnswerASurveyNotAssignedToThem()
+    {
+        await InitializeDbClientAndCollections();
+        var templateRepository = new MongoTemplateRepository(_databaseSettings);
+        var teamRepository = new MongoTeamRepository(_databaseSettings);
+        var surveyRepository = new MongoSurveyRepository(_databaseSettings);
+        var surveyService = new SurveyService(surveyRepository, teamRepository, templateRepository);
+        var surveyController = new SurveyController(surveyService, _logger);
+        var surveyId = Guid.NewGuid();
+        var teamMemberId = Guid.NewGuid();
+        var teamId = Guid.NewGuid();
+        var coachId = Guid.NewGuid();
+        var coach = new User.Domain.User(coachId, "Lucia");
+        var teamMember = ATeamMember()
+            .WithId(teamMemberId)
+            .Build();
+        var team = ATeam()
+            .WithId(teamId)
+            .Build();
+        var template = ATemplate()
+            .Build();
+        var templateWithoutQuestions = ATemplate().BuildWithoutQuestions();
+        var deadline = new DateTime(2024, 06, 24).ToUniversalTime();
+        var survey = ASurvey()
+            .WithId(surveyId)
+            .WithTeam(team)
+            .WithTemplate(template)
+            .WithDeadline(deadline)
+            .WithCoach(coach)
+            .Build();
+
+        await teamRepository.AddTeamAsync(team);
+        await surveyRepository.CreateSurvey(survey);
+
+        await _templateCollection.InsertOneAsync(new BsonDocument
+        {
+            { "name", template.Name },
+            { "minutesToComplete", template.MinutesToComplete },
+            { "questions", new BsonArray(template.Questions) }
+        });
+
+        // Given: A TeamMember is not assigned to a survey
+        var response = new SurveyResponse(teamMemberId);
+        var answerSurveyDto = new AnswerSurveyDto(surveyId, teamMemberId, response);
+        var expectedMessage = new SurveyNotAssignedToTeamMemberException(teamMemberId).Message;
+
+        // When: A response is submitted
+        var actionResult = await surveyController.AnswerSurvey(answerSurveyDto);
+
+        // Then: The controller should respond with bad request
+        var badRequestResult = Assert.IsType<ObjectResult>(actionResult);
+        Assert.Equal(StatusCodes.Status400BadRequest, badRequestResult.StatusCode);
         Assert.Equal(expectedMessage, badRequestResult.Value);
     }
 

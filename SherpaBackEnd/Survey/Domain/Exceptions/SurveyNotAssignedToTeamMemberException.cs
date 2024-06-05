@@ -1,12 +1,8 @@
 namespace SherpaBackEnd.Survey.Domain.Exceptions;
 
-public class SurveyNotAssignedToTeamMemberException: Exception
+public class SurveyNotAssignedToTeamMemberException : Exception
 {
-    public SurveyNotAssignedToTeamMemberException(string? message) : base(message)
-    {
-    }
-
-    public SurveyNotAssignedToTeamMemberException(string? message, Exception? innerException) : base(message, innerException)
+    public SurveyNotAssignedToTeamMemberException(Guid teamMemberId) : base($"{teamMemberId} is not assigned to survey")
     {
     }
 }
