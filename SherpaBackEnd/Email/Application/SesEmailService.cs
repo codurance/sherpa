@@ -51,6 +51,11 @@ public class SesEmailService : IEmailService
         return httpStatusCode;
     }
 
+    public Task<HttpStatusCode> SendEmailWith(EmailTemplateRequest templateRequest)
+    {
+        throw new NotImplementedException();
+    }
+
 
     private async Task CreatePendingSurveyTemplate()
     {
@@ -79,10 +84,5 @@ public class SesEmailService : IEmailService
             Console.WriteLine(e);
             await CreatePendingSurveyTemplate();
         }
-    }
-
-    public Task<HttpStatusCode> SendTemplatedEmail<TemplateRequest>(TemplateRequest templateRequest)
-    {
-        throw new NotImplementedException();
     }
 }

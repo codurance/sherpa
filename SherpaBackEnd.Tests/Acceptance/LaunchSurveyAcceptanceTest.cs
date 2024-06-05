@@ -7,8 +7,10 @@ using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Moq;
+using SherpaBackEnd.Email;
 using SherpaBackEnd.Email.Application;
 using SherpaBackEnd.Shared.Infrastructure.Persistence;
+using SherpaBackEnd.Shared.Services;
 using SherpaBackEnd.SurveyNotification;
 using SherpaBackEnd.Survey.Infrastructure.Http;
 using SherpaBackEnd.Survey.Infrastructure.Persistence;
@@ -17,6 +19,12 @@ using SherpaBackEnd.SurveyNotification.Domain;
 using SherpaBackEnd.SurveyNotification.Infrastructure.Http;
 using SherpaBackEnd.SurveyNotification.Infrastructure.Http.Dto;
 using SherpaBackEnd.SurveyNotification.Infrastructure.Persistence;
+using SherpaBackEnd.Team.Domain;
+using SherpaBackEnd.Team.Infrastructure.Persistence;
+using SherpaBackEnd.Template.Domain;
+using static SherpaBackEnd.Tests.Builders.SurveyBuilder;
+using static SherpaBackEnd.Tests.Builders.TeamBuilder;
+using static SherpaBackEnd.Tests.Builders.TeamMemberBuilder;
 
 namespace SherpaBackEnd.Tests.Acceptance;
 
@@ -67,25 +75,50 @@ public class LaunchSurveyAcceptanceTest: IDisposable
     public async Task ShouldBeAbleToLaunchASurvey()
     { 
         await InitializeDbClientAndCollections();
+
+        var mongoTeamRepository = new MongoTeamRepository(_databaseSettings);
+        var surveyRepository = new MongoSurveyRepository(_databaseSettings);
+        
+        var teamMember = ATeamMember().WithFullName("Jane Doe").WithEmail("jane.doe@codurance.com").Build();
+        var teamMembers = new List<TeamMember>() { teamMember };
+        var team = ATeam().WithTeamMembers(teamMembers).Build();
+        var template = new Template.Domain.Template("Hackman Model", new List<IQuestion>(), 30);
+        var surveyId = Guid.NewGuid();
+        var survey = ASurvey().WithId(surveyId).WithTeam(team).WithTemplate(template).Build();
+
+        await mongoTeamRepository.AddTeamAsync(team);
+        await mongoTeamRepository.AddTeamMemberToTeamAsync(team.Id, teamMember);
+        await surveyRepository.CreateSurvey(survey);
+        
+        await _templateCollection.InsertOneAsync(new BsonDocument
+        {
+            { "name", template.Name },
+            { "minutesToComplete", template.MinutesToComplete },
+            { "questions", new BsonArray(template.Questions) }
+        });
+        
         // Given that an Org.coach has created a survey
         var emailService = new Mock<IEmailService>();
-        var surveyRepository = new MongoSurveyRepository(_databaseSettings);
         var surveyNotificationRepository = new MongoSurveyNotificationRepository(_databaseSettings);
+        var guidService = new Mock<IGuidService>();
+        var surveyNotificationId = Guid.NewGuid();
+        guidService.Setup(service => service.GenerateRandomGuid()).Returns(surveyNotificationId);
         var emailTemplateFactory = new EmailTemplateFactory();
-        var surveyNotificationService = new SurveyNotificationService(surveyRepository, surveyNotificationRepository, emailTemplateFactory);
+        var surveyNotificationService = new SurveyNotificationService(surveyRepository, surveyNotificationRepository, emailTemplateFactory, guidService.Object);
         var launchSurveyController = new SurveyNotificationController(surveyNotificationService);
         
         var launchSurveyDto = new CreateSurveyNotificationsDto(Guid.NewGuid());
         // When they launch the survey
         
         var actionResult = await launchSurveyController.LaunchSurvey(launchSurveyDto);
-        Assert.IsType<CreatedResult>(actionResult);
         
         // Then an email with a survey link should be sent to each team member
-        List<string> recipients = new(){"fulanito@codurance.com"};
+        var recipient = teamMember.Email;
+        var url = "sherpa.com/answer-survey/"+surveyNotificationId;
 
-        
-        // emailService.Verify(service => service.SendTemplatedEmail(templateRequest));
+        var templateRequest = new EmailTemplateRequest(recipient, url);
+        Assert.IsType<CreatedResult>(actionResult);
+        emailService.Verify(service => service.SendEmailWith(templateRequest));
     }
 
     public void Dispose()

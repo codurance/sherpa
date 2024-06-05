@@ -1,5 +1,7 @@
+using System.Runtime.InteropServices;
 using SherpaBackEnd.Email.Application;
 using SherpaBackEnd.Exceptions;
+using SherpaBackEnd.Shared.Services;
 using SherpaBackEnd.Survey.Domain.Persistence;
 using SherpaBackEnd.SurveyNotification.Infrastructure.Http.Dto;
 using SherpaBackEnd.SurveyNotification.Infrastructure.Persistence;
@@ -11,13 +13,15 @@ public class SurveyNotificationService : ISurveyNotificationService
     private readonly ISurveyRepository _surveyRepository;
     private readonly ISurveyNotificationsRepository _surveyNotificationsRepository;
     private readonly IEmailTemplateFactory _emailTemplateFactory;
+    private readonly IGuidService? _guidService;
 
     public SurveyNotificationService(ISurveyRepository surveyRepository,
-        ISurveyNotificationsRepository surveyNotificationsRepository, IEmailTemplateFactory emailTemplateFactory)
+        ISurveyNotificationsRepository surveyNotificationsRepository, IEmailTemplateFactory emailTemplateFactory, [Optional] IGuidService? guidService)
     {
         _surveyRepository = surveyRepository;
         _surveyNotificationsRepository = surveyNotificationsRepository;
         _emailTemplateFactory = emailTemplateFactory;
+        _guidService = guidService;
     }
 
     public async Task LaunchSurveyNotificationsFor(CreateSurveyNotificationsDto createSurveyNotificationsDto)
@@ -69,6 +73,6 @@ public class SurveyNotificationService : ISurveyNotificationService
 
     protected virtual Guid GenerateId()
     {
-        return Guid.NewGuid();
+        return _guidService?.GenerateRandomGuid() ?? Guid.NewGuid();
     }
 }
