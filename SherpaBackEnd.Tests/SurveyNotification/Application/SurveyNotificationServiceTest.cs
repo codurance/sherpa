@@ -32,10 +32,14 @@ public class SurveyNotificationServiceTest
     [Fact]
     public async Task ShouldRetrieveTheSurveyWithTheSurveyIdInTheDto()
     {
+        var team = ATeam().Build();
+        var survey = ASurvey().WithId(_surveyId).WithTeam(team).Build();
         var surveyNotificationService = new SurveyNotificationService(_surveyRepository.Object,
             _surveyNotificationsRepository.Object, _emailTemplateFactory.Object);
+        _surveyRepository.Setup(repository => repository.GetSurveyById(_surveyId)).ReturnsAsync(survey);
+
         await surveyNotificationService.LaunchSurveyNotificationsFor(_createSurveyNotificationsDto);
-        
+
         _surveyRepository.Verify(repository => repository.GetSurveyById(_createSurveyNotificationsDto.SurveyId));
     }
     
@@ -131,5 +135,24 @@ public class SurveyNotificationServiceTest
             await surveyNotificationService.LaunchSurveyNotificationsFor(_createSurveyNotificationsDto));
 
         Assert.IsType<ConnectionToRepositoryUnsuccessfulException>(exceptionThrown);
+    }
+
+
+    [Fact]
+    public async Task ShouldThrowErrorIfGetSurveyByIdIsNotFound()
+    {
+        var surveyNotificationId = Guid.NewGuid();
+        var surveyNotificationService =
+            new TestableSurveyNotificationService(_surveyRepository.Object, _surveyNotificationsRepository.Object, _emailTemplateFactory.Object)
+            {
+                SurveyNotificationId = surveyNotificationId
+            };
+        
+        _surveyRepository.Setup(repository =>
+            repository.GetSurveyById(_createSurveyNotificationsDto.SurveyId)).ReturnsAsync((Survey.Domain.Survey?)null);
+        
+        var exceptionThrown = await Assert.ThrowsAsync<NotFoundException>(async () =>
+            await surveyNotificationService.LaunchSurveyNotificationsFor(_createSurveyNotificationsDto));
+        Assert.IsType<NotFoundException>(exceptionThrown);
     }
 }
