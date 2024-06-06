@@ -4,6 +4,7 @@ using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -109,8 +110,9 @@ public class LaunchSurveyAcceptanceTest: IDisposable
         httpContextAccessor.SetupProperty(context => context.HttpContext.Request.Scheme, "http");
         httpContextAccessor.SetupProperty(context => context.HttpContext.Request.Host, new HostString("www.sherpa.com"));
         var emailTemplateFactory = new EmailTemplateFactory(httpContextAccessor.Object);
-        var surveyNotificationService = new SurveyNotificationService(surveyRepository, surveyNotificationRepository, emailTemplateFactory, emailService.Object, guidService.Object);
-        var launchSurveyController = new SurveyNotificationController(surveyNotificationService);
+        var surveyNotificationService = new SurveyNotificationService(surveyRepository, surveyNotificationRepository, emailTemplateFactory, emailService.Object, guidService.Object); 
+        var logger = Mock.Of<ILogger<SurveyNotificationController>>();
+        var launchSurveyController = new SurveyNotificationController(surveyNotificationService, logger);
         
         var launchSurveyDto = new CreateSurveyNotificationsDto(surveyId);
         // When they launch the survey
