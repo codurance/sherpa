@@ -242,7 +242,7 @@ public class SurveyControllerTest
     {
         var survey = SurveyBuilder.ASurvey().Build();
         var teamMember = TeamMemberBuilder.ATeamMember().Build();
-        var response = new SurveyResponse(teamMember.Id);
+        var response = new SurveyResponse(teamMember.Id, new List<QuestionResponse>());
         var answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, response);
 
         var actionResult = await _controller.AnswerSurvey(answerSurveyDto);
@@ -257,7 +257,7 @@ public class SurveyControllerTest
     {
         var survey = SurveyBuilder.ASurvey().Build();
         var teamMember = TeamMemberBuilder.ATeamMember().Build();
-        var response = new SurveyResponse(teamMember.Id);
+        var response = new SurveyResponse(teamMember.Id, new List<QuestionResponse>());
         var answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, response);
         var connectionToRepositoryUnsuccessfulException =
             new ConnectionToRepositoryUnsuccessfulException("Cannot create survey response.");
@@ -275,7 +275,7 @@ public class SurveyControllerTest
     public async Task ShouldReturnBadRequestIfSurveyHasAlreadyBeenAnsweredByTeamMembers()
     {
         var teamMember = TeamMemberBuilder.ATeamMember().Build();
-        var response = new SurveyResponse(teamMember.Id);
+        var response = new SurveyResponse(teamMember.Id, new List<QuestionResponse>());
         var survey = SurveyBuilder.ASurvey().Build();
         var answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, response);
         var surveyAlreadyAnsweredException =
@@ -294,7 +294,7 @@ public class SurveyControllerTest
     public async Task ShouldReturnBadRequestIfTeamMemberIsNotAssignedToSurvey()
     {
         var teamMember = TeamMemberBuilder.ATeamMember().Build();
-        var response = new SurveyResponse(teamMember.Id);
+        var response = new SurveyResponse(teamMember.Id, new List<QuestionResponse>());
         var survey = SurveyBuilder.ASurvey().Build();
         var answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, response);
         var surveyNotAssignedToTeamMemberException =

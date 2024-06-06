@@ -154,7 +154,7 @@ public class SurveyServiceTest
         var teamMember = TeamMemberBuilder.ATeamMember().Build();
         var team = TeamBuilder.ATeam().WithTeamMembers(new List<TeamMember>() { teamMember }).Build();
         var survey = SurveyBuilder.ASurvey().WithTeam(team).WithTemplate(template).Build();
-        var response = new SurveyResponse(teamMember.Id);
+        var response = new SurveyResponse(teamMember.Id, new List<QuestionResponse>());
         var answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, response);
         _surveyRepository.Setup(repository => repository.GetSurveyById(survey.Id)).ReturnsAsync(survey);
 
@@ -186,7 +186,7 @@ public class SurveyServiceTest
         var teamMember = TeamMemberBuilder.ATeamMember().Build();
         var team = TeamBuilder.ATeam().WithTeamMembers(new List<TeamMember>() { teamMember }).Build();
         var survey = SurveyBuilder.ASurvey().WithTeam(team).WithTemplate(template).Build();
-        var response = new SurveyResponse(teamMember.Id);
+        var response = new SurveyResponse(teamMember.Id, new List<QuestionResponse>());
         var answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, response);
         _surveyRepository.Setup(repository => repository.GetSurveyById(survey.Id)).ReturnsAsync(survey);
 
@@ -200,7 +200,7 @@ public class SurveyServiceTest
     {
         var survey = SurveyBuilder.ASurvey().Build();
         var teamMember = TeamMemberBuilder.ATeamMember().Build();
-        var response = new SurveyResponse(teamMember.Id);
+        var response = new SurveyResponse(teamMember.Id, new List<QuestionResponse>());
         var answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, response);
 
         var notFoundException =
@@ -214,7 +214,7 @@ public class SurveyServiceTest
     {
         var survey = SurveyBuilder.ASurvey().Build();
         var teamMember = TeamMemberBuilder.ATeamMember().Build();
-        var response = new SurveyResponse(teamMember.Id);
+        var response = new SurveyResponse(teamMember.Id, new List<QuestionResponse>());
         var answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, response);
         _surveyRepository.Setup(repository => repository.GetSurveyById(survey.Id)).ThrowsAsync(new Exception());
 
@@ -230,7 +230,7 @@ public class SurveyServiceTest
     {
         var teamMember = TeamMemberBuilder.ATeamMember().Build();
         var team = TeamBuilder.ATeam().WithTeamMembers(new List<TeamMember>() { teamMember }).Build();
-        var response = new SurveyResponse(teamMember.Id);
+        var response = new SurveyResponse(teamMember.Id, new List<QuestionResponse>());
         var survey = SurveyBuilder.ASurvey().WithTeam(team).WithResponses(new List<SurveyResponse>() { response })
             .Build();
         var answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, response);
@@ -248,7 +248,7 @@ public class SurveyServiceTest
     {
         var teamMember = TeamMemberBuilder.ATeamMember().Build();
         var team = TeamBuilder.ATeam().Build();
-        var response = new SurveyResponse(teamMember.Id);
+        var response = new SurveyResponse(teamMember.Id, new List<QuestionResponse>());
         var survey = SurveyBuilder.ASurvey().WithTeam(team).Build();
         var answerSurveyDto = new AnswerSurveyDto(survey.Id, teamMember.Id, response);
         _surveyRepository.Setup(repository => repository.GetSurveyById(survey.Id)).ReturnsAsync(survey);

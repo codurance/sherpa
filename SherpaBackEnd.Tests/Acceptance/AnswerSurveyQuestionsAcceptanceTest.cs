@@ -107,7 +107,7 @@ public class AnswerSurveyQuestionsAcceptanceTest : IDisposable
         });
 
         // Given: A TeamMember has responded to a survey
-        var response = new SurveyResponse(teamMemberId);
+        var response = new SurveyResponse(teamMemberId, new List<QuestionResponse>());
         var answerSurveyDto = new AnswerSurveyDto(surveyId, teamMemberId, response);
         var expectedSurvey = ASurvey()
             .WithId(surveyId)
@@ -154,7 +154,7 @@ public class AnswerSurveyQuestionsAcceptanceTest : IDisposable
             .Build();
         var templateWithoutQuestions = ATemplate().BuildWithoutQuestions();
         var deadline = new DateTime(2024, 06, 24).ToUniversalTime();
-        SurveyResponse firstResponse = new SurveyResponse(teamMemberId);
+        SurveyResponse firstResponse = new SurveyResponse(teamMemberId, new List<QuestionResponse>());
         var survey = ASurvey()
             .WithId(surveyId)
             .WithTeam(team)
@@ -176,7 +176,7 @@ public class AnswerSurveyQuestionsAcceptanceTest : IDisposable
         });
 
         // Given: A TeamMember has already saved a response to a survey
-        var secondResponse = new SurveyResponse(teamMemberId);
+        var secondResponse = new SurveyResponse(teamMemberId, new List<QuestionResponse>());
         var answerSurveyDto = new AnswerSurveyDto(surveyId, teamMemberId, secondResponse);
         var expectedMessage = new SurveyAlreadyAnsweredException(teamMemberId).Message;
 
@@ -232,7 +232,7 @@ public class AnswerSurveyQuestionsAcceptanceTest : IDisposable
         });
 
         // Given: A TeamMember is not assigned to a survey
-        var response = new SurveyResponse(teamMemberId);
+        var response = new SurveyResponse(teamMemberId, new List<QuestionResponse>());
         var answerSurveyDto = new AnswerSurveyDto(surveyId, teamMemberId, response);
         var expectedMessage = new SurveyNotAssignedToTeamMemberException(teamMemberId).Message;
 

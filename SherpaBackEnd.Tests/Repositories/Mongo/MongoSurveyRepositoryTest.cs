@@ -250,7 +250,7 @@ public class MongoSurveyRepositoryTest : IDisposable
         });
         var mongoSurveyRepository = new MongoSurveyRepository(_databaseSettings);
 
-        SurveyResponse response = new SurveyResponse(teamMember.Id);
+        SurveyResponse response = new SurveyResponse(teamMember.Id, new List<QuestionResponse>());
         survey.AnswerSurvey(response);
         await mongoSurveyRepository.Update(survey);
 

@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace SherpaBackEnd.Survey.Domain;
 
 public class SurveyResponse
@@ -9,13 +11,6 @@ public class SurveyResponse
     {
         TeamMemberId = teamMemberId;
         Answers = answers;
-    }
-
-    [Obsolete]
-    public SurveyResponse(Guid teamMemberId)
-    {
-        TeamMemberId = teamMemberId;
-        Answers = new List<QuestionResponse>();
     }
 
     protected bool Equals(SurveyResponse other)
