@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.SurveyNotification.Application;
 using SherpaBackEnd.SurveyNotification.Infrastructure.Http.Dto;
 
@@ -9,12 +10,15 @@ namespace SherpaBackEnd.SurveyNotification.Infrastructure.Http;
 public class SurveyNotificationController
 {
     private readonly ISurveyNotificationService _surveyNotificationService;
+    private readonly ILogger<SurveyNotificationController> _logger;
 
-    public SurveyNotificationController(ISurveyNotificationService surveyNotificationService)
+    public SurveyNotificationController(ISurveyNotificationService surveyNotificationService,
+        ILogger<SurveyNotificationController> logger)
     {
         _surveyNotificationService = surveyNotificationService;
+        _logger = logger;
     }
-    
+
     [HttpPost]
     public async Task<IActionResult> LaunchSurvey(CreateSurveyNotificationsDto createSurveyNotificationsDto)
     {
@@ -23,10 +27,15 @@ public class SurveyNotificationController
             await _surveyNotificationService.LaunchSurveyNotificationsFor(createSurveyNotificationsDto);
             return new CreatedResult("", null);
         }
-        catch (Exception e)
+        catch (Exception error)
         {
-            Console.WriteLine(e);
-            throw;
+            return error switch
+            {
+                NotFoundException => new ObjectResult(error)
+                {
+                    StatusCode = StatusCodes.Status400BadRequest, Value = error.Message
+                }
+            };
         }
     }
 }
