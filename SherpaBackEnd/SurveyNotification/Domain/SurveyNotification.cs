@@ -4,20 +4,20 @@ namespace SherpaBackEnd.SurveyNotification.Domain;
 
 public class SurveyNotification
 {
-    private readonly Survey.Domain.Survey _survey;
-    private readonly TeamMember _teamMember;
-    private readonly Guid _id;
+    public Guid Id { get; }
+    public Survey.Domain.Survey Survey { get; }
+    public TeamMember TeamMember { get;  }
 
     public SurveyNotification(Guid id, Survey.Domain.Survey survey, TeamMember teamMember)
     {
-        _id = id;
-        _survey = survey;
-        _teamMember = teamMember;
+        Id = id;
+        Survey = survey;
+        TeamMember = teamMember;
     }
 
     protected bool Equals(SurveyNotification other)
     {
-        return _id.Equals(other._id);
+        return Id.Equals(other.Id) && Survey.Equals(other.Survey) && TeamMember.Equals(other.TeamMember);
     }
 
     public override bool Equals(object? obj)
@@ -30,6 +30,6 @@ public class SurveyNotification
 
     public override int GetHashCode()
     {
-        return _id.GetHashCode();
+        return HashCode.Combine(Id, Survey, TeamMember);
     }
 }
