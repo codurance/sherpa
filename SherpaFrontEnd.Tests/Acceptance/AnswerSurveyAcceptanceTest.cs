@@ -72,8 +72,10 @@ public class AnswerSurveyAcceptanceTest
     }
 
 
-    [Fact]
-    public async Task UserShouldBeAbleToSeeQuestionsInEnglish()
+    [Theory]
+    [InlineData("English")]
+    [InlineData("Spanish")]
+    public async Task UserShouldBeAbleToSeeQuestionsInSelectedLanguage(string selectedLanguage)
     {
         var QuestionInSpanish = "Question in spanish";
         var QuestionInEnglish = "Question in english";
@@ -120,13 +122,16 @@ public class AnswerSurveyAcceptanceTest
         var answerSurveyPage = $"/answer-survey/{_surveyId}/{teamMemberId}";
         _navManager.NavigateTo(answerSurveyPage);
 
-        var surveyQuestionElement = appComponent.FindElementByCssSelectorAndTextContent("legend", QuestionInEnglish);
+        var languageSelectElement = appComponent.Find("select");
+        languageSelectElement.Change(selectedLanguage.ToUpper());
+
+        var surveyQuestionElement = appComponent.FindElementByCssSelectorAndTextContent("legend", question.Statement[selectedLanguage.ToUpper()]);
         Assert.NotNull(surveyQuestionElement);
-        
-        var surveyResponseLabel1 = appComponent.FindElementByCssSelectorAndTextContent("label", ResponseEnglish1);
-        var surveyResponseLabel2 = appComponent.FindElementByCssSelectorAndTextContent("label", ResponseEnglish2);
-        var surveyResponseLabel3 = appComponent.FindElementByCssSelectorAndTextContent("label", ResponseEnglish3);
-        
+
+        var surveyResponseLabel1 = appComponent.FindElementByCssSelectorAndTextContent("label", question.Responses[selectedLanguage.ToUpper()][0]);
+        var surveyResponseLabel2 = appComponent.FindElementByCssSelectorAndTextContent("label", question.Responses[selectedLanguage.ToUpper()][1]);
+        var surveyResponseLabel3 = appComponent.FindElementByCssSelectorAndTextContent("label", question.Responses[selectedLanguage.ToUpper()][2]);
+
         var surveyResponseInput1 =
             appComponent.Find($"input[id='{surveyResponseLabel1.Attributes.GetNamedItem("for").Value}']");
         Assert.NotNull(surveyResponseInput1);
