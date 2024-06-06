@@ -7,6 +7,11 @@ public class EmailTemplateFactory : IEmailTemplateFactory
     public List<EmailTemplate> CreateEmailTemplate(List<SurveyNotification.Domain.SurveyNotification> surveyNotifications)
     {
         return surveyNotifications.Select(notification =>
-            new EmailTemplate(notification.TeamMember.Email, _baseAnswerSurveyUrl + notification.Id)).ToList();
+            new EmailTemplate(notification.TeamMember.Email, CreateAnswerSurveyUrl(notification))).ToList();
+    }
+
+    private string CreateAnswerSurveyUrl(SurveyNotification.Domain.SurveyNotification notification)
+    {
+        return _baseAnswerSurveyUrl + notification.Id;
     }
 }
