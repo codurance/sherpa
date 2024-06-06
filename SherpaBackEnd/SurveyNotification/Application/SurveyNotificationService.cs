@@ -40,7 +40,7 @@ public class SurveyNotificationService : ISurveyNotificationService
         await CreateManySurveyNotification(surveyNotifications);
 
         var emailTemplateRequests = _emailTemplateFactory.CreateEmailTemplate(surveyNotifications);
-        await _emailService.SendEmailWith(emailTemplateRequests);
+        await _emailService.SendEmailsWith(emailTemplateRequests);
     }
 
     private async Task CreateManySurveyNotification(List<Domain.SurveyNotification> surveyNotifications)

@@ -1,10 +1,8 @@
-using System.Net;
-using SherpaBackEnd.SurveyNotification.Domain;
+﻿using System.Net;
 
 namespace SherpaBackEnd.Email.Application;
 
 public interface IEmailService
 {
-    Task<HttpStatusCode> SendEmail(string templateName, List<string> recipients);
-    Task<HttpStatusCode> SendEmailWith(List<EmailTemplate> templateRequest);
+    Task<HttpStatusCode> SendEmailsWith(List<EmailTemplate> emailTemplates);
 }

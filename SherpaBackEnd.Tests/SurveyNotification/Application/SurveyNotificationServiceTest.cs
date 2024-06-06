@@ -140,7 +140,7 @@ public class SurveyNotificationServiceTest
 
         await testableSurveyNotificationService.LaunchSurveyNotificationsFor(_createSurveyNotificationsDto);
 
-        _emailService.Verify(service => service.SendEmailWith(templateRequests));
+        _emailService.Verify(service => service.SendEmailsWith(templateRequests));
     }
 
     [Fact]

@@ -6,20 +6,20 @@ using SherpaBackEnd.SurveyNotification.Domain;
 
 namespace SherpaBackEnd.Email.Application;
 
-public class SesEmailService : IEmailService
+public class SesEmailServicePoC : IEmailServicePoC
 {
     private const string PendingSurveyTemplate = "pending_survey_template";
     private readonly AmazonSimpleEmailServiceClient _amazonSimpleEmailService;
     private readonly EmailServiceRequestFactory _emailServiceRequestFactory;
 
-    public SesEmailService(IHttpContextAccessor httpContextAccessor)
+    public SesEmailServicePoC(IHttpContextAccessor httpContextAccessor)
     {
         _amazonSimpleEmailService = new AmazonSimpleEmailServiceClient(
             RegionEndpoint.EUCentral1);
         _emailServiceRequestFactory = new EmailServiceRequestFactory(httpContextAccessor);
     }
 
-    public SesEmailService(IHttpContextAccessor httpContextAccessor, string accessKey, string secretKey)
+    public SesEmailServicePoC(IHttpContextAccessor httpContextAccessor, string accessKey, string secretKey)
     {
         _amazonSimpleEmailService = new AmazonSimpleEmailServiceClient(
             new BasicAWSCredentials(accessKey, secretKey),

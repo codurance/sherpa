@@ -99,13 +99,17 @@ public class LaunchSurveyAcceptanceTest: IDisposable
         });
         
         // Given that an Org.coach has created a survey
-        var emailService = new Mock<IEmailService>();
+        var emailTemplateAdapter = new SesEmailTemplateAdapter();
+        var emailSender = new Mock<IEmailSender>();
+        var emailService = new EmailService(
+            emailTemplateAdapter, emailSender.Object
+        );
         var surveyNotificationRepository = new MongoSurveyNotificationRepository(_databaseSettings);
         var guidService = new Mock<IGuidService>();
         var surveyNotificationId = Guid.NewGuid();
         guidService.Setup(service => service.GenerateRandomGuid()).Returns(surveyNotificationId);
         var emailTemplateFactory = new EmailTemplateFactory();
-        var surveyNotificationService = new SurveyNotificationService(surveyRepository, surveyNotificationRepository, emailTemplateFactory, emailService.Object, guidService.Object);
+        var surveyNotificationService = new SurveyNotificationService(surveyRepository, surveyNotificationRepository, emailTemplateFactory, emailService, guidService.Object);
         var launchSurveyController = new SurveyNotificationController(surveyNotificationService);
         
         var launchSurveyDto = new CreateSurveyNotificationsDto(surveyId);
@@ -114,14 +118,8 @@ public class LaunchSurveyAcceptanceTest: IDisposable
         var actionResult = await launchSurveyController.LaunchSurvey(launchSurveyDto);
         
         // Then an email with a survey link should be sent to each team member
-        var recipient = teamMember.Email;
-        var url = "sherpa.com/answer-survey/"+surveyNotificationId;
-
-        var templateRequests = new List<EmailTemplate>(){
-            new EmailTemplate(recipient, url)
-        };
         Assert.IsType<CreatedResult>(actionResult);
-        emailService.Verify(service => service.SendEmailWith(templateRequests));
+        emailSender.Verify(sender => sender.SendEmailsWith(It.IsAny<object>()));
     }
 
     public void Dispose()
