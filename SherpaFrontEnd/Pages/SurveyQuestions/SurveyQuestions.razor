@@ -50,7 +50,7 @@
             }
         </div>
         <div class="flex justify-center py-6 w-3/4 max-w-[740px]">
-            <button class="bg-primary-red-principal-800 hover:bg-primary-red-900 rounded-lg px-6 text-white text-base font-bold py-2">Submit</button>
+            <button @onclick="SubmitAction" class="bg-primary-red-principal-800 hover:bg-primary-red-900 rounded-lg px-6 text-white text-base font-bold py-2">Submit</button>
         </div>
     }
 </div>
@@ -112,6 +112,11 @@
         }
 
         return Array.Empty<string>();
+    }
+
+    private void SubmitAction()
+    {
+        throw new NotImplementedException();
     }
 
 }
