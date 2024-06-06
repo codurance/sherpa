@@ -21,30 +21,32 @@
     }
     @if (_questions != null)
     {
-        <div class="flex w-3/4 flex-col items-center rounded-lg border bg-white px-16 py-2 pb-10 max-w-[740px] border-primary-dark-100">
+        <div class="rounded-lg border bg-white px-16 py-2 pb-10 w-3/4 max-w-[740px] border-primary-dark-100">
             @foreach (var question in _questions.OrderBy(q => q.Position))
             {
-                <label class="self-start">
-                    <p class="font-bold text-[#1D233C] mb-4 mt-14 text-left">
-                        @(_questions.OrderBy(q => q.Position).ToList().IndexOf(question) + 1). @question.Statement[_selectedLanguage]
-                    </p>
-                </label>
-                <div class=@($"flex {@GetFlexDirection(question)} w-full justify-between p-1 border border-primary-dark-200 rounded-md divide-x divide-primary-dark-100")>
-                    @foreach (var response in question.Responses[_selectedLanguage])
-                    {
-                        <div class="flex flex-1">
-                            <input class="hidden peer" type="radio" id="@question.Position-@Array.IndexOf(question.Responses[_selectedLanguage], @response)" name="@question.Position" value="@response">
-                            <label class="flex-1 py-2 px-2 text-primary-dark-principal peer-checked:text-white hover:bg-primary-dark-100 peer-checked:bg-[#1D233C] rounded-md text-center" for="@question.Position-@Array.IndexOf(question.Responses[_selectedLanguage], @response)">@response</label>
-                        </div>
-                    }
+                <fieldset class="flex flex-col items-center">
 
-                </div>
-                <div class="flex w-full justify-between">
-                    @foreach (var footLabel in GetFootLabels(question))
-                    {
-                        <p class="flex-1 py-2 px-2 text-primary-dark-principal text-center text-xs">@footLabel</p>
-                    }
-                </div>
+                    <legend class="self-start font-bold text-[#1D233C] mb-4 mt-14 text-left text-sm">
+                        @(_questions.OrderBy(q => q.Position).ToList().IndexOf(question) + 1). @question.Statement[_selectedLanguage]
+                    </legend>
+
+                    <div class=@($"flex {@GetFlexDirection(question)} w-full justify-between p-1 border border-primary-dark-200 rounded-md divide-x divide-primary-dark-100 self-center")>
+                        @foreach (var response in question.Responses[_selectedLanguage])
+                        {
+                            <div class="flex flex-1">
+                                <input class="hidden peer" type="radio" id="@question.Position-@Array.IndexOf(question.Responses[_selectedLanguage], @response)" name="@question.Position" value="@response">
+                                <label class="flex-1 py-2 px-2 text-primary-dark-principal peer-checked:text-white hover:bg-primary-dark-100 peer-checked:bg-[#1D233C] rounded-md text-center" for="@question.Position-@Array.IndexOf(question.Responses[_selectedLanguage], @response)">@response</label>
+                            </div>
+                        }
+
+                    </div>
+                    <div class="flex w-full justify-between">
+                        @foreach (var footLabel in GetFootLabels(question))
+                        {
+                            <p class="flex-1 py-2 px-2 text-primary-dark-principal text-center text-xs">@footLabel</p>
+                        }
+                    </div>
+                </fieldset>
             }
         </div>
         <div class="flex justify-center py-6 w-3/4 max-w-[740px]">
@@ -56,11 +58,9 @@
 
 @code {
 
-    [Parameter]
-    public Guid SurveyId { get; set; }
+    [Parameter] public Guid SurveyId { get; set; }
 
-    [Parameter]
-    public Guid MemberId { get; set; }
+    [Parameter] public Guid MemberId { get; set; }
 
     private SurveyWithoutQuestions? _survey;
     private List<Question>? _questions;
@@ -89,23 +89,23 @@
         var isShortAnswer = question.Responses[Languages.ENGLISH][0].Length < 5;
         var questionHasFiveAnswers = question.Responses[Languages.ENGLISH].Length == 5;
         var questionHasFourAnswers = question.Responses[Languages.ENGLISH].Length == 4;
-        
-        
+
+
         if (isShortAnswer && questionHasFiveAnswers && _selectedLanguage == Languages.ENGLISH)
         {
             return new[] { "Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree" };
         }
-        
+
         if (isShortAnswer && questionHasFiveAnswers && _selectedLanguage == Languages.SPANISH)
         {
             return new[] { "Totalmente en desacuerdo", "En desacuerdo", "Neutral", "De acuerdo", "Totalmente de acuerdo" };
         }
-        
+
         if (isShortAnswer && questionHasFourAnswers && _selectedLanguage == Languages.ENGLISH)
         {
             return new[] { "Strongly Disagree", "Disagree", "Agree", "Strongly Agree" };
         }
-        
+
         if (isShortAnswer && questionHasFourAnswers && _selectedLanguage == Languages.SPANISH)
         {
             return new[] { "Totalmente en desacuerdo", "En desacuerdo", "De acuerdo", "Totalmente de acuerdo" };
@@ -115,4 +115,3 @@
     }
 
 }
-

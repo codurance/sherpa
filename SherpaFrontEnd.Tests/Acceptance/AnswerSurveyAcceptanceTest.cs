@@ -41,7 +41,7 @@ public class AnswerSurveyAcceptanceTest
         _guidService.Setup(service => service.GenerateRandomGuid()).Returns(_surveyId);
         var auth = _testCtx.AddTestAuthorization();
         auth.SetAuthorized("Demo user");
-        auth.SetClaims(new []{new Claim("username", "Demo user")});
+        auth.SetClaims(new[] { new Claim("username", "Demo user") });
         _navManager = _testCtx.Services.GetRequiredService<FakeNavigationManager>();
     }
 
@@ -61,7 +61,7 @@ public class AnswerSurveyAcceptanceTest
             { StatusCode = HttpStatusCode.OK, Content = new StringContent(questionsJson) };
         _handlerMock.SetupRequest(HttpMethod.Get, $"/survey/{_surveyId}", surveyResponse);
         _handlerMock.SetupRequest(HttpMethod.Get, $"/survey/{_surveyId}/questions", questionsResponse);
-        
+
         var appComponent = _testCtx.RenderComponent<App>();
         var answerSurveyPage = $"/answer-survey/{_surveyId}/{teamMemberId}";
         _navManager.NavigateTo(answerSurveyPage);
@@ -69,5 +69,72 @@ public class AnswerSurveyAcceptanceTest
         var surveyTitleElement = appComponent.FindElementByCssSelectorAndTextContent("h2", surveyTitle);
 
         Assert.NotNull(surveyTitleElement);
+    }
+
+
+    [Fact]
+    public async Task UserShouldBeAbleToSeeQuestionsInEnglish()
+    {
+        var QuestionInSpanish = "Question in spanish";
+        var QuestionInEnglish = "Question in english";
+        var ResponseSpanish1 = "SPA_1";
+        var ResponseSpanish2 = "SPA_2";
+        var ResponseSpanish3 = "SPA_3";
+        var ResponseEnglish1 = "ENG_1";
+        var ResponseEnglish2 = "ENG_2";
+        var ResponseEnglish3 = "ENG_3";
+        var Position = 1;
+        var Reverse = false;
+
+        var question = new Question(new Dictionary<string, string>()
+            {
+                { Languages.SPANISH, QuestionInSpanish },
+                { Languages.ENGLISH, QuestionInEnglish },
+            }, new Dictionary<string, string[]>()
+            {
+                {
+                    Languages.SPANISH, new[] { ResponseSpanish1, ResponseSpanish2, ResponseSpanish3 }
+                },
+                {
+                    Languages.ENGLISH, new[] { ResponseEnglish1, ResponseEnglish2, ResponseEnglish3 }
+                }
+            }, Reverse,
+            HackmanComponent.INTERPERSONAL_PEER_COACHING,
+            HackmanSubcategory.DELIMITED, HackmanSubcomponent.SENSE_OF_URGENCY, Position);
+
+        var teamMemberId = Guid.NewGuid();
+        var surveyTitle = "Title";
+        var survey = new Survey(_surveyId, new User(Guid.NewGuid(), "Lucia"), Status.Draft, new DateTime(), surveyTitle,
+            "Description", Array.Empty<Response>(), null, new Template("Hackman"));
+        var surveyJson = await JsonContent.Create(survey).ReadAsStringAsync();
+        var surveyResponse = new HttpResponseMessage()
+            { StatusCode = HttpStatusCode.OK, Content = new StringContent(surveyJson) };
+        var questions = new List<Question>() { question };
+        var questionsJson = await JsonContent.Create(questions).ReadAsStringAsync();
+        var questionsResponse = new HttpResponseMessage()
+            { StatusCode = HttpStatusCode.OK, Content = new StringContent(questionsJson) };
+        _handlerMock.SetupRequest(HttpMethod.Get, $"/survey/{_surveyId}", surveyResponse);
+        _handlerMock.SetupRequest(HttpMethod.Get, $"/survey/{_surveyId}/questions", questionsResponse);
+
+        var appComponent = _testCtx.RenderComponent<App>();
+        var answerSurveyPage = $"/answer-survey/{_surveyId}/{teamMemberId}";
+        _navManager.NavigateTo(answerSurveyPage);
+
+        var surveyQuestionElement = appComponent.FindElementByCssSelectorAndTextContent("legend", QuestionInEnglish);
+        Assert.NotNull(surveyQuestionElement);
+        
+        var surveyResponseLabel1 = appComponent.FindElementByCssSelectorAndTextContent("label", ResponseEnglish1);
+        var surveyResponseLabel2 = appComponent.FindElementByCssSelectorAndTextContent("label", ResponseEnglish2);
+        var surveyResponseLabel3 = appComponent.FindElementByCssSelectorAndTextContent("label", ResponseEnglish3);
+        
+        var surveyResponseInput1 =
+            appComponent.Find($"input[id='{surveyResponseLabel1.Attributes.GetNamedItem("for").Value}']");
+        Assert.NotNull(surveyResponseInput1);
+        var surveyResponseInput2 =
+            appComponent.Find($"input[id='{surveyResponseLabel2.Attributes.GetNamedItem("for").Value}']");
+        Assert.NotNull(surveyResponseInput2);
+        var surveyResponseInput3 =
+            appComponent.Find($"input[id='{surveyResponseLabel3.Attributes.GetNamedItem("for").Value}']");
+        Assert.NotNull(surveyResponseInput3);
     }
 }

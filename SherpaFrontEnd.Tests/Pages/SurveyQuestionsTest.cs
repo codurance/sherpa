@@ -112,7 +112,7 @@ public class SurveyQuestionsTest
                 ComponentParameter.CreateParameter("MemberId", _memberId)
             );
         
-        var questionSpanishStatement = appComponent.FindElementByCssSelectorAndTextContent("p", questions[0].Statement[Languages.ENGLISH]);
+        var questionSpanishStatement = appComponent.FindElementByCssSelectorAndTextContent("legend", questions[0].Statement[Languages.ENGLISH]);
         Assert.NotNull(questionSpanishStatement);
 
         var amountOfAvailableResponses = appComponent.FindAll("input[type=radio]").Count;
@@ -176,10 +176,10 @@ public class SurveyQuestionsTest
                 ComponentParameter.CreateParameter("MemberId", _memberId)
             );
         
-        var firstQuestionSpanishStatement = appComponent.FindElementByCssSelectorAndTextContent("p", questions[0].Statement[Languages.ENGLISH]);
+        var firstQuestionSpanishStatement = appComponent.FindElementByCssSelectorAndTextContent("legend", questions[0].Statement[Languages.ENGLISH]);
         Assert.NotNull(firstQuestionSpanishStatement);
         
-        var secondQuestionSpanishStatement = appComponent.FindElementByCssSelectorAndTextContent("p", questions[1].Statement[Languages.ENGLISH]);
+        var secondQuestionSpanishStatement = appComponent.FindElementByCssSelectorAndTextContent("legend", questions[1].Statement[Languages.ENGLISH]);
         Assert.NotNull(secondQuestionSpanishStatement);
         
         var submitButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Submit");
