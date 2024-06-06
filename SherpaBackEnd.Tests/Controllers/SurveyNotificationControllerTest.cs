@@ -55,6 +55,19 @@ public class SurveyNotificationControllerTest
         Assert.Equal(notFoundException.Message, objectResult.Value);
         
     }
-
     
+    [Fact]
+    public async Task ShouldReturnInternalServerErrorIfServiceThrowsExceptionWhenCallingLaunchSurvey()
+    {
+        var notFoundException = new Exception();
+        _surveyNotificationService.Setup(service => service.LaunchSurveyNotificationsFor(_createSurveyNotificationsDto))
+            .ThrowsAsync(notFoundException);
+
+        var actionResult = await _surveyNotificationController.LaunchSurvey(_createSurveyNotificationsDto);
+
+        var objectResult = Assert.IsType<ObjectResult>(actionResult);
+        
+        Assert.Equal(StatusCodes.Status500InternalServerError, objectResult.StatusCode);
+        Assert.Equal(notFoundException.Message, objectResult.Value);
+    }
 }
