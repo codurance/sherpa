@@ -4,6 +4,7 @@ using System.Security.Claims;
 using Blazored.Modal;
 using Bunit;
 using Bunit.TestDoubles;
+using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using SherpaBackEnd.Survey.Domain.Exceptions;
@@ -126,12 +127,20 @@ public class AnswerSurveyAcceptanceTest
         var languageSelectElement = appComponent.Find("select");
         languageSelectElement.Change(selectedLanguage.ToUpper());
 
-        var surveyQuestionElement = appComponent.FindElementByCssSelectorAndTextContent("legend", question.Statement[selectedLanguage.ToUpper()]);
+        var surveyQuestionElement =
+            appComponent.FindElementByCssSelectorAndTextContent("legend",
+                question.Statement[selectedLanguage.ToUpper()]);
         Assert.NotNull(surveyQuestionElement);
 
-        var surveyResponseLabel1 = appComponent.FindElementByCssSelectorAndTextContent("label", question.Responses[selectedLanguage.ToUpper()][0]);
-        var surveyResponseLabel2 = appComponent.FindElementByCssSelectorAndTextContent("label", question.Responses[selectedLanguage.ToUpper()][1]);
-        var surveyResponseLabel3 = appComponent.FindElementByCssSelectorAndTextContent("label", question.Responses[selectedLanguage.ToUpper()][2]);
+        var surveyResponseLabel1 =
+            appComponent.FindElementByCssSelectorAndTextContent("label",
+                question.Responses[selectedLanguage.ToUpper()][0]);
+        var surveyResponseLabel2 =
+            appComponent.FindElementByCssSelectorAndTextContent("label",
+                question.Responses[selectedLanguage.ToUpper()][1]);
+        var surveyResponseLabel3 =
+            appComponent.FindElementByCssSelectorAndTextContent("label",
+                question.Responses[selectedLanguage.ToUpper()][2]);
 
         var surveyResponseInput1 =
             appComponent.Find($"input[id='{surveyResponseLabel1.Attributes.GetNamedItem("for").Value}']");
@@ -146,7 +155,7 @@ public class AnswerSurveyAcceptanceTest
 
 
     [Fact]
-    public async Task METHOD()
+    public async Task UserShouldSeeThankYouForReplyingWhenSuccessfulySubmittingForm()
     {
         var ResponseSpanish1 = "SPA_1";
         var ResponseSpanish2 = "SPA_2";
@@ -172,7 +181,7 @@ public class AnswerSurveyAcceptanceTest
             }, Reverse,
             HackmanComponent.INTERPERSONAL_PEER_COACHING,
             HackmanSubcategory.DELIMITED, HackmanSubcomponent.SENSE_OF_URGENCY, Position);
-        
+
         var secondQuestion = new Question(new Dictionary<string, string>()
             {
                 { Languages.SPANISH, "Segunda pregunta en espanol" },
@@ -190,7 +199,7 @@ public class AnswerSurveyAcceptanceTest
             HackmanSubcategory.DELIMITED, HackmanSubcomponent.SENSE_OF_URGENCY, Position);
 
         var questions = new List<Question>() { firstQuestion, secondQuestion };
-        
+
         var teamMemberId = Guid.NewGuid();
         var surveyTitle = "Title";
         var survey = new Survey(_surveyId, new User(Guid.NewGuid(), "Lucia"), Status.Draft, new DateTime(), surveyTitle,
@@ -201,16 +210,30 @@ public class AnswerSurveyAcceptanceTest
         var questionsJson = await JsonContent.Create(questions).ReadAsStringAsync();
         var questionsResponse = new HttpResponseMessage()
             { StatusCode = HttpStatusCode.OK, Content = new StringContent(questionsJson) };
+        var submitAnswersResponse = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.Created
+        };
         _handlerMock.SetupRequest(HttpMethod.Get, $"/survey/{_surveyId}", surveyResponse);
         _handlerMock.SetupRequest(HttpMethod.Get, $"/survey/{_surveyId}/questions", questionsResponse);
+        _handlerMock.SetupRequest(HttpMethod.Post, $"/survey/{_surveyId}/{teamMemberId}");
 
         var appComponent = _testCtx.RenderComponent<App>();
         var answerSurveyPage = $"/answer-survey/{_surveyId}/{teamMemberId}";
         _navManager.NavigateTo(answerSurveyPage);
-        
-        var submitButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Submit");
-        submitButton.Click();
-        var validationError = appComponent.FindElementByCssSelectorAndTextContent("div", "This field is mandatory");
-        Assert.NotNull(validationError);
+
+        var question1Answer = firstQuestion.Responses[Languages.ENGLISH][1];
+        var question2Answer = secondQuestion.Responses[Languages.ENGLISH][1];
+
+        var question1AnswerElement = appComponent.Find($"input[value='{question1Answer}']");
+        question1AnswerElement.Change(new ChangeEventArgs());
+        var question2AnswerElement = appComponent.Find($"input[value='{question2Answer}']");
+        question2AnswerElement.Change(new ChangeEventArgs());
+
+        var surveyElement = appComponent.Find("form[id='survey']");
+        surveyElement.Submit();
+
+        var thankYouTitle = appComponent.FindElementByCssSelectorAndTextContent("h1", "Thank you for your reply!");
+        Assert.NotNull(thankYouTitle);
     }
 }

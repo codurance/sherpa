@@ -52,4 +52,9 @@ public class SurveyService : ISurveyService
         return JsonSerializer.Deserialize<List<Question>>(
             responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
     }
+
+    public Task SubmitSurveyResponse(AnswerSurveyDto answerSurveyDto)
+    {
+        throw new NotImplementedException();
+    }
 }
