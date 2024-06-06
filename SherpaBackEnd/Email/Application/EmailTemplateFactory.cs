@@ -2,7 +2,13 @@ namespace SherpaBackEnd.Email.Application;
 
 public class EmailTemplateFactory : IEmailTemplateFactory
 {
+    private readonly IHttpContextAccessor _httpContextAccessor;
     private string _baseAnswerSurveyUrl = "sherpa.com/answer-survey/";
+
+    public EmailTemplateFactory(IHttpContextAccessor httpContextAccessor)
+    {
+        _httpContextAccessor = httpContextAccessor;
+    }
 
     public List<EmailTemplate> CreateEmailTemplate(List<SurveyNotification.Domain.SurveyNotification> surveyNotifications)
     {

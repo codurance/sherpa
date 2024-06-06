@@ -1,4 +1,6 @@
 using JetBrains.Annotations;
+using Microsoft.AspNetCore.Http;
+using Moq;
 using SherpaBackEnd.Email;
 using SherpaBackEnd.Email.Application;
 using static SherpaBackEnd.Tests.Builders.SurveyBuilder;
@@ -14,7 +16,14 @@ public class EmailTemplateFactoryTest
     [Fact]
     public void ShouldCreateEmailTemplatesFromSurveyNotifications()
     {
-        var emailTemplateFactory = new EmailTemplateFactory();
+        var httpContextAccessor = new Mock<IHttpContextAccessor>();
+
+        var httpScheme = "http";
+        var sherpaUrl = new HostString("www.sherpa.com");
+        httpContextAccessor.SetupProperty(context => context.HttpContext.Request.Scheme, httpScheme);
+        httpContextAccessor.SetupProperty(context => context.HttpContext.Request.Host, sherpaUrl);
+        
+        var emailTemplateFactory = new EmailTemplateFactory(httpContextAccessor.Object);
         var jane = ATeamMember().WithFullName("Jane Doe").WithEmail("jane.doe@codurance.com").Build();
         var surveyId = Guid.NewGuid();
         var survey = ASurvey().WithId(surveyId).Build();
@@ -32,8 +41,7 @@ public class EmailTemplateFactoryTest
                 johnSurveyNotification
             };
         
-        // TODO change url to real one
-        var baseAnswerSurveyUrl = "sherpa.com/answer-survey/";
+        var baseAnswerSurveyUrl = httpScheme + "://" + sherpaUrl + "/answer-survey/";
         var expectedJaneUrl = baseAnswerSurveyUrl + janeSurveyNotificationId; 
         var expectedJohnUrl = baseAnswerSurveyUrl + johnSurveyNotificationId; 
         

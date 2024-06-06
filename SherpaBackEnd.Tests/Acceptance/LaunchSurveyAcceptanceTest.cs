@@ -2,6 +2,7 @@ using System.Net;
 using Amazon.SimpleEmail.Model;
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
@@ -104,7 +105,10 @@ public class LaunchSurveyAcceptanceTest: IDisposable
         var guidService = new Mock<IGuidService>();
         var surveyNotificationId = Guid.NewGuid();
         guidService.Setup(service => service.GenerateRandomGuid()).Returns(surveyNotificationId);
-        var emailTemplateFactory = new EmailTemplateFactory();
+        var httpContextAccessor = new Mock<IHttpContextAccessor>();
+        httpContextAccessor.SetupProperty(context => context.HttpContext.Request.Scheme, "http");
+        httpContextAccessor.SetupProperty(context => context.HttpContext.Request.Host, new HostString("www.sherpa.com"));
+        var emailTemplateFactory = new EmailTemplateFactory(httpContextAccessor.Object);
         var surveyNotificationService = new SurveyNotificationService(surveyRepository, surveyNotificationRepository, emailTemplateFactory, emailService.Object, guidService.Object);
         var launchSurveyController = new SurveyNotificationController(surveyNotificationService);
         
