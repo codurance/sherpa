@@ -134,7 +134,7 @@ public class SurveyNotificationServiceTest
 
         _surveyRepository.Setup(repository => repository.GetSurveyById(_surveyId))
             .ReturnsAsync(survey);
-        var templateRequests = new List<EmailTemplateRequest>();
+        var templateRequests = new List<EmailTemplate>();
         _emailTemplateFactory.Setup(factory => factory.CreateEmailTemplate(surveyNotifications))
             .Returns(templateRequests);
 

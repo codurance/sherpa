@@ -50,6 +50,7 @@ public class LaunchSurveyAcceptanceTest: IDisposable
             TeamMembersCollectionName = "TeamMembers",
             SurveyCollectionName = "Surveys",
             TemplateCollectionName = "Templates",
+            SurveyNotificationCollectionName = "SurveyNotifications",
             ConnectionString = $"mongodb://localhost:{_mongoDbContainer.GetMappedPublicPort(27017)}"
         });
 
@@ -107,7 +108,7 @@ public class LaunchSurveyAcceptanceTest: IDisposable
         var surveyNotificationService = new SurveyNotificationService(surveyRepository, surveyNotificationRepository, emailTemplateFactory, emailService.Object, guidService.Object);
         var launchSurveyController = new SurveyNotificationController(surveyNotificationService);
         
-        var launchSurveyDto = new CreateSurveyNotificationsDto(Guid.NewGuid());
+        var launchSurveyDto = new CreateSurveyNotificationsDto(surveyId);
         // When they launch the survey
         
         var actionResult = await launchSurveyController.LaunchSurvey(launchSurveyDto);
@@ -116,8 +117,8 @@ public class LaunchSurveyAcceptanceTest: IDisposable
         var recipient = teamMember.Email;
         var url = "sherpa.com/answer-survey/"+surveyNotificationId;
 
-        var templateRequests = new List<EmailTemplateRequest>(){
-            new EmailTemplateRequest(recipient, url)
+        var templateRequests = new List<EmailTemplate>(){
+            new EmailTemplate(recipient, url)
         };
         Assert.IsType<CreatedResult>(actionResult);
         emailService.Verify(service => service.SendEmailWith(templateRequests));
