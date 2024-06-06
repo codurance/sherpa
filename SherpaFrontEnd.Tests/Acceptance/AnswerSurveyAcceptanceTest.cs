@@ -216,7 +216,8 @@ public class AnswerSurveyAcceptanceTest
         };
         _handlerMock.SetupRequest(HttpMethod.Get, $"/survey/{_surveyId}", surveyResponse);
         _handlerMock.SetupRequest(HttpMethod.Get, $"/survey/{_surveyId}/questions", questionsResponse);
-        _handlerMock.SetupRequest(HttpMethod.Post, $"/survey/{_surveyId}/{teamMemberId}");
+        _handlerMock.SetupRequest(HttpMethod.Post, $"/survey/{_surveyId}/team-members/{teamMemberId}",
+            submitAnswersResponse);
 
         var appComponent = _testCtx.RenderComponent<App>();
         var answerSurveyPage = $"/answer-survey/{_surveyId}/{teamMemberId}";

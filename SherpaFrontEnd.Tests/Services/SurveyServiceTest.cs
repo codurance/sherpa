@@ -59,7 +59,7 @@ public class SurveyServiceTest
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(surveyJson)
         };
-        
+
         _handlerMock.SetupRequest(HttpMethod.Get, $"/survey/{surveyId.ToString()}", surveyResponse);
 
         var surveyService = new SurveyService(_httpClientFactory.Object);
@@ -81,7 +81,7 @@ public class SurveyServiceTest
         {
             StatusCode = HttpStatusCode.Created,
         };
-        
+
         _handlerMock.SetupRequest(HttpMethod.Post, "/survey", createSurveyResponse);
 
         var surveyService = new SurveyService(_httpClientFactory.Object);
@@ -105,7 +105,7 @@ public class SurveyServiceTest
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(surveysJson),
         };
-        
+
         _handlerMock.SetupRequest(HttpMethod.Get, $"/team/{teamId.ToString()}/surveys", emptySurveyListResponse);
 
 
@@ -192,13 +192,36 @@ public class SurveyServiceTest
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(questionsListJson)
         };
-        
+
         _handlerMock.SetupRequest(HttpMethod.Get, $"/survey/{surveyId.ToString()}/questions", questionsListResponse);
 
         var surveyService = new SurveyService(_httpClientFactory.Object);
-        
+
         var surveyQuestions = await surveyService.GetSurveyQuestionsBySurveyId(surveyId);
-        
+
         Assert.Equal(JsonConvert.SerializeObject(questions), JsonConvert.SerializeObject(surveyQuestions));
+    }
+
+    [Fact]
+    public void ShouldSendAnswerSurveyDtoRequest()
+    {
+        var surveyId = Guid.NewGuid();
+        var memberId = Guid.NewGuid();
+        var answerSurveyResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.Created,
+        };
+
+        var path = $"/survey/{surveyId}/team-members/{memberId}";
+        _handlerMock.SetupRequest(HttpMethod.Post, path, answerSurveyResponse);
+
+        var surveyService = new SurveyService(_httpClientFactory.Object);
+        surveyService.SubmitSurveyResponse(new AnswerSurveyDto(memberId, surveyId,
+            new SurveyResponse(memberId, new List<QuestionResponse>() { new(1, "1"), new(2, "1") })));
+
+        _handlerMock.Protected().Verify("SendAsync", Times.Once(),
+            ItExpr.Is<HttpRequestMessage>(
+                m => m.Method.Equals(HttpMethod.Post) && m.RequestUri!.AbsoluteUri.Contains(path)),
+            ItExpr.IsAny<CancellationToken>());
     }
 }

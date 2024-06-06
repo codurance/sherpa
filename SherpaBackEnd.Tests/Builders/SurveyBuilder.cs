@@ -1,8 +1,7 @@
-using Microsoft.AspNetCore.SignalR;
 using SherpaBackEnd.Survey.Domain;
 using SherpaBackEnd.Survey.Infrastructure.Http.Dto;
 using SherpaBackEnd.Template.Infrastructure.Http.Dto;
-using SherpaFrontEnd.Dtos.Survey;
+using SurveyResponse = SherpaBackEnd.Survey.Domain.SurveyResponse;
 
 namespace SherpaBackEnd.Tests.Builders;
 

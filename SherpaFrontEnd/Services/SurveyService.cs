@@ -46,15 +46,18 @@ public class SurveyService : ISurveyService
         var client = _httpClientFactory.CreateClient(SherpaBackend);
         var request = new HttpRequestMessage(HttpMethod.Get, $"/survey/{surveyId.ToString()}/questions");
         var response = await client.SendAsync(request);
-        
+
         var responseString = await response.Content.ReadAsStringAsync();
-        
+
         return JsonSerializer.Deserialize<List<Question>>(
             responseString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
     }
 
-    public Task SubmitSurveyResponse(AnswerSurveyDto answerSurveyDto)
+    public async Task SubmitSurveyResponse(AnswerSurveyDto answerSurveyDto)
     {
-        throw new NotImplementedException();
+        var client = _httpClientFactory.CreateClient(SherpaBackend);
+
+        var requestUri = $"/survey/{answerSurveyDto.SurveyId}/team-members/{answerSurveyDto.TeamMemberId}";
+        await client.PostAsJsonAsync(requestUri, answerSurveyDto);
     }
 }
