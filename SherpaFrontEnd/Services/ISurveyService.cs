@@ -12,4 +12,5 @@ public interface ISurveyService
     public Task<List<Survey>?> GetAllSurveysByTeam(Guid teamId);
 
     public Task<List<Question>?> GetSurveyQuestionsBySurveyId(Guid surveyId);
+    public Task SubmitSurveyResponse(AnswerSurveyDto answerSurveyDto);
 }

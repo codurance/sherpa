@@ -27,6 +27,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Shared.Test\Shared.Test.csproj" />
+      <ProjectReference Include="..\SherpaBackEnd\SherpaBackEnd.csproj" />
       <ProjectReference Include="..\SherpaFrontEnd\SherpaFrontEnd.csproj" />
     </ItemGroup>
 

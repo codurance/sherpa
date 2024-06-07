@@ -13,7 +13,7 @@ public class MSurvey
     public DateTime? Deadline { get; set; }
     public string Title { get; set; }
     public string? Description { get; set; }
-    public List<SurveyResponse> Responses { get; set; }
+    public List<MSurveyResponse> Responses { get; set; }
     [BsonRepresentation(MongoDB.Bson.BsonType.String)]
     public Guid Team { get; set; }
     public string Template { get; set; }
@@ -27,7 +27,7 @@ public class MSurvey
         Deadline = deadline;
         Title = title;
         Description = description;
-        Responses = responses;
+        Responses = responses.Select(MSurveyResponse.FromSurveyResponse).ToList();
         Team = team;
         Template = template;
     }
@@ -56,7 +56,7 @@ public class MSurvey
             mSurvey.Deadline,
             mSurvey.Title,
             mSurvey.Description,
-            mSurvey.Responses,
+            mSurvey.Responses.Select(MSurveyResponse.ToSurveyResponse).ToList(),
             surveyTeam,
             surveyTemplate
         );

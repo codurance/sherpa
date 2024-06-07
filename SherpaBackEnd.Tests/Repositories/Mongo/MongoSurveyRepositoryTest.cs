@@ -8,6 +8,7 @@ using SherpaBackEnd.Survey.Domain;
 using SherpaBackEnd.Survey.Infrastructure.Persistence;
 using SherpaBackEnd.Team.Domain;
 using SherpaBackEnd.Template.Domain;
+using SherpaBackEnd.Tests.Builders;
 
 namespace SherpaBackEnd.Tests.Repositories.Mongo;
 
@@ -17,6 +18,13 @@ public class MongoSurveyRepositoryTest : IDisposable
         .WithImage("mongodb/mongodb-community-server:latest")
         .WithPortBinding(27017, true).Build();
 
+    private IMongoCollection<BsonDocument> _surveyCollection;
+    private IOptions<DatabaseSettings> _databaseSettings;
+    private IMongoCollection<BsonDocument>? _teamCollection;
+    private IMongoCollection<BsonDocument>? _teamMemberCollection;
+    private IMongoCollection<BsonDocument>? _templateCollection;
+    private IMongoDatabase? _mongoDatabase;
+
     public async void Dispose()
     {
         await _mongoDbContainer.StopAsync();
@@ -25,47 +33,34 @@ public class MongoSurveyRepositoryTest : IDisposable
     [Fact]
     public async Task ShouldBeAbleToCreateSurvey()
     {
-        await _mongoDbContainer.StartAsync();
+        await InitialiseDatabaseClientAndCollections();
 
-        var databaseSettings = Options.Create(new DatabaseSettings
-        {
-            DatabaseName = "Sherpa",
-            TeamsCollectionName = "Teams",
-            TeamMembersCollectionName = "TeamMembers",
-            SurveyCollectionName = "Surveys",
-            TemplateCollectionName = "Templates",
-            ConnectionString = $"mongodb://localhost:{_mongoDbContainer.GetMappedPublicPort(27017)}"
-        });
+        var surveyCollection = _mongoDatabase.GetCollection<MSurvey>(
+            _databaseSettings.Value.SurveyCollectionName);
 
-        var mongoClient = new MongoClient(databaseSettings.Value.ConnectionString);
+        var surveyRepository = new MongoSurveyRepository(_databaseSettings);
 
-        var mongoDatabase = mongoClient.GetDatabase(
-            databaseSettings.Value.DatabaseName);
-
-        var surveyCollection = mongoDatabase.GetCollection<MSurvey>(
-            databaseSettings.Value.SurveyCollectionName);
-
-        var surveyRepository = new MongoSurveyRepository(databaseSettings);
-
-        var survey = new Survey.Domain.Survey(Guid.NewGuid(), new User.Domain.User(Guid.NewGuid(), "Lucia"), SurveyStatus.Draft,
+        var survey = new Survey.Domain.Survey(Guid.NewGuid(), new User.Domain.User(Guid.NewGuid(), "Lucia"),
+            SurveyStatus.Draft,
             DateTime.Parse("2023-08-09T07:38:04+0000"), "Title", "description", new List<SurveyResponse>(),
-            new Team.Domain.Team(Guid.NewGuid(), "team name"), new Template.Domain.Template("Template name", Array.Empty<IQuestion>(), 1));
+            new Team.Domain.Team(Guid.NewGuid(), "team name"),
+            new Template.Domain.Template("Template name", Array.Empty<IQuestion>(), 1));
 
         await surveyRepository.CreateSurvey(survey);
 
         var insertedSurvey = await surveyCollection.Find(new BsonDocument()).FirstOrDefaultAsync();
+
 
         Assert.Equal(survey.Id, insertedSurvey?.Id);
         Assert.Equal(survey.Team.Id, insertedSurvey?.Team);
         Assert.Equal(survey.Template.Name, insertedSurvey?.Template);
     }
 
-    [Fact]
-    public async Task ShouldReturnAllSurveysFromTeam()
+    private async Task InitialiseDatabaseClientAndCollections()
     {
         await _mongoDbContainer.StartAsync();
 
-        var databaseSettings = Options.Create(new DatabaseSettings
+        _databaseSettings = Options.Create(new DatabaseSettings
         {
             DatabaseName = "Sherpa",
             TeamsCollectionName = "Teams",
@@ -75,36 +70,43 @@ public class MongoSurveyRepositoryTest : IDisposable
             ConnectionString = $"mongodb://localhost:{_mongoDbContainer.GetMappedPublicPort(27017)}"
         });
 
-        var mongoClient = new MongoClient(databaseSettings.Value.ConnectionString);
+        var mongoClient = new MongoClient(_databaseSettings.Value.ConnectionString);
 
-        var mongoDatabase = mongoClient.GetDatabase(
-            databaseSettings.Value.DatabaseName);
+        _mongoDatabase = mongoClient.GetDatabase(
+            _databaseSettings.Value.DatabaseName);
 
-        var teamCollection = mongoDatabase.GetCollection<BsonDocument>(
-            databaseSettings.Value.TeamsCollectionName);
+        _teamCollection = _mongoDatabase.GetCollection<BsonDocument>(
+            _databaseSettings.Value.TeamsCollectionName);
 
-        var teamMemberCollection = mongoDatabase.GetCollection<BsonDocument>(
-            databaseSettings.Value.TeamMembersCollectionName);
+        _teamMemberCollection = _mongoDatabase.GetCollection<BsonDocument>(
+            _databaseSettings.Value.TeamMembersCollectionName);
 
-        var templateCollection = mongoDatabase.GetCollection<BsonDocument>(
-            databaseSettings.Value.TemplateCollectionName);
+        _templateCollection = _mongoDatabase.GetCollection<BsonDocument>(
+            _databaseSettings.Value.TemplateCollectionName);
 
-        var surveyCollection = mongoDatabase.GetCollection<BsonDocument>(
-            databaseSettings.Value.SurveyCollectionName);
+        _surveyCollection = _mongoDatabase.GetCollection<BsonDocument>(
+            _databaseSettings.Value.SurveyCollectionName);
+    }
 
+    [Fact]
+    public async Task ShouldReturnAllSurveysFromTeam()
+    {
+        await InitialiseDatabaseClientAndCollections();
 
         var teamMemberId = Guid.NewGuid();
         var teamMember = new TeamMember(teamMemberId, "Some name", "Some position", "some@email.com");
         var teamId = Guid.NewGuid();
         var team = new Team.Domain.Team(teamId, "Some team name", new List<TeamMember> { teamMember });
         var template = new Template.Domain.Template("Hackman Model", new List<IQuestion>(), 10);
-        var survey = new Survey.Domain.Survey(Guid.NewGuid(), new User.Domain.User(Guid.NewGuid(), "Demo coach"), SurveyStatus.Draft, DateTime.Now,
+        var survey = new Survey.Domain.Survey(Guid.NewGuid(), new User.Domain.User(Guid.NewGuid(), "Demo coach"),
+            SurveyStatus.Draft, DateTime.Now,
             "Survey title", "Survey Description", new List<SurveyResponse>(), team, template);
 
-        var survey2 = new Survey.Domain.Survey(Guid.NewGuid(), new User.Domain.User(Guid.NewGuid(), "Demo coach"), SurveyStatus.Draft, DateTime.Now,
+        var survey2 = new Survey.Domain.Survey(Guid.NewGuid(), new User.Domain.User(Guid.NewGuid(), "Demo coach"),
+            SurveyStatus.Draft, DateTime.Now,
             "Survey title", "Survey Description", new List<SurveyResponse>(), team, template);
 
-        await teamMemberCollection.InsertOneAsync(new BsonDocument
+        await _teamMemberCollection.InsertOneAsync(new BsonDocument
         {
             { "_id", teamMemberId.ToString() },
             { "FullName", teamMember.FullName },
@@ -112,7 +114,7 @@ public class MongoSurveyRepositoryTest : IDisposable
             { "Email", teamMember.Email },
         });
 
-        await teamCollection.InsertOneAsync(new BsonDocument
+        await _teamCollection.InsertOneAsync(new BsonDocument
         {
             { "_id", teamId.ToString() },
             { "Name", team.Name },
@@ -120,14 +122,14 @@ public class MongoSurveyRepositoryTest : IDisposable
             { "IsDeleted", team.IsDeleted }
         });
 
-        await templateCollection.InsertOneAsync(new BsonDocument
+        await _templateCollection.InsertOneAsync(new BsonDocument
         {
             { "name", template.Name },
             { "questions", new BsonArray() },
             { "minutesToComplete", template.MinutesToComplete }
         });
 
-        await surveyCollection.InsertManyAsync(new List<BsonDocument>()
+        await _surveyCollection.InsertManyAsync(new List<BsonDocument>()
         {
             new BsonDocument
             {
@@ -166,7 +168,7 @@ public class MongoSurveyRepositoryTest : IDisposable
         });
 
 
-        var surveyRepository = new MongoSurveyRepository(databaseSettings);
+        var surveyRepository = new MongoSurveyRepository(_databaseSettings);
 
         var foundSurveys = await surveyRepository.GetAllSurveysFromTeam(teamId);
 
@@ -176,30 +178,12 @@ public class MongoSurveyRepositoryTest : IDisposable
     [Fact]
     public async Task ShouldReturnEmptyListOfSurveysIfNotFoundAnyMatchingByTeamId()
     {
-        await _mongoDbContainer.StartAsync();
-
-        var databaseSettings = Options.Create(new DatabaseSettings
-        {
-            DatabaseName = "Sherpa",
-            TeamsCollectionName = "Teams",
-            TeamMembersCollectionName = "TeamMembers",
-            SurveyCollectionName = "Surveys",
-            TemplateCollectionName = "Templates",
-            ConnectionString = $"mongodb://localhost:{_mongoDbContainer.GetMappedPublicPort(27017)}"
-        });
-
-        var mongoClient = new MongoClient(databaseSettings.Value.ConnectionString);
-
-        var mongoDatabase = mongoClient.GetDatabase(
-            databaseSettings.Value.DatabaseName);
-
-        var teamCollection = mongoDatabase.GetCollection<BsonDocument>(
-            databaseSettings.Value.TeamsCollectionName);
+        await InitialiseDatabaseClientAndCollections();
 
         var teamId = Guid.NewGuid();
         var team = new Team.Domain.Team(teamId, "Some team name", new List<TeamMember> { });
 
-        teamCollection.InsertOne(new BsonDocument
+        _teamCollection.InsertOne(new BsonDocument
         {
             { "_id", teamId.ToString() },
             { "Name", team.Name },
@@ -207,10 +191,71 @@ public class MongoSurveyRepositoryTest : IDisposable
             { "IsDeleted", team.IsDeleted }
         });
 
-        var surveyRepository = new MongoSurveyRepository(databaseSettings);
+        var surveyRepository = new MongoSurveyRepository(_databaseSettings);
 
         var foundSurveys = await surveyRepository.GetAllSurveysFromTeam(teamId);
 
         Assert.False(foundSurveys.Any());
+    }
+
+
+    [Fact]
+    public async Task ShouldUpdateSurvey()
+    {
+        await InitialiseDatabaseClientAndCollections();
+        var template = TemplateBuilder.ATemplate().Build();
+        var teamMember = TeamMemberBuilder.ATeamMember().Build();
+        var team = TeamBuilder.ATeam().WithTeamMembers(new List<TeamMember>() { teamMember }).Build();
+        var survey = SurveyBuilder.ASurvey().WithTeam(team).WithTemplate(template).Build();
+        await _teamCollection.InsertOneAsync(new BsonDocument
+            {
+                { "_id", team.Id.ToString() },
+                { "Name", team.Name },
+                { "Members", new BsonArray() { teamMember.Id.ToString() } },
+                { "IsDeleted", team.IsDeleted }
+            }
+        );
+
+        await _teamMemberCollection.InsertOneAsync(new BsonDocument
+        {
+            { "_id", teamMember.Id.ToString() },
+            { "FullName", teamMember.FullName },
+            { "Position", teamMember.Position },
+            { "Email", teamMember.Email }
+        });
+
+        await _surveyCollection.InsertOneAsync(new BsonDocument
+        {
+            { "_id", survey.Id.ToString() },
+            { "Title", survey.Title },
+            { "Status", survey.SurveyStatus },
+            { "Deadline", survey.Deadline },
+            { "Description", survey.Description },
+            { "Team", survey.Team.Id.ToString() },
+            { "Template", survey.Template.Name },
+            { "Responses", new BsonArray(survey.Responses) },
+            {
+                "Coach", new BsonDocument
+                {
+                    { "_id", survey.Coach.Id.ToString() },
+                    { "Name", survey.Coach.Name }
+                }
+            }
+        });
+        await _templateCollection.InsertOneAsync(new BsonDocument
+        {
+            { "name", template.Name },
+            { "minutesToComplete", template.MinutesToComplete },
+            { "questions", new BsonArray(template.Questions) }
+        });
+        var mongoSurveyRepository = new MongoSurveyRepository(_databaseSettings);
+
+        SurveyResponse response = new SurveyResponse(teamMember.Id, new List<QuestionResponse>());
+        survey.AnswerSurvey(response);
+        await mongoSurveyRepository.Update(survey);
+
+        var updatedSurvey = await mongoSurveyRepository.GetSurveyById(survey.Id);
+        
+        Assert.Contains(response, updatedSurvey.Responses);
     }
 }

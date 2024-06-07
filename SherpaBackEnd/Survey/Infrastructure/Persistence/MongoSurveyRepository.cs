@@ -61,6 +61,13 @@ public class MongoSurveyRepository : ISurveyRepository
         return await PopulateMSurvey(mSurvey);
     }
 
+    public async Task Update(Domain.Survey survey)
+    {
+        var mSurvey = MSurvey.FromSurvey(survey);
+        var filterDefinition = Builders<MSurvey>.Filter.Eq(s => s.Id, survey.Id);
+        await _surveyCollection.ReplaceOneAsync(filterDefinition, mSurvey);
+    }
+
     private async Task<Domain.Survey?> PopulateMSurvey(MSurvey mSurvey)
     {
         var surveyMTeam = await _teamCollection.Find(Builders<MTeam>.Filter.Eq("_id", mSurvey.Team.ToString()))

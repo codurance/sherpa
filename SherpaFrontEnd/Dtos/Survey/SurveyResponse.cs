@@ -1,6 +1,4 @@
-using System.Text.Json.Serialization;
-
-namespace SherpaBackEnd.Survey.Domain;
+namespace SherpaFrontEnd.Dtos.Survey;
 
 public class SurveyResponse
 {
@@ -15,7 +13,7 @@ public class SurveyResponse
 
     protected bool Equals(SurveyResponse other)
     {
-        return TeamMemberId.Equals(other.TeamMemberId);
+        return TeamMemberId.Equals(other.TeamMemberId) && Answers.Equals(other.Answers);
     }
 
     public override bool Equals(object? obj)
@@ -28,6 +26,16 @@ public class SurveyResponse
 
     public override int GetHashCode()
     {
-        return TeamMemberId.GetHashCode();
+        return HashCode.Combine(TeamMemberId, Answers);
+    }
+
+    public static bool operator ==(SurveyResponse? left, SurveyResponse? right)
+    {
+        return Equals(left, right);
+    }
+
+    public static bool operator !=(SurveyResponse? left, SurveyResponse? right)
+    {
+        return !Equals(left, right);
     }
 }

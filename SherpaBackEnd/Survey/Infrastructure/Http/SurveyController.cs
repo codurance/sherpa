@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Survey.Application;
+using SherpaBackEnd.Survey.Domain.Exceptions;
 using SherpaBackEnd.Survey.Infrastructure.Http.Dto;
 using SherpaBackEnd.Template.Domain;
 
@@ -86,5 +87,29 @@ public class SurveyController
         var surveysQuestions = await _surveyService.GetSurveyQuestionsBySurveyId(guid);
         return new OkObjectResult(surveysQuestions);
     }
-    
+
+    [HttpPost("/survey/{surveyId:guid}/team-members/{teamMembersId:guid}")]
+    public async Task<IActionResult> AnswerSurvey(AnswerSurveyDto answerSurveyDto)
+    {
+        try
+        {
+            await _surveyService.AnswerSurvey(answerSurveyDto);
+            return new CreatedResult("", null);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception.Message);
+            return exception switch
+            {
+                SurveyAlreadyAnsweredException or
+                    SurveyNotCompleteException or
+                    SurveyNotAssignedToTeamMemberException => new ObjectResult(exception)
+                    {
+                        StatusCode = StatusCodes.Status400BadRequest, Value = exception.Message,
+                    },
+                _ => new ObjectResult(exception)
+                    { StatusCode = StatusCodes.Status500InternalServerError, Value = exception.Message },
+            };
+        }
+    }
 }

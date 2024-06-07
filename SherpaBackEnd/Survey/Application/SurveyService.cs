@@ -1,5 +1,6 @@
 ﻿using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Survey.Domain;
+using SherpaBackEnd.Survey.Domain.Exceptions;
 using SherpaBackEnd.Survey.Infrastructure.Http.Dto;
 using SherpaBackEnd.Team.Domain;
 using SherpaBackEnd.Template.Domain;
@@ -31,8 +32,10 @@ public class SurveyService : ISurveyService
         if (team == null) throw new NotFoundException("Team not found");
         if (template == null) throw new NotFoundException("Template not found");
 
-        var survey = new Domain.Survey(createSurveyDto.SurveyId, new User.Domain.User(DefaultUserId, "Lucia"), SurveyStatus.Draft,
-            createSurveyDto.Deadline, createSurveyDto.Title, createSurveyDto.Description, new List<SurveyResponse>(), team,
+        var survey = new Domain.Survey(createSurveyDto.SurveyId, new User.Domain.User(DefaultUserId, "Lucia"),
+            SurveyStatus.Draft,
+            createSurveyDto.Deadline, createSurveyDto.Title, createSurveyDto.Description, new List<SurveyResponse>(),
+            team,
             template);
 
         await _surveyRepository.CreateSurvey(survey);
@@ -68,5 +71,35 @@ public class SurveyService : ISurveyService
     {
         var surveyById = await _surveyRepository.GetSurveyById(expectedSurveyId);
         return surveyById.Template.Questions;
+    }
+
+    public async Task AnswerSurvey(AnswerSurveyDto answerSurveyDto)
+    {
+        try
+        {
+            var survey = await _surveyRepository.GetSurveyById(answerSurveyDto.SurveyId);
+
+            if (survey == null)
+            {
+                throw new NotFoundException("Survey not found");
+            }
+
+            survey.AnswerSurvey(answerSurveyDto.Response);
+
+            await _surveyRepository.Update(survey);
+        }
+        catch (Exception e)
+        {
+            switch (e)
+            {
+                case NotFoundException:
+                case SurveyAlreadyAnsweredException:
+                case SurveyNotAssignedToTeamMemberException:
+                case SurveyNotCompleteException:
+                    throw;
+                default:
+                    throw new ConnectionToRepositoryUnsuccessfulException("Unable to update answered survey");
+            }
+        }
     }
 }
