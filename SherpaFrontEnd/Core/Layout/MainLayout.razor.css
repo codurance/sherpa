@@ -4,10 +4,6 @@
     flex-direction: column;
 }
 
-main {
-    flex: 1;
-}
-
 .main-nav-logo{
 
     height: 1.7rem;

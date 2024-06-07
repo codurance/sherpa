@@ -10,14 +10,14 @@
                 <NavMenu/>
             </div>
 
-            <main class="flex flex-col">
-                <div class="flex gap-8 flex-row-reverse">
+            <div class="flex flex-col px-8 flex-1">
+                <div class="flex gap-8 flex-row-reverse py-6">
                     <LoginDisplay/>
                 </div>
-                <article class="m-0 flex flex-1 flex-col p-0">
+                <main class="m-0 flex flex-1 flex-col pt-10 pb-0 px-0">
                     @Body
-                </article>
-            </main>
+                </main>
+            </div>
         </Authorized>
         <NotAuthorized>
             <div class="flex justify-center items-center w-screen h-screen">

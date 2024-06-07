@@ -2,7 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Security.Claims;
 using AngleSharp.Dom;
-
+using AngleSharp.Html.Dom;
 using Blazored.Modal;
 using Bunit;
 using Bunit.TestDoubles;
@@ -12,6 +12,7 @@ using SherpaFrontEnd;
 using SherpaFrontEnd.Dtos;
 using SherpaFrontEnd.Dtos.Survey;
 using SherpaFrontEnd.Dtos.Team;
+using SherpaFrontEnd.Pages.DeliverySettings;
 using SherpaFrontEnd.Services;
 using Xunit.Abstractions;
 
@@ -160,7 +161,8 @@ public class SurveyAcceptanceTest
     private async Task UserIsRedirectedToDraftReviewPageAfterCreatingASurvey()
     {
         // GIVEN that an Org coach is on the Delivery settings page for creating a survey
-        // and he filled in all fields
+        // And they filled in all fields
+        // And they use the default description
         _guidService.Setup(service => service.GenerateRandomGuid()).Returns(_surveyId);
         var teamsJson = await JsonContent.Create(_teams).ReadAsStringAsync();
         var responseWithTeams = new HttpResponseMessage
@@ -192,8 +194,8 @@ public class SurveyAcceptanceTest
             new User(Guid.NewGuid(), "Lucia"), 
             Status.Draft, 
             deadline, 
-            "Title", 
-            "Description", 
+            "Title",
+            SurveyCopy.DefaultDescription(), 
             Array.Empty<Response>(), 
             _teams[0], 
             templateWithoutQuestions);
@@ -229,7 +231,7 @@ public class SurveyAcceptanceTest
 
         var descriptionTextArea = appComponent.Find($"textarea#{descriptionLabel!.Attributes.GetNamedItem("for").Value}");
         Assert.NotNull(descriptionTextArea);
-        descriptionTextArea.Change("Description");
+        Assert.Equal(survey.Description, descriptionTextArea.GetAttribute("value"));
 
         var deadlineLabel = appComponent.FindElementByCssSelectorAndTextContent("label", "On a specific date");
 
@@ -265,7 +267,6 @@ public class SurveyAcceptanceTest
         // description
         var surveyDescriptionElement = appComponent.FindElementByCssSelectorAndTextContent("p", survey.Description);
         Assert.NotNull(surveyDescriptionElement);
-        
         // deadline
         var surveyDeadlineElement = appComponent.FindElementByCssSelectorAndTextContent("li", survey.Deadline.Value.ToString("dd/MM/yyyy"));
         Assert.NotNull(surveyDeadlineElement);

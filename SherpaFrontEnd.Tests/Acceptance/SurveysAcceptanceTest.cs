@@ -107,7 +107,7 @@ public class SurveysAcceptanceTest
 
         createNewTeamButton.Click();
         
-        var teamNameLabel = appComponent.FindElementByCssSelectorAndTextContent("label", "Team's name");
+        var teamNameLabel = appComponent.FindElementByCssSelectorAndTextContent("label", "Team name");
         var teamNameInputId = teamNameLabel.Attributes.GetNamedItem("for");
         var teamNameInput = appComponent.Find($"#{teamNameInputId.TextContent}");
         Assert.NotNull(teamNameInput);
@@ -197,7 +197,7 @@ public class SurveysAcceptanceTest
 
         createNewTeamButton.Click();
         
-        var teamNameLabel = appComponent.FindElementByCssSelectorAndTextContent("label", "Team's name");
+        var teamNameLabel = appComponent.FindElementByCssSelectorAndTextContent("label", "Team name");
         var teamNameInputId = teamNameLabel.Attributes.GetNamedItem("for");
         var teamNameInput = appComponent.Find($"#{teamNameInputId.TextContent}");
         Assert.NotNull(teamNameInput);

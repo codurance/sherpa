@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Shared.Test.Helpers;
 using SherpaFrontEnd.Dtos;
+using SherpaFrontEnd.Dtos.Survey;
 using SherpaFrontEnd.Dtos.Team;
 using SherpaFrontEnd.Model;
 using SherpaFrontEnd.Pages;
@@ -57,8 +58,10 @@ public class DeliverySettingsTest
 
         var descriptionLabel = component.FindElementByCssSelectorAndTextContent("label", "Description");
 
+        var defaultDescription = SurveyCopy.DefaultDescription();
         var descriptionTextArea = component.Find($"textarea#{descriptionLabel!.Attributes.GetNamedItem("for").Value}");
         Assert.NotNull(descriptionTextArea);
+        Assert.Equal(defaultDescription, descriptionTextArea.GetAttribute("value"));
 
         var deadlineLabel = component.FindElementByCssSelectorAndTextContent("label", "On a specific date");
 
