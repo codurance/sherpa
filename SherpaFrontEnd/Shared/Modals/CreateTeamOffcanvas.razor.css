@@ -1,0 +1,8 @@
+﻿::deep .modalInputText {
+    border-width: 1px;
+    border-style: solid;
+    border-color: var(--primary---dark--600);
+    border-radius: 8px;
+    padding: 0.625rem 0.875rem 0.625rem 0.875rem;
+    margin-bottom: 0.5rem;
+}
