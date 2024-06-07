@@ -99,6 +99,8 @@
 
     public EditContext? EditContext;
 
+    private static readonly string DefaultDescription = SurveyCopy.DefaultDescription();
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -109,7 +111,7 @@
         {
             CreateSurveyDto.TemplateName = Template;
         }
-        CreateSurveyDto.Description = null;
+        CreateSurveyDto.Description = DefaultDescription;
         CreateSurveyDto.Deadline = null;
         CreateSurveyDto.TeamId = null;
 

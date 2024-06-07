@@ -40,16 +40,16 @@ builder.Services.AddSingleton<ITemplateService, TemplateService>();
 builder.Services.AddSingleton<ISurveyRepository, MongoSurveyRepository>();
 builder.Services.AddSingleton<ISurveyService, SurveyService>();
 
-builder.Services.AddSingleton<IEmailService, SesEmailService>(provider =>
+builder.Services.AddSingleton<IEmailServicePoC, SesEmailServicePoC>(provider =>
 {
     if (!builder.Environment.IsDevelopment())
     {
-        return new SesEmailService(provider.GetService<IHttpContextAccessor>()!);
+        return new SesEmailServicePoC(provider.GetService<IHttpContextAccessor>()!);
     }
 
     var accessKey = Environment.GetEnvironmentVariable("AWS_SES_ACCESS_KEY");
     var secretKey = Environment.GetEnvironmentVariable("AWS_SES_SECRET_KEY");
-    return new SesEmailService(provider.GetService<IHttpContextAccessor>()!, accessKey!, secretKey!);
+    return new SesEmailServicePoC(provider.GetService<IHttpContextAccessor>()!, accessKey!, secretKey!);
 });
 
 builder.Logging.ClearProviders();
