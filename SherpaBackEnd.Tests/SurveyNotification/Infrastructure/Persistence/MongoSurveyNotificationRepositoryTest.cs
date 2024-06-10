@@ -12,6 +12,7 @@ namespace SherpaBackEnd.Tests.SurveyNotification.Infrastructure.Persistence;
 [TestSubject(typeof(MongoSurveyNotificationRepository))]
 public class MongoSurveyNotificationRepositoryTest : IDisposable
 {
+    
     private readonly IContainer _mongoDbContainer = new ContainerBuilder()
         .WithImage("mongodb/mongodb-community-server:latest")
         .WithPortBinding(27017, true).Build();

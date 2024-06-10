@@ -43,6 +43,11 @@ public class SurveyNotificationService : ISurveyNotificationService
         await _emailService.SendEmailsWith(emailTemplateRequests);
     }
 
+    public Task<Domain.SurveyNotification> GetSurveyNotification(Guid surveyNotificationId)
+    {
+        throw new NotImplementedException();
+    }
+
     private async Task CreateManySurveyNotification(List<Domain.SurveyNotification> surveyNotifications)
     {
         try
