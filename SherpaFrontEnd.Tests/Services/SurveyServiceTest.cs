@@ -224,4 +224,24 @@ public class SurveyServiceTest
                 m => m.Method.Equals(HttpMethod.Post) && m.RequestUri!.AbsoluteUri.Contains(path)),
             ItExpr.IsAny<CancellationToken>());
     }
+
+    [Fact]
+    public async Task ShouldSendLaunchSurveyRequest()
+    {
+        var surveyId = Guid.NewGuid();
+
+        var launchSurveyResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.Created,
+        };
+        var path = "/survey-notifications";
+        _handlerMock.SetupRequest(HttpMethod.Post, path, launchSurveyResponse);
+        
+        var surveyService = new SurveyService(_httpClientFactory.Object);
+
+        await surveyService.LaunchSurvey(surveyId);
+        
+        _handlerMock.Protected().Verify("SendAsync", Times.Once(), ItExpr.Is<HttpRequestMessage>(
+            message => message.Method.Equals(HttpMethod.Post) && message.RequestUri!.AbsoluteUri.Contains(path)), ItExpr.IsAny<CancellationToken>());
+    }
 }

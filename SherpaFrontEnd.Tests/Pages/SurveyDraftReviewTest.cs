@@ -85,4 +85,35 @@ public class SurveyDraftReviewTest
         
         appComponent.WaitForAssertion(() => Assert.Equal("http://localhost/error", _navMan.Uri));
     }
+
+    [Fact]
+    public void ShouldLaunchSurveyAndNavigateToTeamPageWhenLaunchSurveyButtonIsClicked()
+    {
+        var deadline = DateTime.Now;
+        var templateWithoutQuestions = new TemplateWithoutQuestions("Hackman Model", 30);
+        var survey = new SurveyWithoutQuestions(
+            _surveyId,
+            new User(Guid.NewGuid(), "Lucia"), 
+            Status.Draft, 
+            deadline, 
+            "Title", 
+            "Description", 
+            Array.Empty<Response>(), 
+            new Team(Guid.NewGuid(), "Demo Team"), 
+            templateWithoutQuestions);
+
+        _surveyService.Setup(service => service.GetSurveyWithoutQuestionsById(_surveyId)).ReturnsAsync(
+            survey);
+        var appComponent = _ctx.RenderComponent<SurveyDraftReview>(ComponentParameter.CreateParameter("SurveyId", _surveyId));
+
+        var launchSurveyButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Launch survey");
+        launchSurveyButton.Click();
+
+        _surveyService.Verify(service => service.LaunchSurvey(survey.Id));
+        
+        appComponent.WaitForAssertion(() =>
+            Assert.Equal(
+                $"http://localhost/team-content/{survey.Team.Id}",
+                _navMan.Uri));
+    }
 }
