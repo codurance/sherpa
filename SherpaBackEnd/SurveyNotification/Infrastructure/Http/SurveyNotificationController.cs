@@ -47,8 +47,16 @@ public class SurveyNotificationController
     [HttpGet("/{surveyNotificationId:guid}")]
     public async Task<IActionResult> GetSurveyNotification(Guid surveyNotificationId)
     {
-        var surveyNotification = await _surveyNotificationService.GetSurveyNotification(surveyNotificationId);
-        var responseBody = SurveyNotificationResponse.FromSurveyNotification(surveyNotification);
-        return new OkObjectResult(responseBody);
+        try
+        {
+            var surveyNotification = await _surveyNotificationService.GetSurveyNotification(surveyNotificationId);
+            var responseBody = SurveyNotificationResponse.FromSurveyNotification(surveyNotification);
+            return new OkObjectResult(responseBody);
+        }
+        catch (Exception error)
+        {
+            Console.WriteLine(error);
+            return new BadRequestResult();
+        }
     }
 }

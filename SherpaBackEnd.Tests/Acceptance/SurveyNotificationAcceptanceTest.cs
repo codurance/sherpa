@@ -80,7 +80,7 @@ public class SurveyNotificationAcceptanceTest : IAsyncLifetime
         var surveyNotificationResponse = SurveyNotificationResponse.FromSurveyNotification(surveyNotification);
 
         // When a user requests it
-        var actionResult = surveyNotifcationsController.GetSurveyNotification(surveyNotification.Id);
+        var actionResult = await surveyNotifcationsController.GetSurveyNotification(surveyNotification.Id);
 
         // Then the controller should return an Ok result
         var okObjectResult = Assert.IsType<OkObjectResult>(actionResult);

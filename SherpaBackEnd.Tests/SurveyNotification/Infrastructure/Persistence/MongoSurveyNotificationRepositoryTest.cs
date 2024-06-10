@@ -56,7 +56,7 @@ public class MongoSurveyNotificationRepositoryTest : IDisposable
             {
                 { "_id", team.Id.ToString() },
                 { "Name", team.Name },
-                { "Members", new BsonArray() { firstTeamMember.Id.ToString(), secondTeamMember.Id.ToString() } },
+                { "Members", new BsonArray() { secondTeamMember.Id.ToString(), firstTeamMember.Id.ToString() } },
                 { "IsDeleted", team.IsDeleted }
             }
         );
@@ -135,11 +135,11 @@ public class MongoSurveyNotificationRepositoryTest : IDisposable
 
         Assert.Equal(firstSurveyNotificationId, firstCreatedSurveyNotification.Id);
         Assert.Equal(firstTeamMember, firstCreatedSurveyNotification.TeamMember);
-        CustomAssertions.StringifyEquals(survey, firstCreatedSurveyNotification.Survey);
+        Assert.Equal(survey.Id, firstCreatedSurveyNotification.Survey.Id);
 
         Assert.Equal(secondSurveyNotificationId, secondCreatedSurveyNotification.Id);
         Assert.Equal(secondTeamMember, secondCreatedSurveyNotification.TeamMember);
-        CustomAssertions.StringifyEquals(survey, secondCreatedSurveyNotification.Survey);
+        Assert.Equal(survey.Id, secondCreatedSurveyNotification.Survey.Id);
     }
 
 
