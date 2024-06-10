@@ -21,7 +21,7 @@
                     </div>
                     <div class="flex flex-col mt-6">
                         <p class="text-title-caption-12px text-primary-dark-400 mb-2">SURVEY DESCRIPTION</p>
-                        <p class="text-text-body-14pt-regular text-primary-dark-principal">
+                        <p class="text-text-body-14pt-regular text-primary-dark-principal" data-testid="survey-description">
                             @foreach (var line in _survey.Description.Split("\n"))
                             {
                                 @line
