@@ -1,9 +1,12 @@
 using SherpaBackEnd.Email.Application;
 using SherpaBackEnd.Shared.Infrastructure.Persistence;
 using SherpaBackEnd.Shared.Infrastructure.Serializers;
+using SherpaBackEnd.Shared.Services;
 using SherpaBackEnd.Survey.Application;
 using SherpaBackEnd.Survey.Domain.Persistence;
 using SherpaBackEnd.Survey.Infrastructure.Persistence;
+using SherpaBackEnd.SurveyNotification.Application;
+using SherpaBackEnd.SurveyNotification.Infrastructure.Persistence;
 using SherpaBackEnd.Team.Application;
 using SherpaBackEnd.Team.Domain;
 using SherpaBackEnd.Team.Infrastructure.Persistence;
@@ -51,6 +54,12 @@ builder.Services.AddSingleton<IEmailServicePoC, SesEmailServicePoC>(provider =>
     var secretKey = Environment.GetEnvironmentVariable("AWS_SES_SECRET_KEY");
     return new SesEmailServicePoC(provider.GetService<IHttpContextAccessor>()!, accessKey!, secretKey!);
 });
+
+builder.Services.AddSingleton<ISurveyNotificationsRepository, MongoSurveyNotificationRepository>();
+builder.Services.AddSingleton<IEmailTemplateFactory, EmailTemplateFactory>();
+builder.Services.AddSingleton<IGuidService, GuidService>();
+builder.Services.AddSingleton<IEmailService, FakeEmailService>();
+builder.Services.AddSingleton<ISurveyNotificationService, SurveyNotificationService>();
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
