@@ -21,7 +21,13 @@
                     </div>
                     <div class="flex flex-col mt-6">
                         <p class="text-title-caption-12px text-primary-dark-400 mb-2">SURVEY DESCRIPTION</p>
-                        <p class="text-text-body-14pt-regular text-primary-dark-principal">@_survey.Description</p>
+                        <p class="text-text-body-14pt-regular text-primary-dark-principal" data-testid="survey-description">
+                            @foreach (var line in _survey.Description.Split("\n"))
+                            {
+                                @line
+                                <br/>
+                            }
+                        </p>
                     </div>
                 </div>
                 <div class="flex flex-col pt-8">
@@ -53,8 +59,7 @@
 
 @code {
 
-    [Parameter]
-    public Guid SurveyId { get; set; }
+    [Parameter] public Guid SurveyId { get; set; }
 
     private SurveyWithoutQuestions? _survey;
 
