@@ -44,8 +44,8 @@ public class SurveyNotificationController
         }
     }
 
-    [HttpGet("/{surveyNotificationId:guid}")]
-    public async Task<IActionResult> GetSurveyNotification(Guid surveyNotificationId)
+    [HttpGet("{surveyNotificationId:guid}")]
+    public async Task<ActionResult<SurveyNotificationResponse>> GetSurveyNotification(Guid surveyNotificationId)
     {
         try
         {

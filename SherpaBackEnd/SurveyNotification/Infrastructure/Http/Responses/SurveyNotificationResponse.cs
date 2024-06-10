@@ -2,9 +2,9 @@ namespace SherpaBackEnd.SurveyNotification.Infrastructure.Http.Responses;
 
 public class SurveyNotificationResponse
 {
-    private Guid Id { get; set; }
-    private Guid SurveyId { get; set; }
-    private Guid TeamMemberId { get; set; }
+    public Guid Id { get; set; }
+    public Guid SurveyId { get; set; }
+    public Guid TeamMemberId { get; set; }
 
     public static SurveyNotificationResponse FromSurveyNotification(Domain.SurveyNotification surveyNotification)
     {
