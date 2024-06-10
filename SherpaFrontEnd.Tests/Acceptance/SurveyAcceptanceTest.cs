@@ -55,7 +55,7 @@ public class SurveyAcceptanceTest
         _guidService.Setup(service => service.GenerateRandomGuid()).Returns(_surveyId);
         var auth = _testCtx.AddTestAuthorization();
         auth.SetAuthorized("Demo user");
-        auth.SetClaims(new []{new Claim("username", "Demo user")});
+        auth.SetClaims(new[] { new Claim("username", "Demo user") });
         _navManager = _testCtx.Services.GetRequiredService<FakeNavigationManager>();
     }
 
@@ -68,7 +68,7 @@ public class SurveyAcceptanceTest
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(templatesJson),
         };
-        
+
         _handlerMock.SetupRequest(HttpMethod.Get, "template", responseWithTemplates);
 
         var appComponent = _testCtx.RenderComponent<App>();
@@ -92,7 +92,8 @@ public class SurveyAcceptanceTest
         var templateTitle = appComponent.FindElementByCssSelectorAndTextContent("h1", "Hackman Model");
         Assert.NotNull(templateTitle);
 
-        var launchThisTemplateButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Launch this template");
+        var launchThisTemplateButton =
+            appComponent.FindElementByCssSelectorAndTextContent("button", "Launch this template");
         Assert.NotNull(launchThisTemplateButton);
     }
 
@@ -112,11 +113,12 @@ public class SurveyAcceptanceTest
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(teamsJson),
         };
-        
+
         _handlerMock.SetupRequest(HttpMethod.Get, "team", responseWithTeams);
 
         // WHEN he clicks on “Launch this template“
-        var launchTemplateButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Launch this template");
+        var launchTemplateButton =
+            appComponent.FindElementByCssSelectorAndTextContent("button", "Launch this template");
         Assert.NotNull(launchTemplateButton);
 
         launchTemplateButton.Click();
@@ -133,7 +135,7 @@ public class SurveyAcceptanceTest
             Assert.Equal(
                 $"http://localhost/survey/delivery-settings?template={Uri.EscapeDataString("Hackman Model")}",
                 _navManager.Uri));
-        
+
         var teamSelect = appComponent.FindElementByCssSelectorAndTextContent("select", "Demo Team");
         Assert.NotNull(teamSelect);
 
@@ -145,7 +147,8 @@ public class SurveyAcceptanceTest
 
         var descriptionLabel = appComponent.FindElementByCssSelectorAndTextContent("label", "Description");
 
-        var descriptionTextArea = appComponent.Find($"textarea#{descriptionLabel!.Attributes.GetNamedItem("for").Value}");
+        var descriptionTextArea =
+            appComponent.Find($"textarea#{descriptionLabel!.Attributes.GetNamedItem("for").Value}");
         Assert.NotNull(descriptionTextArea);
 
         var deadlineLabel = appComponent.FindElementByCssSelectorAndTextContent("label", "On a specific date");
@@ -156,7 +159,7 @@ public class SurveyAcceptanceTest
 
         Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("button", "Continue"));
     }
-    
+
     [Fact]
     private async Task UserIsRedirectedToDraftReviewPageAfterCreatingASurvey()
     {
@@ -170,53 +173,53 @@ public class SurveyAcceptanceTest
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(teamsJson),
         };
-        
+
         _handlerMock.SetupRequest(HttpMethod.Get, "team", responseWithTeams);
-        
+
         var appComponent = _testCtx.RenderComponent<App>();
 
         var targetPage = $"http://localhost/survey/delivery-settings?template={Uri.EscapeDataString("Hackman Model")}";
 
         _navManager.NavigateTo(targetPage);
 
-        
+
         var surveyCreationResponse = new HttpResponseMessage
         {
             StatusCode = HttpStatusCode.Created,
         };
-        
+
         _handlerMock.SetupRequest(HttpMethod.Post, "survey", surveyCreationResponse);
 
         var deadline = DateTime.Now;
         var templateWithoutQuestions = new TemplateWithoutQuestions("Hackman Model", 30);
         var survey = new SurveyWithoutQuestions(
-            _surveyId, 
-            new User(Guid.NewGuid(), "Lucia"), 
-            Status.Draft, 
-            deadline, 
+            _surveyId,
+            new User(Guid.NewGuid(), "Lucia"),
+            Status.Draft,
+            deadline,
             "Title",
-            SurveyCopy.DefaultDescription(), 
-            Array.Empty<Response>(), 
-            _teams[0], 
+            SurveyCopy.DefaultDescription(),
+            Array.Empty<Response>(),
+            _teams[0],
             templateWithoutQuestions);
-        
+
         var surveyJson = await JsonContent.Create(survey).ReadAsStringAsync();
         var surveyResponse = new HttpResponseMessage
         {
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(surveyJson)
         };
-        
+
         _handlerMock.SetupRequest(HttpMethod.Get, $"survey/{_surveyId}", surveyResponse);
-        
+
 
         appComponent.WaitForAssertion(() =>
             Assert.Equal(
                 $"http://localhost/survey/delivery-settings?template={Uri.EscapeDataString("Hackman Model")}",
                 _navManager.Uri));
-        
+
         var teamSelect = appComponent.FindElementByCssSelectorAndTextContent("select", "Demo Team");
-        
+
         Assert.NotNull(teamSelect);
         teamSelect.Change(_teams[0].Id);
 
@@ -229,7 +232,8 @@ public class SurveyAcceptanceTest
 
         var descriptionLabel = appComponent.FindElementByCssSelectorAndTextContent("label", "Description");
 
-        var descriptionTextArea = appComponent.Find($"textarea#{descriptionLabel!.Attributes.GetNamedItem("for").Value}");
+        var descriptionTextArea =
+            appComponent.Find($"textarea#{descriptionLabel!.Attributes.GetNamedItem("for").Value}");
         Assert.NotNull(descriptionTextArea);
         Assert.Equal(survey.Description, descriptionTextArea.GetAttribute("value"));
 
@@ -239,46 +243,49 @@ public class SurveyAcceptanceTest
         Assert.NotNull(deadlineInput);
         deadlineInput.Change(deadline.Date.ToString("yyyy-MM-dd"));
 
-        
+
         // WHEN he clicks on Continue
 
         var continueButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Continue");
         Assert.NotNull(continueButton);
-        
+
         continueButton.Click();
-        
+
         _testOutputHelper.WriteLine(appComponent.Markup);
-        
+
         // THEN he should be redirected on the Summary page for a survey
         // and he should see the following info:
         appComponent.WaitForAssertion(() =>
             Assert.Equal(
                 $"http://localhost/survey/draft-review/{_surveyId.ToString()}",
                 _navManager.Uri));
-        
+
         // template
-        var templateNameElement = appComponent.FindElementByCssSelectorAndTextContent("p", templateWithoutQuestions.Name);
+        var templateNameElement =
+            appComponent.FindElementByCssSelectorAndTextContent("p", templateWithoutQuestions.Name);
         Assert.NotNull(templateNameElement);
-        
+
         // title
         var surveyTitleElement = appComponent.FindElementByCssSelectorAndTextContent("p", survey.Title);
         Assert.NotNull(surveyTitleElement);
-        
+
         // description
-        var surveyDescriptionElement = appComponent.FindElementByCssSelectorAndTextContent("p", survey.Description);
+        var surveyDescriptionElement =
+            appComponent.Find("p[data-testid='survey-description']");
         Assert.NotNull(surveyDescriptionElement);
         // deadline
-        var surveyDeadlineElement = appComponent.FindElementByCssSelectorAndTextContent("li", survey.Deadline.Value.ToString("dd/MM/yyyy"));
+        var surveyDeadlineElement =
+            appComponent.FindElementByCssSelectorAndTextContent("li", survey.Deadline.Value.ToString("dd/MM/yyyy"));
         Assert.NotNull(surveyDeadlineElement);
-        
+
         // name of the team
         var teamNameElement = appComponent.FindElementByCssSelectorAndTextContent("p", survey.Team.Name);
         Assert.NotNull(teamNameElement);
-        
+
         // button Back
         var finalBackButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Preview");
         Assert.NotNull(finalBackButton);
-        
+
         // button Launch
         var finalLaunchButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Launch survey");
         Assert.NotNull(finalLaunchButton);
@@ -295,23 +302,22 @@ public class SurveyAcceptanceTest
             Content = new StringContent(emptyTeamsList),
         };
 
-    
-        
+
         _handlerMock.SetupRequest(HttpMethod.Get, "team", responseWithEmptyTeamsList);
-        
+
         var appComponent = _testCtx.RenderComponent<App>();
 
         var targetPage = $"http://localhost/survey/delivery-settings?template={Uri.EscapeDataString("Hackman Model")}";
 
         _navManager.NavigateTo(targetPage);
-        
+
         // WHEN he clicks on Continue
         var continueButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Continue");
         Assert.NotNull(continueButton);
-        
+
         continueButton.Click();
         appComponent.WaitForElement(".validation-message");
-        
+
         // and he didn't enter anything to the mandatory fields: Title and Team
         // team
         var teamLabel = appComponent.FindElementByCssSelectorAndTextContent("label", "Team");
@@ -319,18 +325,144 @@ public class SurveyAcceptanceTest
         Assert.NotNull(teamSelector);
 
         var inputTeamGroup = teamSelector.Parent.Parent;
-        
+
         //title
         var titleLabel = appComponent.FindElementByCssSelectorAndTextContent("label", "Survey title");
         var titleInput = appComponent.Find($"input#{titleLabel!.Attributes.GetNamedItem("for").Value}");
         Assert.NotNull(titleInput);
-        
+
         var inputTitleGroup = titleInput.Parent.Parent;
 
         // THEN these fields should be highlighted in read and under particular field he should see an error message
-        
+
         Assert.Contains("This field is mandatory", inputTitleGroup.ToMarkup());
 
         Assert.Contains("This field is mandatory", inputTeamGroup.ToMarkup());
+    }
+
+    [Fact]
+    public async Task ShouldBeRedirectedToTeamPageWhenLaunchingSurveyAndWasSuccessful()
+    {
+        // GIVEN that an Org coach is on the Review survey page after creating a survey
+        var deadline = DateTime.Now;
+        var templateWithoutQuestions = new TemplateWithoutQuestions("Hackman Model", 30);
+        var survey = new SurveyWithoutQuestions(
+            _surveyId, 
+            new User(Guid.NewGuid(), "Lucia"), 
+            Status.Draft, 
+            deadline, 
+            "Survey Test",
+            SurveyCopy.DefaultDescription(), 
+            Array.Empty<Response>(), 
+            _teams[0], 
+            templateWithoutQuestions);
+        
+        var surveyJson = await JsonContent.Create(survey).ReadAsStringAsync();
+        var surveyResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(surveyJson)
+        };
+        
+        _handlerMock.SetupRequest(HttpMethod.Get, $"survey/{_surveyId}", surveyResponse);
+        
+        var appComponent = _testCtx.RenderComponent<App>();
+
+        var targetPage = $"http://localhost/survey/draft-review/{_surveyId}";
+
+        _navManager.NavigateTo(targetPage);
+        
+        // WHEN he clicks on Launch survey
+        // AND it is launched successfully
+        var launchResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.Created,
+        };
+
+        var teamJson = await JsonContent.Create(survey.Team).ReadAsStringAsync();
+        var teamResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(teamJson)
+        };
+
+        var teamSurveysJson = await JsonContent.Create(new List<Survey>()).ReadAsStringAsync();
+        var teamSurveysResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(teamSurveysJson)
+        };
+        
+        _handlerMock.SetupRequest(HttpMethod.Post, "survey-notifications", launchResponse);
+        _handlerMock.SetupRequest(HttpMethod.Get, $"/team/{survey.Team.Id}", teamResponse);
+        _handlerMock.SetupRequest(HttpMethod.Get, $"/team/{survey.Team.Id}/surveys", teamSurveysResponse);
+        
+        var launchSurveyButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Launch survey");
+        Assert.NotNull(launchSurveyButton);
+        
+        launchSurveyButton.Click();
+        
+        // THEN he should be redirected on the Team page, Surveys tab
+        // AND he should see the following info:
+        appComponent.WaitForAssertion(() =>
+            Assert.Equal(
+                $"http://localhost/team-content/{_teams[0].Id.ToString()}",
+                _navManager.Uri));
+        
+        // team title
+        appComponent.FindElementByCssSelectorAndTextContent("h3", survey.Team.Name);
+    }
+
+    [Fact]
+    public async Task ShouldBeRedirectedToErrorPageWhenLaunchingSurveyAndWasUnsuccessful()
+    {
+        // GIVEN that an Org coach is on the Review survey page after creating a survey
+        var deadline = DateTime.Now;
+        var templateWithoutQuestions = new TemplateWithoutQuestions("Hackman Model", 30);
+        var survey = new SurveyWithoutQuestions(
+            _surveyId, 
+            new User(Guid.NewGuid(), "Lucia"), 
+            Status.Draft, 
+            deadline, 
+            "Survey Test",
+            SurveyCopy.DefaultDescription(), 
+            Array.Empty<Response>(), 
+            _teams[0], 
+            templateWithoutQuestions);
+        
+        var surveyJson = await JsonContent.Create(survey).ReadAsStringAsync();
+        var surveyResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(surveyJson)
+        };
+        
+        _handlerMock.SetupRequest(HttpMethod.Get, $"survey/{_surveyId}", surveyResponse);
+        
+        var appComponent = _testCtx.RenderComponent<App>();
+
+        var targetPage = $"http://localhost/survey/draft-review/{_surveyId}";
+
+        _navManager.NavigateTo(targetPage);
+        
+        // WHEN he clicks on Launch survey
+        // AND it is launched unsuccessfully
+        
+        var launchResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.InternalServerError,
+        };
+        _handlerMock.SetupRequest(HttpMethod.Post, "survey-notifications", launchResponse);
+        
+        var launchSurveyButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Launch survey");
+        Assert.NotNull(launchSurveyButton);
+        
+        launchSurveyButton.Click();
+        
+        // THEN he should be redirected on the Error page
+        appComponent.WaitForAssertion(() =>
+            Assert.Equal(
+                "http://localhost/error",
+                _navManager.Uri));
     }
 }

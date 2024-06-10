@@ -21,7 +21,13 @@
                     </div>
                     <div class="flex flex-col mt-6">
                         <p class="text-title-caption-12px text-primary-dark-400 mb-2">SURVEY DESCRIPTION</p>
-                        <p class="text-text-body-14pt-regular text-primary-dark-principal">@_survey.Description</p>
+                        <p class="text-text-body-14pt-regular text-primary-dark-principal" data-testid="survey-description">
+                            @foreach (var line in _survey.Description.Split("\n"))
+                            {
+                                @line
+                                <br/>
+                            }
+                        </p>
                     </div>
                 </div>
                 <div class="flex flex-col pt-8">
@@ -46,15 +52,14 @@
     </div>
     <div class="mt-9 flex w-full justify-end gap-6" role="group">
         <button class="rounded-lg px-6 py-2 text-base text-primary-dark-800 border border-primary-dark-800/[.2] bg-white border hover:bg-primary-dark-100">Preview</button>
-        <button type="submit" class="flex items-center gap-2 rounded-lg px-6 py-2 text-base text-white bg-primary-red-principal-800 hover:bg-primary-red-900">Launch survey</button>
+        <button @onclick="LaunchSurvey" class="flex items-center gap-2 rounded-lg px-6 py-2 text-base text-white bg-primary-red-principal-800 hover:bg-primary-red-900">Launch survey</button>
     </div>
 
 </div>
 
 @code {
 
-    [Parameter]
-    public Guid SurveyId { get; set; }
+    [Parameter] public Guid SurveyId { get; set; }
 
     private SurveyWithoutQuestions? _survey;
 
@@ -63,6 +68,19 @@
         try
         {
             _survey = await SurveyService.GetSurveyWithoutQuestionsById(SurveyId);
+        }
+        catch
+        {
+            NavigationManager.NavigateTo(NavigationManager.BaseUri + "error");
+        }
+    }
+
+    private async Task LaunchSurvey()
+    {
+        try
+        {
+            await SurveyService.LaunchSurvey(SurveyId);
+            NavigationManager.NavigateTo(NavigationManager.BaseUri + $"team-content/{_survey.Team.Id}");
         }
         catch
         {
