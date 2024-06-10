@@ -9,7 +9,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using SherpaFrontEnd;
 using SherpaFrontEnd.Dtos.Survey;
-using SherpaFrontEnd.Dtos.Team;
 using SherpaFrontEnd.Services;
 using Xunit.Abstractions;
 
@@ -117,7 +116,6 @@ public class AnswerSurveyAcceptanceTest
             HackmanComponent.INTERPERSONAL_PEER_COACHING,
             HackmanSubcategory.DELIMITED, HackmanSubcomponent.SENSE_OF_URGENCY, Position);
 
-        var teamMemberId = Guid.NewGuid();
         var surveyTitle = "Title";
         var survey = new Survey(_surveyId, new User(Guid.NewGuid(), "Lucia"), Status.Draft, new DateTime(), surveyTitle,
             "Description", Array.Empty<Response>(), null, new Template("Hackman"));
@@ -128,11 +126,20 @@ public class AnswerSurveyAcceptanceTest
         var questionsJson = await JsonContent.Create(questions).ReadAsStringAsync();
         var questionsResponse = new HttpResponseMessage()
             { StatusCode = HttpStatusCode.OK, Content = new StringContent(questionsJson) };
+        var surveyNotificationJson = await JsonContent.Create(_surveyNotification).ReadAsStringAsync();
+        var surveyNotificationResponse = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(surveyNotificationJson)
+        };
+
+        _handlerMock.SetupRequest(HttpMethod.Get, $"/survey-notifications/{_surveyNotificationId}",
+            surveyNotificationResponse);
         _handlerMock.SetupRequest(HttpMethod.Get, $"/survey/{_surveyId}", surveyResponse);
         _handlerMock.SetupRequest(HttpMethod.Get, $"/survey/{_surveyId}/questions", questionsResponse);
 
         var appComponent = _testCtx.RenderComponent<App>();
-        var answerSurveyPage = $"/answer-survey/{_surveyId}/{teamMemberId}";
+        var answerSurveyPage = $"/answer-survey/{_surveyNotificationId}";
         _navManager.NavigateTo(answerSurveyPage);
 
         var languageSelectElement = appComponent.Find("select");
@@ -211,7 +218,6 @@ public class AnswerSurveyAcceptanceTest
 
         var questions = new List<Question>() { firstQuestion, secondQuestion };
 
-        var teamMemberId = Guid.NewGuid();
         var surveyTitle = "Title";
         var survey = new Survey(_surveyId, new User(Guid.NewGuid(), "Lucia"), Status.Draft, new DateTime(), surveyTitle,
             "Description", Array.Empty<Response>(), null, new Template("Hackman"));
@@ -225,13 +231,22 @@ public class AnswerSurveyAcceptanceTest
         {
             StatusCode = HttpStatusCode.Created
         };
+        var surveyNotificationJson = await JsonContent.Create(_surveyNotification).ReadAsStringAsync();
+        var surveyNotificationResponse = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(surveyNotificationJson)
+        };
+
+        _handlerMock.SetupRequest(HttpMethod.Get, $"/survey-notifications/{_surveyNotificationId}",
+            surveyNotificationResponse);
         _handlerMock.SetupRequest(HttpMethod.Get, $"/survey/{_surveyId}", surveyResponse);
         _handlerMock.SetupRequest(HttpMethod.Get, $"/survey/{_surveyId}/questions", questionsResponse);
-        _handlerMock.SetupRequest(HttpMethod.Post, $"/survey/{_surveyId}/team-members/{teamMemberId}",
+        _handlerMock.SetupRequest(HttpMethod.Post, $"/survey/{_surveyId}/team-members/{_teamMemberId}",
             submitAnswersResponse);
 
         var appComponent = _testCtx.RenderComponent<App>();
-        var answerSurveyPage = $"/answer-survey/{_surveyId}/{teamMemberId}";
+        var answerSurveyPage = $"/answer-survey/{_surveyNotificationId}";
         _navManager.NavigateTo(answerSurveyPage);
 
         var question1Answer = firstQuestion.Responses[Languages.ENGLISH][1];

@@ -70,8 +70,17 @@ public class SurveyService : ISurveyService
         response.EnsureSuccessStatusCode();
     }
 
-    public Task<SurveyNotification> GetSurveyNotificationById(Guid surveyNotificationId)
+    public async Task<SurveyNotification?> GetSurveyNotificationById(Guid surveyNotificationId)
     {
-        throw new NotImplementedException();
+        var client = _httpClientFactory.CreateClient(SherpaBackend);
+
+        var httpRequestMessage =
+            new HttpRequestMessage(HttpMethod.Get, $"/survey-notifications/{surveyNotificationId}");
+
+        var httpResponseMessage = await client.SendAsync(httpRequestMessage);
+        var responseString = await httpResponseMessage.Content.ReadAsStringAsync();
+
+        return JsonSerializer.Deserialize<SurveyNotification>(responseString,
+            new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
     }
 }
