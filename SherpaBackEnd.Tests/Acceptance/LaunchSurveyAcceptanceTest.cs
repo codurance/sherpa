@@ -121,7 +121,7 @@ public class LaunchSurveyAcceptanceTest: IDisposable
         
         // Then an email with a survey link should be sent to each team member
         Assert.IsType<CreatedResult>(actionResult);
-        emailService.Verify(service => service.SendEmailsWith(It.IsAny<List<EmailTemplate>>()));
+        emailService.Verify(service => service.SendEmailsWith(It.IsAny<EmailTemplate>()));
     }
 
     public void Dispose()

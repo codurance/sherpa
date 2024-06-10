@@ -9,10 +9,13 @@ public class EmailTemplateFactory : IEmailTemplateFactory
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public List<EmailTemplate> CreateEmailTemplate(List<SurveyNotification.Domain.SurveyNotification> surveyNotifications)
+    public EmailTemplate CreateEmailTemplate(List<SurveyNotification.Domain.SurveyNotification> surveyNotifications)
     {
-        return surveyNotifications.Select(notification =>
-            new EmailTemplate(notification.TeamMember.Email, CreateAnswerSurveyUrl(notification))).ToList();
+        //TODO: Revisit this
+        string body = surveyNotifications.Select(notification => notification.Survey.Description).First().ToString() ?? string.Empty;
+        var recipients = surveyNotifications.Select(notification =>
+            new Recipient(notification.TeamMember.Email, CreateAnswerSurveyUrl(notification))).ToList();
+        return new EmailTemplate(body, recipients);
     }
 
     private string CreateAnswerSurveyUrl(SurveyNotification.Domain.SurveyNotification notification)
