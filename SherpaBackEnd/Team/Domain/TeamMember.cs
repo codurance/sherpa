@@ -16,4 +16,31 @@ public class TeamMember
         FullName = fullName;
     }
 
+    protected bool Equals(TeamMember other)
+    {
+        return Id.Equals(other.Id) && FullName == other.FullName && Position == other.Position && Email == other.Email;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != this.GetType()) return false;
+        return Equals((TeamMember)obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Id, FullName, Position, Email);
+    }
+
+    public static bool operator ==(TeamMember? left, TeamMember? right)
+    {
+        return Equals(left, right);
+    }
+
+    public static bool operator !=(TeamMember? left, TeamMember? right)
+    {
+        return !Equals(left, right);
+    }
 }
