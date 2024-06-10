@@ -7,9 +7,11 @@ public class MSurveyNotification
     [BsonId]
     [BsonRepresentation(MongoDB.Bson.BsonType.String)]
     public Guid Id { get; set; }
-
+    
+    [BsonRepresentation(MongoDB.Bson.BsonType.String)]
     public Guid Survey { get; set; }
 
+    [BsonRepresentation(MongoDB.Bson.BsonType.String)]
     public Guid TeamMember { get; set; }
 
     private MSurveyNotification(Guid id, Guid surveyId, Guid teamMemberId)

@@ -60,4 +60,13 @@ public class SurveyService : ISurveyService
         var requestUri = $"/survey/{answerSurveyDto.SurveyId}/team-members/{answerSurveyDto.TeamMemberId}";
         await client.PostAsJsonAsync(requestUri, answerSurveyDto);
     }
+
+    public async Task LaunchSurvey(Guid surveyId)
+    {
+        var client = _httpClientFactory.CreateClient(SherpaBackend);
+
+        var launchSurveyDto = new LaunchSurveyDto(surveyId);
+        var response = await client.PostAsJsonAsync("/survey-notifications", launchSurveyDto);
+        response.EnsureSuccessStatusCode();
+    }
 }
