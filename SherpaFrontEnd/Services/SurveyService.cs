@@ -69,4 +69,9 @@ public class SurveyService : ISurveyService
         var response = await client.PostAsJsonAsync("/survey-notifications", launchSurveyDto);
         response.EnsureSuccessStatusCode();
     }
+
+    public Task<SurveyNotification> GetSurveyNotificationById(Guid surveyNotificationId)
+    {
+        throw new NotImplementedException();
+    }
 }
