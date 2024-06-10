@@ -244,4 +244,21 @@ public class SurveyServiceTest
         _handlerMock.Protected().Verify("SendAsync", Times.Once(), ItExpr.Is<HttpRequestMessage>(
             message => message.Method.Equals(HttpMethod.Post) && message.RequestUri!.AbsoluteUri.Contains(path)), ItExpr.IsAny<CancellationToken>());
     }
+
+    [Fact]
+    public async Task ShouldThrowAnErrorIfLaunchSurveyIsUnsuccessful()
+    {
+        var surveyId = Guid.NewGuid();
+
+        var launchSurveyResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.InternalServerError,
+        };
+        var path = "/survey-notifications";
+        _handlerMock.SetupRequest(HttpMethod.Post, path, launchSurveyResponse);
+        
+        var surveyService = new SurveyService(_httpClientFactory.Object);
+
+        await Assert.ThrowsAsync<HttpRequestException>(() => surveyService.LaunchSurvey(surveyId));
+    }
 }

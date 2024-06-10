@@ -72,8 +72,15 @@
 
     private async Task LaunchSurvey()
     {
-        await SurveyService.LaunchSurvey(SurveyId);
-        NavigationManager.NavigateTo(NavigationManager.BaseUri + $"team-content/{_survey.Team.Id}");
+        try
+        {
+            await SurveyService.LaunchSurvey(SurveyId);
+            NavigationManager.NavigateTo(NavigationManager.BaseUri + $"team-content/{_survey.Team.Id}");
+        }
+        catch
+        {
+            NavigationManager.NavigateTo(NavigationManager.BaseUri + "error");
+        }
     }
 
 }

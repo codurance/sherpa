@@ -406,4 +406,57 @@ public class SurveyAcceptanceTest
         // team title
         appComponent.FindElementByCssSelectorAndTextContent("h3", survey.Team.Name);
     }
+
+    [Fact]
+    public async Task ShouldBeRedirectedToErrorPageWhenLaunchingSurveyAndWasUnsuccessful()
+    {
+        // GIVEN that an Org coach is on the Review survey page after creating a survey
+        var deadline = DateTime.Now;
+        var templateWithoutQuestions = new TemplateWithoutQuestions("Hackman Model", 30);
+        var survey = new SurveyWithoutQuestions(
+            _surveyId, 
+            new User(Guid.NewGuid(), "Lucia"), 
+            Status.Draft, 
+            deadline, 
+            "Survey Test",
+            SurveyCopy.DefaultDescription(), 
+            Array.Empty<Response>(), 
+            _teams[0], 
+            templateWithoutQuestions);
+        
+        var surveyJson = await JsonContent.Create(survey).ReadAsStringAsync();
+        var surveyResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(surveyJson)
+        };
+        
+        _handlerMock.SetupRequest(HttpMethod.Get, $"survey/{_surveyId}", surveyResponse);
+        
+        var appComponent = _testCtx.RenderComponent<App>();
+
+        var targetPage = $"http://localhost/survey/draft-review/{_surveyId}";
+
+        _navManager.NavigateTo(targetPage);
+        
+        // WHEN he clicks on Launch survey
+        // AND it is launched unsuccessfully
+        
+        var launchResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.InternalServerError,
+        };
+        _handlerMock.SetupRequest(HttpMethod.Post, "survey-notifications", launchResponse);
+        
+        var launchSurveyButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Launch survey");
+        Assert.NotNull(launchSurveyButton);
+        
+        launchSurveyButton.Click();
+        
+        // THEN he should be redirected on the Error page
+        appComponent.WaitForAssertion(() =>
+            Assert.Equal(
+                "http://localhost/error",
+                _navManager.Uri));
+    }
 }

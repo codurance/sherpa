@@ -66,6 +66,7 @@ public class SurveyService : ISurveyService
         var client = _httpClientFactory.CreateClient(SherpaBackend);
 
         var launchSurveyDto = new LaunchSurveyDto(surveyId);
-        await client.PostAsJsonAsync("/survey-notifications", launchSurveyDto);
+        var response = await client.PostAsJsonAsync("/survey-notifications", launchSurveyDto);
+        response.EnsureSuccessStatusCode();
     }
 }
