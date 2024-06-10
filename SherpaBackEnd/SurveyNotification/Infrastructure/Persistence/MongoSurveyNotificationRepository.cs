@@ -22,4 +22,9 @@ public class MongoSurveyNotificationRepository : ISurveyNotificationsRepository
             .Select(notification => MSurveyNotification.FromSurvey(notification)).ToList();
         await _surveyNotificationCollection.InsertManyAsync(databaseSurveyNotifications);
     }
+
+    public Task<Domain.SurveyNotification> GetSurveyNotificationById(Guid surveyNotificationId)
+    {
+        throw new NotImplementedException();
+    }
 }

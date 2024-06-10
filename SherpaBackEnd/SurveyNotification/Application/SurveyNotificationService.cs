@@ -43,9 +43,9 @@ public class SurveyNotificationService : ISurveyNotificationService
         await _emailService.SendEmailsWith(emailTemplateRequests);
     }
 
-    public Task<Domain.SurveyNotification> GetSurveyNotification(Guid surveyNotificationId)
+    public async Task<Domain.SurveyNotification> GetSurveyNotification(Guid surveyNotificationId)
     {
-        throw new NotImplementedException();
+        return await _surveyNotificationsRepository.GetSurveyNotificationById(surveyNotificationId);
     }
 
     private async Task CreateManySurveyNotification(List<Domain.SurveyNotification> surveyNotifications)
