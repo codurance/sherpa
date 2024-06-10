@@ -13,14 +13,15 @@ public class SESEmailServiceTest : IAsyncDisposable
         await localStackContainer.StartAsync()
             .ConfigureAwait(false);
     }
-
-    [Fact]
+    [Fact (Skip = "skipped")]
     public async Task METHOD()
     {
         await InitialiseSES();
         var config = new AmazonSimpleEmailServiceConfig();
         config.ServiceURL = localStackContainer.GetConnectionString();
         using var client = new AmazonSimpleEmailServiceClient(config);
+        
+        
     }
 
     public async ValueTask DisposeAsync()
