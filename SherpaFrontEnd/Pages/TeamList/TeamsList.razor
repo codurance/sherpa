@@ -16,7 +16,10 @@
     
     <div class="flex justify-between mb-6">
         <MainHeading>All teams</MainHeading>
-        <button class="w-25 btn btn-outline-primary" onclick="@ShowFormContainer">Create new team</button>
+        <button class="bg-primary-red-principal-800 hover:bg-primary-red-900 rounded-lg px-6 py-2 text-white font-semibold text-base" onclick="@ShowFormContainer">
+            <i class="las la-plus"></i>
+            Create new team
+        </button>
     </div>
 
     <CreateTeamOffcanvas CanvasId="@CanvasId"/>

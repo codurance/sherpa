@@ -25,6 +25,7 @@ module.exports = {
                 "gray-200": "var(--gray--200)",
                 "gray-100": "var(--gray--100)",
                 "gray-white": "var(--gray---white)",
+                "gray-inner-shadow": "var(--gray---inner--shadow)",
                 "states-success-800": "var(--states---success--800)",
                 "states-success-400": "var(--states---success--400)",
                 "states-success-200": "var(--states---success--200)",
