@@ -338,12 +338,13 @@ public class SurveyQuestionsTest
 
         var questions = new List<Question>() { firstQuestion, secondQuestion };
 
+        _surveyService.Setup(service => service.GetSurveyNotificationById(_surveyNotificationId))
+            .ReturnsAsync(new SurveyNotification(Guid.NewGuid(), _surveyId, _memberId));
         _surveyService.Setup(service => service.GetSurveyQuestionsBySurveyId(_surveyId)).ReturnsAsync(questions);
 
         var appComponent =
             _ctx.RenderComponent<SurveyQuestions>(
-                ComponentParameter.CreateParameter("SurveyId", _surveyId),
-                ComponentParameter.CreateParameter("MemberId", _memberId)
+                ComponentParameter.CreateParameter("SurveyNotificationId", _surveyNotificationId)
             );
 
         var survey = appComponent.Find("form[id='survey']");
