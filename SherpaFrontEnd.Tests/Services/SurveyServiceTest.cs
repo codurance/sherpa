@@ -224,6 +224,7 @@ public class SurveyServiceTest
                 m => m.Method.Equals(HttpMethod.Post) && m.RequestUri!.AbsoluteUri.Contains(path)),
             ItExpr.IsAny<CancellationToken>());
     }
+    
 
     [Fact]
     public async Task ShouldSendLaunchSurveyRequest()

@@ -237,4 +237,92 @@ public class AnswerSurveyAcceptanceTest
         var thankYouTitle = appComponent.FindElementByCssSelectorAndTextContent("h1", "Thank you for your reply!");
         Assert.NotNull(thankYouTitle);
     }
+
+    [Fact]
+    public async Task UserShouldSeeAContactYourCoachPageWhenSubmittingAFormFails()
+    {
+        var ResponseSpanish1 = "SPA_1";
+        var ResponseSpanish2 = "SPA_2";
+        var ResponseSpanish3 = "SPA_3";
+        var ResponseEnglish1 = "ENG_1";
+        var ResponseEnglish2 = "ENG_2";
+        var ResponseEnglish3 = "ENG_3";
+        var Position = 1;
+        var Reverse = false;
+
+        var firstQuestion = new Question(new Dictionary<string, string>()
+            {
+                { Languages.SPANISH, "Primera pregunta en espanol" },
+                { Languages.ENGLISH, "First Question in english" },
+            }, new Dictionary<string, string[]>()
+            {
+                {
+                    Languages.SPANISH, new[] { ResponseSpanish1, ResponseSpanish2, ResponseSpanish3 }
+                },
+                {
+                    Languages.ENGLISH, new[] { ResponseEnglish1, ResponseEnglish2, ResponseEnglish3 }
+                }
+            }, Reverse,
+            HackmanComponent.INTERPERSONAL_PEER_COACHING,
+            HackmanSubcategory.DELIMITED, HackmanSubcomponent.SENSE_OF_URGENCY, Position);
+
+        var secondQuestion = new Question(new Dictionary<string, string>()
+            {
+                { Languages.SPANISH, "Segunda pregunta en espanol" },
+                { Languages.ENGLISH, "Second Question in english" },
+            }, new Dictionary<string, string[]>()
+            {
+                {
+                    Languages.SPANISH, new[] { ResponseSpanish1, ResponseSpanish2, ResponseSpanish3 }
+                },
+                {
+                    Languages.ENGLISH, new[] { ResponseEnglish1, ResponseEnglish2, ResponseEnglish3 }
+                }
+            }, Reverse,
+            HackmanComponent.INTERPERSONAL_PEER_COACHING,
+            HackmanSubcategory.DELIMITED, HackmanSubcomponent.SENSE_OF_URGENCY, Position);
+
+        var questions = new List<Question>() { firstQuestion, secondQuestion };
+
+        var teamMemberId = Guid.NewGuid();
+        var surveyTitle = "Title";
+        var survey = new Survey(_surveyId, new User(Guid.NewGuid(), "Lucia"), Status.Draft, new DateTime(), surveyTitle,
+            "Description", Array.Empty<Response>(), null, new Template("Hackman"));
+        var surveyJson = await JsonContent.Create(survey).ReadAsStringAsync();
+        var surveyResponse = new HttpResponseMessage()
+            { StatusCode = HttpStatusCode.OK, Content = new StringContent(surveyJson) };
+        var questionsJson = await JsonContent.Create(questions).ReadAsStringAsync();
+        var questionsResponse = new HttpResponseMessage()
+            { StatusCode = HttpStatusCode.OK, Content = new StringContent(questionsJson) };
+        var submitAnswersResponse = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.InternalServerError
+        };
+        _handlerMock.SetupRequest(HttpMethod.Get, $"/survey/{_surveyId}", surveyResponse);
+        _handlerMock.SetupRequest(HttpMethod.Get, $"/survey/{_surveyId}/questions", questionsResponse);
+        _handlerMock.SetupRequest(HttpMethod.Post, $"/survey/{_surveyId}/team-members/{teamMemberId}",
+            submitAnswersResponse);
+
+        var appComponent = _testCtx.RenderComponent<App>();
+        var answerSurveyPage = $"/answer-survey/{_surveyId}/{teamMemberId}";
+        _navManager.NavigateTo(answerSurveyPage);
+
+        var question1Answer = firstQuestion.Responses[Languages.ENGLISH][1];
+        var question2Answer = secondQuestion.Responses[Languages.ENGLISH][1];
+
+        var question1AnswerElement = appComponent.Find($"input[value='{question1Answer}']");
+        question1AnswerElement.Change(new ChangeEventArgs());
+        var question2AnswerElement = appComponent.Find($"input[value='{question2Answer}']");
+        question2AnswerElement.Change(new ChangeEventArgs());
+
+        var surveyElement = appComponent.Find("form[id='survey']");
+        surveyElement.Submit();
+
+        var unableToSubmitSurveyResponseElement =
+            appComponent.FindElementByCssSelectorAndTextContent("h1", "Unable to submit survey response");
+        Assert.NotNull(unableToSubmitSurveyResponseElement);
+
+        var contactCoachElement = appComponent.FindElementByCssSelectorAndTextContent("p", "Please contact your coach");
+        Assert.NotNull(contactCoachElement);
+    }
 }
