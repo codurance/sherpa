@@ -227,6 +227,28 @@ public class SurveyServiceTest
     }
 
     [Fact]
+    public async Task ShouldThrowExceptionWhenAnswerSurveyRequestIsUnsuccessful()
+    {
+        var surveyId = Guid.NewGuid();
+        var memberId = Guid.NewGuid();
+        var answerSurveyResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.InternalServerError,
+        };
+
+        var path = $"/survey/{surveyId}/team-members/{memberId}";
+        _handlerMock.SetupRequest(HttpMethod.Post, path, answerSurveyResponse);
+
+        var surveyService = new SurveyService(_httpClientFactory.Object);
+
+        await Assert.ThrowsAsync<HttpRequestException>(() =>
+            surveyService.SubmitSurveyResponse(new AnswerSurveyDto(memberId, surveyId,
+                new SurveyResponse(memberId, new List<QuestionResponse>() { new(1, "1"), new(2, "1") })))
+        );
+    }
+
+
+    [Fact]
     public async Task ShouldSendLaunchSurveyRequest()
     {
         var surveyId = Guid.NewGuid();
