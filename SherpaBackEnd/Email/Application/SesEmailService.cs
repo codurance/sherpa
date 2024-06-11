@@ -8,7 +8,7 @@ namespace SherpaBackEnd.Email.Application;
 
 public class SesEmailService : IEmailService
 {
-    private const string DefaultTemplate = "default_template";
+    private const string TemplateName = "answer_survey_template";
     private readonly AmazonSimpleEmailServiceClient _amazonEmailService;
     private readonly string _defaultEmail;
 
@@ -22,8 +22,8 @@ public class SesEmailService : IEmailService
     {
         try
         {
-            await GetTemplate(DefaultTemplate);
-            var request = CreateBulkTemplatedEmailRequest(emailTemplate, DefaultTemplate);
+            await GetTemplate(TemplateName);
+            var request = CreateBulkTemplatedEmailRequest(emailTemplate, TemplateName);
             await _amazonEmailService.SendBulkTemplatedEmailAsync(request);
         }
         catch (Exception e)
@@ -53,7 +53,7 @@ public class SesEmailService : IEmailService
     {
         try
         {
-            var templateRequest = CreateTemplateRequest(DefaultTemplate);
+            var templateRequest = CreateTemplateRequest(TemplateName);
             await _amazonEmailService.CreateTemplateAsync(templateRequest);
         }
         catch (Exception e)
@@ -74,7 +74,7 @@ public class SesEmailService : IEmailService
                     <p>
                         {{html-body}}
                     </p>
-                    <a target=""_blank"" href=""{{personal-link}}"">{{personal-link}}</a>
+                    <a target=""_blank"" href=""{{personal-link}}"">Answer questionnaire</a>
                 ",
                 TextPart = @"
                     {{text-body}}
