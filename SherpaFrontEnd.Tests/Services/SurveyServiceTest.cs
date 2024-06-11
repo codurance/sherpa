@@ -224,7 +224,28 @@ public class SurveyServiceTest
                 m => m.Method.Equals(HttpMethod.Post) && m.RequestUri!.AbsoluteUri.Contains(path)),
             ItExpr.IsAny<CancellationToken>());
     }
-    
+
+    [Fact]
+    public async Task ShouldThrowExceptionWhenAnswerSurveyRequestIsUnsuccessful()
+    {
+        var surveyId = Guid.NewGuid();
+        var memberId = Guid.NewGuid();
+        var answerSurveyResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.InternalServerError,
+        };
+
+        var path = $"/survey/{surveyId}/team-members/{memberId}";
+        _handlerMock.SetupRequest(HttpMethod.Post, path, answerSurveyResponse);
+
+        var surveyService = new SurveyService(_httpClientFactory.Object);
+
+        await Assert.ThrowsAsync<HttpRequestException>(() =>
+            surveyService.SubmitSurveyResponse(new AnswerSurveyDto(memberId, surveyId,
+                new SurveyResponse(memberId, new List<QuestionResponse>() { new(1, "1"), new(2, "1") })))
+        );
+    }
+
 
     [Fact]
     public async Task ShouldSendLaunchSurveyRequest()
@@ -237,13 +258,14 @@ public class SurveyServiceTest
         };
         var path = "/survey-notifications";
         _handlerMock.SetupRequest(HttpMethod.Post, path, launchSurveyResponse);
-        
+
         var surveyService = new SurveyService(_httpClientFactory.Object);
 
         await surveyService.LaunchSurvey(surveyId);
-        
+
         _handlerMock.Protected().Verify("SendAsync", Times.Once(), ItExpr.Is<HttpRequestMessage>(
-            message => message.Method.Equals(HttpMethod.Post) && message.RequestUri!.AbsoluteUri.Contains(path)), ItExpr.IsAny<CancellationToken>());
+                message => message.Method.Equals(HttpMethod.Post) && message.RequestUri!.AbsoluteUri.Contains(path)),
+            ItExpr.IsAny<CancellationToken>());
     }
 
     [Fact]
@@ -257,7 +279,7 @@ public class SurveyServiceTest
         };
         var path = "/survey-notifications";
         _handlerMock.SetupRequest(HttpMethod.Post, path, launchSurveyResponse);
-        
+
         var surveyService = new SurveyService(_httpClientFactory.Object);
 
         await Assert.ThrowsAsync<HttpRequestException>(() => surveyService.LaunchSurvey(surveyId));
