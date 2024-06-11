@@ -24,7 +24,7 @@ public class SesEmailService : IEmailService
         {
             await GetTemplate(DefaultTemplate);
             var request = CreateBulkTemplatedEmailRequest(emailTemplate, DefaultTemplate);
-            var response = await _amazonEmailService.SendBulkTemplatedEmailAsync(request);
+            await _amazonEmailService.SendBulkTemplatedEmailAsync(request);
         }
         catch (Exception e)
         {
