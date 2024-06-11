@@ -6,4 +6,5 @@ namespace SherpaBackEnd.SurveyNotification.Application;
 public interface ISurveyNotificationService
 {
     Task LaunchSurveyNotificationsFor(CreateSurveyNotificationsDto createSurveyNotificationsDto);
+    Task<Domain.SurveyNotification> GetSurveyNotification(Guid surveyNotificationId);
 }
