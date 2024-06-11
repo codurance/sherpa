@@ -4,5 +4,5 @@ namespace SherpaBackEnd.Email.Application;
 
 public interface IEmailService
 {
-    Task<HttpStatusCode> SendEmailsWith(List<EmailTemplate> emailTemplates);
+    Task SendEmailsWith(EmailTemplate emailTemplate);
 }

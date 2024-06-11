@@ -26,7 +26,7 @@ public class EmailTemplateFactoryTest
         var emailTemplateFactory = new EmailTemplateFactory(httpContextAccessor.Object);
         var jane = ATeamMember().WithFullName("Jane Doe").WithEmail("jane.doe@codurance.com").Build();
         var surveyId = Guid.NewGuid();
-        var survey = ASurvey().WithId(surveyId).Build();
+        var survey = ASurvey().WithId(surveyId).WithDescription("Answer this").Build();
         var janeSurveyNotificationId = Guid.NewGuid();
         var janeSurveyNotification =
             new SherpaBackEnd.SurveyNotification.Domain.SurveyNotification(janeSurveyNotificationId, survey, jane);
@@ -43,16 +43,21 @@ public class EmailTemplateFactoryTest
         
         var baseAnswerSurveyUrl = httpScheme + "://" + sherpaUrl + "/answer-survey/";
         var expectedJaneUrl = baseAnswerSurveyUrl + janeSurveyNotificationId; 
-        var expectedJohnUrl = baseAnswerSurveyUrl + johnSurveyNotificationId; 
-        
-        var expectedEmailTemplates = new List<EmailTemplate>()
+        var expectedJohnUrl = baseAnswerSurveyUrl + johnSurveyNotificationId;
+        var janeRecipient = new Recipient(jane.Email, expectedJaneUrl);
+        var johnRecipient = new Recipient(john.Email, expectedJohnUrl);
+        List<Recipient> recipients = new List<Recipient>()
         {
-            new EmailTemplate(jane.Email, expectedJaneUrl),
-            new EmailTemplate(john.Email, expectedJohnUrl)
+            janeRecipient,
+            johnRecipient
         };
-
+        
+        var expectedEmailTemplates = new EmailTemplate(survey.Description, recipients);
+        
         var actualEmailTemplates = emailTemplateFactory.CreateEmailTemplate(surveyNotifications);
 
-        Assert.Equal(expectedEmailTemplates, actualEmailTemplates);
+        Assert.Equal(expectedEmailTemplates.Body, actualEmailTemplates.Body);
+        Assert.Contains(janeRecipient, actualEmailTemplates.Recipients);
+        Assert.Contains(johnRecipient, actualEmailTemplates.Recipients);
     }
 }

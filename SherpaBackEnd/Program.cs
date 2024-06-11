@@ -1,3 +1,6 @@
+using Amazon;
+using Amazon.Runtime;
+using Amazon.SimpleEmail;
 using SherpaBackEnd.Email.Application;
 using SherpaBackEnd.Shared.Infrastructure.Persistence;
 using SherpaBackEnd.Shared.Infrastructure.Serializers;
@@ -43,22 +46,21 @@ builder.Services.AddSingleton<ITemplateService, TemplateService>();
 builder.Services.AddSingleton<ISurveyRepository, MongoSurveyRepository>();
 builder.Services.AddSingleton<ISurveyService, SurveyService>();
 
-builder.Services.AddSingleton<IEmailServicePoC, SesEmailServicePoC>(provider =>
+builder.Services.AddSingleton<IEmailService, SesEmailService>(provider =>
 {
-    if (!builder.Environment.IsDevelopment())
-    {
-        return new SesEmailServicePoC(provider.GetService<IHttpContextAccessor>()!);
-    }
-
+    RegionEndpoint clientConfig = builder.Environment.IsDevelopment()? RegionEndpoint.EUCentral1 : RegionEndpoint.EUWest1;
+    string defaultEmail = builder.Environment.IsDevelopment()? "paula.masutier@codurance.com" : "sherpa@codurance.com";
+    
     var accessKey = Environment.GetEnvironmentVariable("AWS_SES_ACCESS_KEY");
     var secretKey = Environment.GetEnvironmentVariable("AWS_SES_SECRET_KEY");
-    return new SesEmailServicePoC(provider.GetService<IHttpContextAccessor>()!, accessKey!, secretKey!);
+    var basicAwsCredentials = new BasicAWSCredentials(accessKey, secretKey);
+    var amazonEmailServiceClient = new AmazonSimpleEmailServiceClient(basicAwsCredentials, clientConfig);
+    return new SesEmailService(amazonEmailServiceClient, defaultEmail);
 });
 
 builder.Services.AddSingleton<ISurveyNotificationsRepository, MongoSurveyNotificationRepository>();
-builder.Services.AddSingleton<IEmailTemplateFactory, EmailTemplateFactory>();
+builder.Services.AddSingleton<IEmailTemplateFactory, EmailTemplateFactory>(provider => new EmailTemplateFactory(provider.GetService<IHttpContextAccessor>()!));
 builder.Services.AddSingleton<IGuidService, GuidService>();
-builder.Services.AddSingleton<IEmailService, FakeEmailService>();
 builder.Services.AddSingleton<ISurveyNotificationService, SurveyNotificationService>();
 
 builder.Logging.ClearProviders();

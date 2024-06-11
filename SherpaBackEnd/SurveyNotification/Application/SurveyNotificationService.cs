@@ -39,8 +39,20 @@ public class SurveyNotificationService : ISurveyNotificationService
 
         await CreateManySurveyNotification(surveyNotifications);
 
-        var emailTemplateRequests = _emailTemplateFactory.CreateEmailTemplate(surveyNotifications);
-        await _emailService.SendEmailsWith(emailTemplateRequests);
+        var emailTemplateRequest = _emailTemplateFactory.CreateEmailTemplate(surveyNotifications);
+        await SendEmailsWith(emailTemplateRequest);
+    }
+
+    private async Task SendEmailsWith(EmailTemplate emailTemplateRequest)
+    {
+        try
+        {
+            await _emailService.SendEmailsWith(emailTemplateRequest);
+        }
+        catch (Exception e)
+        {
+            throw new EmailSendingException("Unable to send email with external service", e);
+        }
     }
 
     public async Task<Domain.SurveyNotification> GetSurveyNotification(Guid surveyNotificationId)

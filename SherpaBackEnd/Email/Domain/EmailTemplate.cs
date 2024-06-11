@@ -1,19 +1,20 @@
-﻿namespace SherpaBackEnd.Email;
+﻿using SherpaBackEnd.Email.Application;
+
+namespace SherpaBackEnd.Email;
 
 public class EmailTemplate
 {
-    public string Recipient { get; }
-    public string Url { get; }
-
-    public EmailTemplate(string recipient, string url)
+    public string Body { get; }
+    public List<Recipient> Recipients { get; }
+    public EmailTemplate(string body, List<Recipient> recipients)
     {
-        Recipient = recipient;
-        Url = url;
+        Body = body;
+        Recipients = recipients;
     }
 
     protected bool Equals(EmailTemplate other)
     {
-        return Recipient == other.Recipient && Url == other.Url;
+        return Body == other.Body && Recipients.Equals(other.Recipients);
     }
 
     public override bool Equals(object? obj)
@@ -26,6 +27,6 @@ public class EmailTemplate
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(Recipient, Url);
+        return HashCode.Combine(Body, Recipients);
     }
 }

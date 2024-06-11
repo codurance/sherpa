@@ -8,7 +8,6 @@ using SherpaBackEnd.SurveyNotification.Application;
 using SherpaBackEnd.SurveyNotification.Infrastructure.Http.Dto;
 using SherpaBackEnd.SurveyNotification.Infrastructure.Persistence;
 using SherpaBackEnd.Team.Domain;
-using SherpaBackEnd.Tests.Builders;
 using static SherpaBackEnd.Tests.Builders.SurveyBuilder;
 using static SherpaBackEnd.Tests.Builders.TeamBuilder;
 using static SherpaBackEnd.Tests.Builders.TeamMemberBuilder;
@@ -135,13 +134,13 @@ public class SurveyNotificationServiceTest
 
         _surveyRepository.Setup(repository => repository.GetSurveyById(_surveyId))
             .ReturnsAsync(survey);
-        var templateRequests = new List<EmailTemplate>();
+        var emailTemplate = new EmailTemplate(null, new List<Recipient>());
         _emailTemplateFactory.Setup(factory => factory.CreateEmailTemplate(surveyNotifications))
-            .Returns(templateRequests);
+            .Returns(emailTemplate);
 
         await testableSurveyNotificationService.LaunchSurveyNotificationsFor(_createSurveyNotificationsDto);
 
-        _emailService.Verify(service => service.SendEmailsWith(templateRequests));
+        _emailService.Verify(service => service.SendEmailsWith(emailTemplate));
     }
 
     [Fact]
@@ -201,6 +200,27 @@ public class SurveyNotificationServiceTest
         Assert.Equal(expectedSurveyNotification, surveyNotification);
     }
 
+    
+    [Fact]
+    public async Task ShouldThrowErrorIfSendEmailIsNotSuccessful()
+    {
+        var surveyNotifications = new List<SherpaBackEnd.SurveyNotification.Domain.SurveyNotification>();
+        var team = ATeam().Build();
+        var survey = ASurvey().WithId(_surveyId).WithTeam(team).Build();
+        _surveyRepository.Setup(repository => repository.GetSurveyById(_surveyId)).ReturnsAsync(survey);
+        var emailTemplate = new EmailTemplate(null, new List<Recipient>());
+        _emailTemplateFactory.Setup(factory => factory.CreateEmailTemplate(surveyNotifications))
+            .Returns(emailTemplate);
+        
+        _emailService
+            .Setup(service => service.SendEmailsWith(emailTemplate))
+            .ThrowsAsync(new Exception());
+
+        var exceptionThrown = await Assert.ThrowsAsync<EmailSendingException>(async () =>
+            await _surveyNotificationService.LaunchSurveyNotificationsFor(_createSurveyNotificationsDto));
+        Assert.IsType<EmailSendingException>(exceptionThrown);
+    }
+    
     // TODO remove TestableSurveyNotificationService by implementing IGuidService mock in tests
     class TestableSurveyNotificationService : SurveyNotificationService
     {
