@@ -49,12 +49,13 @@ builder.Services.AddSingleton<ISurveyService, SurveyService>();
 builder.Services.AddSingleton<IEmailService, SesEmailService>(provider =>
 {
     RegionEndpoint clientConfig = builder.Environment.IsDevelopment()? RegionEndpoint.EUCentral1 : RegionEndpoint.EUWest1;
+    string defaultEmail = builder.Environment.IsDevelopment()? "paula.masutier@codurance.com" : "sherpa@codurance.com";
     
     var accessKey = Environment.GetEnvironmentVariable("AWS_SES_ACCESS_KEY");
     var secretKey = Environment.GetEnvironmentVariable("AWS_SES_SECRET_KEY");
     var basicAwsCredentials = new BasicAWSCredentials(accessKey, secretKey);
     var amazonEmailServiceClient = new AmazonSimpleEmailServiceClient(basicAwsCredentials, clientConfig);
-    return new SesEmailService(amazonEmailServiceClient);
+    return new SesEmailService(amazonEmailServiceClient, defaultEmail);
 });
 
 builder.Services.AddSingleton<ISurveyNotificationsRepository, MongoSurveyNotificationRepository>();

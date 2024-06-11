@@ -10,34 +10,26 @@ public class SesEmailService : IEmailService
 {
     private const string DefaultTemplate = "default_template";
     private readonly AmazonSimpleEmailServiceClient _amazonEmailService;
+    private readonly string _defaultEmail;
 
-    public SesEmailService(AmazonSimpleEmailServiceClient amazonEmailService)
+    public SesEmailService(AmazonSimpleEmailServiceClient amazonEmailService, string defaultEmail)
     {
         _amazonEmailService = amazonEmailService;
+        _defaultEmail = defaultEmail;
     }
 
-    public async Task<HttpStatusCode> SendEmailsWith(EmailTemplate emailTemplate)
+    public async Task SendEmailsWith(EmailTemplate emailTemplate)
     {
-        var httpStatusCode = HttpStatusCode.BadRequest;
         try
         {
-            var deleteTemplateRequest = new DeleteTemplateRequest()
-            {
-                TemplateName = DefaultTemplate
-            };
-            await _amazonEmailService.DeleteTemplateAsync(deleteTemplateRequest);
             await GetTemplate(DefaultTemplate);
             var request = CreateBulkTemplatedEmailRequest(emailTemplate, DefaultTemplate);
             var response = await _amazonEmailService.SendBulkTemplatedEmailAsync(request);
-            
-            httpStatusCode = response.HttpStatusCode;
         }
         catch (Exception e)
         {
-            return HttpStatusCode.InternalServerError;
+            throw new Exception(e.Message);
         }
-
-        return httpStatusCode;
     }
     
     private async Task GetTemplate(string templateName)
@@ -107,10 +99,10 @@ public class SesEmailService : IEmailService
         var sendBulkTemplatedEmailRequest = new SendBulkTemplatedEmailRequest
         {
             Destinations = bulkEmailDestinations,
-            Source = "paula.masutier@codurance.com",
+            Source = _defaultEmail,
             Template = templateName,
             DefaultTemplateData = JsonConvert.SerializeObject(new Dictionary<string, string>{{"html-body", "Something went wrong"}, {"text-body", "Something went wrong"}, {"personal-link", "Missing link"}}),
-            ReturnPath = "paula.masutier@codurance.com"
+            ReturnPath = _defaultEmail
         };
         return sendBulkTemplatedEmailRequest;
     }
