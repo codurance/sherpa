@@ -21,11 +21,11 @@ public class SesEmailService : IEmailService
         var httpStatusCode = HttpStatusCode.BadRequest;
         try
         {
-            /*var deleteTemplateRequest = new DeleteTemplateRequest()
+            var deleteTemplateRequest = new DeleteTemplateRequest()
             {
                 TemplateName = DefaultTemplate
             };
-            await _amazonEmailService.DeleteTemplateAsync(deleteTemplateRequest);*/
+            await _amazonEmailService.DeleteTemplateAsync(deleteTemplateRequest);
             await GetTemplate(DefaultTemplate);
             var request = CreateBulkTemplatedEmailRequest(emailTemplate, DefaultTemplate);
             var response = await _amazonEmailService.SendBulkTemplatedEmailAsync(request);
@@ -80,11 +80,12 @@ public class SesEmailService : IEmailService
                 SubjectPart = "Pending Survey",
                 HtmlPart = @"
                     <p>
-                        In order to access the survey click the following link:
+                        {{html-body}}
                     </p>
-                    <a href=""{{personal-link}}"">{{personal-link}}</a>
+                    <a target=""_blank"" href=""{{personal-link}}"">{{personal-link}}</a>
                 ",
                 TextPart = @"
+                    {{text-body}}
                     In order to access the survey click the following link:
                     {{personal-link}}
                 "
@@ -100,7 +101,7 @@ public class SesEmailService : IEmailService
             {
                 ToAddresses = new List<string>(){ recipient.Email}
             },
-            ReplacementTemplateData = $"\"personal-link\":\"{recipient.Url}\"}}"
+            ReplacementTemplateData = JsonConvert.SerializeObject(new Dictionary<string, string>{{"html-body", string.Join("<br />", emailTemplate.Body.Split("\n"))},{"text-body", emailTemplate.Body}, {"personal-link", recipient.Url}})
         });
         
         var sendBulkTemplatedEmailRequest = new SendBulkTemplatedEmailRequest
@@ -108,7 +109,7 @@ public class SesEmailService : IEmailService
             Destinations = bulkEmailDestinations,
             Source = "paula.masutier@codurance.com",
             Template = templateName,
-            DefaultTemplateData = "{ \"personal-link\":\"default@email.com\"}",
+            DefaultTemplateData = JsonConvert.SerializeObject(new Dictionary<string, string>{{"html-body", "Something went wrong"}, {"text-body", "Something went wrong"}, {"personal-link", "Missing link"}}),
             ReturnPath = "paula.masutier@codurance.com"
         };
         return sendBulkTemplatedEmailRequest;

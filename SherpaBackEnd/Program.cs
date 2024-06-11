@@ -48,7 +48,7 @@ builder.Services.AddSingleton<ISurveyService, SurveyService>();
 
 builder.Services.AddSingleton<IEmailService, SesEmailService>(provider =>
 {
-    RegionEndpoint clientConfig = RegionEndpoint.EUCentral1;
+    RegionEndpoint clientConfig = builder.Environment.IsDevelopment()? RegionEndpoint.EUCentral1 : RegionEndpoint.EUWest1;
     
     var accessKey = Environment.GetEnvironmentVariable("AWS_SES_ACCESS_KEY");
     var secretKey = Environment.GetEnvironmentVariable("AWS_SES_SECRET_KEY");
