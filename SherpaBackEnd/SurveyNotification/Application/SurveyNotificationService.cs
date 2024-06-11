@@ -55,6 +55,11 @@ public class SurveyNotificationService : ISurveyNotificationService
         }
     }
 
+    public async Task<Domain.SurveyNotification> GetSurveyNotification(Guid surveyNotificationId)
+    {
+        return await _surveyNotificationsRepository.GetSurveyNotificationById(surveyNotificationId);
+    }
+
     private async Task CreateManySurveyNotification(List<Domain.SurveyNotification> surveyNotifications)
     {
         try

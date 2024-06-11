@@ -182,6 +182,24 @@ public class SurveyNotificationServiceTest
             await _surveyNotificationService.LaunchSurveyNotificationsFor(_createSurveyNotificationsDto));
         Assert.IsType<ConnectionToRepositoryUnsuccessfulException>(exceptionThrown);
     }
+
+    [Fact]
+    public async Task ShouldGetSurveyNotificationFromRepository()
+    {
+        var teamMember = ATeamMember().Build();
+        var survey = ASurvey().Build();
+        var surveyNotificationId = Guid.NewGuid();
+        var expectedSurveyNotification =
+            new SherpaBackEnd.SurveyNotification.Domain.SurveyNotification(surveyNotificationId, survey, teamMember);
+
+        _surveyNotificationsRepository.Setup(repository => repository.GetSurveyNotificationById(surveyNotificationId))
+            .ReturnsAsync(expectedSurveyNotification);
+
+        var surveyNotification = await _surveyNotificationService.GetSurveyNotification(surveyNotificationId);
+
+        Assert.Equal(expectedSurveyNotification, surveyNotification);
+    }
+
     
     [Fact]
     public async Task ShouldThrowErrorIfSendEmailIsNotSuccessful()
@@ -210,7 +228,8 @@ public class SurveyNotificationServiceTest
 
         public TestableSurveyNotificationService(ISurveyRepository surveyRepository,
             ISurveyNotificationsRepository surveyNotificationsRepository,
-            IEmailTemplateFactory emailTemplateFactory, IEmailService emailService) : base(surveyRepository, surveyNotificationsRepository,
+            IEmailTemplateFactory emailTemplateFactory, IEmailService emailService) : base(surveyRepository,
+            surveyNotificationsRepository,
             emailTemplateFactory, emailService)
         {
         }

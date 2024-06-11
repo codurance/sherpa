@@ -69,4 +69,18 @@ public class SurveyService : ISurveyService
         var response = await client.PostAsJsonAsync("/survey-notifications", launchSurveyDto);
         response.EnsureSuccessStatusCode();
     }
+
+    public async Task<SurveyNotification?> GetSurveyNotificationById(Guid surveyNotificationId)
+    {
+        var client = _httpClientFactory.CreateClient(SherpaBackend);
+
+        var httpRequestMessage =
+            new HttpRequestMessage(HttpMethod.Get, $"/survey-notifications/{surveyNotificationId}");
+
+        var httpResponseMessage = await client.SendAsync(httpRequestMessage);
+        var responseString = await httpResponseMessage.Content.ReadAsStringAsync();
+
+        return JsonSerializer.Deserialize<SurveyNotification>(responseString,
+            new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+    }
 }
