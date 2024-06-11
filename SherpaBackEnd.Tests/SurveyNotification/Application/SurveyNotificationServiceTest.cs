@@ -183,6 +183,26 @@ public class SurveyNotificationServiceTest
         Assert.IsType<ConnectionToRepositoryUnsuccessfulException>(exceptionThrown);
     }
     
+    [Fact]
+    public async Task ShouldThrowErrorIfSendEmailIsNotSuccessful()
+    {
+        var surveyNotifications = new List<SherpaBackEnd.SurveyNotification.Domain.SurveyNotification>();
+        var team = ATeam().Build();
+        var survey = ASurvey().WithId(_surveyId).WithTeam(team).Build();
+        _surveyRepository.Setup(repository => repository.GetSurveyById(_surveyId)).ReturnsAsync(survey);
+        var emailTemplate = new EmailTemplate(null, new List<Recipient>());
+        _emailTemplateFactory.Setup(factory => factory.CreateEmailTemplate(surveyNotifications))
+            .Returns(emailTemplate);
+        
+        _emailService
+            .Setup(service => service.SendEmailsWith(emailTemplate))
+            .ThrowsAsync(new Exception());
+
+        var exceptionThrown = await Assert.ThrowsAsync<EmailSendingException>(async () =>
+            await _surveyNotificationService.LaunchSurveyNotificationsFor(_createSurveyNotificationsDto));
+        Assert.IsType<EmailSendingException>(exceptionThrown);
+    }
+    
     // TODO remove TestableSurveyNotificationService by implementing IGuidService mock in tests
     class TestableSurveyNotificationService : SurveyNotificationService
     {
