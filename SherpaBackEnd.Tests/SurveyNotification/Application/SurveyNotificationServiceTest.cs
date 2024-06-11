@@ -8,6 +8,7 @@ using SherpaBackEnd.SurveyNotification.Application;
 using SherpaBackEnd.SurveyNotification.Infrastructure.Http.Dto;
 using SherpaBackEnd.SurveyNotification.Infrastructure.Persistence;
 using SherpaBackEnd.Team.Domain;
+using SherpaBackEnd.Tests.Builders;
 using static SherpaBackEnd.Tests.Builders.SurveyBuilder;
 using static SherpaBackEnd.Tests.Builders.TeamBuilder;
 using static SherpaBackEnd.Tests.Builders.TeamMemberBuilder;
@@ -182,7 +183,24 @@ public class SurveyNotificationServiceTest
             await _surveyNotificationService.LaunchSurveyNotificationsFor(_createSurveyNotificationsDto));
         Assert.IsType<ConnectionToRepositoryUnsuccessfulException>(exceptionThrown);
     }
-    
+
+    [Fact]
+    public async Task ShouldGetSurveyNotificationFromRepository()
+    {
+        var teamMember = ATeamMember().Build();
+        var survey = ASurvey().Build();
+        var surveyNotificationId = Guid.NewGuid();
+        var expectedSurveyNotification =
+            new SherpaBackEnd.SurveyNotification.Domain.SurveyNotification(surveyNotificationId, survey, teamMember);
+
+        _surveyNotificationsRepository.Setup(repository => repository.GetSurveyNotificationById(surveyNotificationId))
+            .ReturnsAsync(expectedSurveyNotification);
+
+        var surveyNotification = await _surveyNotificationService.GetSurveyNotification(surveyNotificationId);
+
+        Assert.Equal(expectedSurveyNotification, surveyNotification);
+    }
+
     // TODO remove TestableSurveyNotificationService by implementing IGuidService mock in tests
     class TestableSurveyNotificationService : SurveyNotificationService
     {
@@ -190,7 +208,8 @@ public class SurveyNotificationServiceTest
 
         public TestableSurveyNotificationService(ISurveyRepository surveyRepository,
             ISurveyNotificationsRepository surveyNotificationsRepository,
-            IEmailTemplateFactory emailTemplateFactory, IEmailService emailService) : base(surveyRepository, surveyNotificationsRepository,
+            IEmailTemplateFactory emailTemplateFactory, IEmailService emailService) : base(surveyRepository,
+            surveyNotificationsRepository,
             emailTemplateFactory, emailService)
         {
         }

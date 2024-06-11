@@ -24,6 +24,7 @@ public class SurveyServiceTest
     private readonly Mock<HttpMessageHandler> _handlerMock;
     private readonly Mock<IHttpClientFactory> _httpClientFactory;
     private readonly Team[] _teams;
+    private Guid _surveyNotificationId = Guid.NewGuid();
 
     public SurveyServiceTest()
     {
@@ -283,5 +284,25 @@ public class SurveyServiceTest
         var surveyService = new SurveyService(_httpClientFactory.Object);
 
         await Assert.ThrowsAsync<HttpRequestException>(() => surveyService.LaunchSurvey(surveyId));
+    }
+
+    [Fact]
+    public async Task ShouldGetSurveyNotificationById()
+    {
+        var surveyNotification = new SurveyNotification(_surveyNotificationId, Guid.NewGuid(), Guid.NewGuid());
+        var surveyNotificationJson = await JsonContent.Create(surveyNotification).ReadAsStringAsync();
+        var getSurveyNotifificationResponse = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(surveyNotificationJson)
+        };
+        var path = $"/survey-notifications/{_surveyNotificationId}";
+        _handlerMock.SetupRequest(HttpMethod.Get, path, getSurveyNotifificationResponse);
+
+        var surveyService = new SurveyService(_httpClientFactory.Object);
+
+        var receivedSurveyNotification = await surveyService.GetSurveyNotificationById(_surveyNotificationId);
+
+        Assert.Equal(surveyNotification, receivedSurveyNotification);
     }
 }
