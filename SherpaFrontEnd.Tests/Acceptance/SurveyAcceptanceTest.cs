@@ -406,7 +406,7 @@ public class SurveyAcceptanceTest
         // AND he should see the following info:
         appComponent.WaitForAssertion(() =>
             Assert.Equal(
-                $"http://localhost/team-content/{_teams[0].Id.ToString()}",
+                $"http://localhost/team-content/{_teams[0].Id.ToString()}/surveys",
                 _navManager.Uri));
         
         // team title

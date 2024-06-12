@@ -80,7 +80,7 @@
         try
         {
             await SurveyService.LaunchSurvey(SurveyId);
-            NavigationManager.NavigateTo(NavigationManager.BaseUri + $"team-content/{_survey.Team.Id}");
+            NavigationManager.NavigateTo(NavigationManager.BaseUri + $"team-content/{_survey.Team.Id}/surveys");
         }
         catch
         {
