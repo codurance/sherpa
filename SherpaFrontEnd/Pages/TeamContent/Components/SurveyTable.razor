@@ -1,31 +1,34 @@
 @using SherpaFrontEnd.Dtos.Survey
-
+@inject IJSRuntime Js
 <div class="relative overflow-x-auto shadow-md sm:rounded-lg gap-2.5" style="margin: 0 1cm">
     <table class="w-full text-sm text-left text-gray-900">
         <thead class="text-xs primary-dark-800 bg-gray-100">
-            <tr>
-                <th scope="col" class="px-6 py-3">
-                    Survey title
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Template
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Coach
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Deadline
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Participants
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Status
-                </th>
-            </tr>
+        <tr>
+            <th scope="col" class="px-6 py-3">
+                Survey title
+            </th>
+            <th scope="col" class="px-6 py-3">
+                Template
+            </th>
+            <th scope="col" class="px-6 py-3">
+                Coach
+            </th>
+            <th scope="col" class="px-6 py-3">
+                Deadline
+            </th>
+            <th scope="col" class="px-6 py-3">
+                Participants
+            </th>
+            <th scope="col" class="px-6 py-3">
+                Status
+            </th>
+            <th scope="col" class="px-6 py-3">
+            </th>
+        </tr>
         </thead>
         <tbody>
-        @foreach (var survey in Surveys) {
+        @foreach (var survey in Surveys)
+        {
             <tr class="bg-white hover:bg-gray-50">
                 <td class="px-6 py-4">
                     <div class="flex items-center primary-dark-800">
@@ -43,13 +46,14 @@
                 </th>
                 <td class="px-6 py-4">
                     <div class="flex items-center">
-                         @if (@survey.Deadline == null)
-                         {
+                        @if (@survey.Deadline == null)
+                        {
                             <span>Not Defined</span>
-                         }
-                         else {
+                        }
+                        else
+                        {
                             <span>@survey.Deadline.Value.ToString("MM/dd/yyyy")</span>
-                         }
+                        }
                     </div>
                 </td>
                 <td class="px-6 py-4">
@@ -58,10 +62,22 @@
                     </div>
                 </td>
                 <td class="px-6 py-4">
-                <div class="flex items-center">
-                    <div class="h-2.5 w-2.5 rounded-full bg-gray-300 mr-2"></div>
-                    @survey.Status
-                </div>
+                    <div class="flex items-center">
+                        <div class="h-2.5 w-2.5 rounded-full bg-gray-300 mr-2"></div>
+                        @survey.Status
+                    </div>
+                </td>
+                <td class="px-6 py-4 text-right">
+                    <div class="dropdown">
+                        <button class="p-0.5 text-2xl font-medium" type="button" id="@survey.Id" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="las la-ellipsis-v"></i>
+                        </button>
+                        <ul class="dropdown-menu py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="@survey.Id">
+                            <li>
+                                <button @onclick="() => DownloadResponses(survey.Id)" class="dropdown-item block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Download responses in .xlsx</button>
+                            </li>
+                        </ul>
+                    </div>
                 </td>
             </tr>
         }
@@ -71,6 +87,11 @@
 
 
 @code {
-    [Parameter]
-    public List<Survey> Surveys { get; set; }
+    [Parameter] public List<Survey> Surveys { get; set; }
+
+    private void DownloadResponses(Guid surveyId)
+    {
+        //TODO request data
+    }
+
 }
