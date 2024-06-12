@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using SherpaBackEnd.Survey.Infrastructure.Http.Dto;
 using SherpaBackEnd.Template.Domain;
 
@@ -10,4 +11,5 @@ public interface ISurveyService
     public Task<SurveyWithoutQuestions> GetSurveyWithoutQuestionsById(Guid expectedSurveyId);
     public Task<IEnumerable<IQuestion>> GetSurveyQuestionsBySurveyId(Guid expectedSurveyId);
     public Task AnswerSurvey(AnswerSurveyDto answerSurveyDto);
+    public Task<FileResult> GetSurveyResponsesFile(Guid surveyId);
 }

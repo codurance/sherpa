@@ -1,4 +1,5 @@
-﻿using SherpaBackEnd.Exceptions;
+﻿using Microsoft.AspNetCore.Mvc;
+using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Survey.Domain;
 using SherpaBackEnd.Survey.Domain.Exceptions;
 using SherpaBackEnd.Survey.Infrastructure.Http.Dto;
@@ -101,5 +102,10 @@ public class SurveyService : ISurveyService
                     throw new ConnectionToRepositoryUnsuccessfulException("Unable to update answered survey");
             }
         }
+    }
+
+    public Task<FileResult> GetSurveyResponsesFile(Guid surveyId)
+    {
+        throw new NotImplementedException();
     }
 }

@@ -112,4 +112,11 @@ public class SurveyController
             };
         }
     }
+
+    [HttpGet("survey/{surveyId:guid}/responses")]
+    public async Task<IActionResult> GetSurveyResponsesFile(Guid surveyId)
+    {
+        var surveyResponsesFile = await _surveyService.GetSurveyResponsesFile(surveyId);
+        return new OkObjectResult(surveyResponsesFile);
+    }
 }
