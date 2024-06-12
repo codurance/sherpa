@@ -1,5 +1,4 @@
 ﻿using AngleSharp.Dom;
-
 using Bunit;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -139,7 +138,7 @@ public class TeamContentTest
 
         teamContentComponent.WaitForAssertion(() =>
             Assert.NotNull(teamContentComponent.FindElementByCssSelectorAndTextContent("h3", "All Surveys")));
-        
+
         Assert.NotNull(teamContentComponent.FindElementByCssSelectorAndTextContent("button", "Send new survey"));
     }
 
@@ -164,12 +163,12 @@ public class TeamContentTest
         _mockTeamService.Setup(m => m.GetTeamById(It.IsAny<Guid>())).ReturnsAsync(team);
         var teamContentComponent =
             _testContext.RenderComponent<TeamContent>(ComponentParameter.CreateParameter("TeamId", teamId));
-        
+
         var surveyTabPage = teamContentComponent.FindElementByCssSelectorAndTextContent("a:not(a[href])", "Surveys");
         Assert.NotNull(surveyTabPage);
         surveyTabPage.Click();
 
-        
+
         var surveyName = teamContentComponent.FindElementByCssSelectorAndTextContent("th", "Survey title");
         var template = teamContentComponent.FindElementByCssSelectorAndTextContent("th", "Template");
         var coach = teamContentComponent.FindElementByCssSelectorAndTextContent("th", "Coach");
@@ -289,5 +288,51 @@ public class TeamContentTest
 
         Assert.Equal("GetTeamById", mockMethodInvocations[2].Method.Name);
         CustomAssertions.StringifyEquals(teamId, mockMethodInvocations[2].Arguments[0]);
+    }
+
+    [Fact]
+    public void ShouldBeAbleToOpenSurveysTabDirectly()
+    {
+        var userOne = new User(Guid.NewGuid(), "testUser");
+        const string newTeamName = "Team with survey";
+        var teamId = Guid.NewGuid();
+        var team = new Team(teamId, newTeamName);
+
+        var testSurveys = new List<Survey>
+        {
+            new Survey(
+                Guid.NewGuid(),
+                userOne,
+                Status.Draft,
+                new DateTime(),
+                "title",
+                "description",
+                Array.Empty<Response>(),
+                team,
+                new Template("template")
+            )
+        };
+
+        _mockSurveyService.Setup(_ => _.GetAllSurveysByTeam(teamId)).ReturnsAsync(testSurveys);
+
+        _mockTeamService.Setup(m => m.GetTeamById(It.IsAny<Guid>())).ReturnsAsync(team);
+
+
+        var surveyTableComponent =
+            _testContext.RenderComponent<TeamContent>(ComponentParameter.CreateParameter("TeamId", teamId),
+                ComponentParameter.CreateParameter("Tab", "Surveys"));
+
+        var rows = surveyTableComponent.FindAll("tr.bg-white");
+        Assert.Equal(testSurveys.Count, rows.Count);
+
+        foreach (var survey in testSurveys)
+        {
+            Assert.NotNull(rows.FirstOrDefault(element => element.ToMarkup().Contains(survey.Title), null));
+            Assert.NotNull(rows.FirstOrDefault(
+                element => element.ToMarkup().Contains(survey.Deadline.Value.Date.ToString("dd/MM/yyyy")), null));
+            Assert.NotNull(rows.FirstOrDefault(element => element.ToMarkup().Contains(survey.Template.Name), null));
+            Assert.NotNull(rows.FirstOrDefault(element => element.ToMarkup().Contains(survey.Coach.Name), null));
+            Assert.NotNull(rows.FirstOrDefault(element => element.ToMarkup().Contains(Status.Draft.ToString()), null));
+        }
     }
 }
