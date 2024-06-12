@@ -1,9 +1,12 @@
 @page "/templates"
 @using SherpaFrontEnd.Services
 @using SherpaFrontEnd.Pages.Templates.Components
+@using SherpaFrontEnd.Core.Components
 @inject ITemplateService TemplateService
 
-<h3>Templates</h3>
+<div class="mb-6">
+    <MainHeading>Templates</MainHeading>
+</div>
 <ul class="template-box-list">
 
     @foreach (var template in _templates)

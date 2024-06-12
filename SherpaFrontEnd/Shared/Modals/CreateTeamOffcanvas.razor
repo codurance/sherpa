@@ -20,8 +20,12 @@
                 <ValidationMessage For="@(() => Team.Name)"/>
             </div>
             <div class="flex gap-6 py-6">
-                <button type="button" class="btn btn-outline-danger flex-grow" @onclick="@CloseOffCanvas">Cancel</button>
-                <button type="submit" class="btn btn-outline-primary flex-grow">Confirm</button>
+                <button type="button" @onclick="@CloseOffCanvas" class="flex-grow rounded-lg py-2 text-primary-red-principal-800 font-semibold text-base border border-gray-inner-shadow bg-white hover:bg-primary-red-100">
+                    Cancel
+                </button>
+                <button type="submit" class="flex-grow bg-primary-red-principal-800 hover:bg-primary-red-900 rounded-lg py-2 text-white font-semibold text-base">
+                    Confirm
+                </button>
             </div>
         </EditForm>
     </div>

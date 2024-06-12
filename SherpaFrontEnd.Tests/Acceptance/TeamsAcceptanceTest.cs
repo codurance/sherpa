@@ -233,10 +233,10 @@ public class TeamsAcceptanceTest
 
         _navMan.NavigateTo($"/team-content/{teamId.ToString()}");
         
-        teamsListComponent.WaitForAssertion(() => Assert.NotNull(teamsListComponent.FindElementByCssSelectorAndTextContent("h3", teamName)));
+        teamsListComponent.WaitForAssertion(() => Assert.NotNull(teamsListComponent.FindElementByCssSelectorAndTextContent("h2", teamName)));
 
 
-        var teamNameElement = teamsListComponent.FindElementByCssSelectorAndTextContent("h3", teamName);
+        var teamNameElement = teamsListComponent.FindElementByCssSelectorAndTextContent("h2", teamName);
         var analysisTab = teamsListComponent.FindElementByCssSelectorAndTextContent("li", "Analysis");
         var sendNewSurveyTeam = teamsListComponent.FindElementByCssSelectorAndTextContent("button", "Send a new survey");
 

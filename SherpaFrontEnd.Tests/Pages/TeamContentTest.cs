@@ -53,7 +53,7 @@ public class TeamContentTest
         var teamDetailsPage = _testContext.RenderComponent<TeamContent>();
         teamDetailsPage.WaitForAssertion(() =>
         {
-            Assert.NotNull(teamDetailsPage.FindElementByCssSelectorAndTextContent("h3", teamName));
+            Assert.NotNull(teamDetailsPage.FindElementByCssSelectorAndTextContent("h2", teamName));
         });
         var analysisTab = teamDetailsPage.FindElementByCssSelectorAndTextContent("li", "Analysis");
         var sendNewSurveyTeam = teamDetailsPage.FindElementByCssSelectorAndTextContent("button", "Send a new survey");
