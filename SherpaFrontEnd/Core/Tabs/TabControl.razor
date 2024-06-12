@@ -23,11 +23,42 @@
 
 @code{
 
-    [Parameter]
-    public RenderFragment? ChildContent { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    [Parameter] public string? InitialTab { get; set; }
 
     public TabPage ActivePage { get; set; }
     List<TabPage> Pages = new();
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (!firstRender) return;
+
+        if (InitialTab == null) return;
+
+        foreach (var tabPage in Pages.Where(tabPage => tabPage.Text.ToLower().Equals(InitialTab.ToLower())))
+        {
+            ActivatePage(tabPage);
+            StateHasChanged();
+        }
+    }
+
+
+    protected override void OnInitialized()
+    {
+        Console.WriteLine(InitialTab);
+        if (InitialTab != null)
+        {
+            Console.WriteLine(InitialTab);
+            Console.WriteLine(Pages.Count);
+            foreach (var tabPage in Pages)
+            {
+                Console.WriteLine(tabPage.Text);
+                if (tabPage.Text.ToLower().Equals(InitialTab.ToLower()))
+                    ActivatePage(tabPage);
+            }
+        }
+    }
 
     string GetButtonClass(TabPage page)
     {
