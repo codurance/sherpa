@@ -315,4 +315,38 @@ public class SurveyServiceTest
 
         await Assert.ThrowsAsync<SurveyNotCompleteException>(async () => await _service.AnswerSurvey(answerSurveyDto));
     }
+
+    [Fact]
+    public async Task ShouldGetSurveyFromRepositoryWhenCallingGetSurveyResponsesFile()
+    {
+        var surveyRepository = new Mock<ISurveyRepository>();
+        var teamRepository = new Mock<ITeamRepository>();
+        var templateRepository = new Mock<ITemplateRepository>();
+        var surveyResponseCsvGenerator = new Mock<ISurveyResponsesFileCreate>();
+
+        var surveyService =
+            new SurveyService(surveyRepository.Object, teamRepository.Object, templateRepository.Object, surveyResponseCsvGenerator.Object);
+        var surveyId = Guid.NewGuid();
+
+        await surveyService.GetSurveyResponsesFile(surveyId);
+
+        surveyRepository.Verify(repository => repository.GetSurveyById(surveyId));
+    }
+
+    [Fact]
+    public async Task ShouldGetSurveyResponsesCsvFromFileGeneratorWhenCallingGetSurveyResponsesFile()
+    {
+        var surveyRepository = new Mock<ISurveyRepository>();
+        var teamRepository = new Mock<ITeamRepository>();
+        var templateRepository = new Mock<ITemplateRepository>();
+        var surveyResponseCsvGenerator = new Mock<ISurveyResponsesFileCreate>();
+        var surveyService =
+            new SurveyService(surveyRepository.Object, teamRepository.Object, templateRepository.Object, surveyResponseCsvGenerator.Object);
+        var surveyId = Guid.NewGuid();
+        var survey = SurveyBuilder.ASurvey().WithId(surveyId).Build();
+
+        surveyRepository.Setup(repository => repository.GetSurveyById(surveyId)).ReturnsAsync(survey);
+        await surveyService.GetSurveyResponsesFile(surveyId);
+        surveyResponseCsvGenerator.Verify(generator => generator.CreateFile(survey));
+    }
 }

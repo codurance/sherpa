@@ -127,6 +127,7 @@ public class SurveyResponsesAcceptanceTest: IDisposable
         var survey = SurveyBuilder.ASurvey().WithId(Guid.NewGuid()).WithTemplate(template).WithResponses(responses).WithTeam(team).Build();
 
         await surveyRepository.CreateSurvey(survey);
+        
 
         // WHEN the coach requests survey responses file
         var actionResult = await surveyController.GetSurveyResponsesFile(survey.Id);
@@ -134,8 +135,9 @@ public class SurveyResponsesAcceptanceTest: IDisposable
         // THEN the controller should return an Ok result
         var okObjectResult = Assert.IsType<OkObjectResult>(actionResult);
         Assert.Equal(StatusCodes.Status200OK, okObjectResult.StatusCode);
+        var fileResult = Assert.IsType<FileStreamResult>(okObjectResult.Value);
+        Assert.Equal("text/csv",fileResult.ContentType);
         // TODO: make assertion on File content if possible
-        // CustomAssertions.StringifyEquals(expectedResponsesFile, okObjectResult.Value);
     }
     
     public void Dispose()

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Runtime.InteropServices;
+using Microsoft.AspNetCore.Mvc;
 using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Survey.Domain;
 using SherpaBackEnd.Survey.Domain.Exceptions;
@@ -15,14 +16,16 @@ public class SurveyService : ISurveyService
     private readonly ISurveyRepository _surveyRepository;
     private readonly ITeamRepository _teamRepository;
     private readonly ITemplateRepository _templateRepository;
+    private readonly ISurveyResponsesFileCreate _surveyResponsesFileCreate;
     public readonly Guid DefaultUserId = Guid.NewGuid();
 
     public SurveyService(ISurveyRepository surveyRepository, ITeamRepository teamRepository,
-        ITemplateRepository templateRepository)
+        ITemplateRepository templateRepository, [Optional] ISurveyResponsesFileCreate surveyResponsesFileCreate)
     {
         _surveyRepository = surveyRepository;
         _teamRepository = teamRepository;
         _templateRepository = templateRepository;
+        _surveyResponsesFileCreate = surveyResponsesFileCreate;
     }
 
     public async Task CreateSurvey(CreateSurveyDto createSurveyDto)
@@ -104,8 +107,11 @@ public class SurveyService : ISurveyService
         }
     }
 
-    public Task<FileResult> GetSurveyResponsesFile(Guid surveyId)
+    public async Task<FileResult> GetSurveyResponsesFile(Guid surveyId)
     {
-        throw new NotImplementedException();
+        var survey = await _surveyRepository.GetSurveyById(surveyId);
+        _surveyResponsesFileCreate.CreateFile(survey);
+
+        return null;
     }
 }
