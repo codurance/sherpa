@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Survey.Application;
 using SherpaBackEnd.Survey.Domain.Exceptions;
 using SherpaBackEnd.Survey.Infrastructure.Http.Dto;
-using SherpaBackEnd.Template.Domain;
+using SherpaFrontEnd.Dtos.Survey;
+using AnswerSurveyDto = SherpaBackEnd.Survey.Infrastructure.Http.Dto.AnswerSurveyDto;
+using IQuestion = SherpaBackEnd.Template.Domain.IQuestion;
 
 namespace SherpaBackEnd.Survey.Infrastructure.Http;
 
@@ -117,10 +120,10 @@ public class SurveyController
     public async Task<IActionResult> GetSurveyResponsesFile(Guid surveyId)
     {
         var surveyResponsesFileStream = await _surveyService.GetSurveyResponsesFileStream(surveyId);
-        var surveyResponsesFile = new FileStreamResult(surveyResponsesFileStream, "text/csv")
+        var surveyResponsesFile = new FileStreamResult(surveyResponsesFileStream,"text/csv")
         {
             FileDownloadName = "survey_responses.csv"
         };
-        return new OkObjectResult(surveyResponsesFile);
+        return surveyResponsesFile;
     }
 }
