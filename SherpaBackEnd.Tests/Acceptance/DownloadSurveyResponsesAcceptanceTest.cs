@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Moq;
+using Newtonsoft.Json;
 using SherpaBackEnd.Shared.Infrastructure.Persistence;
 using SherpaBackEnd.Survey.Application;
 using SherpaBackEnd.Survey.Domain;
@@ -21,17 +22,17 @@ using SherpaBackEnd.Tests.Builders;
 
 namespace SherpaBackEnd.Tests.Acceptance;
 
-public class DownloadSurveyResponsesAcceptanceTest: IDisposable
+public class DownloadSurveyResponsesAcceptanceTest : IDisposable
 {
     private readonly IContainer _mongoDbContainer = new ContainerBuilder()
         .WithImage("mongodb/mongodb-community-server:latest")
         .WithPortBinding(27017, true).Build();
-    
+
     private readonly ILogger<SurveyController> _logger = new Mock<ILogger<SurveyController>>().Object;
     private IOptions<DatabaseSettings> _databaseSettings;
     private IMongoCollection<BsonDocument> _surveyCollection;
     private IMongoCollection<BsonDocument> _templateCollection;
-    
+
     private async Task InitializeDbClientAndCollections()
     {
         await _mongoDbContainer.StartAsync();
@@ -50,7 +51,7 @@ public class DownloadSurveyResponsesAcceptanceTest: IDisposable
 
         var mongoDatabase = mongoClient.GetDatabase(
             _databaseSettings.Value.DatabaseName);
-        
+
         _surveyCollection = mongoDatabase.GetCollection<BsonDocument>(
             _databaseSettings.Value.SurveyCollectionName);
 
@@ -66,14 +67,13 @@ public class DownloadSurveyResponsesAcceptanceTest: IDisposable
         var teamRepository = new MongoTeamRepository(_databaseSettings);
         var surveyRepository = new MongoSurveyRepository(_databaseSettings);
         var surveyResponsesFileService = new Mock<ISurveyResponsesFileService>();
-        var surveyService = new SurveyService(surveyRepository, teamRepository, templateRepository, surveyResponsesFileService.Object);
+        var surveyService = new SurveyService(surveyRepository, teamRepository, templateRepository,
+            surveyResponsesFileService.Object);
         var surveyController = new SurveyController(surveyService, _logger);
-        
+
         var dummyCsvContent = "Id,Response\n1,Yes\n2,No";
         var dummyCsvBytes = Encoding.UTF8.GetBytes(dummyCsvContent);
         var surveyResponsesFileStream = new MemoryStream(dummyCsvBytes);
-        
-        // TODO: use real implementation instead of mock
         surveyResponsesFileService.Setup(service => service.CreateFileStream(It.IsAny<Survey.Domain.Survey>()))
             .Returns(surveyResponsesFileStream);
 
@@ -138,32 +138,38 @@ public class DownloadSurveyResponsesAcceptanceTest: IDisposable
 
         var team = TeamBuilder.ATeam().WithTeamMembers(new List<TeamMember>() { janeTeamMember, johnTeamMember })
             .Build();
-        var survey = SurveyBuilder.ASurvey().WithId(Guid.NewGuid()).WithTemplate(template).WithResponses(responses).WithTeam(team).Build();
+        var survey = SurveyBuilder.ASurvey().WithId(Guid.NewGuid()).WithTemplate(template).WithResponses(responses)
+            .WithTeam(team).Build();
 
         await teamRepository.AddTeamAsync(team);
         await teamRepository.AddTeamMemberToTeamAsync(team.Id, janeTeamMember);
         await teamRepository.AddTeamMemberToTeamAsync(team.Id, johnTeamMember);
         await surveyRepository.CreateSurvey(survey);
-        
+
         await _templateCollection.InsertOneAsync(new BsonDocument
         {
             { "name", template.Name },
             { "minutesToComplete", template.MinutesToComplete },
-            { "questions", new BsonArray(new List<IQuestion>()) } // TODO: insert real questions from template object
+            {
+                "questions", new BsonArray()
+                {
+                    BsonDocument.Parse(JsonConvert.SerializeObject(template.Questions.ElementAt(0))),
+                    BsonDocument.Parse(JsonConvert.SerializeObject(template.Questions.ElementAt(1))),
+                    BsonDocument.Parse(JsonConvert.SerializeObject(template.Questions.ElementAt(2))),
+                }
+            }
         });
-        
+
 
         // WHEN the coach requests survey responses file
         var actionResult = await surveyController.GetSurveyResponsesFile(survey.Id);
-        
+
         // THEN the controller should return an Ok result
-        var okObjectResult = Assert.IsType<OkObjectResult>(actionResult);
-        Assert.Equal(StatusCodes.Status200OK, okObjectResult.StatusCode);
-        var fileResult = Assert.IsType<FileStreamResult>(okObjectResult.Value);
-        Assert.Equal("text/csv",fileResult.ContentType);
+        var fileResult = Assert.IsType<FileStreamResult>(actionResult);
+        Assert.Equal("text/csv", fileResult.ContentType);
         // TODO: assert on File content
     }
-    
+
     public void Dispose()
     {
         _mongoDbContainer.StopAsync();

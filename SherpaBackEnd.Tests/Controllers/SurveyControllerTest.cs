@@ -322,7 +322,7 @@ public class SurveyControllerTest
 
         var actionResult = await _controller.AnswerSurvey(answerSurveyDto);
 
-        var objectResult = Assert.IsType<ObjectResult>(actionResult);               
+        var objectResult = Assert.IsType<ObjectResult>(actionResult);
 
         Assert.Equal(StatusCodes.Status400BadRequest, objectResult.StatusCode);
         Assert.Equal(surveyNotCompleteException.Message, objectResult.Value);
@@ -335,18 +335,16 @@ public class SurveyControllerTest
         var logger = new Mock<ILogger<SurveyController>>();
         var surveyController = new SurveyController(surveyService.Object, logger.Object);
         var surveyId = Guid.NewGuid();
-        
+
         var dummyCsvContent = "Id,Response\n1,Yes\n2,No";
         var dummyCsvBytes = Encoding.UTF8.GetBytes(dummyCsvContent);
         var surveyResponsesFileStream = new MemoryStream(dummyCsvBytes);
-        surveyService.Setup(service => service.GetSurveyResponsesFileStream(surveyId)).ReturnsAsync(surveyResponsesFileStream);
-        
+        surveyService.Setup(service => service.GetSurveyResponsesFileStream(surveyId))
+            .ReturnsAsync(surveyResponsesFileStream);
+
         var result = await surveyController.GetSurveyResponsesFile(surveyId);
-
-        var okObjectResult = Assert.IsType<OkObjectResult>(result);
-        Assert.Equal(StatusCodes.Status200OK, okObjectResult.StatusCode);
-
-        var fileResult = Assert.IsType<FileStreamResult>(okObjectResult.Value);
+        
+        var fileResult = Assert.IsType<FileStreamResult>(result);
         Assert.Equal(surveyResponsesFileStream, fileResult.FileStream);
     }
 }
