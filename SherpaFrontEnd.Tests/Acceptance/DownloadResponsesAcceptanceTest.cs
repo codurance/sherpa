@@ -93,10 +93,10 @@ public class DownloadResponsesAcceptanceTest
 
         // Then they should see the button "Download responses in .xlsx"
         Assert.NotNull(downloadButton);
-        
+
         // And when they click on the button
         downloadButton.Click();
-        
+
         //TODO: check if more is needed to download
         // Then a report should be downloaded
         _handlerMock.Protected().Verify("SendAsync", Times.Once(),
@@ -104,5 +104,54 @@ public class DownloadResponsesAcceptanceTest
                 message.Method.Equals(HttpMethod.Get) &&
                 message.RequestUri!.AbsoluteUri.Contains(downloadSurveyPath)),
             ItExpr.IsAny<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task UserShouldBeRedirectedToErrorPageIfDownloadFails()
+    {
+        var teamId = Guid.NewGuid();
+        var team = new Team();
+        var teamJson = await JsonContent.Create(team).ReadAsStringAsync();
+        var teamResponse = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(teamJson)
+        };
+        _handlerMock.SetupRequest(HttpMethod.Get, $"/team/{teamId}", teamResponse);
+
+        var surveyId = Guid.NewGuid();
+        var surveys = new List<Survey>()
+        {
+            new Survey(surveyId, new User(Guid.NewGuid(), "Lucia"), Status.Draft, new DateTime(), "title",
+                "Description", Array.Empty<Response>(), null, new Template("Hackman"))
+        };
+        var surveyJson = await JsonContent.Create(surveys).ReadAsStringAsync();
+        var surveyResponse = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(surveyJson)
+        };
+        _handlerMock.SetupRequest(HttpMethod.Get, $"/team/{teamId}/surveys", surveyResponse);
+
+        var downloadSurveyPath = $"survey/{surveyId}/responses";
+        var downloadSurveyResponse = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.InternalServerError,
+        };
+        _handlerMock.SetupRequest(HttpMethod.Get, downloadSurveyPath, downloadSurveyResponse);
+
+        var appComponent = _testCtx.RenderComponent<App>();
+        var teamContentPageSurveys = $"/team-content/{teamId}/surveys";
+        _navManager.NavigateTo(teamContentPageSurveys);
+
+        appComponent.WaitForAssertion(() =>
+            Assert.Equal($"http://localhost/team-content/{teamId.ToString()}/surveys", _navManager.Uri));
+
+        var downloadButton =
+            appComponent.FindElementByCssSelectorAndTextContent("button", "Download responses in .xlsx");
+
+        downloadButton.Click();
+
+        appComponent.WaitForAssertion(() => Assert.Equal("http://localhost/error", _navManager.Uri));
     }
 }

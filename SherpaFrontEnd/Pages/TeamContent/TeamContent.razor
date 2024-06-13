@@ -5,6 +5,8 @@
 @using SherpaFrontEnd.Pages.TeamContent.Components
 @inject ITeamDataService TeamDataService
 @inject ISurveyService SurveyService
+@inject NavigationManager NavigationManager
+
 
 @page "/team-content/{teamId:guid}/{tab?}"
 
@@ -97,7 +99,14 @@
 
     private async Task DownloadSurveyResponses(Guid surveyId)
     {
-        await SurveyService.DownloadSurveyResponses(surveyId);
+        try
+        {
+            await SurveyService.DownloadSurveyResponses(surveyId);
+        }
+        catch
+        {
+            NavigationManager.NavigateTo(NavigationManager.BaseUri + "error");
+        }
     }
 
 }

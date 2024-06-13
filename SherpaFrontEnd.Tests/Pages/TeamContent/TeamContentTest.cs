@@ -1,5 +1,6 @@
 ﻿using AngleSharp.Dom;
 using Bunit;
+using Bunit.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Shared.Test.Helpers;
@@ -22,6 +23,7 @@ public class TeamContentTest
     private Mock<ITeamDataService> _mockTeamService;
     private Mock<ISurveyService> _mockSurveyService;
     private readonly Mock<IGuidService> _mockGuidService;
+    private readonly FakeNavigationManager _navManager;
 
     public TeamContentTest(ITestOutputHelper testOutputHelper)
     {
@@ -33,6 +35,8 @@ public class TeamContentTest
         _testContext.Services.AddScoped(s => _mockTeamService.Object);
         _testContext.Services.AddSingleton<ISurveyService>(_mockSurveyService.Object);
         _testContext.Services.AddSingleton<IGuidService>(_mockGuidService.Object);
+        _navManager = _testContext.Services.GetRequiredService<FakeNavigationManager>();
+
     }
 
     [Fact]
@@ -333,9 +337,52 @@ public class TeamContentTest
                 ComponentParameter.CreateParameter("Tab", "Surveys"),
                 ComponentParameter.CreateParameter("SurveyFlags", new SurveyTableFeatureFlags(true, true, true)));
 
-        var downloadResponsesButton = teamContent.FindElementByCssSelectorAndTextContent("button", "Download responses in .xlsx");
+        var downloadResponsesButton =
+            teamContent.FindElementByCssSelectorAndTextContent("button", "Download responses in .xlsx");
         downloadResponsesButton.Click();
-        
+
         _mockSurveyService.Verify(service => service.DownloadSurveyResponses(surveyId));
+    }
+
+    [Fact]
+    public void ShouldRedirectToErrorPageIfErrorDownloadingSurveyResponses()
+    {
+        var userOne = new User(Guid.NewGuid(), "testUser");
+        const string newTeamName = "Team with survey";
+        var teamId = Guid.NewGuid();
+        var team = new Team(teamId, newTeamName);
+
+        var surveyId = Guid.NewGuid();
+        var testSurveys = new List<Survey>
+        {
+            new Survey(
+                surveyId,
+                userOne,
+                Status.Draft,
+                new DateTime(),
+                "title",
+                "description",
+                Array.Empty<Response>(),
+                team,
+                new Template("template")
+            )
+        };
+
+        _mockSurveyService.Setup(_ => _.GetAllSurveysByTeam(teamId)).ReturnsAsync(testSurveys);
+
+        _mockTeamService.Setup(m => m.GetTeamById(It.IsAny<Guid>())).ReturnsAsync(team);
+        _mockSurveyService.Setup(service => service.DownloadSurveyResponses(surveyId)).ThrowsAsync(new Exception());
+
+
+        var teamContent =
+            _testContext.RenderComponent<TeamContent>(ComponentParameter.CreateParameter("TeamId", teamId),
+                ComponentParameter.CreateParameter("Tab", "Surveys"),
+                ComponentParameter.CreateParameter("SurveyFlags", new SurveyTableFeatureFlags(true, true, true)));
+
+        var downloadResponsesButton =
+            teamContent.FindElementByCssSelectorAndTextContent("button", "Download responses in .xlsx");
+        downloadResponsesButton.Click();
+
+        teamContent.WaitForAssertion(() => Assert.Equal("http://localhost/error", _navManager.Uri));
     }
 }
