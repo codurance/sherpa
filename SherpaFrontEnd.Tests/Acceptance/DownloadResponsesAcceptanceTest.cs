@@ -49,7 +49,6 @@ public class DownloadResponsesAcceptanceTest
     public async Task UserShouldBeAbleToClickOnDownloadResponsesButtonAndSendDownloadRequest()
     {
         var teamId = Guid.NewGuid();
-        var request = new HttpRequestMessage(HttpMethod.Get, $"/team/{teamId}");
         var team = new Team();
         var teamJson = await JsonContent.Create(team).ReadAsStringAsync();
         var teamResponse = new HttpResponseMessage()
@@ -72,27 +71,38 @@ public class DownloadResponsesAcceptanceTest
             Content = new StringContent(surveyJson)
         };
         _handlerMock.SetupRequest(HttpMethod.Get, $"/team/{teamId}/surveys", surveyResponse);
+
+        var downloadSurveyPath = $"survey/{surveyId}/responses";
+        var downloadSurveyResponse = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.OK,
+        };
+        _handlerMock.SetupRequest(HttpMethod.Get, downloadSurveyPath, downloadSurveyResponse);
+
+        // Given an Org Coach is on the survey tab inside a team
         var appComponent = _testCtx.RenderComponent<App>();
-        var teamContentPage = $"/team-content/{teamId}";
-        _navManager.NavigateTo(teamContentPage);
+        var teamContentPageSurveys = $"/team-content/{teamId}/surveys";
+        _navManager.NavigateTo(teamContentPageSurveys);
 
         appComponent.WaitForAssertion(() =>
-            Assert.Equal($"http://localhost/team-content/{teamId.ToString()}", _navManager.Uri));
-        var surveyTab = appComponent.FindElementByCssSelectorAndTextContent("a:not(a[href])", "Surveys");
-        _testOutputHelper.WriteLine(appComponent.Markup);
-        surveyTab.Click();
+            Assert.Equal($"http://localhost/team-content/{teamId.ToString()}/surveys", _navManager.Uri));
 
-        //var icon = appComponent.Find("button:has(i)");
-        //icon.Click();
-
+        // When they click on the 3 dots next to a survey (this can't be clicked from the test)
         var downloadButton =
             appComponent.FindElementByCssSelectorAndTextContent("button", "Download responses in .xlsx");
-        downloadButton.Click();
 
+        // Then they should see the button "Download responses in .xlsx"
+        Assert.NotNull(downloadButton);
+        
+        // And when they click on the button
+        downloadButton.Click();
+        
+        //TODO: check if more is needed to download
+        // Then a report should be downloaded
         _handlerMock.Protected().Verify("SendAsync", Times.Once(),
             ItExpr.Is<HttpRequestMessage>(message =>
                 message.Method.Equals(HttpMethod.Get) &&
-                message.RequestUri!.AbsoluteUri.Contains($"/survey/{surveyId}/responses")),
+                message.RequestUri!.AbsoluteUri.Contains(downloadSurveyPath)),
             ItExpr.IsAny<CancellationToken>());
     }
 }

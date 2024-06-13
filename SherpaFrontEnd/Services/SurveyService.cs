@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+using System.Reflection.Metadata;
 using System.Text.Json;
 using SherpaFrontEnd.Dtos;
 using SherpaFrontEnd.Dtos.Survey;
@@ -88,10 +89,7 @@ public class SurveyService : ISurveyService
     public async Task DownloadSurveyResponses(Guid surveyId)
     {
         var client = _httpClientFactory.CreateClient(SherpaBackend);
-
-        var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, $"/survey/{surveyId}/responses");
-
-        var response = await client.SendAsync(httpRequestMessage);
+        var response = await client.GetAsync($"/survey/{surveyId}/responses");
         response.EnsureSuccessStatusCode();
     }
 }
