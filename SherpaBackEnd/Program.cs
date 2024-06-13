@@ -63,6 +63,8 @@ builder.Services.AddSingleton<IEmailTemplateFactory, EmailTemplateFactory>(provi
 builder.Services.AddSingleton<IGuidService, GuidService>();
 builder.Services.AddSingleton<ISurveyNotificationService, SurveyNotificationService>();
 
+builder.Services.AddSingleton<ISurveyResponsesFileService, FakeSurveyResponsesFileService>();
+
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 

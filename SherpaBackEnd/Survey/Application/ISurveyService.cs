@@ -10,4 +10,5 @@ public interface ISurveyService
     public Task<SurveyWithoutQuestions> GetSurveyWithoutQuestionsById(Guid expectedSurveyId);
     public Task<IEnumerable<IQuestion>> GetSurveyQuestionsBySurveyId(Guid expectedSurveyId);
     public Task AnswerSurvey(AnswerSurveyDto answerSurveyDto);
+    public Task<Stream> GetSurveyResponsesFileStream(Guid surveyId);
 }

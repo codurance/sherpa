@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using System.Text;
+using Moq;
 using Shared.Test.Helpers;
 using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Survey.Application;
@@ -314,5 +315,63 @@ public class SurveyServiceTest
         _surveyRepository.Setup(repository => repository.GetSurveyById(survey.Id)).ReturnsAsync(survey);
 
         await Assert.ThrowsAsync<SurveyNotCompleteException>(async () => await _service.AnswerSurvey(answerSurveyDto));
+    }
+
+    [Fact]
+    public async Task ShouldGetSurveyFromRepositoryWhenCallingGetSurveyResponsesFile()
+    {
+        var surveyRepository = new Mock<ISurveyRepository>();
+        var teamRepository = new Mock<ITeamRepository>();
+        var templateRepository = new Mock<ITemplateRepository>();
+        var surveyResponsesFileService = new Mock<ISurveyResponsesFileService>();
+
+        var surveyService =
+            new SurveyService(surveyRepository.Object, teamRepository.Object, templateRepository.Object, surveyResponsesFileService.Object);
+        var surveyId = Guid.NewGuid();
+
+        await surveyService.GetSurveyResponsesFileStream(surveyId);
+
+        surveyRepository.Verify(repository => repository.GetSurveyById(surveyId));
+    }
+
+    [Fact]
+    public async Task ShouldGetSurveyResponsesCsvFromFileGeneratorWhenCallingGetSurveyResponsesFile()
+    {
+        var surveyRepository = new Mock<ISurveyRepository>();
+        var teamRepository = new Mock<ITeamRepository>();
+        var templateRepository = new Mock<ITemplateRepository>();
+        var surveyResponsesFileService = new Mock<ISurveyResponsesFileService>();
+        var surveyService =
+            new SurveyService(surveyRepository.Object, teamRepository.Object, templateRepository.Object, surveyResponsesFileService.Object);
+        var surveyId = Guid.NewGuid();
+        var survey = SurveyBuilder.ASurvey().WithId(surveyId).Build();
+
+        surveyRepository.Setup(repository => repository.GetSurveyById(surveyId)).ReturnsAsync(survey);
+        await surveyService.GetSurveyResponsesFileStream(surveyId);
+        surveyResponsesFileService.Verify(generator => generator.CreateFileStream(survey));
+    }
+
+    [Fact]
+    public async Task ShouldReturnSurveyResponsesFileStreamProvidedByFileGeneratorWhenCallingGetSurveyResponsesFileStream()
+    {
+        var surveyRepository = new Mock<ISurveyRepository>();
+        var teamRepository = new Mock<ITeamRepository>();
+        var templateRepository = new Mock<ITemplateRepository>();
+        var surveyResponsesFileService = new Mock<ISurveyResponsesFileService>();
+        var surveyService =
+            new SurveyService(surveyRepository.Object, teamRepository.Object, templateRepository.Object, surveyResponsesFileService.Object);
+        var surveyId = Guid.NewGuid();
+        var survey = SurveyBuilder.ASurvey().WithId(surveyId).Build();
+        
+        var dummyCsvContent = "Id,Response\n1,Yes\n2,No";
+        var dummyCsvBytes = Encoding.UTF8.GetBytes(dummyCsvContent);
+        var expectedSurveyResponsesFileStream = new MemoryStream(dummyCsvBytes);
+
+        surveyRepository.Setup(repository => repository.GetSurveyById(surveyId)).ReturnsAsync(survey);
+        surveyResponsesFileService.Setup(generator => generator.CreateFileStream(survey)).Returns(expectedSurveyResponsesFileStream);
+
+        var surveyResponsesFile = await surveyService.GetSurveyResponsesFileStream(surveyId);
+        
+        Assert.Equal(expectedSurveyResponsesFileStream, surveyResponsesFile);
     }
 }

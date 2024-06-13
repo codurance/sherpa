@@ -1,4 +1,5 @@
-﻿using SherpaBackEnd.Exceptions;
+﻿using System.Runtime.InteropServices;
+using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Survey.Domain;
 using SherpaBackEnd.Survey.Domain.Exceptions;
 using SherpaBackEnd.Survey.Infrastructure.Http.Dto;
@@ -14,14 +15,16 @@ public class SurveyService : ISurveyService
     private readonly ISurveyRepository _surveyRepository;
     private readonly ITeamRepository _teamRepository;
     private readonly ITemplateRepository _templateRepository;
+    private readonly ISurveyResponsesFileService _surveyResponsesFileService;
     public readonly Guid DefaultUserId = Guid.NewGuid();
 
     public SurveyService(ISurveyRepository surveyRepository, ITeamRepository teamRepository,
-        ITemplateRepository templateRepository)
+        ITemplateRepository templateRepository, [Optional] ISurveyResponsesFileService surveyResponsesFileService)
     {
         _surveyRepository = surveyRepository;
         _teamRepository = teamRepository;
         _templateRepository = templateRepository;
+        _surveyResponsesFileService = surveyResponsesFileService;
     }
 
     public async Task CreateSurvey(CreateSurveyDto createSurveyDto)
@@ -101,5 +104,11 @@ public class SurveyService : ISurveyService
                     throw new ConnectionToRepositoryUnsuccessfulException("Unable to update answered survey");
             }
         }
+    }
+
+    public async Task<Stream> GetSurveyResponsesFileStream(Guid surveyId)
+    {
+        var survey = await _surveyRepository.GetSurveyById(surveyId);
+        return _surveyResponsesFileService.CreateFileStream(survey);
     }
 }

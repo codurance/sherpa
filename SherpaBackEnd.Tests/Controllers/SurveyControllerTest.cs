@@ -1,3 +1,4 @@
+using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -321,9 +322,29 @@ public class SurveyControllerTest
 
         var actionResult = await _controller.AnswerSurvey(answerSurveyDto);
 
-        var objectResult = Assert.IsType<ObjectResult>(actionResult);               
+        var objectResult = Assert.IsType<ObjectResult>(actionResult);
 
         Assert.Equal(StatusCodes.Status400BadRequest, objectResult.StatusCode);
         Assert.Equal(surveyNotCompleteException.Message, objectResult.Value);
+    }
+
+    [Fact]
+    public async Task ShouldReturnSurveyResponsesFileResultWhenCallingGetSurveyResponsesFile()
+    {
+        var surveyService = new Mock<ISurveyService>();
+        var logger = new Mock<ILogger<SurveyController>>();
+        var surveyController = new SurveyController(surveyService.Object, logger.Object);
+        var surveyId = Guid.NewGuid();
+
+        var dummyCsvContent = "Id,Response\n1,Yes\n2,No";
+        var dummyCsvBytes = Encoding.UTF8.GetBytes(dummyCsvContent);
+        var surveyResponsesFileStream = new MemoryStream(dummyCsvBytes);
+        surveyService.Setup(service => service.GetSurveyResponsesFileStream(surveyId))
+            .ReturnsAsync(surveyResponsesFileStream);
+
+        var result = await surveyController.GetSurveyResponsesFile(surveyId);
+        
+        var fileResult = Assert.IsType<FileStreamResult>(result);
+        Assert.Equal(surveyResponsesFileStream, fileResult.FileStream);
     }
 }
