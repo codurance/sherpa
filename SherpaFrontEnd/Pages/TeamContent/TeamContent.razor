@@ -103,7 +103,7 @@
         try
         {
             var surveyResponsesBytes = await SurveyService.DownloadSurveyResponses(survey.Id);
-            await Js.InvokeVoidAsync("downloadFile", $"{survey.Title}-responses.csv", "file/csv", surveyResponsesBytes);
+            await Js.InvokeVoidAsync("downloadFile", $"{survey.Title} responses.csv", "file/csv", surveyResponsesBytes);
         }
         catch (Exception error)
         {

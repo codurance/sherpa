@@ -11,6 +11,7 @@ function downloadFile(filename, contentType, fileData) {
     document.body.appendChild(downloadLink);
     downloadLink.href = downloadUrl;
     downloadLink.target = "_self";
+    downloadLink.download = filename;
     downloadLink.click();
 
     URL.revokeObjectURL(downloadUrl);
