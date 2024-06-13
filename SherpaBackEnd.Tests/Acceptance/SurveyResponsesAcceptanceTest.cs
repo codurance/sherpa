@@ -1,4 +1,5 @@
-﻿using DotNet.Testcontainers.Builders;
+﻿using System.Text;
+using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -29,6 +30,7 @@ public class SurveyResponsesAcceptanceTest: IDisposable
     private readonly ILogger<SurveyController> _logger = new Mock<ILogger<SurveyController>>().Object;
     private IOptions<DatabaseSettings> _databaseSettings;
     private IMongoCollection<BsonDocument> _surveyCollection;
+    private IMongoCollection<BsonDocument> _templateCollection;
     
     private async Task InitializeDbClientAndCollections()
     {
@@ -51,6 +53,9 @@ public class SurveyResponsesAcceptanceTest: IDisposable
         
         _surveyCollection = mongoDatabase.GetCollection<BsonDocument>(
             _databaseSettings.Value.SurveyCollectionName);
+
+        _templateCollection = mongoDatabase.GetCollection<BsonDocument>(
+            _databaseSettings.Value.TemplateCollectionName);
     }
 
     [Fact]
@@ -60,8 +65,22 @@ public class SurveyResponsesAcceptanceTest: IDisposable
         var templateRepository = new MongoTemplateRepository(_databaseSettings);
         var teamRepository = new MongoTeamRepository(_databaseSettings);
         var surveyRepository = new MongoSurveyRepository(_databaseSettings);
-        var surveyService = new SurveyService(surveyRepository, teamRepository, templateRepository);
+        var surveyResponsesFileService = new Mock<ISurveyResponsesFileService>();
+        var surveyService = new SurveyService(surveyRepository, teamRepository, templateRepository, surveyResponsesFileService.Object);
         var surveyController = new SurveyController(surveyService, _logger);
+        
+        var dummyCsvContent = "Id,Response\n1,Yes\n2,No";
+        var dummyCsvBytes = Encoding.UTF8.GetBytes(dummyCsvContent);
+        var memoryStream = new MemoryStream(dummyCsvBytes);
+        
+        var surveyResponsesFile = new FileStreamResult(memoryStream, "text/csv")
+        {
+            FileDownloadName = "survey_responses.csv"
+        };
+        
+        // TODO: use real implementation instead of mock
+        surveyResponsesFileService.Setup(service => service.CreateFile(It.IsAny<Survey.Domain.Survey>()))
+            .Returns(surveyResponsesFile);
 
         IEnumerable<IQuestion> questions = new IQuestion[]
         {
@@ -126,7 +145,17 @@ public class SurveyResponsesAcceptanceTest: IDisposable
             .Build();
         var survey = SurveyBuilder.ASurvey().WithId(Guid.NewGuid()).WithTemplate(template).WithResponses(responses).WithTeam(team).Build();
 
+        await teamRepository.AddTeamAsync(team);
+        await teamRepository.AddTeamMemberToTeamAsync(team.Id, janeTeamMember);
+        await teamRepository.AddTeamMemberToTeamAsync(team.Id, johnTeamMember);
         await surveyRepository.CreateSurvey(survey);
+        
+        await _templateCollection.InsertOneAsync(new BsonDocument
+        {
+            { "name", template.Name },
+            { "minutesToComplete", template.MinutesToComplete },
+            { "questions", new BsonArray(new List<IQuestion>()) } // TODO: insert real questions from template object
+        });
         
 
         // WHEN the coach requests survey responses file
@@ -137,7 +166,7 @@ public class SurveyResponsesAcceptanceTest: IDisposable
         Assert.Equal(StatusCodes.Status200OK, okObjectResult.StatusCode);
         var fileResult = Assert.IsType<FileStreamResult>(okObjectResult.Value);
         Assert.Equal("text/csv",fileResult.ContentType);
-        // TODO: make assertion on File content if possible
+        // TODO: assert on File content
     }
     
     public void Dispose()
