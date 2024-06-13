@@ -85,8 +85,13 @@ public class SurveyService : ISurveyService
             new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
     }
 
-    public Task DownloadSurveyResponses(Guid surveyId)
+    public async Task DownloadSurveyResponses(Guid surveyId)
     {
-        throw new NotImplementedException();
+        var client = _httpClientFactory.CreateClient(SherpaBackend);
+
+        var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, $"/survey/{surveyId}/responses");
+
+        var response = await client.SendAsync(httpRequestMessage);
+        response.EnsureSuccessStatusCode();
     }
 }
