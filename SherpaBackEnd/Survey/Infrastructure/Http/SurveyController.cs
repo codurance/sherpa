@@ -116,7 +116,11 @@ public class SurveyController
     [HttpGet("survey/{surveyId:guid}/responses")]
     public async Task<IActionResult> GetSurveyResponsesFile(Guid surveyId)
     {
-        var surveyResponsesFile = await _surveyService.GetSurveyResponsesFile(surveyId);
+        var surveyResponsesFileStream = await _surveyService.GetSurveyResponsesFileStream(surveyId);
+        var surveyResponsesFile = new FileStreamResult(surveyResponsesFileStream, "text/csv")
+        {
+            FileDownloadName = "survey_responses.csv"
+        };
         return new OkObjectResult(surveyResponsesFile);
     }
 }

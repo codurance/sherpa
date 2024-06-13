@@ -71,16 +71,11 @@ public class SurveyResponsesAcceptanceTest: IDisposable
         
         var dummyCsvContent = "Id,Response\n1,Yes\n2,No";
         var dummyCsvBytes = Encoding.UTF8.GetBytes(dummyCsvContent);
-        var memoryStream = new MemoryStream(dummyCsvBytes);
-        
-        var surveyResponsesFile = new FileStreamResult(memoryStream, "text/csv")
-        {
-            FileDownloadName = "survey_responses.csv"
-        };
+        var surveyResponsesFileStream = new MemoryStream(dummyCsvBytes);
         
         // TODO: use real implementation instead of mock
-        surveyResponsesFileService.Setup(service => service.CreateFile(It.IsAny<Survey.Domain.Survey>()))
-            .Returns(surveyResponsesFile);
+        surveyResponsesFileService.Setup(service => service.CreateFileStream(It.IsAny<Survey.Domain.Survey>()))
+            .Returns(surveyResponsesFileStream);
 
         IEnumerable<IQuestion> questions = new IQuestion[]
         {

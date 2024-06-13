@@ -4,5 +4,5 @@ namespace SherpaBackEnd.Survey.Application;
 
 public interface ISurveyResponsesFileService
 {
-    FileResult CreateFile(Domain.Survey survey);
+    Stream CreateFileStream(Domain.Survey survey);
 }

@@ -329,7 +329,7 @@ public class SurveyControllerTest
     }
 
     [Fact]
-    public async Task ShouldReturnTheSurveyResponsesFileGivenByTheServiceWhenCallingGetSurveyResponsesFile()
+    public async Task ShouldReturnSurveyResponsesFileResultWhenCallingGetSurveyResponsesFile()
     {
         var surveyService = new Mock<ISurveyService>();
         var logger = new Mock<ILogger<SurveyController>>();
@@ -338,13 +338,8 @@ public class SurveyControllerTest
         
         var dummyCsvContent = "Id,Response\n1,Yes\n2,No";
         var dummyCsvBytes = Encoding.UTF8.GetBytes(dummyCsvContent);
-        var memoryStream = new MemoryStream(dummyCsvBytes);
-        
-        var expectedSurveyResponses = new FileStreamResult(memoryStream, "text/csv")
-        {
-            FileDownloadName = "survey_responses.csv"
-        };
-        surveyService.Setup(service => service.GetSurveyResponsesFile(surveyId)).ReturnsAsync(expectedSurveyResponses);
+        var surveyResponsesFileStream = new MemoryStream(dummyCsvBytes);
+        surveyService.Setup(service => service.GetSurveyResponsesFileStream(surveyId)).ReturnsAsync(surveyResponsesFileStream);
         
         var result = await surveyController.GetSurveyResponsesFile(surveyId);
 
@@ -352,6 +347,6 @@ public class SurveyControllerTest
         Assert.Equal(StatusCodes.Status200OK, okObjectResult.StatusCode);
 
         var fileResult = Assert.IsType<FileStreamResult>(okObjectResult.Value);
-        Assert.Equal(expectedSurveyResponses, fileResult);
+        Assert.Equal(surveyResponsesFileStream, fileResult.FileStream);
     }
 }

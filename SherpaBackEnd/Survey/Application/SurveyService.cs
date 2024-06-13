@@ -1,5 +1,4 @@
 ﻿using System.Runtime.InteropServices;
-using Microsoft.AspNetCore.Mvc;
 using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Survey.Domain;
 using SherpaBackEnd.Survey.Domain.Exceptions;
@@ -107,9 +106,9 @@ public class SurveyService : ISurveyService
         }
     }
 
-    public async Task<FileResult> GetSurveyResponsesFile(Guid surveyId)
+    public async Task<Stream> GetSurveyResponsesFileStream(Guid surveyId)
     {
         var survey = await _surveyRepository.GetSurveyById(surveyId);
-        return _surveyResponsesFileService.CreateFile(survey);
+        return _surveyResponsesFileService.CreateFileStream(survey);
     }
 }

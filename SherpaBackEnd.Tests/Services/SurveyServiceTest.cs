@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Shared.Test.Helpers;
 using SherpaBackEnd.Exceptions;
@@ -330,7 +329,7 @@ public class SurveyServiceTest
             new SurveyService(surveyRepository.Object, teamRepository.Object, templateRepository.Object, surveyResponsesFileService.Object);
         var surveyId = Guid.NewGuid();
 
-        await surveyService.GetSurveyResponsesFile(surveyId);
+        await surveyService.GetSurveyResponsesFileStream(surveyId);
 
         surveyRepository.Verify(repository => repository.GetSurveyById(surveyId));
     }
@@ -348,12 +347,12 @@ public class SurveyServiceTest
         var survey = SurveyBuilder.ASurvey().WithId(surveyId).Build();
 
         surveyRepository.Setup(repository => repository.GetSurveyById(surveyId)).ReturnsAsync(survey);
-        await surveyService.GetSurveyResponsesFile(surveyId);
-        surveyResponsesFileService.Verify(generator => generator.CreateFile(survey));
+        await surveyService.GetSurveyResponsesFileStream(surveyId);
+        surveyResponsesFileService.Verify(generator => generator.CreateFileStream(survey));
     }
 
     [Fact]
-    public async Task ShouldReturnSurveyResponsesCsvProvidedByFileGeneratorWhenCallingGetSurveyResponsesFile()
+    public async Task ShouldReturnSurveyResponsesFileStreamProvidedByFileGeneratorWhenCallingGetSurveyResponsesFileStream()
     {
         var surveyRepository = new Mock<ISurveyRepository>();
         var teamRepository = new Mock<ITeamRepository>();
@@ -366,18 +365,13 @@ public class SurveyServiceTest
         
         var dummyCsvContent = "Id,Response\n1,Yes\n2,No";
         var dummyCsvBytes = Encoding.UTF8.GetBytes(dummyCsvContent);
-        var memoryStream = new MemoryStream(dummyCsvBytes);
-        
-        var expectedSurveyResponsesFile = new FileStreamResult(memoryStream, "text/csv")
-        {
-            FileDownloadName = "survey_responses.csv"
-        };
+        var expectedSurveyResponsesFileStream = new MemoryStream(dummyCsvBytes);
 
         surveyRepository.Setup(repository => repository.GetSurveyById(surveyId)).ReturnsAsync(survey);
-        surveyResponsesFileService.Setup(generator => generator.CreateFile(survey)).Returns(expectedSurveyResponsesFile);
+        surveyResponsesFileService.Setup(generator => generator.CreateFileStream(survey)).Returns(expectedSurveyResponsesFileStream);
 
-        var surveyResponsesFile = await surveyService.GetSurveyResponsesFile(surveyId);
+        var surveyResponsesFile = await surveyService.GetSurveyResponsesFileStream(surveyId);
         
-        Assert.Equal(expectedSurveyResponsesFile, surveyResponsesFile);
+        Assert.Equal(expectedSurveyResponsesFileStream, surveyResponsesFile);
     }
 }
