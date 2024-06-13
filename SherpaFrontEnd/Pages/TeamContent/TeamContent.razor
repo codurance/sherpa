@@ -105,8 +105,9 @@
             var surveyResponsesBytes = await SurveyService.DownloadSurveyResponses(survey.Id);
             await Js.InvokeVoidAsync("downloadFile", $"{survey.Title}-responses.csv", "file/csv", surveyResponsesBytes);
         }
-        catch
+        catch (Exception error)
         {
+            Console.WriteLine(error);
             NavigationManager.NavigateTo(NavigationManager.BaseUri + "error");
         }
     }
