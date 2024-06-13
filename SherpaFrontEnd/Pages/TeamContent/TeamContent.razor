@@ -5,6 +5,9 @@
 @using SherpaFrontEnd.Pages.TeamContent.Components
 @inject ITeamDataService TeamDataService
 @inject ISurveyService SurveyService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime Js
+
 
 @page "/team-content/{teamId:guid}/{tab?}"
 
@@ -29,7 +32,7 @@
                         Send new survey
                     </button>
                 </div>
-                <SurveyTable Surveys="Surveys"/>
+                <SurveyTable DownloadSurveyResponses="@DownloadSurveyResponses" Surveys="Surveys" Flags="SurveyFlags ?? new SurveyTableFeatureFlags()"/>
             }
             @if (Surveys != null && Surveys.Count == 0)
             {
@@ -61,6 +64,7 @@
     [Parameter] public Guid TeamId { get; set; }
 
     [Parameter] public string Tab { get; set; }
+    [Parameter] public SurveyTableFeatureFlags? SurveyFlags { get; set; }
 
     public Team? Team { get; set; }
 
@@ -91,6 +95,21 @@
 
         // Re-fetch team
         await FetchTeam();
+    }
+
+
+    private async Task DownloadSurveyResponses(Survey survey)
+    {
+        try
+        {
+            var surveyResponsesBytes = await SurveyService.DownloadSurveyResponses(survey.Id);
+            await Js.InvokeVoidAsync("downloadFile", $"{survey.Title} responses.csv", "file/csv", surveyResponsesBytes);
+        }
+        catch (Exception error)
+        {
+            Console.WriteLine(error);
+            NavigationManager.NavigateTo(NavigationManager.BaseUri + "error");
+        }
     }
 
 }

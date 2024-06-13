@@ -305,4 +305,26 @@ public class SurveyServiceTest
 
         Assert.Equal(surveyNotification, receivedSurveyNotification);
     }
+
+    [Fact]
+    public async Task ShouldDownloadSurveyResponsesById()
+    {
+        var surveyId = Guid.NewGuid();
+        var surveyService = new SurveyService(_httpClientFactory.Object);
+
+        var path = $"survey/{surveyId}/responses";
+        var downloadSurveyResponse = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.OK,
+        };
+        _handlerMock.SetupRequest(HttpMethod.Get, path, downloadSurveyResponse);
+
+        await surveyService.DownloadSurveyResponses(surveyId);
+
+        _handlerMock.Protected().Verify("SendAsync", Times.Once(),
+            ItExpr.Is<HttpRequestMessage>(message =>
+                message.Method.Equals(HttpMethod.Get) &&
+                message.RequestUri!.AbsoluteUri.Contains(path)),
+            ItExpr.IsAny<CancellationToken>());
+    }
 }
