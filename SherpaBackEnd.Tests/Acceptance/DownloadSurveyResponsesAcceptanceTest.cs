@@ -21,7 +21,7 @@ using SherpaBackEnd.Tests.Builders;
 
 namespace SherpaBackEnd.Tests.Acceptance;
 
-public class SurveyResponsesAcceptanceTest: IDisposable
+public class DownloadSurveyResponsesAcceptanceTest: IDisposable
 {
     private readonly IContainer _mongoDbContainer = new ContainerBuilder()
         .WithImage("mongodb/mongodb-community-server:latest")
