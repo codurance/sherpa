@@ -21,6 +21,11 @@ public class HackmanQuestion : IQuestion
         Subcomponent = subcomponent;
         Position = position;
     }
+    
+    public int GetPosition()
+    {
+        return Position;
+    }
 }
 
 public static class Languages
