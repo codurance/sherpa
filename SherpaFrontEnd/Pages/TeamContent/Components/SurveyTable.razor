@@ -91,7 +91,7 @@
                         </button>
                         <ul class="dropdown-menu py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="@survey.Id">
                             <li>
-                                <button @onclick="() => DownloadSurveyResponses.InvokeAsync(survey.Id)" class="dropdown-item block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white flex items-center gap-2">
+                                <button @onclick="() => DownloadSurveyResponses.InvokeAsync(survey)" class="dropdown-item block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white flex items-center gap-2">
                                     <i class="las la-download text-xl"></i>
                                     Download responses in .xlsx
                                 </button>
@@ -109,7 +109,7 @@
 @code {
     [Parameter] public List<Survey> Surveys { get; set; }
     [Parameter] public SurveyTableFeatureFlags Flags { get; set; }
-    [Parameter] public EventCallback<Guid> DownloadSurveyResponses { get; set; }
+    [Parameter] public EventCallback<Survey> DownloadSurveyResponses { get; set; }
     private readonly bool _showCoach = false;
     private readonly bool _showParticipants = false;
     private readonly bool _showStatus = false;

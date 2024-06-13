@@ -36,7 +36,6 @@ public class TeamContentTest
         _testContext.Services.AddSingleton<ISurveyService>(_mockSurveyService.Object);
         _testContext.Services.AddSingleton<IGuidService>(_mockGuidService.Object);
         _navManager = _testContext.Services.GetRequiredService<FakeNavigationManager>();
-
     }
 
     [Fact]
@@ -341,6 +340,7 @@ public class TeamContentTest
             teamContent.FindElementByCssSelectorAndTextContent("button", "Download responses in .xlsx");
         downloadResponsesButton.Click();
 
+        _testContext.JSInterop.VerifyInvoke("downloadFile", 1);
         _mockSurveyService.Verify(service => service.DownloadSurveyResponses(surveyId));
     }
 

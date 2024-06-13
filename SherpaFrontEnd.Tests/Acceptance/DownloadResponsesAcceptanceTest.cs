@@ -1,10 +1,12 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Security.Claims;
+using System.Text;
 using Blazored.Modal;
 using Bunit;
 using Bunit.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.JSInterop;
 using Moq;
 using Moq.Protected;
 using SherpaFrontEnd;
@@ -59,9 +61,10 @@ public class DownloadResponsesAcceptanceTest
         _handlerMock.SetupRequest(HttpMethod.Get, $"/team/{teamId}", teamResponse);
 
         var surveyId = Guid.NewGuid();
+        var surveyTitle = "title";
         var surveys = new List<Survey>()
         {
-            new Survey(surveyId, new User(Guid.NewGuid(), "Lucia"), Status.Draft, new DateTime(), "title",
+            new Survey(surveyId, new User(Guid.NewGuid(), "Lucia"), Status.Draft, new DateTime(), surveyTitle,
                 "Description", Array.Empty<Response>(), null, new Template("Hackman"))
         };
         var surveyJson = await JsonContent.Create(surveys).ReadAsStringAsync();
@@ -73,9 +76,12 @@ public class DownloadResponsesAcceptanceTest
         _handlerMock.SetupRequest(HttpMethod.Get, $"/team/{teamId}/surveys", surveyResponse);
 
         var downloadSurveyPath = $"survey/{surveyId}/responses";
+        var csvText = "Responses,1,2,3";
+        var fileBytes = Encoding.UTF8.GetBytes(csvText);
         var downloadSurveyResponse = new HttpResponseMessage()
         {
             StatusCode = HttpStatusCode.OK,
+            Content = new ByteArrayContent(fileBytes)
         };
         _handlerMock.SetupRequest(HttpMethod.Get, downloadSurveyPath, downloadSurveyResponse);
 
@@ -99,6 +105,8 @@ public class DownloadResponsesAcceptanceTest
 
         //TODO: check if more is needed to download
         // Then a report should be downloaded
+        _testCtx.JSInterop.VerifyInvoke("downloadFile", 1);
+
         _handlerMock.Protected().Verify("SendAsync", Times.Once(),
             ItExpr.Is<HttpRequestMessage>(message =>
                 message.Method.Equals(HttpMethod.Get) &&

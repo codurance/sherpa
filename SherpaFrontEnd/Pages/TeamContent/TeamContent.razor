@@ -6,6 +6,7 @@
 @inject ITeamDataService TeamDataService
 @inject ISurveyService SurveyService
 @inject NavigationManager NavigationManager
+@inject IJSRuntime Js
 
 
 @page "/team-content/{teamId:guid}/{tab?}"
@@ -97,11 +98,12 @@
     }
 
 
-    private async Task DownloadSurveyResponses(Guid surveyId)
+    private async Task DownloadSurveyResponses(Survey survey)
     {
         try
         {
-            await SurveyService.DownloadSurveyResponses(surveyId);
+            var surveyResponsesBytes = await SurveyService.DownloadSurveyResponses(survey.Id);
+            await Js.InvokeVoidAsync("downloadFile", $"{survey.Title}-responses.csv", "file/csv", surveyResponsesBytes);
         }
         catch
         {

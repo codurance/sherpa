@@ -86,10 +86,12 @@ public class SurveyService : ISurveyService
             new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
     }
 
-    public async Task DownloadSurveyResponses(Guid surveyId)
+    public async Task<byte[]> DownloadSurveyResponses(Guid surveyId)
     {
         var client = _httpClientFactory.CreateClient(SherpaBackend);
         var response = await client.GetAsync($"/survey/{surveyId}/responses");
         response.EnsureSuccessStatusCode();
+
+        return await response.Content.ReadAsByteArrayAsync();
     }
 }

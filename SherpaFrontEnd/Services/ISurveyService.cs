@@ -15,5 +15,5 @@ public interface ISurveyService
     public Task SubmitSurveyResponse(AnswerSurveyDto answerSurveyDto);
     public Task LaunchSurvey(Guid surveyId);
     public Task<SurveyNotification?> GetSurveyNotificationById(Guid surveyNotificationId);
-    public Task DownloadSurveyResponses(Guid surveyId);
+    public Task<byte[]> DownloadSurveyResponses(Guid surveyId);
 }
