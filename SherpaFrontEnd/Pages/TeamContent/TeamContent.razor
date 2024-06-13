@@ -29,7 +29,7 @@
                         Send new survey
                     </button>
                 </div>
-                <SurveyTable Surveys="Surveys" Flags="SurveyFlags ?? new SurveyTableFeatureFlags()"/>
+                <SurveyTable DownloadSurveyResponses="@DownloadSurveyResponses" Surveys="Surveys" Flags="SurveyFlags ?? new SurveyTableFeatureFlags()"/>
             }
             @if (Surveys != null && Surveys.Count == 0)
             {
@@ -92,6 +92,12 @@
 
         // Re-fetch team
         await FetchTeam();
+    }
+
+
+    private async Task DownloadSurveyResponses(Guid surveyId)
+    {
+        await SurveyService.DownloadSurveyResponses(surveyId);
     }
 
 }

@@ -84,4 +84,9 @@ public class SurveyService : ISurveyService
         return JsonSerializer.Deserialize<SurveyNotification>(responseString,
             new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
     }
+
+    public Task DownloadSurveyResponses(Guid surveyId)
+    {
+        throw new NotImplementedException();
+    }
 }
