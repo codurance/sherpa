@@ -110,8 +110,6 @@ public class SurveyService : ISurveyService
     public async Task<FileResult> GetSurveyResponsesFile(Guid surveyId)
     {
         var survey = await _surveyRepository.GetSurveyById(surveyId);
-        _surveyResponsesFileCreate.CreateFile(survey);
-
-        return null;
+        return _surveyResponsesFileCreate.CreateFile(survey);
     }
 }

@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.Mvc;
+
 namespace SherpaBackEnd.Survey.Application;
 
 public interface ISurveyResponsesFileCreate
 {
-    void CreateFile(Domain.Survey survey);
+    FileResult CreateFile(Domain.Survey survey);
 }

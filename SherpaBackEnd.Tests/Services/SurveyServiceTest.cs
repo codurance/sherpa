@@ -1,4 +1,6 @@
-﻿using Moq;
+﻿using System.Text;
+using Microsoft.AspNetCore.Mvc;
+using Moq;
 using Shared.Test.Helpers;
 using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Survey.Application;
@@ -348,5 +350,34 @@ public class SurveyServiceTest
         surveyRepository.Setup(repository => repository.GetSurveyById(surveyId)).ReturnsAsync(survey);
         await surveyService.GetSurveyResponsesFile(surveyId);
         surveyResponseCsvGenerator.Verify(generator => generator.CreateFile(survey));
+    }
+
+    [Fact]
+    public async Task ShouldReturnSurveyResponsesCsvProvidedByFileGeneratorWhenCallingGetSurveyResponsesFile()
+    {
+        var surveyRepository = new Mock<ISurveyRepository>();
+        var teamRepository = new Mock<ITeamRepository>();
+        var templateRepository = new Mock<ITemplateRepository>();
+        var surveyResponseCsvGenerator = new Mock<ISurveyResponsesFileCreate>();
+        var surveyService =
+            new SurveyService(surveyRepository.Object, teamRepository.Object, templateRepository.Object, surveyResponseCsvGenerator.Object);
+        var surveyId = Guid.NewGuid();
+        var survey = SurveyBuilder.ASurvey().WithId(surveyId).Build();
+        
+        var dummyCsvContent = "Id,Response\n1,Yes\n2,No";
+        var dummyCsvBytes = Encoding.UTF8.GetBytes(dummyCsvContent);
+        var memoryStream = new MemoryStream(dummyCsvBytes);
+        
+        var expectedSurveyResponsesFile = new FileStreamResult(memoryStream, "text/csv")
+        {
+            FileDownloadName = "survey_responses.csv"
+        };
+
+        surveyRepository.Setup(repository => repository.GetSurveyById(surveyId)).ReturnsAsync(survey);
+        surveyResponseCsvGenerator.Setup(generator => generator.CreateFile(survey)).Returns(expectedSurveyResponsesFile);
+
+        var surveyResponsesFile = await surveyService.GetSurveyResponsesFile(surveyId);
+        
+        Assert.Equal(expectedSurveyResponsesFile, surveyResponsesFile);
     }
 }
