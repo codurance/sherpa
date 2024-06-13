@@ -162,7 +162,8 @@ public class TeamContentTest
 
         _mockTeamService.Setup(m => m.GetTeamById(It.IsAny<Guid>())).ReturnsAsync(team);
         var teamContentComponent =
-            _testContext.RenderComponent<TeamContent>(ComponentParameter.CreateParameter("TeamId", teamId));
+            _testContext.RenderComponent<TeamContent>(ComponentParameter.CreateParameter("TeamId", teamId),
+                ComponentParameter.CreateParameter("SurveyFlags", new SurveyTableFeatureFlags(true, true, true)));
 
         var surveyTabPage = teamContentComponent.FindElementByCssSelectorAndTextContent("a:not(a[href])", "Surveys");
         Assert.NotNull(surveyTabPage);
@@ -211,7 +212,9 @@ public class TeamContentTest
         };
 
         var surveyTableComponent =
-            _testContext.RenderComponent<SurveyTable>(ComponentParameter.CreateParameter("Surveys", testSurvey));
+            _testContext.RenderComponent<SurveyTable>(
+                ComponentParameter.CreateParameter("Surveys", testSurvey), ComponentParameter.CreateParameter("Flags",
+                    new SurveyTableFeatureFlags(true, true, true)));
 
         var rows = surveyTableComponent.FindAll("tr.bg-white");
         Assert.Equal(testSurvey.Count, rows.Count);
@@ -320,7 +323,8 @@ public class TeamContentTest
 
         var surveyTableComponent =
             _testContext.RenderComponent<TeamContent>(ComponentParameter.CreateParameter("TeamId", teamId),
-                ComponentParameter.CreateParameter("Tab", "Surveys"));
+                ComponentParameter.CreateParameter("Tab", "Surveys"),
+                ComponentParameter.CreateParameter("SurveyFlags", new SurveyTableFeatureFlags(true, true, true)));
 
         var rows = surveyTableComponent.FindAll("tr.bg-white");
         Assert.Equal(testSurveys.Count, rows.Count);

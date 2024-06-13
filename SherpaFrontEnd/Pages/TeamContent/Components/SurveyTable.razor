@@ -1,5 +1,4 @@
 @using SherpaFrontEnd.Dtos.Survey
-@inject IJSRuntime Js
 <div class="relative overflow-x-auto shadow-md sm:rounded-lg gap-2.5" style="margin: 0 1cm">
     <table class="w-full text-sm text-left text-gray-900">
         <thead class="text-xs primary-dark-800 bg-gray-100">
@@ -10,18 +9,27 @@
             <th scope="col" class="px-6 py-3">
                 Template
             </th>
-            <th scope="col" class="px-6 py-3">
-                Coach
-            </th>
+            @if (Flags.ShowCoach)
+            {
+                <th scope="col" class="px-6 py-3">
+                    Coach
+                </th>
+            }
             <th scope="col" class="px-6 py-3">
                 Deadline
             </th>
-            <th scope="col" class="px-6 py-3">
-                Participants
-            </th>
-            <th scope="col" class="px-6 py-3">
-                Status
-            </th>
+            @if (Flags.ShowParticipants)
+            {
+                <th scope="col" class="px-6 py-3">
+                    Participants
+                </th>
+            }
+            @if (Flags.ShowCoach)
+            {
+                <th scope="col" class="px-6 py-3">
+                    Status
+                </th>
+            }
             <th scope="col" class="px-6 py-3">
             </th>
         </tr>
@@ -38,12 +46,15 @@
                 <td class="px-6 py-4">
                     @survey.Template.Name
                 </td>
-                <th scope="row" class="flex items-center px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                    <img class="w-10 h-10 rounded-full" src="https://images.squarespace-cdn.com/content/v1/5dc8c552827e992c23db627c/1621993751451-EBKN1QNNFWPKHEFQU4GU/Minions_Galerie3.jpg" alt="Jese image">
-                    <div class="pl-3">
-                        <div class="font-normal text-gray-500">@survey.Coach.Name Gismondi</div>
-                    </div>
-                </th>
+                @if (Flags.ShowCoach)
+                {
+                    <td class="flex items-center px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                        <img class="w-10 h-10 rounded-full" src="https://images.squarespace-cdn.com/content/v1/5dc8c552827e992c23db627c/1621993751451-EBKN1QNNFWPKHEFQU4GU/Minions_Galerie3.jpg" alt="Jese image">
+                        <div class="pl-3">
+                            <div class="font-normal text-gray-500">@survey.Coach.Name Gismondi</div>
+                        </div>
+                    </td>
+                }
                 <td class="px-6 py-4">
                     <div class="flex items-center">
                         @if (@survey.Deadline == null)
@@ -56,17 +67,23 @@
                         }
                     </div>
                 </td>
-                <td class="px-6 py-4">
-                    <div class="flex items-center">
-                        TODO
-                    </div>
-                </td>
-                <td class="px-6 py-4">
-                    <div class="flex items-center">
-                        <div class="h-2.5 w-2.5 rounded-full bg-gray-300 mr-2"></div>
-                        @survey.Status
-                    </div>
-                </td>
+                @if (Flags.ShowParticipants)
+                {
+                    <td class="px-6 py-4">
+                        <div class="flex items-center">
+                            TODO
+                        </div>
+                    </td>
+                }
+                @if (Flags.ShowStatus)
+                {
+                    <td class="px-6 py-4">
+                        <div class="flex items-center">
+                            <div class="h-2.5 w-2.5 rounded-full bg-gray-300 mr-2"></div>
+                            @survey.Status
+                        </div>
+                    </td>
+                }
                 <td class="px-6 py-4 text-right">
                     <div class="dropdown">
                         <button class="p-0.5 text-2xl font-medium" type="button" id="@survey.Id" data-bs-toggle="dropdown" aria-expanded="false">
@@ -88,6 +105,10 @@
 
 @code {
     [Parameter] public List<Survey> Surveys { get; set; }
+    [Parameter] public SurveyTableFeatureFlags Flags { get; set; }
+    private readonly bool _showCoach = false;
+    private readonly bool _showParticipants = false;
+    private readonly bool _showStatus = false;
 
     private void DownloadResponses(Guid surveyId)
     {
