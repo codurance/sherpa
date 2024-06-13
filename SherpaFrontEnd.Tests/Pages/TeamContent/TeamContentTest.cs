@@ -337,7 +337,7 @@ public class TeamContentTest
                 ComponentParameter.CreateParameter("SurveyFlags", new SurveyTableFeatureFlags(true, true, true)));
 
         var downloadResponsesButton =
-            teamContent.FindElementByCssSelectorAndTextContent("button", "Download responses in .xlsx");
+            teamContent.FindElementByCssSelectorAndTextContent("button", "Download all responses");
         downloadResponsesButton.Click();
 
         _testContext.JSInterop.VerifyInvoke("downloadFile", 1);
@@ -380,7 +380,7 @@ public class TeamContentTest
                 ComponentParameter.CreateParameter("SurveyFlags", new SurveyTableFeatureFlags(true, true, true)));
 
         var downloadResponsesButton =
-            teamContent.FindElementByCssSelectorAndTextContent("button", "Download responses in .xlsx");
+            teamContent.FindElementByCssSelectorAndTextContent("button", "Download all responses");
         downloadResponsesButton.Click();
 
         teamContent.WaitForAssertion(() => Assert.Equal("http://localhost/error", _navManager.Uri));

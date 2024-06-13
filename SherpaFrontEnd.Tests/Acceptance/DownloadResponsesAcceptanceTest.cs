@@ -95,7 +95,7 @@ public class DownloadResponsesAcceptanceTest
 
         // When they click on the 3 dots next to a survey (this can't be clicked from the test)
         var downloadButton =
-            appComponent.FindElementByCssSelectorAndTextContent("button", "Download responses in .xlsx");
+            appComponent.FindElementByCssSelectorAndTextContent("button", "Download all responses");
 
         // Then they should see the button "Download responses in .xlsx"
         Assert.NotNull(downloadButton);
@@ -156,7 +156,7 @@ public class DownloadResponsesAcceptanceTest
             Assert.Equal($"http://localhost/team-content/{teamId.ToString()}/surveys", _navManager.Uri));
 
         var downloadButton =
-            appComponent.FindElementByCssSelectorAndTextContent("button", "Download responses in .xlsx");
+            appComponent.FindElementByCssSelectorAndTextContent("button", "Download all responses");
 
         downloadButton.Click();
 
