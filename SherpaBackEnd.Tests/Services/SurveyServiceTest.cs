@@ -324,10 +324,10 @@ public class SurveyServiceTest
         var surveyRepository = new Mock<ISurveyRepository>();
         var teamRepository = new Mock<ITeamRepository>();
         var templateRepository = new Mock<ITemplateRepository>();
-        var surveyResponseCsvGenerator = new Mock<ISurveyResponsesFileCreate>();
+        var surveyResponsesFileService = new Mock<ISurveyResponsesFileService>();
 
         var surveyService =
-            new SurveyService(surveyRepository.Object, teamRepository.Object, templateRepository.Object, surveyResponseCsvGenerator.Object);
+            new SurveyService(surveyRepository.Object, teamRepository.Object, templateRepository.Object, surveyResponsesFileService.Object);
         var surveyId = Guid.NewGuid();
 
         await surveyService.GetSurveyResponsesFile(surveyId);
@@ -341,15 +341,15 @@ public class SurveyServiceTest
         var surveyRepository = new Mock<ISurveyRepository>();
         var teamRepository = new Mock<ITeamRepository>();
         var templateRepository = new Mock<ITemplateRepository>();
-        var surveyResponseCsvGenerator = new Mock<ISurveyResponsesFileCreate>();
+        var surveyResponsesFileService = new Mock<ISurveyResponsesFileService>();
         var surveyService =
-            new SurveyService(surveyRepository.Object, teamRepository.Object, templateRepository.Object, surveyResponseCsvGenerator.Object);
+            new SurveyService(surveyRepository.Object, teamRepository.Object, templateRepository.Object, surveyResponsesFileService.Object);
         var surveyId = Guid.NewGuid();
         var survey = SurveyBuilder.ASurvey().WithId(surveyId).Build();
 
         surveyRepository.Setup(repository => repository.GetSurveyById(surveyId)).ReturnsAsync(survey);
         await surveyService.GetSurveyResponsesFile(surveyId);
-        surveyResponseCsvGenerator.Verify(generator => generator.CreateFile(survey));
+        surveyResponsesFileService.Verify(generator => generator.CreateFile(survey));
     }
 
     [Fact]
@@ -358,9 +358,9 @@ public class SurveyServiceTest
         var surveyRepository = new Mock<ISurveyRepository>();
         var teamRepository = new Mock<ITeamRepository>();
         var templateRepository = new Mock<ITemplateRepository>();
-        var surveyResponseCsvGenerator = new Mock<ISurveyResponsesFileCreate>();
+        var surveyResponsesFileService = new Mock<ISurveyResponsesFileService>();
         var surveyService =
-            new SurveyService(surveyRepository.Object, teamRepository.Object, templateRepository.Object, surveyResponseCsvGenerator.Object);
+            new SurveyService(surveyRepository.Object, teamRepository.Object, templateRepository.Object, surveyResponsesFileService.Object);
         var surveyId = Guid.NewGuid();
         var survey = SurveyBuilder.ASurvey().WithId(surveyId).Build();
         
@@ -374,7 +374,7 @@ public class SurveyServiceTest
         };
 
         surveyRepository.Setup(repository => repository.GetSurveyById(surveyId)).ReturnsAsync(survey);
-        surveyResponseCsvGenerator.Setup(generator => generator.CreateFile(survey)).Returns(expectedSurveyResponsesFile);
+        surveyResponsesFileService.Setup(generator => generator.CreateFile(survey)).Returns(expectedSurveyResponsesFile);
 
         var surveyResponsesFile = await surveyService.GetSurveyResponsesFile(surveyId);
         

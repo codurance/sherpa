@@ -16,16 +16,16 @@ public class SurveyService : ISurveyService
     private readonly ISurveyRepository _surveyRepository;
     private readonly ITeamRepository _teamRepository;
     private readonly ITemplateRepository _templateRepository;
-    private readonly ISurveyResponsesFileCreate _surveyResponsesFileCreate;
+    private readonly ISurveyResponsesFileService _surveyResponsesFileService;
     public readonly Guid DefaultUserId = Guid.NewGuid();
 
     public SurveyService(ISurveyRepository surveyRepository, ITeamRepository teamRepository,
-        ITemplateRepository templateRepository, [Optional] ISurveyResponsesFileCreate surveyResponsesFileCreate)
+        ITemplateRepository templateRepository, [Optional] ISurveyResponsesFileService surveyResponsesFileService)
     {
         _surveyRepository = surveyRepository;
         _teamRepository = teamRepository;
         _templateRepository = templateRepository;
-        _surveyResponsesFileCreate = surveyResponsesFileCreate;
+        _surveyResponsesFileService = surveyResponsesFileService;
     }
 
     public async Task CreateSurvey(CreateSurveyDto createSurveyDto)
@@ -110,6 +110,6 @@ public class SurveyService : ISurveyService
     public async Task<FileResult> GetSurveyResponsesFile(Guid surveyId)
     {
         var survey = await _surveyRepository.GetSurveyById(surveyId);
-        return _surveyResponsesFileCreate.CreateFile(survey);
+        return _surveyResponsesFileService.CreateFile(survey);
     }
 }
