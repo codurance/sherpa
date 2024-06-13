@@ -6,6 +6,7 @@ using Bunit;
 using Bunit.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
+using Moq.Protected;
 using SherpaFrontEnd;
 using SherpaFrontEnd.Dtos.Survey;
 using SherpaFrontEnd.Dtos.Team;
@@ -45,7 +46,7 @@ public class DownloadResponsesAcceptanceTest
     }
 
     [Fact]
-    public async Task UserShouldBeAbleToClickOnDownloadResponsesButton()
+    public async Task UserShouldBeAbleToClickOnDownloadResponsesButtonAndSendDownloadRequest()
     {
         var teamId = Guid.NewGuid();
         var request = new HttpRequestMessage(HttpMethod.Get, $"/team/{teamId}");
@@ -58,9 +59,10 @@ public class DownloadResponsesAcceptanceTest
         };
         _handlerMock.SetupRequest(HttpMethod.Get, $"/team/{teamId}", teamResponse);
 
+        var surveyId = Guid.NewGuid();
         var surveys = new List<Survey>()
         {
-            new Survey(Guid.NewGuid(), new User(Guid.NewGuid(), "Lucia"), Status.Draft, new DateTime(), "title",
+            new Survey(surveyId, new User(Guid.NewGuid(), "Lucia"), Status.Draft, new DateTime(), "title",
                 "Description", Array.Empty<Response>(), null, new Template("Hackman"))
         };
         var surveyJson = await JsonContent.Create(surveys).ReadAsStringAsync();
@@ -86,7 +88,11 @@ public class DownloadResponsesAcceptanceTest
         var downloadButton =
             appComponent.FindElementByCssSelectorAndTextContent("button", "Download responses in .xlsx");
         downloadButton.Click();
-        
-        
+
+        _handlerMock.Protected().Verify("SendAsync", Times.Once(),
+            ItExpr.Is<HttpRequestMessage>(message =>
+                message.Method.Equals(HttpMethod.Get) &&
+                message.RequestUri!.AbsoluteUri.Contains($"/survey/{surveyId}/responses")),
+            ItExpr.IsAny<CancellationToken>());
     }
 }
