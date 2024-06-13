@@ -86,5 +86,7 @@ public class DownloadResponsesAcceptanceTest
         var downloadButton =
             appComponent.FindElementByCssSelectorAndTextContent("button", "Download responses in .xlsx");
         downloadButton.Click();
+        
+        
     }
 }

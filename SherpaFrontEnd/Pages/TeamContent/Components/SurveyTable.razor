@@ -91,7 +91,10 @@
                         </button>
                         <ul class="dropdown-menu py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="@survey.Id">
                             <li>
-                                <button @onclick="() => DownloadResponses(survey.Id)" class="dropdown-item block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Download responses in .xlsx</button>
+                                <button @onclick="() => DownloadResponses(survey.Id)" class="dropdown-item block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white flex items-center gap-2">
+                                    <i class="las la-download text-xl"></i>
+                                    Download responses in .xlsx
+                                </button>
                             </li>
                         </ul>
                     </div>
