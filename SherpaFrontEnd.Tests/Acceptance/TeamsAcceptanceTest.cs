@@ -109,7 +109,7 @@ public class TeamsAcceptanceTest
         Assert.NotNull(createTeamButton);
 
         var teamNameElement =
-            appComponent.FindElementByCssSelectorAndTextContent("h5", teamName);
+            appComponent.FindElementByCssSelectorAndTextContent("h2", teamName);
         Assert.NotNull(teamNameElement);
     }
 
@@ -348,7 +348,7 @@ public class TeamsAcceptanceTest
         // and he can click on this team
 
         var existingTeamNameElement =
-            appComponent.FindElementByCssSelectorAndTextContent("h5", teamName);
+            appComponent.FindElementByCssSelectorAndTextContent("h2", teamName);
         Assert.NotNull(existingTeamNameElement);
 
         existingTeamNameElement.Click();

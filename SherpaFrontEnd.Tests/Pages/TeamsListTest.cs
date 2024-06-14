@@ -76,7 +76,7 @@ public class TeamListTest
             .ReturnsAsync(new List<Team>() { new Team(Guid.NewGuid(), teamName) });
         var page = _testContext.RenderComponent<TeamsList>();
 
-        var teamNameElement = page.FindElementByCssSelectorAndTextContent("h5", teamName);
+        var teamNameElement = page.FindElementByCssSelectorAndTextContent("h2", teamName);
         Assert.NotNull(teamNameElement);
     }
 
@@ -109,7 +109,7 @@ public class TeamListTest
         _mockTeamService.Setup(m => m.GetTeamById(teamId)).ReturnsAsync(newTeam);
         var page = _testContext.RenderComponent<TeamsList>();
         
-        var existingTeamNameElement = page.FindElementByCssSelectorAndTextContent("h5", teamName);
+        var existingTeamNameElement = page.FindElementByCssSelectorAndTextContent("h2", teamName);
         Assert.NotNull(existingTeamNameElement);
         
         existingTeamNameElement.Click();
