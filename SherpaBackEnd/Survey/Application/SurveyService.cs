@@ -103,8 +103,16 @@ public class SurveyService : ISurveyService
 
     private async Task<Domain.Survey?> GetSurveyById(Guid surveyId)
     {
-        var survey = await _surveyRepository.GetSurveyById(surveyId);
-
+        Domain.Survey survey;
+        try
+        {
+            survey = await _surveyRepository.GetSurveyById(surveyId);
+        }
+        catch (Exception e)
+        {
+            throw new ConnectionToRepositoryUnsuccessfulException("Unable to retrieve survey from database", e);
+        }
+        
         if (survey == null)
         {
             throw new NotFoundException("Survey not found");

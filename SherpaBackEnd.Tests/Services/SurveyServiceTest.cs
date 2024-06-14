@@ -382,4 +382,18 @@ public class SurveyServiceTest
 
         Assert.Equal(expectedSurveyResponsesFileStream, surveyResponsesFile);
     }
+
+    [Fact]
+    public async Task ShouldThrowErrorWhenGetSurveyByIdIsUnsuccessful()
+    {
+        Guid surveyId = Guid.NewGuid();
+        _surveyRepository.Setup(repository => repository.GetSurveyById(surveyId)).ThrowsAsync(new Exception());
+        _service.GetSurveyResponsesFileStream(surveyId);
+
+        var thrownException =
+            await Assert.ThrowsAsync<ConnectionToRepositoryUnsuccessfulException>(async () =>
+                await _service.GetSurveyResponsesFileStream(surveyId));
+        
+        Assert.IsType<ConnectionToRepositoryUnsuccessfulException>(thrownException);
+    }
 }
