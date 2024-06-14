@@ -359,7 +359,7 @@ public class SurveyControllerTest
 
         var objectResult = Assert.IsType<ObjectResult>(actionResult);
 
-        Assert.Equal(StatusCodes.Status400BadRequest, objectResult.StatusCode);
+        Assert.Equal(StatusCodes.Status404NotFound, objectResult.StatusCode);
         Assert.Equal(notFoundException.Message, objectResult.Value);
     }
 }

@@ -129,7 +129,7 @@ public class SurveyController
             Console.WriteLine(exception);
             return new ObjectResult(exception)
             {
-                StatusCode = StatusCodes.Status400BadRequest, Value = exception.Message
+                StatusCode = StatusCodes.Status404NotFound, Value = exception.Message
             };
         }
 
