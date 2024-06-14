@@ -85,6 +85,7 @@ public class SurveyService : ISurveyService
         {
             switch (e)
             {
+                case NotFoundException:
                 case SurveyAlreadyAnsweredException:
                 case SurveyNotAssignedToTeamMemberException:
                 case SurveyNotCompleteException:

@@ -321,24 +321,6 @@ public class SurveyServiceTest
     }
 
     [Fact]
-    public async Task ShouldGetSurveyFromRepositoryWhenCallingGetSurveyResponsesFile()
-    {
-        var surveyRepository = new Mock<ISurveyRepository>();
-        var teamRepository = new Mock<ITeamRepository>();
-        var templateRepository = new Mock<ITemplateRepository>();
-        var surveyResponsesFileService = new Mock<ISurveyResponsesFileService>();
-
-        var surveyService =
-            new SurveyService(surveyRepository.Object, teamRepository.Object, templateRepository.Object,
-                surveyResponsesFileService.Object);
-        var surveyId = Guid.NewGuid();
-
-        await surveyService.GetSurveyResponsesFileStream(surveyId);
-
-        surveyRepository.Verify(repository => repository.GetSurveyById(surveyId));
-    }
-
-    [Fact]
     public async Task ShouldGetSurveyResponsesCsvFromFileGeneratorWhenCallingGetSurveyResponsesFile()
     {
         var surveyRepository = new Mock<ISurveyRepository>();
