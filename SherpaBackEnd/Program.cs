@@ -37,16 +37,16 @@ builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddSingleton<ITeamRepository, MongoTeamRepository>();
-builder.Services.AddSingleton<ITeamService, TeamService>();
-builder.Services.AddSingleton<ITeamMemberService, TeamMemberService>();
+builder.Services.AddScoped<ITeamService, TeamService>();
+builder.Services.AddScoped<ITeamMemberService, TeamMemberService>();
 
 builder.Services.AddSingleton<ITemplateRepository, MongoTemplateRepository>();
-builder.Services.AddSingleton<ITemplateService, TemplateService>();
+builder.Services.AddScoped<ITemplateService, TemplateService>();
 
 builder.Services.AddSingleton<ISurveyRepository, MongoSurveyRepository>();
-builder.Services.AddSingleton<ISurveyService, SurveyService>();
+builder.Services.AddScoped<ISurveyService, SurveyService>();
 
-builder.Services.AddSingleton<IEmailService, SesEmailService>(provider =>
+builder.Services.AddScoped<IEmailService, SesEmailService>(provider =>
 {
     RegionEndpoint clientConfig = builder.Environment.IsDevelopment()? RegionEndpoint.EUCentral1 : RegionEndpoint.EUWest1;
     string defaultEmail = builder.Environment.IsDevelopment()? "paula.masutier@codurance.com" : "sherpa@codurance.com";
@@ -59,11 +59,11 @@ builder.Services.AddSingleton<IEmailService, SesEmailService>(provider =>
 });
 
 builder.Services.AddSingleton<ISurveyNotificationsRepository, MongoSurveyNotificationRepository>();
-builder.Services.AddSingleton<IEmailTemplateFactory, EmailTemplateFactory>(provider => new EmailTemplateFactory(provider.GetService<IHttpContextAccessor>()!));
-builder.Services.AddSingleton<IGuidService, GuidService>();
-builder.Services.AddSingleton<ISurveyNotificationService, SurveyNotificationService>();
+builder.Services.AddScoped<IEmailTemplateFactory, EmailTemplateFactory>(provider => new EmailTemplateFactory(provider.GetService<IHttpContextAccessor>()!));
+builder.Services.AddScoped<IGuidService, GuidService>();
+builder.Services.AddScoped<ISurveyNotificationService, SurveyNotificationService>();
 
-builder.Services.AddSingleton<ISurveyResponsesFileService, FakeSurveyResponsesFileService>();
+builder.Services.AddScoped<ISurveyResponsesFileService, SurveyResponsesCsvFileService>();
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
