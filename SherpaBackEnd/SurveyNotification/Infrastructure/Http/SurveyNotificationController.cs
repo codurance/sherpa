@@ -34,7 +34,7 @@ public class SurveyNotificationController
             {
                 NotFoundException => new ObjectResult(error)
                 {
-                    StatusCode = StatusCodes.Status400BadRequest, Value = error.Message
+                    StatusCode = StatusCodes.Status404NotFound, Value = error.Message
                 },
                 _ => new ObjectResult(error)
                 {

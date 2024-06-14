@@ -321,24 +321,6 @@ public class SurveyServiceTest
     }
 
     [Fact]
-    public async Task ShouldGetSurveyFromRepositoryWhenCallingGetSurveyResponsesFile()
-    {
-        var surveyRepository = new Mock<ISurveyRepository>();
-        var teamRepository = new Mock<ITeamRepository>();
-        var templateRepository = new Mock<ITemplateRepository>();
-        var surveyResponsesFileService = new Mock<ISurveyResponsesFileService>();
-
-        var surveyService =
-            new SurveyService(surveyRepository.Object, teamRepository.Object, templateRepository.Object,
-                surveyResponsesFileService.Object);
-        var surveyId = Guid.NewGuid();
-
-        await surveyService.GetSurveyResponsesFileStream(surveyId);
-
-        surveyRepository.Verify(repository => repository.GetSurveyById(surveyId));
-    }
-
-    [Fact]
     public async Task ShouldGetSurveyResponsesCsvFromFileGeneratorWhenCallingGetSurveyResponsesFile()
     {
         var surveyRepository = new Mock<ISurveyRepository>();
@@ -381,5 +363,19 @@ public class SurveyServiceTest
         var surveyResponsesFile = await surveyService.GetSurveyResponsesFileStream(surveyId);
 
         Assert.Equal(expectedSurveyResponsesFileStream, surveyResponsesFile);
+    }
+
+    [Fact]
+    public async Task ShouldThrowErrorWhenGetSurveyByIdIsUnsuccessful()
+    {
+        Guid surveyId = Guid.NewGuid();
+        _surveyRepository.Setup(repository => repository.GetSurveyById(surveyId)).ThrowsAsync(new Exception());
+        _service.GetSurveyResponsesFileStream(surveyId);
+
+        var thrownException =
+            await Assert.ThrowsAsync<ConnectionToRepositoryUnsuccessfulException>(async () =>
+                await _service.GetSurveyResponsesFileStream(surveyId));
+        
+        Assert.IsType<ConnectionToRepositoryUnsuccessfulException>(thrownException);
     }
 }

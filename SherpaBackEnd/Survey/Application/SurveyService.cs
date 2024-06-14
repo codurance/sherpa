@@ -58,12 +58,7 @@ public class SurveyService : ISurveyService
 
     public async Task<SurveyWithoutQuestions> GetSurveyWithoutQuestionsById(Guid expectedSurveyId)
     {
-        var surveyById = await _surveyRepository.GetSurveyById(expectedSurveyId);
-
-        if (surveyById == null)
-        {
-            throw new NotFoundException("Survey not found");
-        }
+        var surveyById = await GetSurveyById(expectedSurveyId);
 
         return new SurveyWithoutQuestions(surveyById.Id, surveyById.Coach, surveyById.SurveyStatus, surveyById.Deadline,
             surveyById.Title, surveyById.Description, surveyById.Responses, surveyById.Team,
@@ -72,7 +67,7 @@ public class SurveyService : ISurveyService
 
     public async Task<IEnumerable<IQuestion>> GetSurveyQuestionsBySurveyId(Guid expectedSurveyId)
     {
-        var surveyById = await _surveyRepository.GetSurveyById(expectedSurveyId);
+        var surveyById = await GetSurveyById(expectedSurveyId);
         return surveyById.Template.Questions;
     }
 
@@ -80,12 +75,7 @@ public class SurveyService : ISurveyService
     {
         try
         {
-            var survey = await _surveyRepository.GetSurveyById(answerSurveyDto.SurveyId);
-
-            if (survey == null)
-            {
-                throw new NotFoundException("Survey not found");
-            }
+            var survey = await GetSurveyById(answerSurveyDto.SurveyId);
 
             survey.AnswerSurvey(answerSurveyDto.Response);
 
@@ -108,7 +98,27 @@ public class SurveyService : ISurveyService
 
     public async Task<Stream> GetSurveyResponsesFileStream(Guid surveyId)
     {
-        var survey = await _surveyRepository.GetSurveyById(surveyId);
+        var survey = await GetSurveyById(surveyId);
         return _surveyResponsesFileService.CreateFileStream(survey);
+    }
+
+    private async Task<Domain.Survey?> GetSurveyById(Guid surveyId)
+    {
+        Domain.Survey survey;
+        try
+        {
+            survey = await _surveyRepository.GetSurveyById(surveyId);
+        }
+        catch (Exception e)
+        {
+            throw new ConnectionToRepositoryUnsuccessfulException("Unable to retrieve survey from database", e);
+        }
+        
+        if (survey == null)
+        {
+            throw new NotFoundException("Survey not found");
+        }
+
+        return survey;
     }
 }
