@@ -1,5 +1,6 @@
 using System.Globalization;
 using CsvHelper;
+using SherpaBackEnd.Survey.Domain;
 using SherpaBackEnd.Template.Domain;
 
 namespace SherpaBackEnd.Survey.Application;
@@ -14,14 +15,18 @@ public class SurveyResponsesCsvFileService : ISurveyResponsesFileService
 
         var headerDescriptions = survey.Template.OrderedQuestions().Select(question =>
             $"{question.GetPosition()}. {question.Statement[Languages.ENGLISH]}").ToList();
+        WriteHeader(csvWriter, headerDescriptions);
 
-        csvWriter.WriteField("Response");
-        foreach (var description in headerDescriptions)
-        {
-            csvWriter.WriteField(description);
-        }
-        csvWriter.NextRecord();
         var surveyResponses = survey.Responses;
+        WriteBody(csvWriter, surveyResponses);
+
+        csvWriter.Flush();
+
+        return stream;
+    }
+
+    private void WriteBody(CsvWriter csvWriter, List<SurveyResponse> surveyResponses)
+    {
         for (var index = 0; index < surveyResponses.Count; index++)
         {
             csvWriter.WriteField(index + 1);
@@ -32,11 +37,19 @@ public class SurveyResponsesCsvFileService : ISurveyResponsesFileService
             {
                 csvWriter.WriteField(orderedResponse.Answer);
             }
+
             csvWriter.NextRecord();
         }
+    }
 
-        csvWriter.Flush();
-        
-        return stream;
+    private void WriteHeader(CsvWriter csvWriter, List<string> headerFields)
+    {
+        csvWriter.WriteField("Response");
+        foreach (var description in headerFields)
+        {
+            csvWriter.WriteField(description);
+        }
+
+        csvWriter.NextRecord();
     }
 }
