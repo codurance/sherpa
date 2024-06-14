@@ -13,6 +13,7 @@ public class SurveyResponsesCsvFileService : ISurveyResponsesFileService
         var writer = new StreamWriter(stream);
         var csvWriter = new CsvWriter(writer, CultureInfo.InvariantCulture);
 
+        // TODO: find out how this language will be configured
         var headerDescriptions = survey.Template.OrderedQuestions().Select(question =>
             $"{question.GetPosition()}. {question.Statement[Languages.ENGLISH]}").ToList();
         WriteHeader(csvWriter, headerDescriptions);
@@ -29,7 +30,8 @@ public class SurveyResponsesCsvFileService : ISurveyResponsesFileService
     {
         for (var index = 0; index < surveyResponses.Count; index++)
         {
-            csvWriter.WriteField(index + 1);
+            var responseNumber = index + 1;
+            csvWriter.WriteField(responseNumber);
             var response = surveyResponses[index];
 
             foreach (var orderedResponse in response.OrderedResponses())

@@ -154,7 +154,7 @@ public class DownloadSurveyResponsesAcceptanceTest : IDisposable
             }
         });
         
-        var expectedCsvContent = "Response,1. Question 1,2. Question 2,3. Question 3\n1,1,3,Two\n2,2,1,Three";
+        var expectedCsvContent = "Response,1. Question 1,2. Question 2,3. Question 3\r\n1,1,3,Two\r\n2,2,1,Three\r\n";
         // WHEN the coach requests survey responses file
         var actionResult = await surveyController.GetSurveyResponsesFile(survey.Id);
 
