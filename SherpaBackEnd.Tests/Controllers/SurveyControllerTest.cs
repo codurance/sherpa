@@ -1,5 +1,4 @@
 using System.Text;
-using Amazon.Runtime.Internal;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -347,7 +346,7 @@ public class SurveyControllerTest
     }
 
     [Fact]
-    public async Task ShouldReturnBadRequestWhenServiceThrowsNotFoundExceptionWhenGetSurveyResponsesFileStreamIsCalled()
+    public async Task ShouldReturnNotFoundWhenServiceThrowsNotFoundExceptionWhenGetSurveyResponsesFileStreamIsCalled()
     {
         var surveyId = Guid.NewGuid();
 
