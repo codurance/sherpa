@@ -69,7 +69,8 @@ public class AnswerSurveyQuestionsAcceptanceTest : IDisposable
         var templateRepository = new MongoTemplateRepository(_databaseSettings);
         var teamRepository = new MongoTeamRepository(_databaseSettings);
         var surveyRepository = new MongoSurveyRepository(_databaseSettings);
-        var surveyService = new SurveyService(surveyRepository, teamRepository, templateRepository);
+        var surveyResponsesCsvFileService = new SurveyResponsesCsvFileService();
+        var surveyService = new SurveyService(surveyRepository, teamRepository, templateRepository, surveyResponsesCsvFileService);
         var surveyController = new SurveyController(surveyService, _logger);
         var surveyId = Guid.NewGuid();
         var teamMemberId = Guid.NewGuid();
@@ -136,7 +137,8 @@ public class AnswerSurveyQuestionsAcceptanceTest : IDisposable
         var templateRepository = new MongoTemplateRepository(_databaseSettings);
         var teamRepository = new MongoTeamRepository(_databaseSettings);
         var surveyRepository = new MongoSurveyRepository(_databaseSettings);
-        var surveyService = new SurveyService(surveyRepository, teamRepository, templateRepository);
+        var surveyResponsesCsvFileService = new SurveyResponsesCsvFileService();
+        var surveyService = new SurveyService(surveyRepository, teamRepository, templateRepository, surveyResponsesCsvFileService);
         var surveyController = new SurveyController(surveyService, _logger);
         var surveyId = Guid.NewGuid();
         var teamMemberId = Guid.NewGuid();
@@ -196,7 +198,8 @@ public class AnswerSurveyQuestionsAcceptanceTest : IDisposable
         var templateRepository = new MongoTemplateRepository(_databaseSettings);
         var teamRepository = new MongoTeamRepository(_databaseSettings);
         var surveyRepository = new MongoSurveyRepository(_databaseSettings);
-        var surveyService = new SurveyService(surveyRepository, teamRepository, templateRepository);
+        var surveyResponsesCsvFileService = new SurveyResponsesCsvFileService();
+        var surveyService = new SurveyService(surveyRepository, teamRepository, templateRepository, surveyResponsesCsvFileService);
         var surveyController = new SurveyController(surveyService, _logger);
         var surveyId = Guid.NewGuid();
         var teamMemberId = Guid.NewGuid();
@@ -252,7 +255,7 @@ public class AnswerSurveyQuestionsAcceptanceTest : IDisposable
         var templateRepository = new MongoTemplateRepository(_databaseSettings);
         var teamRepository = new MongoTeamRepository(_databaseSettings);
         var surveyRepository = new MongoSurveyRepository(_databaseSettings);
-        var surveyService = new SurveyService(surveyRepository, teamRepository, templateRepository);
+        var surveyService = new SurveyService(surveyRepository, teamRepository, templateRepository, new SurveyResponsesCsvFileService());
         var surveyController = new SurveyController(surveyService, _logger);
         var surveyId = Guid.NewGuid();
         var teamMemberId = Guid.NewGuid();

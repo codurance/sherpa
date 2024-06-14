@@ -103,7 +103,8 @@ public class SurveyAcceptanceTest: IDisposable
         var teamRepository = new MongoTeamRepository(_databaseSettings);
         var surveyRepository = new MongoSurveyRepository(_databaseSettings);
 
-        var surveysService = new SurveyService(surveyRepository, teamRepository, templateRepository);
+        var surveyResponsesCsvFileService = new SurveyResponsesCsvFileService();
+        var surveysService = new SurveyService(surveyRepository, teamRepository, templateRepository, surveyResponsesCsvFileService);
 
         var surveyController = new SurveyController(surveysService, _logger);
 
@@ -211,7 +212,8 @@ public class SurveyAcceptanceTest: IDisposable
 
         var surveyRepository = new MongoSurveyRepository(_databaseSettings);
         ITeamRepository teamRepository = new MongoTeamRepository(_databaseSettings);
-        var surveysService = new SurveyService(surveyRepository, teamRepository, templateRepository);
+        var surveyResponsesCsvFileService = new SurveyResponsesCsvFileService();
+        var surveysService = new SurveyService(surveyRepository, teamRepository, templateRepository, surveyResponsesCsvFileService);
 
         var surveyController = new SurveyController(surveysService, _logger);
 

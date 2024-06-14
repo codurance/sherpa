@@ -21,6 +21,7 @@ public class SurveyServiceTest
     private Mock<ITemplateRepository> _templateRepo;
     private readonly ITestOutputHelper output;
     private SurveyService _service;
+    private Mock<ISurveyResponsesFileService> _surveyResponsesFileService;
 
     public SurveyServiceTest(ITestOutputHelper output)
     {
@@ -28,7 +29,9 @@ public class SurveyServiceTest
         _surveyRepository = new Mock<ISurveyRepository>();
         _teamRepo = new Mock<ITeamRepository>();
         _templateRepo = new Mock<ITemplateRepository>();
-        _service = new SurveyService(_surveyRepository.Object, _teamRepo.Object, _templateRepo.Object);
+        _surveyResponsesFileService = new Mock<ISurveyResponsesFileService>();
+        _service = new SurveyService(_surveyRepository.Object, _teamRepo.Object, _templateRepo.Object,
+            _surveyResponsesFileService.Object);
     }
 
     [Fact]
@@ -326,7 +329,8 @@ public class SurveyServiceTest
         var surveyResponsesFileService = new Mock<ISurveyResponsesFileService>();
 
         var surveyService =
-            new SurveyService(surveyRepository.Object, teamRepository.Object, templateRepository.Object, surveyResponsesFileService.Object);
+            new SurveyService(surveyRepository.Object, teamRepository.Object, templateRepository.Object,
+                surveyResponsesFileService.Object);
         var surveyId = Guid.NewGuid();
 
         await surveyService.GetSurveyResponsesFileStream(surveyId);
@@ -342,7 +346,8 @@ public class SurveyServiceTest
         var templateRepository = new Mock<ITemplateRepository>();
         var surveyResponsesFileService = new Mock<ISurveyResponsesFileService>();
         var surveyService =
-            new SurveyService(surveyRepository.Object, teamRepository.Object, templateRepository.Object, surveyResponsesFileService.Object);
+            new SurveyService(surveyRepository.Object, teamRepository.Object, templateRepository.Object,
+                surveyResponsesFileService.Object);
         var surveyId = Guid.NewGuid();
         var survey = SurveyBuilder.ASurvey().WithId(surveyId).Build();
 
@@ -352,26 +357,29 @@ public class SurveyServiceTest
     }
 
     [Fact]
-    public async Task ShouldReturnSurveyResponsesFileStreamProvidedByFileGeneratorWhenCallingGetSurveyResponsesFileStream()
+    public async Task
+        ShouldReturnSurveyResponsesFileStreamProvidedByFileGeneratorWhenCallingGetSurveyResponsesFileStream()
     {
         var surveyRepository = new Mock<ISurveyRepository>();
         var teamRepository = new Mock<ITeamRepository>();
         var templateRepository = new Mock<ITemplateRepository>();
         var surveyResponsesFileService = new Mock<ISurveyResponsesFileService>();
         var surveyService =
-            new SurveyService(surveyRepository.Object, teamRepository.Object, templateRepository.Object, surveyResponsesFileService.Object);
+            new SurveyService(surveyRepository.Object, teamRepository.Object, templateRepository.Object,
+                surveyResponsesFileService.Object);
         var surveyId = Guid.NewGuid();
         var survey = SurveyBuilder.ASurvey().WithId(surveyId).Build();
-        
+
         var dummyCsvContent = "Id,Response\n1,Yes\n2,No";
         var dummyCsvBytes = Encoding.UTF8.GetBytes(dummyCsvContent);
         var expectedSurveyResponsesFileStream = new MemoryStream(dummyCsvBytes);
 
         surveyRepository.Setup(repository => repository.GetSurveyById(surveyId)).ReturnsAsync(survey);
-        surveyResponsesFileService.Setup(generator => generator.CreateFileStream(survey)).Returns(expectedSurveyResponsesFileStream);
+        surveyResponsesFileService.Setup(generator => generator.CreateFileStream(survey))
+            .Returns(expectedSurveyResponsesFileStream);
 
         var surveyResponsesFile = await surveyService.GetSurveyResponsesFileStream(surveyId);
-        
+
         Assert.Equal(expectedSurveyResponsesFileStream, surveyResponsesFile);
     }
 }

@@ -19,7 +19,7 @@ public class SurveyService : ISurveyService
     public readonly Guid DefaultUserId = Guid.NewGuid();
 
     public SurveyService(ISurveyRepository surveyRepository, ITeamRepository teamRepository,
-        ITemplateRepository templateRepository, [Optional] ISurveyResponsesFileService surveyResponsesFileService)
+        ITemplateRepository templateRepository, ISurveyResponsesFileService surveyResponsesFileService)
     {
         _surveyRepository = surveyRepository;
         _teamRepository = teamRepository;
