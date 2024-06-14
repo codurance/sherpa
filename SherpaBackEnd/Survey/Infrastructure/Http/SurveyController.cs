@@ -119,7 +119,20 @@ public class SurveyController
     [HttpGet("survey/{surveyId:guid}/responses")]
     public async Task<IActionResult> GetSurveyResponsesFile(Guid surveyId)
     {
-        var surveyResponsesFileStream = await _surveyService.GetSurveyResponsesFileStream(surveyId);
+        Stream surveyResponsesFileStream;
+        try
+        {
+            surveyResponsesFileStream = await _surveyService.GetSurveyResponsesFileStream(surveyId);
+        }
+        catch (Exception exception)
+        {
+            Console.WriteLine(exception);
+            return new ObjectResult(exception)
+            {
+                StatusCode = StatusCodes.Status400BadRequest, Value = exception.Message
+            };
+        }
+
         surveyResponsesFileStream.Position = 0;
         var surveyResponsesFile = new FileStreamResult(surveyResponsesFileStream, "text/csv")
         {

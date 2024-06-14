@@ -1,4 +1,5 @@
 using System.Text;
+using Amazon.Runtime.Internal;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -331,20 +332,34 @@ public class SurveyControllerTest
     [Fact]
     public async Task ShouldReturnSurveyResponsesFileResultWhenCallingGetSurveyResponsesFile()
     {
-        var surveyService = new Mock<ISurveyService>();
-        var logger = new Mock<ILogger<SurveyController>>();
-        var surveyController = new SurveyController(surveyService.Object, logger.Object);
         var surveyId = Guid.NewGuid();
 
         var dummyCsvContent = "Id,Response\n1,Yes\n2,No";
         var dummyCsvBytes = Encoding.UTF8.GetBytes(dummyCsvContent);
         var surveyResponsesFileStream = new MemoryStream(dummyCsvBytes);
-        surveyService.Setup(service => service.GetSurveyResponsesFileStream(surveyId))
+        _serviceMock.Setup(service => service.GetSurveyResponsesFileStream(surveyId))
             .ReturnsAsync(surveyResponsesFileStream);
 
-        var result = await surveyController.GetSurveyResponsesFile(surveyId);
-        
+        var result = await _controller.GetSurveyResponsesFile(surveyId);
+
         var fileResult = Assert.IsType<FileStreamResult>(result);
         Assert.Equal(surveyResponsesFileStream, fileResult.FileStream);
+    }
+
+    [Fact]
+    public async Task ShouldReturnBadRequestWhenServiceThrowsNotFoundExceptionWhenGetSurveyResponsesFileStreamIsCalled()
+    {
+        var surveyId = Guid.NewGuid();
+
+        var notFoundException = new NotFoundException("Survey not found");
+        _serviceMock.Setup(service => service.GetSurveyResponsesFileStream(surveyId))
+            .ThrowsAsync(notFoundException);
+
+        var actionResult = await _controller.GetSurveyResponsesFile(surveyId);
+
+        var objectResult = Assert.IsType<ObjectResult>(actionResult);
+
+        Assert.Equal(StatusCodes.Status400BadRequest, objectResult.StatusCode);
+        Assert.Equal(notFoundException.Message, objectResult.Value);
     }
 }
