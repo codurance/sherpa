@@ -9,6 +9,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using Moq;
 using Newtonsoft.Json;
+using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Shared.Infrastructure.Persistence;
 using SherpaBackEnd.Survey.Application;
 using SherpaBackEnd.Survey.Domain;
@@ -153,7 +154,7 @@ public class DownloadSurveyResponsesAcceptanceTest : IDisposable
                 }
             }
         });
-        
+
         var expectedCsvContent = "Response,1. Question 1,2. Question 2,3. Question 3\r\n1,1,3,Two\r\n2,2,1,Three\r\n";
         // WHEN the coach requests survey responses file
         var actionResult = await surveyController.GetSurveyResponsesFile(survey.Id);
@@ -167,7 +168,29 @@ public class DownloadSurveyResponsesAcceptanceTest : IDisposable
             var content = await streamReader.ReadToEndAsync();
             Assert.Equal(expectedCsvContent, content);
         }
+    }
 
+    [Fact]
+    public async Task SurveyResponsesFileCanNotBeReturnedIfSurveyIsNotFound()
+    {
+        await InitializeDbClientAndCollections();
+        var templateRepository = new MongoTemplateRepository(_databaseSettings);
+        var teamRepository = new MongoTeamRepository(_databaseSettings);
+        var surveyRepository = new MongoSurveyRepository(_databaseSettings);
+        var surveyResponsesFileService = new SurveyResponsesCsvFileService();
+        var surveyService = new SurveyService(surveyRepository, teamRepository, templateRepository,
+            surveyResponsesFileService);
+        var surveyController = new SurveyController(surveyService, _logger);
+        //Given: the survey is not saved in the database
+        var surveyId = Guid.NewGuid();
+        var notFoundException = new NotFoundException("Survey not found");
+
+        //When: the coach requests the survey responses file
+        var actionResult = await surveyController.GetSurveyResponsesFile(surveyId);
+        //Then: the controller should respond with not found
+        var objectResult = Assert.IsType<ObjectResult>(actionResult);
+        Assert.Equal(StatusCodes.Status404NotFound, objectResult.StatusCode);
+        Assert.Equal(notFoundException.Message, objectResult.Value);
     }
 
     public void Dispose()
