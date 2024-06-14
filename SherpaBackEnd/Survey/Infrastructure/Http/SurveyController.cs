@@ -119,19 +119,28 @@ public class SurveyController
     [HttpGet("survey/{surveyId:guid}/responses")]
     public async Task<IActionResult> GetSurveyResponsesFile(Guid surveyId)
     {
-        Stream surveyResponsesFileStream;
+        Stream surveyResponsesFileStream = null;
         try
         {
             surveyResponsesFileStream = await _surveyService.GetSurveyResponsesFileStream(surveyId);
         }
         catch (Exception exception)
         {
-            Console.WriteLine(exception);
-            return new ObjectResult(exception)
+            switch (exception)
             {
-                StatusCode = StatusCodes.Status404NotFound, Value = exception.Message
-            };
+                case NotFoundException:
+                    return new ObjectResult(exception)
+                    {
+                        StatusCode = StatusCodes.Status404NotFound, Value = exception.Message
+                    };
+                case ConnectionToRepositoryUnsuccessfulException:
+                    return new ObjectResult(exception)
+                    {
+                        StatusCode = StatusCodes.Status500InternalServerError, Value = exception.Message
+                    };
+            }
         }
+
 
         surveyResponsesFileStream.Position = 0;
         var surveyResponsesFile = new FileStreamResult(surveyResponsesFileStream, "text/csv")

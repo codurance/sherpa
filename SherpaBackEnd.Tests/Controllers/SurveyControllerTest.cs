@@ -362,4 +362,21 @@ public class SurveyControllerTest
         Assert.Equal(StatusCodes.Status404NotFound, objectResult.StatusCode);
         Assert.Equal(notFoundException.Message, objectResult.Value);
     }
+
+    [Fact]
+    public async Task ShouldReturnInternalServerErrorWhenServiceThrowsConnectionToRepositoryUnsuccessfulExceptionWhenCallingGetSurveyResponsesFileStream()
+    {
+        var surveyId = Guid.NewGuid();
+
+        var connectionToRepositoryUnsuccessfulException = new ConnectionToRepositoryUnsuccessfulException("Unable to retrieve Survey from database");
+        _serviceMock.Setup(service => service.GetSurveyResponsesFileStream(surveyId))
+            .ThrowsAsync(connectionToRepositoryUnsuccessfulException);
+
+        var actionResult = await _controller.GetSurveyResponsesFile(surveyId);
+
+        var objectResult = Assert.IsType<ObjectResult>(actionResult);
+
+        Assert.Equal(StatusCodes.Status500InternalServerError, objectResult.StatusCode);
+        Assert.Equal(connectionToRepositoryUnsuccessfulException.Message, objectResult.Value);
+    }
 }
