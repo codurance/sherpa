@@ -30,4 +30,9 @@ public class SurveyResponse
     {
         return TeamMemberId.GetHashCode();
     }
+
+    public List<QuestionResponse> OrderedResponses()
+    {
+        return Answers.OrderBy(res => res.Number).ToList();
+    }
 }

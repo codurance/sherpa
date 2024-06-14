@@ -66,16 +66,10 @@ public class DownloadSurveyResponsesAcceptanceTest : IDisposable
         var templateRepository = new MongoTemplateRepository(_databaseSettings);
         var teamRepository = new MongoTeamRepository(_databaseSettings);
         var surveyRepository = new MongoSurveyRepository(_databaseSettings);
-        var surveyResponsesFileService = new Mock<ISurveyResponsesFileService>();
+        var surveyResponsesFileService = new SurveyResponsesCsvFileService();
         var surveyService = new SurveyService(surveyRepository, teamRepository, templateRepository,
-            surveyResponsesFileService.Object);
+            surveyResponsesFileService);
         var surveyController = new SurveyController(surveyService, _logger);
-
-        var dummyCsvContent = "Id,Response\n1,Yes\n2,No";
-        var dummyCsvBytes = Encoding.UTF8.GetBytes(dummyCsvContent);
-        var surveyResponsesFileStream = new MemoryStream(dummyCsvBytes);
-        surveyResponsesFileService.Setup(service => service.CreateFileStream(It.IsAny<Survey.Domain.Survey>()))
-            .Returns(surveyResponsesFileStream);
 
         IEnumerable<IQuestion> questions = new IQuestion[]
         {
@@ -107,8 +101,8 @@ public class DownloadSurveyResponsesAcceptanceTest : IDisposable
                     { Languages.ENGLISH, "Question 3" },
                 }, new Dictionary<string, string[]>()
                 {
-                    { Languages.SPANISH, new[] { "1", "2", "3" } },
-                    { Languages.ENGLISH, new[] { "1", "2", "3" } }
+                    { Languages.SPANISH, new[] { "Uno", "Dos", "Tres" } },
+                    { Languages.ENGLISH, new[] { "One", "Two", "Three" } }
                 }, false, HackmanComponent.INTERPERSONAL_PEER_COACHING, HackmanSubcategory.DELIMITED,
                 HackmanSubcomponent.SENSE_OF_URGENCY, 3
             ),
@@ -122,13 +116,13 @@ public class DownloadSurveyResponsesAcceptanceTest : IDisposable
         {
             new QuestionResponse(1, "1"),
             new QuestionResponse(2, "3"),
-            new QuestionResponse(3, "2"),
+            new QuestionResponse(3, "Two"),
         };
         var johnAnswers = new List<QuestionResponse>()
         {
             new QuestionResponse(1, "2"),
             new QuestionResponse(2, "1"),
-            new QuestionResponse(3, "3"),
+            new QuestionResponse(3, "Three"),
         };
         var responses = new List<SurveyResponse>()
         {
@@ -159,15 +153,21 @@ public class DownloadSurveyResponsesAcceptanceTest : IDisposable
                 }
             }
         });
-
-
+        
+        var expectedCsvContent = "Response,1. Question 1,2. Question 2,3. Question 3\r\n1,1,3,Two\r\n2,2,1,Three\r\n";
         // WHEN the coach requests survey responses file
         var actionResult = await surveyController.GetSurveyResponsesFile(survey.Id);
 
-        // THEN the controller should return an Ok result
+        // THEN the controller should return a file with expected content
         var fileResult = Assert.IsType<FileStreamResult>(actionResult);
         Assert.Equal("text/csv", fileResult.ContentType);
-        // TODO: assert on File content
+        fileResult.FileStream.Position = 0;
+        using (var streamReader = new StreamReader(fileResult.FileStream))
+        {
+            var content = await streamReader.ReadToEndAsync();
+            Assert.Equal(expectedCsvContent, content);
+        }
+
     }
 
     public void Dispose()

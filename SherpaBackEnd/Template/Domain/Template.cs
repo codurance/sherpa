@@ -12,4 +12,10 @@ public class Template
         Questions = questions;
         MinutesToComplete = minutesToComplete;
     }
+
+
+    public IEnumerable<IQuestion> OrderedQuestions()
+    {
+        return Questions.OrderBy(question => question.GetPosition());
+    }
 }
