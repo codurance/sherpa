@@ -97,7 +97,7 @@ public class SurveyService : ISurveyService
 
     public async Task<Stream> GetSurveyResponsesFileStream(Guid surveyId)
     {
-        var survey = await _surveyRepository.GetSurveyById(surveyId);
+        var survey = await GetSurveyById(surveyId);
         return _surveyResponsesFileService.CreateFileStream(survey);
     }
 
