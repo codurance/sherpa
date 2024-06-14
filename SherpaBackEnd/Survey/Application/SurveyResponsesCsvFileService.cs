@@ -31,9 +31,8 @@ public class SurveyResponsesCsvFileService : ISurveyResponsesFileService
         {
             csvWriter.WriteField(index + 1);
             var response = surveyResponses[index];
-            var orderedResponses = response.Answers.OrderBy(res => res.Number).ToList();
 
-            foreach (var orderedResponse in orderedResponses)
+            foreach (var orderedResponse in response.OrderedResponses())
             {
                 csvWriter.WriteField(orderedResponse.Answer);
             }
