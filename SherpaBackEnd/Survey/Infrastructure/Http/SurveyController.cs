@@ -126,19 +126,18 @@ public class SurveyController
         }
         catch (Exception exception)
         {
-            switch (exception)
+            return exception switch
             {
-                case NotFoundException:
-                    return new ObjectResult(exception)
-                    {
-                        StatusCode = StatusCodes.Status404NotFound, Value = exception.Message
-                    };
-                case ConnectionToRepositoryUnsuccessfulException:
-                    return new ObjectResult(exception)
-                    {
-                        StatusCode = StatusCodes.Status500InternalServerError, Value = exception.Message
-                    };
-            }
+                NotFoundException => new ObjectResult(exception)
+                {
+                    StatusCode = StatusCodes.Status404NotFound, Value = exception.Message
+                },
+                ConnectionToRepositoryUnsuccessfulException 
+                    or _ => new ObjectResult(exception)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError, Value = exception.Message
+                }
+            };
         }
 
 
