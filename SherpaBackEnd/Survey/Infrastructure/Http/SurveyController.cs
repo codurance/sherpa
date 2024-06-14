@@ -120,9 +120,10 @@ public class SurveyController
     public async Task<IActionResult> GetSurveyResponsesFile(Guid surveyId)
     {
         var surveyResponsesFileStream = await _surveyService.GetSurveyResponsesFileStream(surveyId);
-        var surveyResponsesFile = new FileStreamResult(surveyResponsesFileStream,"text/csv")
+        surveyResponsesFileStream.Position = 0;
+        var surveyResponsesFile = new FileStreamResult(surveyResponsesFileStream, "text/csv")
         {
-            FileDownloadName = "survey_responses.csv"
+            FileDownloadName = "survey_responses.csv",
         };
         return surveyResponsesFile;
     }
