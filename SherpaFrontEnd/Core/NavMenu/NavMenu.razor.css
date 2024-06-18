@@ -3,7 +3,8 @@
 }
 
 .top-row {
-    height: 3.5rem;
+    padding-top: 1.1rem;
+    padding-bottom: 1.3rem;
 }
 
 #nav-logo {
@@ -12,6 +13,10 @@
 
 .navbar-brand {
     font-size: 1.1rem;
+    font-weight: 700;
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-end;
 }
 
 .oi {
@@ -46,12 +51,13 @@
 
 .nav-item ::deep a {
     color: #d7d7d7;
-    border-radius: 4px;
+    border-radius: 8px;
     height: 3rem;
     display: flex;
     align-items: center;
     line-height: 3rem;
     font-weight: 600;
+    gap: 12px;
 }
 
 .nav-item ::deep a.active {

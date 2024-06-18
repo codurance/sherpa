@@ -1,10 +1,12 @@
 ﻿@using SherpaFrontEnd.Core.Layout
 @using SherpaFrontEnd.Core.Tabs
+@using SherpaFrontEnd.Core.Icons
 
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a href="" class="navbar-brand">
-            <img id="nav-logo" src="img/Codurance-logo-negative.png" alt="codurance logo"/>
+            <SherpaLogo />
+            <span>Sherpa</span>
         </a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
@@ -16,11 +18,13 @@
     <nav class="flex-column">
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="teams-list-page">
+                <Rocket Height="14" Width="14"/>
                 Teams
             </NavLink>
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="templates">
+                <Clone Height="14" Width="14"/>
                 Templates
             </NavLink>
         </div>
