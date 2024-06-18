@@ -38,7 +38,7 @@
 html, body {
     font-family: 'proxima-nova', Helvetica, Arial, sans-serif;
     color: #62626a;
-    background: var(--gray--100);
+    background: var(--gray---white);
 }
 
 h1:focus {
