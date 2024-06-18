@@ -32,7 +32,7 @@ public class MemberTableTest
             ComponentParameter.CreateParameter("Team", team)
         );
 
-        var teamMembersHeading = membersTableComponent.FindAll("h2.text-title-h2--semibold");
+        var teamMembersHeading = membersTableComponent.FindAll("h2.text-title-h3");
         Assert.NotNull(teamMembersHeading.FirstOrDefault(heading => heading.ToMarkup().Contains(team.Name)));
 
         var removeTeamMemberButton = membersTableComponent.FindElementByCssSelectorAndTextContent("button[disabled]", "Remove");

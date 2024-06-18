@@ -120,7 +120,7 @@ public class SurveysAcceptanceTest
         confirmButton.Click();
         
         appComponent.WaitForAssertion(() => Assert.Equal($"http://localhost/team-content/{newTeamId.ToString()}", _navMan.Uri));
-        Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("h2", newTeamName));
+        Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("h1", newTeamName));
 
         var teamSurveysTabPage = appComponent.FindElementByCssSelectorAndTextContent("a:not(a[href])", "Surveys");
         Assert.NotNull(teamSurveysTabPage);
@@ -216,7 +216,7 @@ public class SurveysAcceptanceTest
         
         teamSurveysTabPage.Click();
         
-        appComponent.WaitForAssertion(() => Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("h3", "All Surveys")));
-        Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("button", "Send new survey"));
+        appComponent.WaitForAssertion(() => Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("h2", "All surveys launched in the team")));
+        Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("button", "Launch new survey"));
     }
 }
