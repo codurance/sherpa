@@ -7,62 +7,63 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Blazored.Modal" Version="6.0.1" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.15" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.15" PrivateAssets="all" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="6.0.5" />
-        <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
-        <PackageReference Include="System.Net.Http" Version="4.3.4" />
+        <PackageReference Include="Blazored.Modal" Version="6.0.1"/>
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.15"/>
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.15" PrivateAssets="all"/>
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="6.0.5"/>
+        <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0"/>
+        <PackageReference Include="System.Net.Http" Version="4.3.4"/>
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Services\Email" />
-      <Folder Include="wwwroot\css\fonts" />
+        <Folder Include="Services\Email"/>
+        <Folder Include="wwwroot\css\fonts"/>
     </ItemGroup>
 
     <ItemGroup>
-      <AdditionalFiles Include="Core\Layout\LoginDisplay.razor" />
-      <AdditionalFiles Include="Core\Layout\MainLayout.razor" />
-      <AdditionalFiles Include="Core\Layout\PublicAccessLayout.razor" />
-      <AdditionalFiles Include="Core\NavMenu\NavMenu.razor" />
-      <AdditionalFiles Include="Core\Tabs\TabControl.razor" />
-      <AdditionalFiles Include="Core\Tabs\TabPage.razor" />
-      <AdditionalFiles Include="Pages\Authentication\Authentication.razor" />
-      <AdditionalFiles Include="Pages\DeliverySettings\DeliverySettings.razor" />
-      <AdditionalFiles Include="Pages\ErrorPage\ErrorPage.razor" />
-      <AdditionalFiles Include="Pages\Index\Index.razor" />
-      <AdditionalFiles Include="Pages\SurveyDraftReview\SurveyDraftReview.razor" />
-      <AdditionalFiles Include="Pages\SurveyQuestions\SurveyQuestions.razor" />
-      <AdditionalFiles Include="Pages\TeamContent\Components\MemberTable.razor" />
-      <AdditionalFiles Include="Pages\TeamContent\Components\SurveyTable.razor" />
-      <AdditionalFiles Include="Pages\TeamContent\TeamContent.razor" />
-      <AdditionalFiles Include="Pages\TeamList\TeamsList.razor" />
-      <AdditionalFiles Include="Pages\TemplateContent\TemplateContent.razor" />
-      <AdditionalFiles Include="Pages\Templates\Components\TemplateBox.razor" />
-      <AdditionalFiles Include="Pages\Templates\Templates.razor" />
-      <AdditionalFiles Include="Shared\Modals\AddTeamModal.razor" />
-      <AdditionalFiles Include="Shared\Modals\ConfirmationModal.razor" />
+        <AdditionalFiles Include="Core\Layout\LoginDisplay.razor"/>
+        <AdditionalFiles Include="Core\Layout\MainLayout.razor"/>
+        <AdditionalFiles Include="Core\Layout\PublicAccessLayout.razor"/>
+        <AdditionalFiles Include="Core\NavMenu\NavMenu.razor"/>
+        <AdditionalFiles Include="Core\Tabs\TabControl.razor"/>
+        <AdditionalFiles Include="Core\Tabs\TabPage.razor"/>
+        <AdditionalFiles Include="Core\Icons\*"/>
+        <AdditionalFiles Include="Pages\Authentication\Authentication.razor"/>
+        <AdditionalFiles Include="Pages\DeliverySettings\DeliverySettings.razor"/>
+        <AdditionalFiles Include="Pages\ErrorPage\ErrorPage.razor"/>
+        <AdditionalFiles Include="Pages\Index\Index.razor"/>
+        <AdditionalFiles Include="Pages\SurveyDraftReview\SurveyDraftReview.razor"/>
+        <AdditionalFiles Include="Pages\SurveyQuestions\SurveyQuestions.razor"/>
+        <AdditionalFiles Include="Pages\TeamContent\Components\MemberTable.razor"/>
+        <AdditionalFiles Include="Pages\TeamContent\Components\SurveyTable.razor"/>
+        <AdditionalFiles Include="Pages\TeamContent\TeamContent.razor"/>
+        <AdditionalFiles Include="Pages\TeamList\TeamsList.razor"/>
+        <AdditionalFiles Include="Pages\TemplateContent\TemplateContent.razor"/>
+        <AdditionalFiles Include="Pages\Templates\Components\TemplateBox.razor"/>
+        <AdditionalFiles Include="Pages\Templates\Templates.razor"/>
+        <AdditionalFiles Include="Shared\Modals\AddTeamModal.razor"/>
+        <AdditionalFiles Include="Shared\Modals\ConfirmationModal.razor"/>
     </ItemGroup>
 
     <ItemGroup>
-      <Content Remove="Shared\Modals\CreateTeamOffcanvas 2.razor" />
-      <Content Remove="Shared\Modals\AddTeamModal 2.razor" />
-      <Content Remove="Pages\TeamsList 2.razor" />
-      <Content Update="wwwroot\appsettings.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
+        <Content Remove="Shared\Modals\CreateTeamOffcanvas 2.razor"/>
+        <Content Remove="Shared\Modals\AddTeamModal 2.razor"/>
+        <Content Remove="Pages\TeamsList 2.razor"/>
+        <Content Update="wwwroot\appsettings.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="Pages\TeamsList.razor 2.css" />
+        <None Remove="Pages\TeamsList.razor 2.css"/>
     </ItemGroup>
 
     <ItemGroup>
-      <_ContentIncludedByDefault Remove="Pages\TeamsPage\TeamsPage.razor" />
+        <_ContentIncludedByDefault Remove="Pages\TeamsPage\TeamsPage.razor"/>
     </ItemGroup>
-    
+
     <Target Name="CompileTailwind" BeforeTargets="Build">
-        <Exec Command="npx tailwindcss -i ./Styles/tailwind.css -o ./wwwroot/css/tailwind.css --minified" />
+        <Exec Command="npx tailwindcss -i ./Styles/tailwind.css -o ./wwwroot/css/tailwind.css --minified"/>
     </Target>
 
 </Project>

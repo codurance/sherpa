@@ -13,9 +13,9 @@
 
 @if (Team != null && Surveys != null)
 {
-    <h2 class="font-semibold text-primary-dark-principal text-title-h2--semibold leading-7 mb-6">
+    <h1 class="font-semibold text-primary-dark-principal text-title-h2--semibold leading-7 mb-6">
         @Team.Name
-    </h2>
+    </h1>
 
 
     <TabControl InitialTab="@Tab">
@@ -25,11 +25,11 @@
         <TabPage Text="Surveys" Args="@Surveys">
             @if (Surveys != null && Surveys.Count > 0)
             {
-                <div class="py-5 flex justify-between items-center rounded-3xl gap-2.5" style="margin: 0 1cm">
-                    <h3 class="flex-grow">All Surveys</h3>
-                    <button type="button" class="flex items-center focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5">
-                        <img src="/img/button-paper-plane.svg" alt="Paper Plane Icon" class="w-4 h-4 mr-2">
-                        Send new survey
+                <div class="my-5 flex justify-between items-center rounded-3xl gap-2.5">
+                    <h2 class="flex-grow text-title-h3 text-primary-dark-principal">All surveys launched in the team</h2>
+                    <button type="button" class="bg-primary-red-principal-800 hover:bg-primary-red-900 rounded-lg px-6 py-2 text-white font-semibold text-sm">
+                        <i class="las la-plus"></i>
+                        Launch new survey
                     </button>
                 </div>
                 <SurveyTable DownloadSurveyResponses="@DownloadSurveyResponses" Surveys="Surveys" Flags="SurveyFlags ?? new SurveyTableFeatureFlags()"/>

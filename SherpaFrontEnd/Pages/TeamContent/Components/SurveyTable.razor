@@ -1,7 +1,7 @@
 @using SherpaFrontEnd.Dtos.Survey
-<div class="relative shadow-md sm:rounded-lg gap-2.5" style="margin: 0 1cm">
-    <table class="w-full text-sm text-left text-gray-900">
-        <thead class="text-xs primary-dark-800 bg-gray-100">
+<div class="my-6 rounded-lg border-2 truncate text-left">
+    <table class="w-full text-sm text-gray-900">
+        <thead class="text-xs primary-dark-800 bg-gray-100 border-b-2">
         <tr>
             <th scope="col" class="px-6 py-3">
                 Survey title
@@ -37,7 +37,7 @@
         <tbody>
         @foreach (var survey in Surveys)
         {
-            <tr class="bg-white hover:bg-gray-50">
+            <tr class="bg-white hover:bg-gray-50 border-b-2">
                 <td class="px-6 py-4">
                     <div class="flex items-center primary-dark-800">
                         @survey.Title

@@ -6,8 +6,8 @@
 @if (Team != null)
 {
     <CreateTeamMemberModal Show="@_isAddMemberModalOpen" CreateTeamMember="@CreateTeamMember" TeamId="Team.Id" CloseModal="@CloseAddMemberModal"/>
-    <header class="m-5 flex justify-between text-black items-center">
-        <h2 class="text-title-h2--semibold text-black">All members of @Team.Name</h2>
+    <header class="flex my-5 justify-between text-black items-center">
+        <h2 class="text-title-h3 text-primary-dark-principal">All members of @Team.Name</h2>
         <aside class="flex gap-2.5">
             <button class="bg-white border-2 rounded-lg px-6 py-2 text-gray-300 border-gray-200 font-semibold text-sm" disabled>
                 <i class="las la-trash"></i>
@@ -19,7 +19,7 @@
             </button>
         </aside>
     </header>
-    <div class="mx-5 my-6 rounded-lg border-2 truncate text-left">
+    <div class="my-6 rounded-lg border-2 truncate text-left">
         <table class="w-full text-sm text-gray-900">
             <thead class="text-xs primary-dark-800 bg-gray-100 border-b-2">
             <tr>
@@ -41,7 +41,7 @@
             <tbody class="bg-white">
             @foreach (var member in Team.Members)
             {
-                <tr>
+                <tr class="border-b-2">
                     <td class="w-1/12 p-3 px-6">
                         <input type="checkbox" class="w-5 h-5 rounded border-gray-300 text-primary-dark-principal text-xl">
                     </td>
