@@ -1,0 +1,24 @@
+<#@ template language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<h1>Hi, <#= TemplateModel.Name #> </h1>
+<p>You have been invited to reply to this <#= TemplateModel.SurveyName #>. Please reply before <#= TemplateModel.Deadline #>, your input is very valuable for us.</p>
+<a href="<#= TemplateModel.Url #>">Answer Survey</a>
+<span>Thank you</span>
+<footer>
+    You are receiving this mail because you and your team are part of this mailing list. In case you do not want to receive this emails in the future please reach out to your manager.
+</footer>
+</body>
+</html>
+<#+
+    public NewSurveyTemplateModel TemplateModel { get; set; }
+#>
