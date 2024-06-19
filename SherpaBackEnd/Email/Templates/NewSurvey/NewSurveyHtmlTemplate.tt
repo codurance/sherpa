@@ -11,7 +11,19 @@
 </head>
 <body>
 <h1>Hi, <#= TemplateModel.Name #> </h1>
-<p>You have been invited to reply to this <#= TemplateModel.SurveyName #>. Please reply before <#= TemplateModel.Deadline #>, your input is very valuable for us.</p>
+<p>You have been invited to reply to this <#= TemplateModel.SurveyName #>. <#
+    if (TemplateModel.Deadline != null)
+    { #>
+        Please reply before <#= TemplateModel.Deadline #>, your input is very valuable for us.</p> 
+
+    <# }
+    else
+    {
+#>
+    Your input is very valuable for us.</p>
+    <#
+    }
+#> 
 <a href="<#= TemplateModel.Url #>">Answer Survey</a>
 <span>Thank you</span>
 <footer>

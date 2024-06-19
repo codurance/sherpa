@@ -4,8 +4,20 @@
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
 Hi, <#= TemplateModel.Name #>
-You have been invited to reply to this <#= TemplateModel.SurveyName #>. Please reply before <#= TemplateModel.Deadline #>, your input is very valuable for us.
-Click the link below:
+You have been invited to reply to this <#= TemplateModel.SurveyName #>. <#
+    if (TemplateModel.Deadline != null)
+    { #>
+        Please reply before <#= TemplateModel.Deadline #>, your input is very valuable for us.
+
+    <# }
+    else
+    {
+#>
+    Your input is very valuable for us.
+    <#
+    }
+#> 
+In order to access the survey click the following link:
 <#= TemplateModel.Url #>
 Thank you.
 You are receiving this mail because you and your team are part of this mailing list. In case you do not want to receive this emails in the future please reach out to your manager.
