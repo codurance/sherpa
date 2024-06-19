@@ -134,7 +134,7 @@ public class SurveyNotificationServiceTest
 
         _surveyRepository.Setup(repository => repository.GetSurveyById(_surveyId))
             .ReturnsAsync(survey);
-        var emailTemplate = new EmailTemplate(null, new List<Recipient>());
+        var emailTemplate = new EmailTemplate(null, null, null, new List<Recipient>());
         _emailTemplateFactory.Setup(factory => factory.CreateEmailTemplate(surveyNotifications))
             .Returns(emailTemplate);
 
@@ -208,7 +208,7 @@ public class SurveyNotificationServiceTest
         var team = ATeam().Build();
         var survey = ASurvey().WithId(_surveyId).WithTeam(team).Build();
         _surveyRepository.Setup(repository => repository.GetSurveyById(_surveyId)).ReturnsAsync(survey);
-        var emailTemplate = new EmailTemplate(null, new List<Recipient>());
+        var emailTemplate = new EmailTemplate(null, null, null, new List<Recipient>());
         _emailTemplateFactory.Setup(factory => factory.CreateEmailTemplate(surveyNotifications))
             .Returns(emailTemplate);
         

@@ -2,18 +2,20 @@ namespace SherpaBackEnd.Email.Application;
 
 public class Recipient
 {
+    public string Name { get; }
     public string Email { get; }
     public string Url { get; }
 
-    public Recipient(string email, string url)
+    public Recipient(string name, string email, string url)
     {
+        Name = name;
         Email = email;
         Url = url;
     }
 
     protected bool Equals(Recipient other)
     {
-        return Email == other.Email && Url == other.Url;
+        return Name == other.Name && Email == other.Email && Url == other.Url;
     }
 
     public override bool Equals(object? obj)
@@ -26,6 +28,6 @@ public class Recipient
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(Email, Url);
+        return HashCode.Combine(Name, Email, Url);
     }
 }
