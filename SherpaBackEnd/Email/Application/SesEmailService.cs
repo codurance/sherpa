@@ -2,6 +2,7 @@ using System.Net;
 using Amazon.SimpleEmail;
 using Amazon.SimpleEmail.Model;
 using Newtonsoft.Json;
+using SherpaBackEnd.Email.Templates.NewSurvey;
 using SherpaBackEnd.Exceptions;
 
 namespace SherpaBackEnd.Email.Application;
@@ -22,6 +23,11 @@ public class SesEmailService : IEmailService
     {
         try
         {
+
+            await _amazonEmailService.DeleteTemplateAsync(new DeleteTemplateRequest()
+            {
+                TemplateName = TemplateName
+            });
             await GetTemplate(TemplateName);
             var request = CreateBulkTemplatedEmailRequest(emailTemplate, TemplateName);
             await _amazonEmailService.SendBulkTemplatedEmailAsync(request);
@@ -31,7 +37,7 @@ public class SesEmailService : IEmailService
             throw new Exception(e.Message);
         }
     }
-    
+
     private async Task GetTemplate(string templateName)
     {
         try
@@ -41,14 +47,13 @@ public class SesEmailService : IEmailService
                 TemplateName = templateName
             };
             await _amazonEmailService.GetTemplateAsync(templateRequest);
-
         }
         catch (Exception e)
         {
             await CreateDefaultSurveyTemplate();
         }
     }
-    
+
     private async Task CreateDefaultSurveyTemplate()
     {
         try
@@ -62,6 +67,7 @@ public class SesEmailService : IEmailService
             throw;
         }
     }
+
     public CreateTemplateRequest CreateTemplateRequest(string templateName)
     {
         return new CreateTemplateRequest
@@ -70,38 +76,55 @@ public class SesEmailService : IEmailService
             {
                 TemplateName = templateName,
                 SubjectPart = "Pending Survey",
-                HtmlPart = @"
-                    <p>
-                        {{html-body}}
-                    </p>
-                    <a target=""_blank"" href=""{{personal-link}}"">Answer questionnaire</a>
-                ",
-                TextPart = @"
-                    {{text-body}}
-                    In order to access the survey click the following link:
-                    {{personal-link}}
-                "
+                HtmlPart = @"{{html-body}}",
+                TextPart = @"{{text-body}}"
             }
         };
     }
+
     public SendBulkTemplatedEmailRequest CreateBulkTemplatedEmailRequest(EmailTemplate emailTemplate,
         string templateName)
     {
-        var bulkEmailDestinations = emailTemplate.Recipients.ConvertAll(recipient => new BulkEmailDestination
+        var bulkEmailDestinations = emailTemplate.Recipients.ConvertAll(recipient =>
         {
-            Destination = new Destination
+            var newSurveyTemplateModel = new NewSurveyTemplateModel()
             {
-                ToAddresses = new List<string>(){ recipient.Email}
-            },
-            ReplacementTemplateData = JsonConvert.SerializeObject(new Dictionary<string, string>{{"html-body", string.Join("<br />", emailTemplate.Body.Split("\n"))},{"text-body", emailTemplate.Body}, {"personal-link", recipient.Url}})
+                Name = recipient.Name,
+                SurveyName = emailTemplate.SurveyTitle,
+                Deadline = emailTemplate.SurveyDeadline,
+                Url = recipient.Url
+            };
+            return new BulkEmailDestination
+            {
+                Destination = new Destination
+                {
+                    ToAddresses = new List<string>() { recipient.Email }
+                },
+                ReplacementTemplateData = JsonConvert.SerializeObject(new Dictionary<string, string>
+                {
+                    {
+                        "html-body", new NewSurveyHtmlTemplate()
+                        {
+                            TemplateModel = newSurveyTemplateModel
+                        }.TransformText()
+                    },
+                    { "text-body", new NewSurveyTextTemplate()
+                    {
+                        TemplateModel = newSurveyTemplateModel
+                    }.TransformText() }
+                })
+            };
         });
-        
+
         var sendBulkTemplatedEmailRequest = new SendBulkTemplatedEmailRequest
         {
             Destinations = bulkEmailDestinations,
             Source = _defaultEmail,
             Template = templateName,
-            DefaultTemplateData = JsonConvert.SerializeObject(new Dictionary<string, string>{{"html-body", "Something went wrong"}, {"text-body", "Something went wrong"}, {"personal-link", "Missing link"}}),
+            DefaultTemplateData = JsonConvert.SerializeObject(new Dictionary<string, string>
+            {
+                { "html-body", "Something went wrong" }, { "text-body", "Something went wrong" }
+            }),
             ReturnPath = _defaultEmail
         };
         return sendBulkTemplatedEmailRequest;
