@@ -14,15 +14,12 @@ public class EmailTemplateFactory : IEmailTemplateFactory
 
     public EmailTemplate CreateEmailTemplate(CreateEmailTemplateDto createEmailTemplateDto)
     {
-        switch (createEmailTemplateDto)
+        return createEmailTemplateDto switch
         {
-            case NewSurveyEmailTemplateDto newSurveyEmailTemplateDto:
-            {
-                return CreateNewSurveyEmailTemplate(newSurveyEmailTemplateDto);
-            }
-            default:
-                throw new NotImplementedException();
-        }
+            NewSurveyEmailTemplateDto newSurveyEmailTemplateDto => CreateNewSurveyEmailTemplate(
+                newSurveyEmailTemplateDto),
+            _ => throw new NotImplementedException()
+        };
     }
 
     private NewSurveyEmailTemplate CreateNewSurveyEmailTemplate(NewSurveyEmailTemplateDto newSurveyEmailTemplateDto)
