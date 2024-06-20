@@ -1,6 +1,7 @@
 using System.Runtime.InteropServices;
 using SherpaBackEnd.Email;
 using SherpaBackEnd.Email.Application;
+using SherpaBackEnd.Email.Templates.NewSurvey;
 using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Shared.Services;
 using SherpaBackEnd.Survey.Domain.Persistence;
@@ -39,7 +40,8 @@ public class SurveyNotificationService : ISurveyNotificationService
 
         await CreateManySurveyNotification(surveyNotifications);
 
-        var emailTemplateRequest = _emailTemplateFactory.CreateEmailTemplate(surveyNotifications);
+        var newSurveyEmailTemplateDto = new NewSurveyEmailTemplateDto(surveyNotifications);
+        var emailTemplateRequest = _emailTemplateFactory.CreateEmailTemplate(newSurveyEmailTemplateDto);
         await SendEmailsWith(emailTemplateRequest);
     }
 

@@ -12,18 +12,6 @@ public class EmailTemplateFactory : IEmailTemplateFactory
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public EmailTemplate CreateEmailTemplate(List<SurveyNotification.Domain.SurveyNotification> surveyNotifications)
-    {
-        // TODO refactor to an actual factory
-        var survey = surveyNotifications.First().Survey;
-        var title = survey.Title;
-        var deadline = survey.Deadline;
-        var recipients = surveyNotifications.Select(notification =>
-            new Recipient(notification.TeamMember.FullName, notification.TeamMember.Email,
-                CreateAnswerSurveyUrl(notification))).ToList();
-        return new EmailTemplate("NewSurvey", title, deadline, recipients);
-    }
-
     public EmailTemplate CreateEmailTemplate(CreateEmailTemplateDto createEmailTemplateDto)
     {
         switch (createEmailTemplateDto)
