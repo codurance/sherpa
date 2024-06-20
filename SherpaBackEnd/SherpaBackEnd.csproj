@@ -16,6 +16,7 @@
         <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.16" />
         <PackageReference Include="MongoDB.Driver" Version="2.21.0" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+        <PackageReference Include="System.CodeDom" Version="6.0.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -34,6 +35,27 @@
       <None Update="Templates\hackman.csv">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+      <None Update="Email\Templates\NewSurvey\NewSurveyHtmlTemplate.tt">
+        <Generator>TextTemplatingFilePreprocessor</Generator>
+        <LastGenOutput>NewSurveyHtmlTemplate.cs</LastGenOutput>
+      </None>
+      <None Update="Email\Templates\NewSurvey\NewSurveyTextTemplate.tt">
+        <Generator>TextTemplatingFilePreprocessor</Generator>
+        <LastGenOutput>NewSurveyTextTemplate.cs</LastGenOutput>
+      </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Email\Templates\NewSurvey\NewSurveyHtmlTemplate.cs">
+        <AutoGen>True</AutoGen>
+        <DesignTime>True</DesignTime>
+        <DependentUpon>NewSurveyHtmlTemplate.tt</DependentUpon>
+      </Compile>
+      <Compile Update="Email\Templates\NewSurvey\NewSurveyTextTemplate.cs">
+        <AutoGen>True</AutoGen>
+        <DesignTime>True</DesignTime>
+        <DependentUpon>NewSurveyTextTemplate.tt</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>

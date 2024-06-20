@@ -11,11 +11,13 @@ public class EmailTemplateFactory : IEmailTemplateFactory
 
     public EmailTemplate CreateEmailTemplate(List<SurveyNotification.Domain.SurveyNotification> surveyNotifications)
     {
-        //TODO: Revisit this
-        string body = surveyNotifications.Select(notification => notification.Survey.Description).First().ToString() ?? string.Empty;
+        // TODO refactor to an actual factory
+        var survey = surveyNotifications.First().Survey;
+        var title = survey.Title;
+        var deadline = survey.Deadline;
         var recipients = surveyNotifications.Select(notification =>
-            new Recipient(notification.TeamMember.Email, CreateAnswerSurveyUrl(notification))).ToList();
-        return new EmailTemplate(body, recipients);
+            new Recipient( notification.TeamMember.FullName, notification.TeamMember.Email, CreateAnswerSurveyUrl(notification))).ToList();
+        return new EmailTemplate("NewSurvey", title, deadline, recipients);
     }
 
     private string CreateAnswerSurveyUrl(SurveyNotification.Domain.SurveyNotification notification)

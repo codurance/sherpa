@@ -44,19 +44,21 @@ public class EmailTemplateFactoryTest
         var baseAnswerSurveyUrl = httpScheme + "://" + sherpaUrl + "/answer-survey/";
         var expectedJaneUrl = baseAnswerSurveyUrl + janeSurveyNotificationId; 
         var expectedJohnUrl = baseAnswerSurveyUrl + johnSurveyNotificationId;
-        var janeRecipient = new Recipient(jane.Email, expectedJaneUrl);
-        var johnRecipient = new Recipient(john.Email, expectedJohnUrl);
+        var janeRecipient = new Recipient(jane.FullName,jane.Email, expectedJaneUrl);
+        var johnRecipient = new Recipient(john.FullName, john.Email, expectedJohnUrl);
         List<Recipient> recipients = new List<Recipient>()
         {
             janeRecipient,
             johnRecipient
         };
         
-        var expectedEmailTemplates = new EmailTemplate(survey.Description, recipients);
+        var expectedEmailTemplates = new EmailTemplate("NewSurvey", survey.Title, survey.Deadline, recipients);
         
         var actualEmailTemplates = emailTemplateFactory.CreateEmailTemplate(surveyNotifications);
 
-        Assert.Equal(expectedEmailTemplates.Body, actualEmailTemplates.Body);
+        Assert.Equal(expectedEmailTemplates.TemplateName, actualEmailTemplates.TemplateName);
+        Assert.Equal(expectedEmailTemplates.SurveyTitle, actualEmailTemplates.SurveyTitle);
+        Assert.Equal(expectedEmailTemplates.SurveyDeadline, actualEmailTemplates.SurveyDeadline);
         Assert.Contains(janeRecipient, actualEmailTemplates.Recipients);
         Assert.Contains(johnRecipient, actualEmailTemplates.Recipients);
     }

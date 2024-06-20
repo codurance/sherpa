@@ -4,29 +4,19 @@ namespace SherpaBackEnd.Email;
 
 public class EmailTemplate
 {
-    public string Body { get; }
+    public string TemplateName { get; }
+
     public List<Recipient> Recipients { get; }
-    public EmailTemplate(string body, List<Recipient> recipients)
+
+    public string SurveyTitle { get; set; }
+
+    public DateTime? SurveyDeadline { get; }
+
+    public EmailTemplate(string templateName, string surveyTitle, DateTime? surveyDeadline, List<Recipient> recipients)
     {
-        Body = body;
+        TemplateName = templateName;
+        SurveyTitle = surveyTitle;
+        SurveyDeadline = surveyDeadline;
         Recipients = recipients;
-    }
-
-    protected bool Equals(EmailTemplate other)
-    {
-        return Body == other.Body && Recipients.Equals(other.Recipients);
-    }
-
-    public override bool Equals(object? obj)
-    {
-        if (ReferenceEquals(null, obj)) return false;
-        if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != this.GetType()) return false;
-        return Equals((EmailTemplate)obj);
-    }
-
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(Body, Recipients);
     }
 }
