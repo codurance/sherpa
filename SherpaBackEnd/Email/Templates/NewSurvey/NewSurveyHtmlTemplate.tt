@@ -3,33 +3,83 @@
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>
-<h1>Hi, <#= TemplateModel.Name #> </h1>
-<p>You have been invited to reply to this <#= TemplateModel.SurveyName #>. <#
-    if (TemplateModel.Deadline != null)
-    { #>
-        Please reply before <#= TemplateModel.Deadline #>, your input is very valuable for us.</p> 
-
-    <# }
-    else
-    {
-#>
-    Your input is very valuable for us.</p>
-    <#
-    }
-#> 
-<a href="<#= TemplateModel.Url #>">Answer Survey</a>
-<span>Thank you</span>
-<footer>
-    You are receiving this mail because you and your team are part of this mailing list. In case you do not want to receive this emails in the future please reach out to your manager.
-</footer>
-</body>
+<!doctype html>
+<html>
+  <body>
+    <div
+      style='background-color:#F2F5F7;color:#242424;font-family:Verdana, "Helvetica Neue", "Arial Nova", "Nimbus Sans", Arial, sans-serif;font-size:16px;font-weight:400;letter-spacing:0.15008px;line-height:1.5;margin:0;padding:32px 0;min-height:100%;width:100%'
+    >
+      <table
+        align="center"
+        width="100%"
+        style="margin:0 auto;max-width:600px;background-color:#FFFFFF"
+        role="presentation"
+        cellspacing="0"
+        cellpadding="0"
+        border="0"
+      >
+        <tbody>
+          <tr style="width:100%">
+            <td>
+              <h3
+                style="font-weight:500;text-align:left;margin:0;font-size:24px;padding:32px 24px 0px 24px"
+              >
+                Hi <#= TemplateModel.Name #>,
+              </h3>
+              <div
+                style="color:#333333;font-size:14px;font-weight:normal;text-align:left;padding:8px 24px 16px 24px"
+              >
+                You have been invited you to reply to this survey "<#= TemplateModel.SurveyName #>".
+                <# if (TemplateModel.Deadline != null) {#> Please reply before <#= TemplateModel.Deadline #>, your input is very valuable for us.</div> <# } 
+                else { #> Your input is very valuable for us.</div><# } #> 
+              <div style="text-align:center;padding:32px 0px 32px 0px">
+                <a
+                  href="<#= TemplateModel.Url #>"
+                  style="color:#FFFFFF;font-size:16px;font-weight:500;background-color:#D91B81;border-radius:8px;display:inline-block;padding:12px 20px;text-decoration:none"
+                  target="_blank"
+                  ><span
+                    ><!--[if mso
+                      ]><i
+                        style="letter-spacing: 20px;mso-font-width:-100%;mso-text-raise:30"
+                        hidden
+                        >&nbsp;</i
+                      ><!
+                    [endif]--></span
+                  ><span>Answer Survey</span
+                  ><span
+                    ><!--[if mso
+                      ]><i
+                        style="letter-spacing: 20px;mso-font-width:-100%"
+                        hidden
+                        >&nbsp;</i
+                      ><!
+                    [endif]--></span
+                  ></a
+                >
+              </div>
+              <div
+                style="color:#333333;font-weight:normal;padding:16px 24px 16px 24px"
+              >
+                Thank you.
+              </div>
+              <div style="padding:16px 24px 16px 24px">
+                <hr
+                  style="width:100%;border:none;border-top:1px solid #EEEEEE;margin:0"
+                />
+              </div>
+              <div
+                style="color:#000000;font-size:10px;font-weight:normal;text-align:center;padding:4px 24px 24px 24px"
+              >
+                You are receiving this mail because you and your team are part
+                of this mailing list. In case you do not want to receive this
+                email in the future please reach out to your manager.
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </body>
 </html>
 <#+
     public NewSurveyTemplateModel TemplateModel { get; set; }
