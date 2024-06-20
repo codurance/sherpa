@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Moq;
 using SherpaBackEnd.Email;
 using SherpaBackEnd.Email.Application;
+using SherpaBackEnd.Email.Templates.NewSurvey;
 using static SherpaBackEnd.Tests.Builders.SurveyBuilder;
 using static SherpaBackEnd.Tests.Builders.TeamBuilder;
 using static SherpaBackEnd.Tests.Builders.TeamMemberBuilder;
@@ -53,8 +54,9 @@ public class EmailTemplateFactoryTest
         };
         
         var expectedEmailTemplates = new EmailTemplate("NewSurvey", survey.Title, survey.Deadline, recipients);
-        
-        var actualEmailTemplates = emailTemplateFactory.CreateEmailTemplate(surveyNotifications);
+        var newSurveyEmailTemplateDto = new NewSurveyEmailTemplateDto(surveyNotifications);
+
+        var actualEmailTemplates = emailTemplateFactory.CreateEmailTemplate(newSurveyEmailTemplateDto);
 
         Assert.Equal(expectedEmailTemplates.TemplateName, actualEmailTemplates.TemplateName);
         Assert.Equal(expectedEmailTemplates.SurveyTitle, actualEmailTemplates.SurveyTitle);
