@@ -3,7 +3,6 @@ using Amazon.SimpleEmail;
 using Amazon.SimpleEmail.Model;
 using Newtonsoft.Json;
 using SherpaBackEnd.Email.Templates.NewSurvey;
-using SherpaBackEnd.Exceptions;
 
 namespace SherpaBackEnd.Email.Application;
 
@@ -91,7 +90,7 @@ public class SesEmailService : IEmailService
             {
                 Name = recipient.Name,
                 SurveyName = emailTemplate.SurveyTitle,
-                Deadline = emailTemplate.SurveyDeadline,
+                Deadline = emailTemplate.SurveyDeadline?.ToString("dd MMMM yyyy"),
                 Url = recipient.Url
             };
             return new BulkEmailDestination
