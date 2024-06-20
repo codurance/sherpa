@@ -18,17 +18,22 @@ public class EmailTemplateFactory : IEmailTemplateFactory
         {
             case NewSurveyEmailTemplateDto newSurveyEmailTemplateDto:
             {
-                var survey = newSurveyEmailTemplateDto.SurveyNotifications.First().Survey;
-                var title = survey.Title;
-                var deadline = survey.Deadline;
-                var recipients = newSurveyEmailTemplateDto.SurveyNotifications.Select(notification =>
-                    new Recipient(notification.TeamMember.FullName, notification.TeamMember.Email,
-                        CreateAnswerSurveyUrl(notification))).ToList();
-                return new EmailTemplate("NewSurvey", title, deadline, recipients);
+                return CreateNewSurveyEmailTemplate(newSurveyEmailTemplateDto);
             }
             default:
                 throw new NotImplementedException();
         }
+    }
+
+    private NewSurveyEmailTemplate CreateNewSurveyEmailTemplate(NewSurveyEmailTemplateDto newSurveyEmailTemplateDto)
+    {
+        var survey = newSurveyEmailTemplateDto.SurveyNotifications.First().Survey;
+        var title = survey.Title;
+        var deadline = survey.Deadline;
+        var recipients = newSurveyEmailTemplateDto.SurveyNotifications.Select(notification =>
+            new Recipient(notification.TeamMember.FullName, notification.TeamMember.Email,
+                CreateAnswerSurveyUrl(notification))).ToList();
+        return new NewSurveyEmailTemplate("NewSurvey", title, deadline, recipients);
     }
 
     private string CreateAnswerSurveyUrl(SurveyNotification.Domain.SurveyNotification notification)
