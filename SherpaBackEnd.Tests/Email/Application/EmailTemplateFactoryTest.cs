@@ -53,13 +53,12 @@ public class EmailTemplateFactoryTest
             johnRecipient
         };
         
-        var expectedEmailTemplates = new EmailTemplate("NewSurvey", survey.Title, survey.Deadline, recipients);
+        var expectedEmailTemplates = new EmailTemplate("NewSurvey", survey.Deadline, recipients);
         var newSurveyEmailTemplateDto = new NewSurveyEmailTemplateDto(surveyNotifications);
 
         var actualEmailTemplates = emailTemplateFactory.CreateEmailTemplate(newSurveyEmailTemplateDto);
 
         Assert.Equal(expectedEmailTemplates.TemplateName, actualEmailTemplates.TemplateName);
-        Assert.Equal(expectedEmailTemplates.SurveyTitle, actualEmailTemplates.SurveyTitle);
         Assert.Equal(expectedEmailTemplates.SurveyDeadline, actualEmailTemplates.SurveyDeadline);
         Assert.Contains(janeRecipient, actualEmailTemplates.Recipients);
         Assert.Contains(johnRecipient, actualEmailTemplates.Recipients);

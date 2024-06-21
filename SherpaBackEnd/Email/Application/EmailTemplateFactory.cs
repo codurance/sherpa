@@ -54,7 +54,7 @@ public class EmailTemplateFactory : IEmailTemplateFactory
                 TextBody = text.TransformText(),
             };
         }).ToList();
-        return new NewSurveyEmailTemplate(title, deadline, recipients);
+        return new NewSurveyEmailTemplate(deadline, recipients);
     }
 
     private string CreateAnswerSurveyUrl(SurveyNotification.Domain.SurveyNotification notification)
