@@ -29,7 +29,7 @@
               <div
                 style="color:#333333;font-size:14px;font-weight:normal;text-align:left;padding:8px 24px 16px 24px"
               >
-                You have been invited you to reply to this survey "<#= TemplateModel.SurveyName #>".
+                You have been invited to reply to this survey "<#= TemplateModel.SurveyName #>".
                 <# if (TemplateModel.Deadline != null) {#> Please reply before <#= TemplateModel.Deadline #>, your input is very valuable for us.</div> <# } 
                 else { #> Your input is very valuable for us.</div><# } #> 
               <div style="text-align:center;padding:32px 0px 32px 0px">

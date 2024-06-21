@@ -1,3 +1,6 @@
+using SherpaBackEnd.Email.Templates;
+using SherpaBackEnd.Email.Templates.NewSurvey;
+
 namespace SherpaBackEnd.Email.Application;
 
 public class EmailTemplateFactory : IEmailTemplateFactory
@@ -9,15 +12,44 @@ public class EmailTemplateFactory : IEmailTemplateFactory
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public EmailTemplate CreateEmailTemplate(List<SurveyNotification.Domain.SurveyNotification> surveyNotifications)
+    public EmailTemplate CreateEmailTemplate(CreateEmailTemplateDto createEmailTemplateDto)
     {
-        // TODO refactor to an actual factory
-        var survey = surveyNotifications.First().Survey;
-        var title = survey.Title;
-        var deadline = survey.Deadline;
-        var recipients = surveyNotifications.Select(notification =>
-            new Recipient( notification.TeamMember.FullName, notification.TeamMember.Email, CreateAnswerSurveyUrl(notification))).ToList();
-        return new EmailTemplate("NewSurvey", title, deadline, recipients);
+        return createEmailTemplateDto switch
+        {
+            NewSurveyEmailTemplateDto newSurveyEmailTemplateDto => CreateNewSurveyEmailTemplate(
+                newSurveyEmailTemplateDto),
+            _ => throw new NotImplementedException()
+        };
+    }
+
+    private EmailTemplate CreateNewSurveyEmailTemplate(NewSurveyEmailTemplateDto newSurveyEmailTemplateDto)
+    {
+        var recipients = newSurveyEmailTemplateDto.SurveyNotifications.Select(notification =>
+        {
+            var newSurveyTemplateModel = CreateNewSurveyTemplateModel(notification);
+            var html = newSurveyTemplateModel.CreateHtmlBody();
+            var text = newSurveyTemplateModel.CreateTextBody();
+            
+            return new Recipient(notification.TeamMember.FullName, notification.TeamMember.Email,
+                CreateAnswerSurveyUrl(notification))
+            {
+                HtmlBody = html,
+                TextBody = text,
+            };
+        }).ToList();
+        return new EmailTemplate("NewSurvey", recipients);
+    }
+
+    private NewSurveyTemplateModel CreateNewSurveyTemplateModel(SurveyNotification.Domain.SurveyNotification notification)
+    {
+        return new NewSurveyTemplateModel()
+        {
+            Url = CreateAnswerSurveyUrl(notification),
+            Deadline = notification.Survey.Deadline?.ToString("dd MMMM yyyy"),
+            SurveyName = notification.Survey.Title,
+            Name = notification.TeamMember.FullName
+                
+        };
     }
 
     private string CreateAnswerSurveyUrl(SurveyNotification.Domain.SurveyNotification notification)

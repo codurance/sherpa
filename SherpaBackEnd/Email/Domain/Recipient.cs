@@ -5,6 +5,8 @@ public class Recipient
     public string Name { get; }
     public string Email { get; }
     public string Url { get; }
+    public string HtmlBody { get; set; }
+    public string TextBody { get; set; }
 
     public Recipient(string name, string email, string url)
     {

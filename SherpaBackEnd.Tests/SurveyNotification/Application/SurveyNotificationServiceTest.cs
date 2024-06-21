@@ -2,6 +2,8 @@ using JetBrains.Annotations;
 using Moq;
 using SherpaBackEnd.Email;
 using SherpaBackEnd.Email.Application;
+using SherpaBackEnd.Email.Templates;
+using SherpaBackEnd.Email.Templates.NewSurvey;
 using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Survey.Domain.Persistence;
 using SherpaBackEnd.SurveyNotification.Application;
@@ -103,13 +105,19 @@ public class SurveyNotificationServiceTest
         var surveyNotifications =
             new List<SherpaBackEnd.SurveyNotification.Domain.SurveyNotification>()
                 { janeSurveyNotification, johnSurveyNotification };
+        var newSurveyEmailTemplateDto = new NewSurveyEmailTemplateDto(surveyNotifications);
 
         _surveyRepository.Setup(repository => repository.GetSurveyById(_surveyId))
             .ReturnsAsync(survey);
 
         await testableSurveyNotificationService.LaunchSurveyNotificationsFor(_createSurveyNotificationsDto);
 
-        _emailTemplateFactory.Verify(factory => factory.CreateEmailTemplate(surveyNotifications));
+
+        _emailTemplateFactory.Verify(factory => factory.CreateEmailTemplate(It.IsAny<CreateEmailTemplateDto>()));
+        _emailTemplateFactory.Verify(factory =>
+            factory.CreateEmailTemplate(It.Is<NewSurveyEmailTemplateDto>(
+                dto => dto.SurveyNotifications.Contains(johnSurveyNotification) &&
+                       dto.SurveyNotifications.Contains(janeSurveyNotification))));
     }
 
     [Fact]
@@ -134,8 +142,9 @@ public class SurveyNotificationServiceTest
 
         _surveyRepository.Setup(repository => repository.GetSurveyById(_surveyId))
             .ReturnsAsync(survey);
-        var emailTemplate = new EmailTemplate(null, null, null, new List<Recipient>());
-        _emailTemplateFactory.Setup(factory => factory.CreateEmailTemplate(surveyNotifications))
+        var emailTemplate = new EmailTemplate(null, new List<Recipient>());
+        var newSurveyEmailTemplateDto = new NewSurveyEmailTemplateDto(surveyNotifications);
+        _emailTemplateFactory.Setup(factory => factory.CreateEmailTemplate(It.IsAny<NewSurveyEmailTemplateDto>()))
             .Returns(emailTemplate);
 
         await testableSurveyNotificationService.LaunchSurveyNotificationsFor(_createSurveyNotificationsDto);
@@ -200,7 +209,7 @@ public class SurveyNotificationServiceTest
         Assert.Equal(expectedSurveyNotification, surveyNotification);
     }
 
-    
+
     [Fact]
     public async Task ShouldThrowErrorIfSendEmailIsNotSuccessful()
     {
@@ -208,10 +217,10 @@ public class SurveyNotificationServiceTest
         var team = ATeam().Build();
         var survey = ASurvey().WithId(_surveyId).WithTeam(team).Build();
         _surveyRepository.Setup(repository => repository.GetSurveyById(_surveyId)).ReturnsAsync(survey);
-        var emailTemplate = new EmailTemplate(null, null, null, new List<Recipient>());
-        _emailTemplateFactory.Setup(factory => factory.CreateEmailTemplate(surveyNotifications))
+        var emailTemplate = new EmailTemplate(null, new List<Recipient>());
+        _emailTemplateFactory.Setup(factory => factory.CreateEmailTemplate(It.IsAny<NewSurveyEmailTemplateDto>()))
             .Returns(emailTemplate);
-        
+
         _emailService
             .Setup(service => service.SendEmailsWith(emailTemplate))
             .ThrowsAsync(new Exception());
@@ -220,7 +229,7 @@ public class SurveyNotificationServiceTest
             await _surveyNotificationService.LaunchSurveyNotificationsFor(_createSurveyNotificationsDto));
         Assert.IsType<EmailSendingException>(exceptionThrown);
     }
-    
+
     // TODO remove TestableSurveyNotificationService by implementing IGuidService mock in tests
     class TestableSurveyNotificationService : SurveyNotificationService
     {

@@ -18,7 +18,7 @@ namespace SherpaBackEnd.Email.Templates.NewSurvey
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "/Users/paulamasutier/Desktop/Sherpa/sherpa/SherpaBackEnd/Email/Templates/NewSurvey/NewSurveyHtmlTemplate.tt"
+    #line 1 "C:\Users\nlope\Codurance\sherpa\SherpaBackEnd\Email\Templates\NewSurvey\NewSurveyHtmlTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "16.0.0.0")]
     public partial class NewSurveyHtmlTemplate : NewSurveyHtmlTemplateBase
     {
@@ -28,37 +28,37 @@ namespace SherpaBackEnd.Email.Templates.NewSurvey
         /// </summary>
         public virtual string TransformText()
         {
-            this.Write("<!doctype html>\n<html>\n  <body>\n    <div\n      style='background-color:#F2F5F7;color:#242424;font-family:Verdana, \"Helvetica Neue\", \"Arial Nova\", \"Nimbus Sans\", Arial, sans-serif;font-size:16px;font-weight:400;letter-spacing:0.15008px;line-height:1.5;margin:0;padding:32px 0;min-height:100%;width:100%'\n    >\n      <table\n        align=\"center\"\n        width=\"100%\"\n        style=\"margin:0 auto;max-width:600px;background-color:#FFFFFF\"\n        role=\"presentation\"\n        cellspacing=\"0\"\n        cellpadding=\"0\"\n        border=\"0\"\n      >\n        <tbody>\n          <tr style=\"width:100%\">\n            <td>\n              <h3\n                style=\"font-weight:500;text-align:left;margin:0;font-size:24px;padding:32px 24px 0px 24px\"\n              >\n                Hi ");
+            this.Write("<!doctype html>\r\n<html>\r\n  <body>\r\n    <div\r\n      style='background-color:#F2F5F7;color:#242424;font-family:Verdana, \"Helvetica Neue\", \"Arial Nova\", \"Nimbus Sans\", Arial, sans-serif;font-size:16px;font-weight:400;letter-spacing:0.15008px;line-height:1.5;margin:0;padding:32px 0;min-height:100%;width:100%'\r\n    >\r\n      <table\r\n        align=\"center\"\r\n        width=\"100%\"\r\n        style=\"margin:0 auto;max-width:600px;background-color:#FFFFFF\"\r\n        role=\"presentation\"\r\n        cellspacing=\"0\"\r\n        cellpadding=\"0\"\r\n        border=\"0\"\r\n      >\r\n        <tbody>\r\n          <tr style=\"width:100%\">\r\n            <td>\r\n              <h3\r\n                style=\"font-weight:500;text-align:left;margin:0;font-size:24px;padding:32px 24px 0px 24px\"\r\n              >\r\n                Hi ");
             
-            #line 27 "/Users/paulamasutier/Desktop/Sherpa/sherpa/SherpaBackEnd/Email/Templates/NewSurvey/NewSurveyHtmlTemplate.tt"
+            #line 27 "C:\Users\nlope\Codurance\sherpa\SherpaBackEnd\Email\Templates\NewSurvey\NewSurveyHtmlTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(TemplateModel.Name));
             
             #line default
             #line hidden
-            this.Write(",\n              </h3>\n              <div\n                style=\"color:#333333;font-size:14px;font-weight:normal;text-align:left;padding:8px 24px 16px 24px\"\n              >\n                You have been invited you to reply to this survey \"");
+            this.Write(",\r\n              </h3>\r\n              <div\r\n                style=\"color:#333333;font-size:14px;font-weight:normal;text-align:left;padding:8px 24px 16px 24px\"\r\n              >\r\n                You have been invited to reply to this survey \"");
             
-            #line 32 "/Users/paulamasutier/Desktop/Sherpa/sherpa/SherpaBackEnd/Email/Templates/NewSurvey/NewSurveyHtmlTemplate.tt"
+            #line 32 "C:\Users\nlope\Codurance\sherpa\SherpaBackEnd\Email\Templates\NewSurvey\NewSurveyHtmlTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(TemplateModel.SurveyName));
             
             #line default
             #line hidden
-            this.Write("\".\n                ");
+            this.Write("\".\r\n                ");
             
-            #line 33 "/Users/paulamasutier/Desktop/Sherpa/sherpa/SherpaBackEnd/Email/Templates/NewSurvey/NewSurveyHtmlTemplate.tt"
+            #line 33 "C:\Users\nlope\Codurance\sherpa\SherpaBackEnd\Email\Templates\NewSurvey\NewSurveyHtmlTemplate.tt"
  if (TemplateModel.Deadline != null) {
             
             #line default
             #line hidden
             this.Write(" Please reply before ");
             
-            #line 33 "/Users/paulamasutier/Desktop/Sherpa/sherpa/SherpaBackEnd/Email/Templates/NewSurvey/NewSurveyHtmlTemplate.tt"
+            #line 33 "C:\Users\nlope\Codurance\sherpa\SherpaBackEnd\Email\Templates\NewSurvey\NewSurveyHtmlTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(TemplateModel.Deadline));
             
             #line default
             #line hidden
             this.Write(", your input is very valuable for us.</div> ");
             
-            #line 33 "/Users/paulamasutier/Desktop/Sherpa/sherpa/SherpaBackEnd/Email/Templates/NewSurvey/NewSurveyHtmlTemplate.tt"
+            #line 33 "C:\Users\nlope\Codurance\sherpa\SherpaBackEnd\Email\Templates\NewSurvey\NewSurveyHtmlTemplate.tt"
  } 
                 else { 
             
@@ -66,23 +66,23 @@ namespace SherpaBackEnd.Email.Templates.NewSurvey
             #line hidden
             this.Write(" Your input is very valuable for us.</div>");
             
-            #line 34 "/Users/paulamasutier/Desktop/Sherpa/sherpa/SherpaBackEnd/Email/Templates/NewSurvey/NewSurveyHtmlTemplate.tt"
+            #line 34 "C:\Users\nlope\Codurance\sherpa\SherpaBackEnd\Email\Templates\NewSurvey\NewSurveyHtmlTemplate.tt"
  } 
             
             #line default
             #line hidden
-            this.Write(" \n              <div style=\"text-align:center;padding:32px 0px 32px 0px\">\n                <a\n                  href=\"");
+            this.Write(" \r\n              <div style=\"text-align:center;padding:32px 0px 32px 0px\">\r\n                <a\r\n                  href=\"");
             
-            #line 37 "/Users/paulamasutier/Desktop/Sherpa/sherpa/SherpaBackEnd/Email/Templates/NewSurvey/NewSurveyHtmlTemplate.tt"
+            #line 37 "C:\Users\nlope\Codurance\sherpa\SherpaBackEnd\Email\Templates\NewSurvey\NewSurveyHtmlTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(TemplateModel.Url));
             
             #line default
             #line hidden
-            this.Write("\"\n                  style=\"color:#FFFFFF;font-size:16px;font-weight:500;background-color:#D91B81;border-radius:8px;display:inline-block;padding:12px 20px;text-decoration:none\"\n                  target=\"_blank\"\n                  ><span\n                    ><!--[if mso\n                      ]><i\n                        style=\"letter-spacing: 20px;mso-font-width:-100%;mso-text-raise:30\"\n                        hidden\n                        >&nbsp;</i\n                      ><!\n                    [endif]--></span\n                  ><span>Answer Survey</span\n                  ><span\n                    ><!--[if mso\n                      ]><i\n                        style=\"letter-spacing: 20px;mso-font-width:-100%\"\n                        hidden\n                        >&nbsp;</i\n                      ><!\n                    [endif]--></span\n                  ></a\n                >\n              </div>\n              <div\n                style=\"color:#333333;font-weight:normal;padding:16px 24px 16px 24px\"\n              >\n                Thank you.\n              </div>\n              <div style=\"padding:16px 24px 16px 24px\">\n                <hr\n                  style=\"width:100%;border:none;border-top:1px solid #EEEEEE;margin:0\"\n                />\n              </div>\n              <div\n                style=\"color:#000000;font-size:10px;font-weight:normal;text-align:center;padding:4px 24px 24px 24px\"\n              >\n                You are receiving this mail because you and your team are part\n                of this mailing list. In case you do not want to receive this\n                email in the future please reach out to your manager.\n              </div>\n            </td>\n          </tr>\n        </tbody>\n      </table>\n    </div>\n  </body>\n</html>\n");
+            this.Write("\"\r\n                  style=\"color:#FFFFFF;font-size:16px;font-weight:500;background-color:#D91B81;border-radius:8px;display:inline-block;padding:12px 20px;text-decoration:none\"\r\n                  target=\"_blank\"\r\n                  ><span\r\n                    ><!--[if mso\r\n                      ]><i\r\n                        style=\"letter-spacing: 20px;mso-font-width:-100%;mso-text-raise:30\"\r\n                        hidden\r\n                        >&nbsp;</i\r\n                      ><!\r\n                    [endif]--></span\r\n                  ><span>Answer Survey</span\r\n                  ><span\r\n                    ><!--[if mso\r\n                      ]><i\r\n                        style=\"letter-spacing: 20px;mso-font-width:-100%\"\r\n                        hidden\r\n                        >&nbsp;</i\r\n                      ><!\r\n                    [endif]--></span\r\n                  ></a\r\n                >\r\n              </div>\r\n              <div\r\n                style=\"color:#333333;font-weight:normal;padding:16px 24px 16px 24px\"\r\n              >\r\n                Thank you.\r\n              </div>\r\n              <div style=\"padding:16px 24px 16px 24px\">\r\n                <hr\r\n                  style=\"width:100%;border:none;border-top:1px solid #EEEEEE;margin:0\"\r\n                />\r\n              </div>\r\n              <div\r\n                style=\"color:#000000;font-size:10px;font-weight:normal;text-align:center;padding:4px 24px 24px 24px\"\r\n              >\r\n                You are receiving this mail because you and your team are part\r\n                of this mailing list. In case you do not want to receive this\r\n                email in the future please reach out to your manager.\r\n              </div>\r\n            </td>\r\n          </tr>\r\n        </tbody>\r\n      </table>\r\n    </div>\r\n  </body>\r\n</html>\r\n");
             return this.GenerationEnvironment.ToString();
         }
         
-        #line 84 "/Users/paulamasutier/Desktop/Sherpa/sherpa/SherpaBackEnd/Email/Templates/NewSurvey/NewSurveyHtmlTemplate.tt"
+        #line 84 "C:\Users\nlope\Codurance\sherpa\SherpaBackEnd\Email\Templates\NewSurvey\NewSurveyHtmlTemplate.tt"
 
     public NewSurveyTemplateModel TemplateModel { get; set; }
 

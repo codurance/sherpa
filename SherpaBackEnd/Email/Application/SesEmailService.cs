@@ -22,7 +22,6 @@ public class SesEmailService : IEmailService
     {
         try
         {
-
             await _amazonEmailService.DeleteTemplateAsync(new DeleteTemplateRequest()
             {
                 TemplateName = TemplateName
@@ -67,7 +66,7 @@ public class SesEmailService : IEmailService
         }
     }
 
-    public CreateTemplateRequest CreateTemplateRequest(string templateName)
+    private CreateTemplateRequest CreateTemplateRequest(string templateName)
     {
         return new CreateTemplateRequest
         {
@@ -81,38 +80,24 @@ public class SesEmailService : IEmailService
         };
     }
 
-    public SendBulkTemplatedEmailRequest CreateBulkTemplatedEmailRequest(EmailTemplate emailTemplate,
+    private SendBulkTemplatedEmailRequest CreateBulkTemplatedEmailRequest(EmailTemplate emailTemplate,
         string templateName)
     {
-        var bulkEmailDestinations = emailTemplate.Recipients.ConvertAll(recipient =>
+        var bulkEmailDestinations = emailTemplate.Recipients.ConvertAll(recipient => new BulkEmailDestination
         {
-            var newSurveyTemplateModel = new NewSurveyTemplateModel()
+            Destination = new Destination
             {
-                Name = recipient.Name,
-                SurveyName = emailTemplate.SurveyTitle,
-                Deadline = emailTemplate.SurveyDeadline?.ToString("dd MMMM yyyy"),
-                Url = recipient.Url
-            };
-            return new BulkEmailDestination
+                ToAddresses = new List<string>() { recipient.Email }
+            },
+            ReplacementTemplateData = JsonConvert.SerializeObject(new Dictionary<string, string>
             {
-                Destination = new Destination
                 {
-                    ToAddresses = new List<string>() { recipient.Email }
+                    "html-body", recipient.HtmlBody
                 },
-                ReplacementTemplateData = JsonConvert.SerializeObject(new Dictionary<string, string>
                 {
-                    {
-                        "html-body", new NewSurveyHtmlTemplate()
-                        {
-                            TemplateModel = newSurveyTemplateModel
-                        }.TransformText()
-                    },
-                    { "text-body", new NewSurveyTextTemplate()
-                    {
-                        TemplateModel = newSurveyTemplateModel
-                    }.TransformText() }
-                })
-            };
+                    "text-body", recipient.TextBody
+                }
+            })
         });
 
         var sendBulkTemplatedEmailRequest = new SendBulkTemplatedEmailRequest
