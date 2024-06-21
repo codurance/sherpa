@@ -27,10 +27,34 @@ public class EmailTemplateFactory : IEmailTemplateFactory
         var survey = newSurveyEmailTemplateDto.SurveyNotifications.First().Survey;
         var title = survey.Title;
         var deadline = survey.Deadline;
+        
         var recipients = newSurveyEmailTemplateDto.SurveyNotifications.Select(notification =>
-            new Recipient(notification.TeamMember.FullName, notification.TeamMember.Email,
-                CreateAnswerSurveyUrl(notification))).ToList();
-        return new NewSurveyEmailTemplate("NewSurvey", title, deadline, recipients);
+        {
+            var newSurveyTemplateModel = new NewSurveyTemplateModel()
+            {
+                Url = CreateAnswerSurveyUrl(notification),
+                Deadline = deadline?.ToString("dd MMMM yyyy"),
+                SurveyName = title,
+                Name = notification.TeamMember.FullName
+                
+            };
+            var html = new NewSurveyHtmlTemplate()
+            {
+                TemplateModel = newSurveyTemplateModel
+            };
+            var text = new NewSurveyTextTemplate()
+            {
+                TemplateModel = newSurveyTemplateModel
+            };
+            
+            return new Recipient(notification.TeamMember.FullName, notification.TeamMember.Email,
+                CreateAnswerSurveyUrl(notification))
+            {
+                HtmlBody = html.TransformText(),
+                TextBody = text.TransformText(),
+            };
+        }).ToList();
+        return new NewSurveyEmailTemplate(title, deadline, recipients);
     }
 
     private string CreateAnswerSurveyUrl(SurveyNotification.Domain.SurveyNotification notification)

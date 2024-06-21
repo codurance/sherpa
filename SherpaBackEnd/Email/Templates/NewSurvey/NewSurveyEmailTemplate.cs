@@ -4,7 +4,9 @@ namespace SherpaBackEnd.Email.Templates.NewSurvey;
 
 public class NewSurveyEmailTemplate: EmailTemplate
 {
-    public NewSurveyEmailTemplate(string templateName, string surveyTitle, DateTime? surveyDeadline, List<Recipient> recipients) : base(templateName, surveyTitle, surveyDeadline, recipients)
+    private static readonly string _templateName = "NewSurvey";
+
+    public NewSurveyEmailTemplate( string surveyTitle, DateTime? surveyDeadline, List<Recipient> recipients) : base(_templateName, surveyTitle, surveyDeadline, recipients)
     {
     }
 }
