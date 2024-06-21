@@ -6,7 +6,7 @@ public class NewSurveyEmailTemplate: EmailTemplate
 {
     private static readonly string _templateName = "NewSurvey";
 
-    public NewSurveyEmailTemplate( DateTime? surveyDeadline, List<Recipient> recipients) : base(_templateName, surveyDeadline, recipients)
+    public NewSurveyEmailTemplate(List<Recipient> recipients) : base(_templateName, recipients)
     {
     }
 }
