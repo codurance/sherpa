@@ -18,7 +18,7 @@ namespace SherpaBackEnd.Email.Templates.NewSurvey
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "/Users/paulamasutier/Desktop/Sherpa/sherpa/SherpaBackEnd/Email/Templates/NewSurvey/NewSurveyTextTemplate.tt"
+    #line 1 "C:\Users\nlope\Codurance\sherpa\SherpaBackEnd\Email\Templates\NewSurvey\NewSurveyTextTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "16.0.0.0")]
     public partial class NewSurveyTextTemplate : NewSurveyTextTemplateBase
     {
@@ -30,21 +30,21 @@ namespace SherpaBackEnd.Email.Templates.NewSurvey
         {
             this.Write("Hi, ");
             
-            #line 6 "/Users/paulamasutier/Desktop/Sherpa/sherpa/SherpaBackEnd/Email/Templates/NewSurvey/NewSurveyTextTemplate.tt"
+            #line 6 "C:\Users\nlope\Codurance\sherpa\SherpaBackEnd\Email\Templates\NewSurvey\NewSurveyTextTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(TemplateModel.Name));
             
             #line default
             #line hidden
-            this.Write("\nYou have been invited to reply to this ");
+            this.Write("\r\nYou have been invited to reply to this ");
             
-            #line 7 "/Users/paulamasutier/Desktop/Sherpa/sherpa/SherpaBackEnd/Email/Templates/NewSurvey/NewSurveyTextTemplate.tt"
+            #line 7 "C:\Users\nlope\Codurance\sherpa\SherpaBackEnd\Email\Templates\NewSurvey\NewSurveyTextTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(TemplateModel.SurveyName));
             
             #line default
             #line hidden
             this.Write(". ");
             
-            #line 7 "/Users/paulamasutier/Desktop/Sherpa/sherpa/SherpaBackEnd/Email/Templates/NewSurvey/NewSurveyTextTemplate.tt"
+            #line 7 "C:\Users\nlope\Codurance\sherpa\SherpaBackEnd\Email\Templates\NewSurvey\NewSurveyTextTemplate.tt"
 
     if (TemplateModel.Deadline != null)
     { 
@@ -53,14 +53,14 @@ namespace SherpaBackEnd.Email.Templates.NewSurvey
             #line hidden
             this.Write("        Please reply before ");
             
-            #line 10 "/Users/paulamasutier/Desktop/Sherpa/sherpa/SherpaBackEnd/Email/Templates/NewSurvey/NewSurveyTextTemplate.tt"
+            #line 10 "C:\Users\nlope\Codurance\sherpa\SherpaBackEnd\Email\Templates\NewSurvey\NewSurveyTextTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(TemplateModel.Deadline));
             
             #line default
             #line hidden
-            this.Write(", your input is very valuable for us.\n\n    ");
+            this.Write(", your input is very valuable.\r\n\r\n    ");
             
-            #line 12 "/Users/paulamasutier/Desktop/Sherpa/sherpa/SherpaBackEnd/Email/Templates/NewSurvey/NewSurveyTextTemplate.tt"
+            #line 12 "C:\Users\nlope\Codurance\sherpa\SherpaBackEnd\Email\Templates\NewSurvey\NewSurveyTextTemplate.tt"
  }
     else
     {
@@ -68,27 +68,27 @@ namespace SherpaBackEnd.Email.Templates.NewSurvey
             
             #line default
             #line hidden
-            this.Write("    Your input is very valuable for us.\n    ");
+            this.Write("    Your input is very valuable.\r\n    ");
             
-            #line 17 "/Users/paulamasutier/Desktop/Sherpa/sherpa/SherpaBackEnd/Email/Templates/NewSurvey/NewSurveyTextTemplate.tt"
+            #line 17 "C:\Users\nlope\Codurance\sherpa\SherpaBackEnd\Email\Templates\NewSurvey\NewSurveyTextTemplate.tt"
 
     }
 
             
             #line default
             #line hidden
-            this.Write(" \nIn order to access the survey click the following link:\n");
+            this.Write(" \r\nIn order to access the survey click the following link:\r\n");
             
-            #line 21 "/Users/paulamasutier/Desktop/Sherpa/sherpa/SherpaBackEnd/Email/Templates/NewSurvey/NewSurveyTextTemplate.tt"
+            #line 21 "C:\Users\nlope\Codurance\sherpa\SherpaBackEnd\Email\Templates\NewSurvey\NewSurveyTextTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(TemplateModel.Url));
             
             #line default
             #line hidden
-            this.Write("\nThank you.\nYou are receiving this mail because you and your team are part of this mailing list. In case you do not want to receive this emails in the future please reach out to your manager.\n");
+            this.Write("\r\nThank you.\r\nYou are receiving this mail because you and your team are part of this mailing list. In case you do not want to receive this emails in the future please reach out to your manager.\r\n");
             return this.GenerationEnvironment.ToString();
         }
         
-        #line 24 "/Users/paulamasutier/Desktop/Sherpa/sherpa/SherpaBackEnd/Email/Templates/NewSurvey/NewSurveyTextTemplate.tt"
+        #line 24 "C:\Users\nlope\Codurance\sherpa\SherpaBackEnd\Email\Templates\NewSurvey\NewSurveyTextTemplate.tt"
 
     public NewSurveyTemplateModel TemplateModel { get; set; }
 

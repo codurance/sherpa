@@ -56,7 +56,7 @@ namespace SherpaBackEnd.Email.Templates.NewSurvey
             
             #line default
             #line hidden
-            this.Write(", your input is very valuable for us.</div> ");
+            this.Write(", your input is very valuable.</div> ");
             
             #line 33 "C:\Users\nlope\Codurance\sherpa\SherpaBackEnd\Email\Templates\NewSurvey\NewSurveyHtmlTemplate.tt"
  } 
@@ -64,7 +64,7 @@ namespace SherpaBackEnd.Email.Templates.NewSurvey
             
             #line default
             #line hidden
-            this.Write(" Your input is very valuable for us.</div>");
+            this.Write(" Your input is very valuable.</div>");
             
             #line 34 "C:\Users\nlope\Codurance\sherpa\SherpaBackEnd\Email\Templates\NewSurvey\NewSurveyHtmlTemplate.tt"
  } 

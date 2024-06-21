@@ -7,13 +7,13 @@ Hi, <#= TemplateModel.Name #>
 You have been invited to reply to this <#= TemplateModel.SurveyName #>. <#
     if (TemplateModel.Deadline != null)
     { #>
-        Please reply before <#= TemplateModel.Deadline #>, your input is very valuable for us.
+        Please reply before <#= TemplateModel.Deadline #>, your input is very valuable.
 
     <# }
     else
     {
 #>
-    Your input is very valuable for us.
+    Your input is very valuable.
     <#
     }
 #> 
