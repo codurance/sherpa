@@ -22,39 +22,34 @@ public class EmailTemplateFactory : IEmailTemplateFactory
         };
     }
 
-    private NewSurveyEmailTemplate CreateNewSurveyEmailTemplate(NewSurveyEmailTemplateDto newSurveyEmailTemplateDto)
+    private EmailTemplate CreateNewSurveyEmailTemplate(NewSurveyEmailTemplateDto newSurveyEmailTemplateDto)
     {
-        var survey = newSurveyEmailTemplateDto.SurveyNotifications.First().Survey;
-        var title = survey.Title;
-        var deadline = survey.Deadline;
-        
         var recipients = newSurveyEmailTemplateDto.SurveyNotifications.Select(notification =>
         {
-            var newSurveyTemplateModel = new NewSurveyTemplateModel()
-            {
-                Url = CreateAnswerSurveyUrl(notification),
-                Deadline = deadline?.ToString("dd MMMM yyyy"),
-                SurveyName = title,
-                Name = notification.TeamMember.FullName
-                
-            };
-            var html = new NewSurveyHtmlTemplate()
-            {
-                TemplateModel = newSurveyTemplateModel
-            };
-            var text = new NewSurveyTextTemplate()
-            {
-                TemplateModel = newSurveyTemplateModel
-            };
+            var newSurveyTemplateModel = CreateTemplateModel(notification);
+            var html = newSurveyTemplateModel.CreateHtmlBody();
+            var text = newSurveyTemplateModel.CreateTextBody();
             
             return new Recipient(notification.TeamMember.FullName, notification.TeamMember.Email,
                 CreateAnswerSurveyUrl(notification))
             {
-                HtmlBody = html.TransformText(),
-                TextBody = text.TransformText(),
+                HtmlBody = html,
+                TextBody = text,
             };
         }).ToList();
-        return new NewSurveyEmailTemplate(recipients);
+        return new EmailTemplate("NewSurvey", recipients);
+    }
+
+    private NewSurveyTemplateModel CreateTemplateModel(SurveyNotification.Domain.SurveyNotification notification)
+    {
+        return new NewSurveyTemplateModel()
+        {
+            Url = CreateAnswerSurveyUrl(notification),
+            Deadline = notification.Survey.Deadline?.ToString("dd MMMM yyyy"),
+            SurveyName = notification.Survey.Title,
+            Name = notification.TeamMember.FullName
+                
+        };
     }
 
     private string CreateAnswerSurveyUrl(SurveyNotification.Domain.SurveyNotification notification)
