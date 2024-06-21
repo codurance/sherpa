@@ -26,7 +26,7 @@ public class EmailTemplateFactory : IEmailTemplateFactory
     {
         var recipients = newSurveyEmailTemplateDto.SurveyNotifications.Select(notification =>
         {
-            var newSurveyTemplateModel = CreateTemplateModel(notification);
+            var newSurveyTemplateModel = CreateNewSurveyTemplateModel(notification);
             var html = newSurveyTemplateModel.CreateHtmlBody();
             var text = newSurveyTemplateModel.CreateTextBody();
             
@@ -40,7 +40,7 @@ public class EmailTemplateFactory : IEmailTemplateFactory
         return new EmailTemplate("NewSurvey", recipients);
     }
 
-    private NewSurveyTemplateModel CreateTemplateModel(SurveyNotification.Domain.SurveyNotification notification)
+    private NewSurveyTemplateModel CreateNewSurveyTemplateModel(SurveyNotification.Domain.SurveyNotification notification)
     {
         return new NewSurveyTemplateModel()
         {
