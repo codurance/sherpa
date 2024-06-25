@@ -19,7 +19,7 @@ public class EmailTemplateFactoryTest
     {
         var httpContextAccessor = new Mock<IHttpContextAccessor>();
 
-        var httpScheme = "http";
+        var httpScheme = "https";
         var sherpaUrl = new HostString("www.sherpa.com");
         httpContextAccessor.SetupProperty(context => context.HttpContext.Request.Scheme, httpScheme);
         httpContextAccessor.SetupProperty(context => context.HttpContext.Request.Host, sherpaUrl);
