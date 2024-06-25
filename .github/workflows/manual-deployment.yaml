@@ -10,19 +10,20 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-    - name: Setting up SDK
+    - name: Setting up dotnet SDK
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: '6.0.x'
 
-    - uses: actions/setup-node@v4
+    - name: Setting up node
+      uses: actions/setup-node@v4
       with:
         node-version: '18'
 
-    - name: Install zip
+    - name: Installing zip
       run:  sudo apt install -y zip
 
-    - name: Install AWS CLI v2
+    - name: Installing AWS CLI v2
       run:  |
         curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o /tmp/awscliv2.zip
         unzip -q /tmp/awscliv2.zip -d /tmp
@@ -30,33 +31,33 @@ jobs:
         sudo /tmp/aws/install --update
         rm -rf /tmp/aws/
 
-    - name: Build
+    - name: Building & Publishing backend
       run: |
         cd SherpaBackEnd
         dotnet build --configuration Release
         dotnet publish -c Release -f net6.0 -o ./publish --runtime linux-x64 /p:PublishProfile=EBDeploy 
 
-    - name: Zip application
+    - name: Zipping application
       run: |
         cd SherpaBackEnd/publish
         zip -r ../sherpa-backend.zip .
         cd ..
 
-    - name: Configure AWS Credentials
+    - name: Configuring AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: eu-central-1
 
-    - name: Deploy artifact to S3 bucket
+    - name: Deploying artifact to S3 bucket
       run: |
         aws s3 cp SherpaBackEnd/sherpa-backend.zip s3://sherpa-source-code-versions/sherpa-backend-1.${{ github.run_number }}.zip 
 
-    - name: Create application version
+    - name: Creating application version
       run: |
         aws elasticbeanstalk create-application-version --application-name Sherpa --version-label 1.${{ github.run_number }} --source-bundle S3Bucket="sherpa-source-code-versions",S3Key="sherpa-backend-1.${{ github.run_number }}.zip" 
         
-    - name: Update environment
+    - name: Updating environment
       run: |
         aws elasticbeanstalk update-environment --environment-name Sherpa-dev --version-label 1.${{ github.run_number }}
