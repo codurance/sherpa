@@ -55,6 +55,8 @@ public class EmailTemplateFactory : IEmailTemplateFactory
     private string CreateAnswerSurveyUrl(SurveyNotification.Domain.SurveyNotification notification)
     {
         var httpContextRequest = _httpContextAccessor.HttpContext?.Request;
-        return $"{httpContextRequest?.Scheme}://{httpContextRequest?.Host}/answer-survey/{notification.Id}";
+        // var scheme = httpContextRequest?.Scheme;
+        var scheme = "https"; // TODO: don't hardcode scheme after enabling SSL
+        return $"{scheme}://{httpContextRequest?.Host}/answer-survey/{notification.Id}";
     }
 }
