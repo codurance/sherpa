@@ -5,25 +5,37 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: gha-runner-scale-set
     steps: 
     - name: Checkout
       uses: actions/checkout@v3
 
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v3
+    - name: Setting up SDK
+      uses: actions/setup-dotnet@v2
       with:
-        dotnet-version: '6.0'
+        dotnet-version: '6.0.x'
 
-    - name: Install dependencies
-      run: dotnet restore
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+
+    - name: Install zip
+      run:  sudo apt install -y zip
+
+    - name: Install AWS CLI v2
+      run:  |
+        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o /tmp/awscliv2.zip
+        unzip -q /tmp/awscliv2.zip -d /tmp
+        rm /tmp/awscliv2.zip
+        sudo /tmp/aws/install --update
+        rm -rf /tmp/aws/
 
     - name: Build
       run: |
         cd SherpaBackEnd
-        dotnet build --configuration Release --no-restore
+        dotnet build --configuration Release
         dotnet publish -c Release -f net6.0 -o ./publish --runtime linux-x64 /p:PublishProfile=EBDeploy 
-  
+
     - name: Zip application
       run: |
         cd SherpaBackEnd/publish
@@ -48,4 +60,3 @@ jobs:
     - name: Update environment
       run: |
         aws elasticbeanstalk update-environment --environment-name Sherpa-dev --version-label 1.${{ github.run_number }}
-        
