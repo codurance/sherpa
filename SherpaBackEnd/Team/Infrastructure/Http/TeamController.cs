@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SherpaBackEnd.Team.Application;
 
 namespace SherpaBackEnd.Team.Infrastructure.Http;
 
+[Authorize]
 [ApiController]
 [Route("[controller]")]
 public class TeamController
