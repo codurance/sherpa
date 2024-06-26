@@ -32,6 +32,7 @@ public class SurveyAcceptanceTest
     private readonly Guid _surveyId = Guid.NewGuid();
     private readonly Mock<IGuidService> _guidService;
     private readonly SurveyService _surveyService;
+    private Mock<IAuthService> _authService;
 
     public SurveyAcceptanceTest(ITestOutputHelper testOutputHelper)
     {
@@ -43,10 +44,13 @@ public class SurveyAcceptanceTest
         _teams = new[] { new Team(Guid.NewGuid(), "Demo Team") };
         var httpClient = new HttpClient(_handlerMock.Object, false) { BaseAddress = new Uri("http://host") };
         _httpClientFactory = new Mock<IHttpClientFactory>();
+        _authService = new Mock<IAuthService>();
+        _authService.Setup(auth => auth.DecorateWithToken(It.IsAny<HttpRequestMessage>()))
+            .ReturnsAsync((HttpRequestMessage requestMessage) => requestMessage);
         _httpClientFactory.Setup(factory => factory.CreateClient("SherpaBackEnd")).Returns(httpClient);
         _templateService = new TemplateService(_httpClientFactory.Object);
         _testCtx.Services.AddSingleton<ITemplateService>(_templateService);
-        _teamService = new TeamServiceHttpClient(_httpClientFactory.Object);
+        _teamService = new TeamServiceHttpClient(_httpClientFactory.Object, _authService.Object);
         _testCtx.Services.AddSingleton<ITeamDataService>(_teamService);
         _surveyService = new SurveyService(_httpClientFactory.Object);
         _testCtx.Services.AddSingleton<ISurveyService>(_surveyService);

@@ -19,6 +19,7 @@ builder.Services.Configure<JsonSerializerOptions>(options =>
     options.Converters.Add(new DateOnlyJsonConverter());
 });
 
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITeamMemberService, InMemoryTeamMemberService>();
 builder.Services.AddScoped<ITeamDataService, TeamServiceHttpClient>();
 builder.Services.AddScoped<ITemplateService, TemplateService>();
