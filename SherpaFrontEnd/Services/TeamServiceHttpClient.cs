@@ -10,16 +10,19 @@ public class TeamServiceHttpClient : ITeamDataService
 {
     private const string Sherpabackend = "SherpaBackEnd";
     private readonly IHttpClientFactory _clientFactory;
+    private readonly IAuthService _authService;
 
-    public TeamServiceHttpClient(IHttpClientFactory httpClientFactory)
+    public TeamServiceHttpClient(IHttpClientFactory httpClientFactory, IAuthService authService)
     {
         _clientFactory = httpClientFactory;
+        _authService = authService;
     }
 
     public async Task<List<Team>> GetAllTeams()
     {
         var client = _clientFactory.CreateClient(Sherpabackend);
         var request = new HttpRequestMessage(HttpMethod.Get, "/team");
+        request = await _authService.DecorateWithToken(request);
         var response = await client.SendAsync(request);
 
         response.EnsureSuccessStatusCode();
@@ -33,6 +36,7 @@ public class TeamServiceHttpClient : ITeamDataService
     {
         var client = _clientFactory.CreateClient(Sherpabackend);
         var request = new HttpRequestMessage(HttpMethod.Get, $"/team/{guid}");
+        request = await _authService.DecorateWithToken(request);
         var response = await client.SendAsync(request);
 
         response.EnsureSuccessStatusCode();
@@ -45,7 +49,10 @@ public class TeamServiceHttpClient : ITeamDataService
     public async Task<HttpStatusCode> DeleteTeam(Guid guid)
     {
         var httpClient = _clientFactory.CreateClient(Sherpabackend);
-        var response = await httpClient.DeleteAsync($"/team/{guid.ToString()}");
+        var request = new HttpRequestMessage(HttpMethod.Delete, $"/team/{guid.ToString()}");
+        request = await _authService.DecorateWithToken(request);
+
+        var response = await httpClient.SendAsync(request);
         response.EnsureSuccessStatusCode();
         return response.StatusCode;
     }
@@ -55,8 +62,11 @@ public class TeamServiceHttpClient : ITeamDataService
         var teamToUpdate =
             JsonSerializer.Serialize(team, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         var httpClient = _clientFactory.CreateClient(Sherpabackend);
-        var response = await httpClient.PutAsync($"/team/{team.Id.ToString()}",
-            new StringContent(teamToUpdate, System.Text.Encoding.UTF8, "application/json"));
+        var request = new HttpRequestMessage(HttpMethod.Put, $"/team/{team.Id.ToString()}");
+        request.Content = new StringContent(teamToUpdate, System.Text.Encoding.UTF8, "application/json");
+        request = await _authService.DecorateWithToken(request);
+
+        var response = await httpClient.SendAsync(request);
         response.EnsureSuccessStatusCode();
     }
 
@@ -67,17 +77,23 @@ public class TeamServiceHttpClient : ITeamDataService
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
         var client = _clientFactory.CreateClient(Sherpabackend);
-        var response = await client.PostAsync("/team",
-            new StringContent(teamToAdd, System.Text.Encoding.UTF8, "application/json"));
+        var request = new HttpRequestMessage(HttpMethod.Post, "/team");
+        request.Content = new StringContent(teamToAdd, System.Text.Encoding.UTF8, "application/json");
+        request = await _authService.DecorateWithToken(request);
+        var response = await client.SendAsync(request);
         response.EnsureSuccessStatusCode();
     }
 
     public async Task AddTeamMember(AddTeamMemberDto addTeamMemberDto)
     {
         var client = _clientFactory.CreateClient(Sherpabackend);
-        await client.PatchAsync($"/team/{addTeamMemberDto.TeamId}/members", new StringContent(
+        var request = new HttpRequestMessage(HttpMethod.Patch, $"/team/{addTeamMemberDto.TeamId}/members");
+        request.Content = new StringContent(
             JsonSerializer.Serialize(addTeamMemberDto,
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true }),
-            System.Text.Encoding.UTF8, "application/json"));
+            System.Text.Encoding.UTF8, "application/json");
+        request = await _authService.DecorateWithToken(request);
+
+        await client.SendAsync(request);
     }
 }
