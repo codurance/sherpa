@@ -20,7 +20,6 @@ builder.Services.Configure<JsonSerializerOptions>(options =>
 });
 
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<ITeamMemberService, InMemoryTeamMemberService>();
 builder.Services.AddScoped<ITeamDataService, TeamServiceHttpClient>();
 builder.Services.AddScoped<ITemplateService, TemplateService>();
 builder.Services.AddScoped<IGuidService, GuidService>();
