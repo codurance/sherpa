@@ -48,7 +48,7 @@ public class SurveyAcceptanceTest
         _authService.Setup(auth => auth.DecorateWithToken(It.IsAny<HttpRequestMessage>()))
             .ReturnsAsync((HttpRequestMessage requestMessage) => requestMessage);
         _httpClientFactory.Setup(factory => factory.CreateClient("SherpaBackEnd")).Returns(httpClient);
-        _templateService = new TemplateService(_httpClientFactory.Object);
+        _templateService = new TemplateService(_httpClientFactory.Object, _authService.Object);
         _testCtx.Services.AddSingleton<ITemplateService>(_templateService);
         _teamService = new TeamServiceHttpClient(_httpClientFactory.Object, _authService.Object);
         _testCtx.Services.AddSingleton<ITeamDataService>(_teamService);

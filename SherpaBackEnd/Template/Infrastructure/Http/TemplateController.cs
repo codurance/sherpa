@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SherpaBackEnd.Template.Application;
 
 namespace SherpaBackEnd.Template.Infrastructure.Http;
 
+[Authorize]
 [ApiController]
 [Route("[controller]")]
 public class TemplateController
