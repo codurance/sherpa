@@ -37,7 +37,7 @@ public class SurveysAcceptanceTest
         _authService.Setup(auth => auth.DecorateWithToken(It.IsAny<HttpRequestMessage>()))
             .ReturnsAsync((HttpRequestMessage requestMessage) => requestMessage);
         _teamsService = new TeamServiceHttpClient(_factoryHttpClient.Object, _authService.Object);
-        _surveyService = new SurveyService(_factoryHttpClient.Object);
+        _surveyService = new SurveyService(_factoryHttpClient.Object, _authService.Object);
         _testCtx.Services.AddSingleton<ITeamDataService>(_teamsService);
         _testCtx.Services.AddSingleton<IGuidService>(_guidService.Object);
         _testCtx.Services.AddSingleton<ISurveyService>(_surveyService);

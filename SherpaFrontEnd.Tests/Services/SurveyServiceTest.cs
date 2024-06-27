@@ -23,6 +23,7 @@ public class SurveyServiceTest
     private readonly TestContext _testCtx;
     private readonly Mock<HttpMessageHandler> _handlerMock;
     private readonly Mock<IHttpClientFactory> _httpClientFactory;
+    private Mock<IAuthService> _authService;
     private readonly Team[] _teams;
     private Guid _surveyNotificationId = Guid.NewGuid();
 
@@ -35,6 +36,9 @@ public class SurveyServiceTest
         var httpClient = new HttpClient(_handlerMock.Object, false) { BaseAddress = new Uri("http://host") };
         _httpClientFactory = new Mock<IHttpClientFactory>();
         _httpClientFactory.Setup(factory => factory.CreateClient("SherpaBackEnd")).Returns(httpClient);
+        _authService = new Mock<IAuthService>();
+        _authService.Setup(auth => auth.DecorateWithToken(It.IsAny<HttpRequestMessage>()))
+            .ReturnsAsync((HttpRequestMessage requestMessage) => requestMessage);
     }
 
     [Fact]
@@ -63,7 +67,7 @@ public class SurveyServiceTest
 
         _handlerMock.SetupRequest(HttpMethod.Get, $"/survey/{surveyId.ToString()}", surveyResponse);
 
-        var surveyService = new SurveyService(_httpClientFactory.Object);
+        var surveyService = new SurveyService(_httpClientFactory.Object, _authService.Object);
         var actualSurvey = await surveyService.GetSurveyWithoutQuestionsById(surveyId);
         CustomAssertions.StringifyEquals(survey, actualSurvey);
     }
@@ -85,7 +89,7 @@ public class SurveyServiceTest
 
         _handlerMock.SetupRequest(HttpMethod.Post, "/survey", createSurveyResponse);
 
-        var surveyService = new SurveyService(_httpClientFactory.Object);
+        var surveyService = new SurveyService(_httpClientFactory.Object, _authService.Object);
         await surveyService.CreateSurvey(createSurveyDto);
 
         _handlerMock.Protected().Verify("SendAsync", Times.Once(),
@@ -110,7 +114,7 @@ public class SurveyServiceTest
         _handlerMock.SetupRequest(HttpMethod.Get, $"/team/{teamId.ToString()}/surveys", emptySurveyListResponse);
 
 
-        var surveyService = new SurveyService(_httpClientFactory.Object);
+        var surveyService = new SurveyService(_httpClientFactory.Object, _authService.Object);
 
         var actualResponse = await surveyService.GetAllSurveysByTeam(teamId);
 
@@ -148,7 +152,7 @@ public class SurveyServiceTest
             .ReturnsAsync(responseWithSurveys);
 
 
-        var surveyService = new SurveyService(_httpClientFactory.Object);
+        var surveyService = new SurveyService(_httpClientFactory.Object, _authService.Object);
 
         var actualResponse = await surveyService.GetAllSurveysByTeam(teamId);
 
@@ -196,7 +200,7 @@ public class SurveyServiceTest
 
         _handlerMock.SetupRequest(HttpMethod.Get, $"/survey/{surveyId.ToString()}/questions", questionsListResponse);
 
-        var surveyService = new SurveyService(_httpClientFactory.Object);
+        var surveyService = new SurveyService(_httpClientFactory.Object, _authService.Object);
 
         var surveyQuestions = await surveyService.GetSurveyQuestionsBySurveyId(surveyId);
 
@@ -216,7 +220,7 @@ public class SurveyServiceTest
         var path = $"/survey/{surveyId}/team-members/{memberId}";
         _handlerMock.SetupRequest(HttpMethod.Post, path, answerSurveyResponse);
 
-        var surveyService = new SurveyService(_httpClientFactory.Object);
+        var surveyService = new SurveyService(_httpClientFactory.Object, _authService.Object);
         surveyService.SubmitSurveyResponse(new AnswerSurveyDto(memberId, surveyId,
             new SurveyResponse(memberId, new List<QuestionResponse>() { new(1, "1"), new(2, "1") })));
 
@@ -239,7 +243,7 @@ public class SurveyServiceTest
         var path = $"/survey/{surveyId}/team-members/{memberId}";
         _handlerMock.SetupRequest(HttpMethod.Post, path, answerSurveyResponse);
 
-        var surveyService = new SurveyService(_httpClientFactory.Object);
+        var surveyService = new SurveyService(_httpClientFactory.Object, _authService.Object);
 
         await Assert.ThrowsAsync<HttpRequestException>(() =>
             surveyService.SubmitSurveyResponse(new AnswerSurveyDto(memberId, surveyId,
@@ -260,7 +264,7 @@ public class SurveyServiceTest
         var path = "/survey-notifications";
         _handlerMock.SetupRequest(HttpMethod.Post, path, launchSurveyResponse);
 
-        var surveyService = new SurveyService(_httpClientFactory.Object);
+        var surveyService = new SurveyService(_httpClientFactory.Object, _authService.Object);
 
         await surveyService.LaunchSurvey(surveyId);
 
@@ -281,7 +285,7 @@ public class SurveyServiceTest
         var path = "/survey-notifications";
         _handlerMock.SetupRequest(HttpMethod.Post, path, launchSurveyResponse);
 
-        var surveyService = new SurveyService(_httpClientFactory.Object);
+        var surveyService = new SurveyService(_httpClientFactory.Object, _authService.Object);
 
         await Assert.ThrowsAsync<HttpRequestException>(() => surveyService.LaunchSurvey(surveyId));
     }
@@ -299,7 +303,7 @@ public class SurveyServiceTest
         var path = $"/survey-notifications/{_surveyNotificationId}";
         _handlerMock.SetupRequest(HttpMethod.Get, path, getSurveyNotifificationResponse);
 
-        var surveyService = new SurveyService(_httpClientFactory.Object);
+        var surveyService = new SurveyService(_httpClientFactory.Object, _authService.Object);
 
         var receivedSurveyNotification = await surveyService.GetSurveyNotificationById(_surveyNotificationId);
 
@@ -310,7 +314,7 @@ public class SurveyServiceTest
     public async Task ShouldDownloadSurveyResponsesById()
     {
         var surveyId = Guid.NewGuid();
-        var surveyService = new SurveyService(_httpClientFactory.Object);
+        var surveyService = new SurveyService(_httpClientFactory.Object, _authService.Object);
 
         var path = $"survey/{surveyId}/responses";
         var downloadSurveyResponse = new HttpResponseMessage()

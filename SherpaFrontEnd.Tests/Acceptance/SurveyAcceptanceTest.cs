@@ -52,7 +52,7 @@ public class SurveyAcceptanceTest
         _testCtx.Services.AddSingleton<ITemplateService>(_templateService);
         _teamService = new TeamServiceHttpClient(_httpClientFactory.Object, _authService.Object);
         _testCtx.Services.AddSingleton<ITeamDataService>(_teamService);
-        _surveyService = new SurveyService(_httpClientFactory.Object);
+        _surveyService = new SurveyService(_httpClientFactory.Object, _authService.Object);
         _testCtx.Services.AddSingleton<ISurveyService>(_surveyService);
         _guidService = new Mock<IGuidService>();
         _testCtx.Services.AddSingleton<IGuidService>(_guidService.Object);
