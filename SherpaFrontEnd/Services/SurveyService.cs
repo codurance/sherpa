@@ -40,6 +40,7 @@ public class SurveyService : ISurveyService
     {
         var httpClient = _httpClientFactory.CreateClient(SherpaBackend);
         var request = new HttpRequestMessage(HttpMethod.Get, $"/team/{teamId}/surveys");
+        request = await _authService.DecorateWithToken(request);
         var response = await httpClient.SendAsync(request);
 
         response.EnsureSuccessStatusCode();

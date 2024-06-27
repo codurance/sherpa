@@ -120,6 +120,8 @@ public class SurveyServiceTest
         var actualResponse = await surveyService.GetAllSurveysByTeam(teamId);
 
         var expectedResponse = new List<Survey> { };
+        
+        _authService.Verify(auth => auth.DecorateWithToken(It.IsAny<HttpRequestMessage>()));
         Assert.Equal(JsonConvert.SerializeObject(expectedResponse), JsonConvert.SerializeObject(actualResponse));
     }
 
@@ -157,6 +159,7 @@ public class SurveyServiceTest
 
         var actualResponse = await surveyService.GetAllSurveysByTeam(teamId);
 
+        _authService.Verify(auth => auth.DecorateWithToken(It.IsAny<HttpRequestMessage>()));
         Assert.Equal(JsonConvert.SerializeObject(surveys), JsonConvert.SerializeObject(actualResponse));
     }
 

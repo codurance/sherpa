@@ -46,6 +46,7 @@ public class SurveyController
         }
     }
 
+    [Authorize]
     [HttpGet("team/{teamId:guid}/surveys")]
     public async Task<ActionResult<IEnumerable<Domain.Survey>>> GetAllSurveysFromTeam(Guid teamId)
     {
