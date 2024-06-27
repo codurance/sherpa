@@ -76,7 +76,12 @@ public class SurveyService : ISurveyService
         var client = _httpClientFactory.CreateClient(SherpaBackend);
 
         var launchSurveyDto = new LaunchSurveyDto(surveyId);
-        var response = await client.PostAsJsonAsync("/survey-notifications", launchSurveyDto);
+        var request = new HttpRequestMessage(HttpMethod.Post, "/survey-notifications");
+        var serializedLaunchSurveyDto = JsonSerializer.Serialize(launchSurveyDto, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        request.Content = new StringContent(serializedLaunchSurveyDto, System.Text.Encoding.UTF8, "application/json");
+        request = await _authService.DecorateWithToken(request);
+        
+        var response = await client.SendAsync(request);
         response.EnsureSuccessStatusCode();
     }
 
