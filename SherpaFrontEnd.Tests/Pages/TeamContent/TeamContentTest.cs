@@ -39,7 +39,7 @@ public class TeamContentTest
     }
 
     [Fact]
-    public void SingleTeamIsRendered()
+    public void ShouldRedirectToCreateSurveyPageWhenLaunchSurveyButtonIsClickedInAnalysisTab()
     {
         const string teamName = "Demo team";
         var team = new Team
@@ -62,6 +62,8 @@ public class TeamContentTest
 
         Assert.NotNull(analysisTab);
         Assert.NotNull(sendNewSurveyTeam);
+        sendNewSurveyTeam.Click();
+        teamDetailsPage.WaitForAssertion(() => Assert.Equal("http://localhost/survey/delivery-settings?template=Hackman%20Model",_navManager.Uri));
     }
 
     [Fact]
@@ -83,7 +85,7 @@ public class TeamContentTest
     }
 
     [Fact]
-    public void ShouldDisplayTeamSurveysTabPageContentWhenEmptySurveysList()
+    public void ShouldRedirectToCreateSurveyPageWhenLaunchSurveyButtonIsClickedOnEmptySurveyList()
     {
         const string teamName = "Demo team";
         var teamId = Guid.NewGuid();
@@ -105,15 +107,20 @@ public class TeamContentTest
 
 
         teamContentComponent.WaitForAssertion(() =>
-            Assert.NotNull(teamContentComponent.FindElementByCssSelectorAndTextContent("button", "Launch first survey")));
-        Assert.NotNull(teamContentComponent.FindElementByCssSelectorAndTextContent("p",
-            "Let's begin the journey towards a stronger, more effective team!"));
-        Assert.NotNull(
-            teamContentComponent.FindElementByCssSelectorAndTextContent("p", "You don’t have any surveys yet"));
+        {
+            Assert.NotNull(teamContentComponent.FindElementByCssSelectorAndTextContent("p", "Let's begin the journey towards a stronger, more effective team!"));
+        });
+        Assert.NotNull(teamContentComponent.FindElementByCssSelectorAndTextContent("p", "You don’t have any surveys yet"));
+        var launchSurveyButton = teamContentComponent.FindElementByCssSelectorAndTextContent("button", "Launch first survey");
+        Assert.NotNull(launchSurveyButton);
+        
+        launchSurveyButton.Click();
+        
+        teamContentComponent.WaitForAssertion(() => Assert.Equal("http://localhost/survey/delivery-settings?template=Hackman%20Model",_navManager.Uri));
     }
 
     [Fact]
-    public void ShouldDisplayTeamSurveysTabPageContentWhenNonEmptyList()
+    public void ShouldRedirectToCreateSurveyPageWhenLaunchSurveyButtonIsClickedOnNonEmptySurveyList()
     {
         const string teamName = "Demo team";
         var teamId = Guid.NewGuid();
@@ -140,9 +147,15 @@ public class TeamContentTest
         surveyTabPage.Click();
 
         teamContentComponent.WaitForAssertion(() =>
-            Assert.NotNull(teamContentComponent.FindElementByCssSelectorAndTextContent("h2", "All surveys launched in the team")));
+            Assert.NotNull(
+                teamContentComponent.FindElementByCssSelectorAndTextContent("h2", "All surveys launched in the team")));
 
-        Assert.NotNull(teamContentComponent.FindElementByCssSelectorAndTextContent("button", "Launch new survey"));
+        var launchSurveyButton = teamContentComponent.FindElementByCssSelectorAndTextContent("button", "Launch new survey");
+        Assert.NotNull(launchSurveyButton);
+        launchSurveyButton.Click();
+        
+        teamContentComponent.WaitForAssertion(() =>
+            Assert.Equal("http://localhost/survey/delivery-settings?template=Hackman%20Model", _navManager.Uri));
     }
 
     [Fact]
@@ -181,7 +194,8 @@ public class TeamContentTest
         var status = teamContentComponent.FindElementByCssSelectorAndTextContent("th", "Status");
 
         teamContentComponent.WaitForAssertion(() =>
-            Assert.NotNull(teamContentComponent.FindElementByCssSelectorAndTextContent("h2", "All surveys launched in the team")));
+            Assert.NotNull(
+                teamContentComponent.FindElementByCssSelectorAndTextContent("h2", "All surveys launched in the team")));
         Assert.NotNull(teamContentComponent.FindElementByCssSelectorAndTextContent("button", "Launch new survey"));
         Assert.NotNull(surveyName);
         Assert.NotNull(template);
