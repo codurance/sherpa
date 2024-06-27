@@ -20,7 +20,7 @@
 
     <TabControl InitialTab="@Tab">
         <TabPage Text="Analysis">
-            <button @onclick="@(RedirectToLaunchSurveyPage)" type="button" class="bg-primary-red-principal-800 hover:bg-primary-red-900 rounded-lg px-6 py-2 text-white font-semibold text-sm">
+            <button @onclick="RedirectToLaunchSurveyPage" type="button" class="bg-primary-red-principal-800 hover:bg-primary-red-900 rounded-lg px-6 py-2 text-white font-semibold text-sm">
                 Launch new survey
             </button>
         </TabPage>
@@ -29,7 +29,7 @@
             {
                 <div class="my-5 flex justify-between items-center rounded-3xl gap-2.5">
                     <h2 class="flex-grow text-title-h3 text-primary-dark-principal">All surveys launched in the team</h2>
-                    <button @onclick="@(RedirectToLaunchSurveyPage)" type="button" class="bg-primary-red-principal-800 hover:bg-primary-red-900 rounded-lg px-6 py-2 text-white font-semibold text-sm">
+                    <button @onclick="RedirectToLaunchSurveyPage" type="button" class="bg-primary-red-principal-800 hover:bg-primary-red-900 rounded-lg px-6 py-2 text-white font-semibold text-sm">
                         <i class="las la-plus"></i>
                         Launch new survey
                     </button>
@@ -46,7 +46,7 @@
                     <p class="text-center text-gray-700 text-base">
                         Let's begin the journey towards a stronger, more effective team!
                     </p>
-                    <button @onclick="@(RedirectToLaunchSurveyPage)" type="button" class="bg-primary-red-principal-800 hover:bg-primary-red-900 rounded-lg px-6 py-2 text-white font-semibold text-sm">
+                    <button @onclick="RedirectToLaunchSurveyPage" type="button" class="bg-primary-red-principal-800 hover:bg-primary-red-900 rounded-lg px-6 py-2 text-white font-semibold text-sm">
                         Launch first survey
                     </button>
                 </div>
