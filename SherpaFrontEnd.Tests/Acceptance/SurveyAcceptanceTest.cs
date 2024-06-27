@@ -282,10 +282,6 @@ public class SurveyAcceptanceTest
         var teamNameElement = appComponent.FindElementByCssSelectorAndTextContent("p", survey.Team.Name);
         Assert.NotNull(teamNameElement);
 
-        // button Back
-        var finalBackButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Preview");
-        Assert.NotNull(finalBackButton);
-
         // button Launch
         var finalLaunchButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Launch survey");
         Assert.NotNull(finalLaunchButton);

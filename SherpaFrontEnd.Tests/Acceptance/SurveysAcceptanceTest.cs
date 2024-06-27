@@ -127,7 +127,7 @@ public class SurveysAcceptanceTest
         
         teamSurveysTabPage.Click();
         
-        appComponent.WaitForAssertion(() => Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("button", "Send first survey")));
+        appComponent.WaitForAssertion(() => Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("button", "Launch first survey")));
         Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("p", "You don’t have any surveys yet"));
         Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("p", "Let's begin the journey towards a stronger, more effective team!"));
     }
