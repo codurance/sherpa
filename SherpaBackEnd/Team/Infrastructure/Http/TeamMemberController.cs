@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Team.Application;
@@ -5,6 +6,7 @@ using SherpaBackEnd.Team.Infrastructure.Http.Dto;
 
 namespace SherpaBackEnd.Team.Infrastructure.Http;
 
+[Authorize]
 [ApiController]
 [Route("")]
 public class TeamMemberController
