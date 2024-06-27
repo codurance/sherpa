@@ -58,7 +58,7 @@ public class TeamContentTest
             Assert.NotNull(teamDetailsPage.FindElementByCssSelectorAndTextContent("h1", teamName));
         });
         var analysisTab = teamDetailsPage.FindElementByCssSelectorAndTextContent("li", "Analysis");
-        var sendNewSurveyTeam = teamDetailsPage.FindElementByCssSelectorAndTextContent("button", "Send a new survey");
+        var sendNewSurveyTeam = teamDetailsPage.FindElementByCssSelectorAndTextContent("button", "Launch new survey");
 
         Assert.NotNull(analysisTab);
         Assert.NotNull(sendNewSurveyTeam);
@@ -105,7 +105,7 @@ public class TeamContentTest
 
 
         teamContentComponent.WaitForAssertion(() =>
-            Assert.NotNull(teamContentComponent.FindElementByCssSelectorAndTextContent("button", "Send first survey")));
+            Assert.NotNull(teamContentComponent.FindElementByCssSelectorAndTextContent("button", "Launch first survey")));
         Assert.NotNull(teamContentComponent.FindElementByCssSelectorAndTextContent("p",
             "Let's begin the journey towards a stronger, more effective team!"));
         Assert.NotNull(
