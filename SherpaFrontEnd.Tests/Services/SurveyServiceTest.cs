@@ -326,6 +326,7 @@ public class SurveyServiceTest
 
         await surveyService.DownloadSurveyResponses(surveyId);
 
+        _authService.Verify(auth => auth.DecorateWithToken(It.IsAny<HttpRequestMessage>()));
         _handlerMock.Protected().Verify("SendAsync", Times.Once(),
             ItExpr.Is<HttpRequestMessage>(message =>
                 message.Method.Equals(HttpMethod.Get) &&

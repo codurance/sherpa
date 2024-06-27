@@ -117,7 +117,8 @@ public class SurveyController
             };
         }
     }
-
+    
+    [Authorize]
     [HttpGet("survey/{surveyId:guid}/responses")]
     public async Task<IActionResult> GetSurveyResponsesFile(Guid surveyId)
     {

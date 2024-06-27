@@ -96,7 +96,9 @@ public class SurveyService : ISurveyService
     public async Task<byte[]> DownloadSurveyResponses(Guid surveyId)
     {
         var client = _httpClientFactory.CreateClient(SherpaBackend);
-        var response = await client.GetAsync($"/survey/{surveyId}/responses");
+        var request = new HttpRequestMessage(HttpMethod.Get, $"/survey/{surveyId}/responses");
+        request = await _authService.DecorateWithToken(request);
+        var response = await client.SendAsync(request);
         response.EnsureSuccessStatusCode();
 
         return await response.Content.ReadAsByteArrayAsync();
