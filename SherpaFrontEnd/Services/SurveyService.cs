@@ -9,18 +9,25 @@ namespace SherpaFrontEnd.Services;
 public class SurveyService : ISurveyService
 {
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IAuthService _authService;
     private const string SherpaBackend = "SherpaBackEnd";
 
-    public SurveyService(IHttpClientFactory httpClientFactory)
+    public SurveyService(IHttpClientFactory httpClientFactory, IAuthService authService)
     {
         _httpClientFactory = httpClientFactory;
+        _authService = authService;
     }
 
     public async Task CreateSurvey(CreateSurveyDto createSurveyDto)
     {
         var client = _httpClientFactory.CreateClient(SherpaBackend);
 
-        await client.PostAsJsonAsync("/survey", createSurveyDto);
+        var request = new HttpRequestMessage(HttpMethod.Post, "/survey");
+        var serializedCreateSurveyDto = JsonSerializer.Serialize(createSurveyDto, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        request.Content = new StringContent(serializedCreateSurveyDto, System.Text.Encoding.UTF8, "application/json");
+        request = await _authService.DecorateWithToken(request);
+        
+        await client.SendAsync(request);
     }
 
     public async Task<SurveyWithoutQuestions?> GetSurveyWithoutQuestionsById(Guid id)

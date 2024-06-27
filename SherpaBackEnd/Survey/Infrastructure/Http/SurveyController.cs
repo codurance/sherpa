@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 using SherpaBackEnd.Exceptions;
@@ -23,6 +24,7 @@ public class SurveyController
         _logger = logger;
     }
 
+    [Authorize]
     [HttpPost("survey")]
     public async Task<ActionResult> CreateSurvey(CreateSurveyDto createSurveyDto)
     {
