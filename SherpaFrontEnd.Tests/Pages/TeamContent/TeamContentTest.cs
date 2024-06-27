@@ -58,11 +58,11 @@ public class TeamContentTest
             Assert.NotNull(teamDetailsPage.FindElementByCssSelectorAndTextContent("h1", teamName));
         });
         var analysisTab = teamDetailsPage.FindElementByCssSelectorAndTextContent("li", "Analysis");
-        var sendNewSurveyTeam = teamDetailsPage.FindElementByCssSelectorAndTextContent("button", "Launch new survey");
+        var launchSurveyButton = teamDetailsPage.FindElementByCssSelectorAndTextContent("button", "Launch new survey");
 
         Assert.NotNull(analysisTab);
-        Assert.NotNull(sendNewSurveyTeam);
-        sendNewSurveyTeam.Click();
+        Assert.NotNull(launchSurveyButton);
+        launchSurveyButton.Click();
         teamDetailsPage.WaitForAssertion(() => Assert.Equal("http://localhost/survey/delivery-settings?template=Hackman%20Model",_navManager.Uri));
     }
 
