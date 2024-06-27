@@ -92,6 +92,7 @@ public class SurveyServiceTest
         var surveyService = new SurveyService(_httpClientFactory.Object, _authService.Object);
         await surveyService.CreateSurvey(createSurveyDto);
 
+        _authService.Verify(auth => auth.DecorateWithToken(It.IsAny<HttpRequestMessage>()));
         _handlerMock.Protected().Verify("SendAsync", Times.Once(),
             ItExpr.Is<HttpRequestMessage>(
                 m => m.Method.Equals(HttpMethod.Post) && m.RequestUri!.AbsoluteUri.Contains("/survey")),
