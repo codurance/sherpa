@@ -241,7 +241,7 @@ public class TeamsAcceptanceTest
 
 
         var analysisTab = teamsListComponent.FindElementByCssSelectorAndTextContent("li", "Analysis");
-        var sendNewSurveyTeam = teamsListComponent.FindElementByCssSelectorAndTextContent("button", "Send a new survey");
+        var sendNewSurveyTeam = teamsListComponent.FindElementByCssSelectorAndTextContent("button", "Launch new survey");
 
         Assert.NotNull(analysisTab);
         Assert.NotNull(sendNewSurveyTeam);
