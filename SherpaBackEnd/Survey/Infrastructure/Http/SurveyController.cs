@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 using SherpaBackEnd.Exceptions;
@@ -23,6 +24,7 @@ public class SurveyController
         _logger = logger;
     }
 
+    [Authorize]
     [HttpPost("survey")]
     public async Task<ActionResult> CreateSurvey(CreateSurveyDto createSurveyDto)
     {
@@ -44,6 +46,7 @@ public class SurveyController
         }
     }
 
+    [Authorize]
     [HttpGet("team/{teamId:guid}/surveys")]
     public async Task<ActionResult<IEnumerable<Domain.Survey>>> GetAllSurveysFromTeam(Guid teamId)
     {
@@ -115,7 +118,8 @@ public class SurveyController
             };
         }
     }
-
+    
+    [Authorize]
     [HttpGet("survey/{surveyId:guid}/responses")]
     public async Task<IActionResult> GetSurveyResponsesFile(Guid surveyId)
     {

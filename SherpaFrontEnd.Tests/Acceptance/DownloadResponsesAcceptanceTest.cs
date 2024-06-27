@@ -43,7 +43,7 @@ public class DownloadResponsesAcceptanceTest
         var auth = _testCtx.AddTestAuthorization();
         auth.SetAuthorized("Demo user");
         auth.SetClaims(new[] { new Claim("username", "Demo user") });
-        _surveyService = new SurveyService(_httpClientFactory.Object);
+        _surveyService = new SurveyService(_httpClientFactory.Object, _authService.Object);
         _testCtx.Services.AddSingleton<ISurveyService>(_surveyService);
         _teamDataService = new TeamServiceHttpClient(_httpClientFactory.Object, _authService.Object);
         _testCtx.Services.AddSingleton<ITeamDataService>(_teamDataService);
