@@ -14,9 +14,17 @@ public class CookiesService: ICookiesService
 
     public async Task<bool> AreCookiesAccepted()
     {
-        var cookiesAcceptedDate = await _localStorageService.GetItemAsync<string?>(LocalStorageKey);
+        var cookiesAcceptedDate = await _localStorageService.GetItemAsync<long?>(LocalStorageKey);
 
         if (cookiesAcceptedDate == null)
+        {
+            return false;
+        }
+
+        var acceptedDateOlderThanSixMonths =
+            DateTimeOffset.FromUnixTimeMilliseconds((long)cookiesAcceptedDate).AddMonths(6) < DateTimeOffset.Now;
+
+        if (acceptedDateOlderThanSixMonths)
         {
             return false;
         }

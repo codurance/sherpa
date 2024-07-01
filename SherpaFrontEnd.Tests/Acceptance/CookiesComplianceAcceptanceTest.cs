@@ -7,8 +7,9 @@ using SherpaFrontEnd.Shared;
 
 namespace BlazorApp.Tests.Acceptance;
 
-public class CookiesComplianceAcceptanceTest
+public class CookiesComplianceAcceptanceTest : IAsyncDisposable
 {
+    private const string CookiesAcceptedDate = "CookiesAcceptedDate";
     private readonly TestContext _testCtx;
     private ILocalStorageService _mockLocalStorage;
 
@@ -23,7 +24,6 @@ public class CookiesComplianceAcceptanceTest
     public async Task ShouldLetTheUserAcceptCookiesIfTheyHaveNotBeenApprovedYet()
     {
         var app = _testCtx.RenderComponent<CookiesPopup>();
-        
 
         var popupElement = app.FindElementByCssSelectorAndTextContent("div[role=\"dialog\"]", "To find out more about our Cookies policy here. Once you are done, please, come back and accept them.");
         
@@ -35,8 +35,31 @@ public class CookiesComplianceAcceptanceTest
         var approveButton = app.FindElementByCssSelectorAndTextContent("button", "Accept");
         approveButton!.Click();
 
-        acceptedLocalStorageEntry = await _mockLocalStorage.GetItemAsync<String>("CookiesAcceptedDate");
+        acceptedLocalStorageEntry = await _mockLocalStorage.GetItemAsync<long?>(CookiesAcceptedDate);
         Assert.NotNull(acceptedLocalStorageEntry);
+        
+        popupElement = app.FindElementByCssSelectorAndTextContent("div[role=\"dialog\"]", "To find out more about our Cookies policy here. Once you are done, please, come back and accept them.");
+        AssertPopupIsNotShown(popupElement);
+    }
+
+    [Fact]
+    public async Task ShouldLetTheUserAcceptCookiesIfTheyHaveBeenApprovedMoreThanSixMonthsAgo()
+    {
+        var sevenMonthsAgo = DateTimeOffset.Now.AddMonths(-7).ToUnixTimeMilliseconds();
+        await _mockLocalStorage.SetItemAsync(CookiesAcceptedDate, sevenMonthsAgo);
+        
+        var app = _testCtx.RenderComponent<CookiesPopup>();
+
+        var popupElement = app.FindElementByCssSelectorAndTextContent("div[role=\"dialog\"]", "To find out more about our Cookies policy here. Once you are done, please, come back and accept them.");
+ 
+        AssertPopupIsShown(popupElement);
+
+        var approveButton = app.FindElementByCssSelectorAndTextContent("button", "Accept");
+        approveButton!.Click();
+
+        var acceptedLocalStorageEntry = await _mockLocalStorage.GetItemAsync<long?>(CookiesAcceptedDate);
+        Assert.NotNull(acceptedLocalStorageEntry);
+        Assert.NotEqual(sevenMonthsAgo, acceptedLocalStorageEntry);
         
         popupElement = app.FindElementByCssSelectorAndTextContent("div[role=\"dialog\"]", "To find out more about our Cookies policy here. Once you are done, please, come back and accept them.");
         AssertPopupIsNotShown(popupElement);
@@ -52,11 +75,13 @@ public class CookiesComplianceAcceptanceTest
         Assert.Contains(cookiesPopup!.ClassList, c => c == "hidden");
     }
 
-    private ValueTask<string?> GetAcceptedLocalStorageEntry()
+    private ValueTask<long?> GetAcceptedLocalStorageEntry()
     {
-        return _mockLocalStorage.GetItemAsync<String>("CookiesAcceptedDate");
+        return _mockLocalStorage.GetItemAsync<long?>(CookiesAcceptedDate);
     }
 
-    // Not accepted yet
-    // Accepted more than 6 months ago
+    public async ValueTask DisposeAsync()
+    {
+        await _mockLocalStorage.ClearAsync();
+    }
 }

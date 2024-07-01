@@ -12,12 +12,28 @@ public class CookiesServiceTest
     {
         var localStorageMock = new Mock<ILocalStorageService>();
         
-        localStorageMock.Setup(mock => mock.GetItemAsync<string>("CookiesAcceptedDate", It.IsAny<CancellationToken>())).ReturnsAsync((string?)null);
+        localStorageMock.Setup(mock => mock.GetItemAsync<long?>("CookiesAcceptedDate", It.IsAny<CancellationToken>())).ReturnsAsync((long?)null);
         
         var cookiesService = new CookiesService(localStorageMock.Object);
         var areCookiesAccepted = await cookiesService.AreCookiesAccepted();
         
-        localStorageMock.Verify(mock => mock.GetItemAsync<string>("CookiesAcceptedDate", It.IsAny<CancellationToken>()), Times.Once);
+        localStorageMock.Verify(mock => mock.GetItemAsync<long?>("CookiesAcceptedDate", It.IsAny<CancellationToken>()), Times.Once);
+        
+        Assert.False(areCookiesAccepted);
+    }
+
+    [Fact]
+    public async Task ShouldReturnCookiesNotAcceptedIfEntryIsOlderThanSixMonths()
+    {
+        var localStorageMock = new Mock<ILocalStorageService>();
+        
+        var sevenMonthsAgo = DateTimeOffset.Now.AddMonths(-7).ToUnixTimeMilliseconds();
+        localStorageMock.Setup(mock => mock.GetItemAsync<long?>("CookiesAcceptedDate", It.IsAny<CancellationToken>())).ReturnsAsync(sevenMonthsAgo);
+        
+        var cookiesService = new CookiesService(localStorageMock.Object);
+        var areCookiesAccepted = await cookiesService.AreCookiesAccepted();
+        
+        localStorageMock.Verify(mock => mock.GetItemAsync<long?>("CookiesAcceptedDate", It.IsAny<CancellationToken>()), Times.Once);
         
         Assert.False(areCookiesAccepted);
     }
