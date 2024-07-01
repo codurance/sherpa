@@ -248,7 +248,7 @@
       },
       {
         "statement": {
-          "SPANISH": "Los propósitos de este equipo están tan claramente especificados que todos los miembros deberían saber exactamente cual es el motivo de su existencia.",
+          "SPANISH": "Los propósitos de este equipo están tan claramente especificados que todos los miembros deberían saber exactamente cuál es el motivo de su existencia.",
           "ENGLISH": "This team’s purposes are specified so clearly that all members should know exactly what the team exists to accomplish"
         },
         "responses": {
@@ -356,7 +356,7 @@
       },
       {
         "statement": {
-          "SPANISH": "El propósito de este equipo tiene consecuencias importantes para aquellos a quién servimos.",
+          "SPANISH": "El propósito de este equipo tiene consecuencias importantes para aquellos a quien servimos.",
           "ENGLISH": "This team’s purposes are of great consequence for those we serve"
         },
         "responses": {
@@ -1245,7 +1245,7 @@
       },
       {
         "statement": {
-          "SPANISH": "Rankea la frecuencia relativa en la que el líder del equipo se ocupa de esta actividad: Coaching individual con miembros del equipo.",
+          "SPANISH": "Clasifica la frecuencia relativa en la que el líder de tu equipo realiza la siguiente actividad: Coaching individual con miembros del equipo.",
           "ENGLISH": "Rank the relative frequency with which their team leader engages in this activity: Coaching individual team members."
         },
         "responses": {
@@ -1272,7 +1272,7 @@
       },
       {
         "statement": {
-          "SPANISH": "Rankea la frecuencia relativa en la que el líder del equipo se ocupa de esta actividad: Ayudando a los miembros del equipo a aprender cómo trabajar bien juntos.",
+          "SPANISH": "Clasifica la frecuencia relativa en la que el líder de tu equipo realiza la siguiente actividad: ayuda a los miembros del equipo a aprender como trabajar bien juntos.",
           "ENGLISH": "Rank the relative frequency with which their team leader engages in this activity: Helping team members learn how to work well together."
         },
         "responses": {
@@ -1299,7 +1299,7 @@
       },
       {
         "statement": {
-          "SPANISH": "Rankea la frecuencia relativa en la que el líder del equipo se ocupa de esta actividad: Inicializando y preparando el equipo -- Clarificando su propósito, eligiendo sus miembros, estructurando las tareas, explicitando expectativas, y así sucesivamente.",
+          "SPANISH": "Clasifica la frecuencia relativa en la que el líder de tu equipo realiza la siguiente actividad: lanzamiento y preparación al equipo: clarificando propósito; eligiendo a sus miembros; estructurando tareas; explicando expectativas, etc.",
           "ENGLISH": "Rank the relative frequency with which their team leader engages in this activity: Getting the team set up right--clarifying its purpose, picking members, structuring the task, setting expectations, and so on."
         },
         "responses": {
@@ -1326,7 +1326,7 @@
       },
       {
         "statement": {
-          "SPANISH": "Rankea la frecuencia relativa en la que el líder del equipo se ocupa de esta actividad: Encargándose de interferencias externas para el equipo -- obteniendo recursos, asegurando asistencia externa, quitando bloqueos, y así sucesivamente",
+          "SPANISH": "Clasifica la frecuencia relativa en la que el líder de tu equipo realiza la siguiente actividad: gestión de interferencias externas para el equipo: obteniendo recursos, asegurando asistencia externa, eliminando obstáculos, etc.",
           "ENGLISH": "Rank the relative frequency with which their team leader engages in this activity: Running external interference for the team--getting resources, securing outside assistance, removing roadblocks, and so on."
         },
         "responses": {
@@ -1434,7 +1434,7 @@
       },
       {
         "statement": {
-          "SPANISH": "¿En general, de cuánta ayuda és el líder del equipo a la hora de construir las capacidades del equipo?",
+          "SPANISH": "¿En general, de cuánta ayuda es el líder del equipo a la hora de construir las capacidades del equipo?",
           "ENGLISH": "Overall, how helpful is your team leader in building your team’s capabilities?"
         },
         "responses": {
@@ -1611,7 +1611,7 @@
       },
       {
         "statement": {
-          "SPANISH": "El líder del equipo Da feedback positivo cuando el equipo se comporta o desempeña bien.",
+          "SPANISH": "El líder del equipo da feedback positivo cuando el equipo se comporta o desempeña bien.",
           "ENGLISH": "The team leader provides positive feedback when the team behaves or performs well."
         },
         "responses": {
@@ -1636,7 +1636,7 @@
       },
       {
         "statement": {
-          "SPANISH": "El líder del equipo Da feedback correctivo cuando es necesario.",
+          "SPANISH": "El líder del equipo da feedback correctivo cuando es necesario.",
           "ENGLISH": "The team leader provides corrective feedback when needed."
         },
         "responses": {
@@ -1661,7 +1661,7 @@
       },
       {
         "statement": {
-          "SPANISH": "El líder del equipo Da críticas o elogios inapropiados o no merecidos.",
+          "SPANISH": "El líder del equipo da críticas o elogios inapropiados o no merecidos.",
           "ENGLISH": "The team leader gives inappropriate or undeserved praise or criticism."
         },
         "responses": {
