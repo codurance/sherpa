@@ -29,60 +29,60 @@ public static class Languages
     public static readonly string ENGLISH = "ENGLISH";
 }
 
-public static class HackmanSubcomponent
+public static class HackmanComponent
 {
-    public static readonly string REAL_TEAM = "Real Team";
-    public static readonly string COMPELLING_DIRECTION = "Compelling Direction";
-    public static readonly string ENABLING_STRUCTURE = "Enabling Structure";
-    public static readonly string SUPPORTIVE_ORGANIZATIONAL_CONTEXT = "Supportive Organizational Context";
-    public static readonly string EXPERT_COACHING = "Expert Coaching";
-    public static readonly string SENSE_OF_URGENCY = "Sense Of Urgency";
+    public const string RealTeam = "Real Team";
+    public const string CompellingDirection = "Compelling Direction";
+    public const string EnablingStructure = "Enabling Structure";
+    public const string SupportiveOrganizationalContext = "Supportive Organizational Context";
+    public const string ExpertCoaching = "Expert Coaching";
+    public const string SenseOfUrgency = "Sense Of Urgency";
 }
 
 public static class HackmanSubcategory
 {
-    public static readonly string DELIMITED = "Delimited";
-    public static readonly string INTERDEPENDENT = "Interdependent";
-    public static readonly string STABLE = "Stable";
-    public static readonly string CLEAR = "Clear";
-    public static readonly string CHALLENGING = "Challenging";
-    public static readonly string CONSECUENTIAL = "Consecuential";
-    public static readonly string ENDS_VS_MEANS = "Ends Vs Means";
-    public static readonly string TEAM_COMPOSITION = "Team Composition";
-    public static readonly string TEAM_TASK_DESIGN = "Team Task Design";
-    public static readonly string REWARDS_RECOGNITION = "Rewards/Recognition";
-    public static readonly string INFORMATION = "Information";
-    public static readonly string EDUCATION_CONSULTATION = "Education/Consultation";
-    public static readonly string MATERIAL_RESOURCES = "Material/Resources";
-    public static readonly string FOCUS_OF_LEADERS_ATTENTION = "Focus of Leader’s Attention";
-    public static readonly string COACHING_AVAILABILITY = "Coaching Availability";
-    public static readonly string HELFULNESS_OF_TEAM_LEADER_COACHING = "Helpfulness of team leader coaching";
-    public static readonly string EXTENT_AND_FOCUS_OF_COACHING_PROVIDED_BY_PEERS = "Extent and focus of coaching provided by peers.";
-    public static readonly string EFFORT_RELATED_PROCESS_CRITERIA = "Effort-Related Process Criteria";
-    public static readonly string STRATEGY_RELATED_PROCESS_CRITERIA = "Strategy-Related Process Criteria";
-    public static readonly string KNOWLEDGE_AND_SILL_RELATED_PROCESS_CRITERIA = "Knowledge-and-Skill-Related Process Criteria";
-    public static readonly string QUALITY_OF_TEAM_INTERACTION = "Quality of Team Interaction";
-    public static readonly string SATISFACTION_WITH_TEAM_RELATIONSHIPS = "Satisfaction with Team Relationships";
-    public static readonly string INTERNAL_WORK_MOTIVATION = "Internal Work Motivation";
-    public static readonly string SATISFACTION_WITH_GROUP_OPPORTUNITIES = "Satisfaction with Group Opportunities";
-    public static readonly string GENERAL_SATISFACTION = "General Satisfaction";
+    public const string Delimited = "Delimited";
+    public const string Interdependent = "Interdependent";
+    public const string Stable = "Stable";
+    public const string Clear = "Clear";
+    public const string Challenging = "Challenging";
+    public const string Consecuential = "Consecuential";
+    public const string EndsVsMeans = "Ends Vs Means";
+    public const string TeamComposition = "Team Composition";
+    public const string TeamTaskDesign = "Team Task Design";
+    public const string RewardsRecognition = "Rewards/Recognition";
+    public const string Information = "Information";
+    public const string EducationConsultation = "Education/Consultation";
+    public const string MaterialResources = "Material/Resources";
+    public const string FocusOfLeadersAttention = "Focus of Leader’s Attention";
+    public const string CoachingAvailability = "Coaching Availability";
+    public const string HelfulnessOfTeamLeaderCoaching = "Helpfulness of team leader coaching";
+    public const string ExtentAndFocusOfCoachingProvidedByPeers = "Extent and focus of coaching provided by peers.";
+    public const string EffortRelatedProcessCriteria = "Effort-Related Process Criteria";
+    public const string StrategyRelatedProcessCriteria = "Strategy-Related Process Criteria";
+    public const string KnowledgeAndSillRelatedProcessCriteria = "Knowledge-and-Skill-Related Process Criteria";
+    public const string QualityOfTeamInteraction = "Quality of Team Interaction";
+    public const string SatisfactionWithTeamRelationships = "Satisfaction with Team Relationships";
+    public const string InternalWorkMotivation = "Internal Work Motivation";
+    public const string SatisfactionWithGroupOpportunities = "Satisfaction with Group Opportunities";
+    public const string GeneralSatisfaction = "General Satisfaction";
 }
 
-public static class HackmanComponent
+public static class HackmanSubComponent
 {
-    public static readonly string SIZE = "Size";
-    public static readonly string DIVERSITY = "Diversity";
-    public static readonly string SKILLS = "Skills";
-    public static readonly string WHOLE_TASK = "Whole Task";
-    public static readonly string AUTONOMY = "Autonomy";
-    public static readonly string KNOWLEDGE_OF_RESULTS = "Knowledge of Results";
-    public static readonly string GROUP_NORMS = "Group Norms";
-    public static readonly string OVERALL = "Overall";
-    public static readonly string TASK_FOCUSED_COACHING = "Task-Focused Coaching";
-    public static readonly string OPERANT_COACHING = "Operant Coaching";
-    public static readonly string INTERPERSONAL_COACHING = "Interpersonal Coaching";
-    public static readonly string UNHELPFUL_DIRECTIVES = "Unhelpful Directives";
-    public static readonly string TASK_FOCUSED_PEER_COACHING = "Task-Focused Peer Coaching";
-    public static readonly string INTERPERSONAL_PEER_COACHING = "Interpersonal Peer Coaching";
-    public static readonly string UNHELPFUL_PEER_INTERVENTIONS = "Unhelpful Peer Interventions";
+    public const string Size = "Size";
+    public const string Diversity = "Diversity";
+    public const string Skills = "Skills";
+    public const string WholeTask = "Whole Task";
+    public const string Autonomy = "Autonomy";
+    public const string KnowledgeOfResults = "Knowledge of Results";
+    public const string GroupNorms = "Group Norms";
+    public const string Overall = "Overall";
+    public const string TaskFocusedCoaching = "Task-Focused Coaching";
+    public const string OperantCoaching = "Operant Coaching";
+    public const string InterpersonalCoaching = "Interpersonal Coaching";
+    public const string UnhelpfulDirectives = "Unhelpful Directives";
+    public const string TaskFocusedPeerCoaching = "Task-Focused Peer Coaching";
+    public const string InterpersonalPeerCoaching = "Interpersonal Peer Coaching";
+    public const string UnhelpfulPeerInterventions = "Unhelpful Peer Interventions";
 }
