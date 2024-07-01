@@ -378,4 +378,54 @@ public class SurveyQuestionsTest
         var contactCoachElement = appComponent.FindElementByCssSelectorAndTextContent("p", "Please contact your coach");
         Assert.NotNull(contactCoachElement);
     }
+
+
+    [Fact]
+    public void ShouldDisplayFootLabelsWithSurveyQuestionWhenResponsesAreLessThanFiveCharacters()
+    {
+        var ResponseSpanish1 = "SPA1";
+        var ResponseSpanish2 = "SPA2";
+        var ResponseSpanish3 = "SPA3";
+        var ResponseSpanish4 = "SPA4";
+        var ResponseSpanish5 = "SPA5";
+        var ResponseEnglish1 = "ENG1";
+        var ResponseEnglish2 = "ENG2";
+        var ResponseEnglish3 = "ENG3";
+        var ResponseEnglish4 = "ENG4";
+        var ResponseEnglish5 = "ENG5";
+        var Reverse = false;
+        var firstQuestion = new Question(new Dictionary<string, string>()
+            {
+                {
+                    Languages.SPANISH,
+                    "¿En general, de cuánta ayuda és el líder del equipo a la hora de construir las capacidades del equipo?"
+                },
+                { Languages.ENGLISH, "Overall, how helpful is your team leader in building your team’s capabilities?" },
+            }, new Dictionary<string, string[]>()
+            {
+                {
+                    Languages.SPANISH,
+                    new[] { ResponseSpanish1, ResponseSpanish2, ResponseSpanish3, ResponseSpanish4, ResponseSpanish5 }
+                },
+                {
+                    Languages.ENGLISH,
+                    new[] { ResponseEnglish1, ResponseEnglish2, ResponseEnglish3, ResponseEnglish4, ResponseEnglish5 }
+                }
+            }, Reverse,
+            HackmanComponent.OVERALL,
+            HackmanSubcategory.HELFULNESS_OF_TEAM_LEADER_COACHING, HackmanSubcomponent.EXPERT_COACHING, 1);
+        var questions = new List<Question>() { firstQuestion };
+
+        _surveyService.Setup(service => service.GetSurveyNotificationById(_surveyNotificationId))
+            .ReturnsAsync(new SurveyNotification(Guid.NewGuid(), _surveyId, _memberId));
+        _surveyService.Setup(service => service.GetSurveyQuestionsBySurveyId(_surveyId)).ReturnsAsync(questions);
+
+        var appComponent =
+            _ctx.RenderComponent<SurveyQuestions>(
+                ComponentParameter.CreateParameter("SurveyNotificationId", _surveyNotificationId)
+            );
+
+        var firstQuestionFootLabel = appComponent.FindElementByCssSelectorAndTextContent("p", "Agree");
+        Assert.NotNull(firstQuestionFootLabel);
+    }
 }

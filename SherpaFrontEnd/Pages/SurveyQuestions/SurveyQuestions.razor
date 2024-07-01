@@ -133,7 +133,7 @@
         var questionHasFiveAnswers = question.Responses[Languages.ENGLISH].Length == 5;
         var questionHasFourAnswers = question.Responses[Languages.ENGLISH].Length == 4;
 
-
+        
         if (isShortAnswer && questionHasFiveAnswers && _selectedLanguage == Languages.ENGLISH)
         {
             return new[] { "Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree" };
