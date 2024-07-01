@@ -51,22 +51,13 @@
     {
         switch (Action)
         {
-            case "logout":
+            case "logout-callback":
             {
-                LogoutFromCognito();
+               // Wait and redirect to logout finished, blazor 6 keeps stuck in the logout process state
+               Task.Delay(1_000).ContinueWith(_ => NavigationManager.NavigateTo("/authentication/logged-out"));
             }
                 break;
         }
         await base.OnInitializedAsync();
-    }
-
-    private void LogoutFromCognito()
-    {
-        var cognitoClientId = config["Cognito:ClientId"];
-        var cognitoLogoutEndpoint = config["Cognito:UIEndpoint"];
-        var redirectUrlAfterLogout = $"{NavigationManager.BaseUri}authentication/logged-out";
-
-        NavigationManager.NavigateTo(
-            $"{cognitoLogoutEndpoint}/logout?client_id={cognitoClientId}&logout_uri={Uri.EscapeDataString(redirectUrlAfterLogout)}");
     }
 }
