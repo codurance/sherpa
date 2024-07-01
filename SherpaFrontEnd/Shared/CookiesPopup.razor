@@ -2,7 +2,12 @@
 @inject ICookiesService CookiesService
 @inject IJSRuntime JsRuntime
 
-<div class="@(_display ? "fixed bottom-0 mb-8" : "hidden")" role="dialog"><span>To find out more about our Cookies policy here. Once you are done, please, come back and accept them.</span><button @onclick="HandleClick">Accept</button></div>
+<div class="@(_display ? "fixed" : "hidden") bottom-0 inset-x-0 z-10 mb-8 flex justify-center" role="dialog">
+    <div class="flex items-center gap-4 p-4 bg-white rounded-2xl shadow-[0_2px_16px_2px_rgba(41,52,61,0.2)]">
+        <span class="text-sm text-primary-dark-principal">To find out more about our <a target="_blank" href="/cookie-policy" class="text-blue-700 text-decoration-underline">Cookies policy here</a>. Once you are done, please, come back and accept them.</span>
+        <button @onclick="HandleClick" class="bg-primary-red-principal-800 hover:bg-primary-red-900 rounded-lg px-6 py-2 text-white font-semibold text-base">Accept</button>
+    </div>
+</div>
 
 @code {
     private bool _display = false;
@@ -17,7 +22,7 @@
             StateHasChanged();
             return;
         }
-        
+
         await StartCollectingData();
     }
 
