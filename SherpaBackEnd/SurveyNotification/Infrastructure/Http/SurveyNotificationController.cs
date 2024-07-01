@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.SurveyNotification.Application;
@@ -20,6 +21,7 @@ public class SurveyNotificationController
         _logger = logger;
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<IActionResult> LaunchSurvey(CreateSurveyNotificationsDto createSurveyNotificationsDto)
     {

@@ -27,6 +27,7 @@ public class TeamsAcceptanceTest
     private readonly Mock<IGuidService> _guidService;
     private ITestOutputHelper _output;
     private readonly ISurveyService _surveyService;
+    private Mock<IAuthService> _authService;
 
     public TeamsAcceptanceTest(ITestOutputHelper output)
     {
@@ -36,8 +37,11 @@ public class TeamsAcceptanceTest
         _testCtx.Services.AddBlazoredModal();
         _httpHandlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
         _factoryHttpClient = new Mock<IHttpClientFactory>();
-        _teamsService = new TeamServiceHttpClient(_factoryHttpClient.Object);
-        _surveyService = new SurveyService(_factoryHttpClient.Object);
+        _authService = new Mock<IAuthService>();
+        _authService.Setup(auth => auth.DecorateWithToken(It.IsAny<HttpRequestMessage>()))
+            .ReturnsAsync((HttpRequestMessage requestMessage) => requestMessage);
+        _teamsService = new TeamServiceHttpClient(_factoryHttpClient.Object, _authService.Object);
+        _surveyService = new SurveyService(_factoryHttpClient.Object, _authService.Object);
         _guidService = new Mock<IGuidService>();
         _testCtx.Services.AddSingleton<ITeamDataService>(_teamsService);
         _testCtx.Services.AddSingleton<IGuidService>(_guidService.Object);
@@ -237,7 +241,7 @@ public class TeamsAcceptanceTest
 
 
         var analysisTab = teamsListComponent.FindElementByCssSelectorAndTextContent("li", "Analysis");
-        var sendNewSurveyTeam = teamsListComponent.FindElementByCssSelectorAndTextContent("button", "Send a new survey");
+        var sendNewSurveyTeam = teamsListComponent.FindElementByCssSelectorAndTextContent("button", "Launch new survey");
 
         Assert.NotNull(analysisTab);
         Assert.NotNull(sendNewSurveyTeam);

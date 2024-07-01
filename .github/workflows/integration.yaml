@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 jobs:
   check-build-test:
-    runs-on: ubuntu-latest
+    runs-on: gha-runner-scale-set
     permissions:
       contents: read
       packages: write
@@ -12,12 +12,17 @@ jobs:
       - name: Checking out repo
         uses: actions/checkout@v3
 
-      - name: Setting up SDK
-        uses: actions/setup-dotnet@v3
+      - name: Setting up dotnet SDK
+        uses: actions/setup-dotnet@v2
         with:
           dotnet-version: '6.0.x'
 
-      - name: Building TestProject1
+      - name: Setting up node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Building
         run: dotnet build
 
       - name: Running tests

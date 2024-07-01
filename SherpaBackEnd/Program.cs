@@ -1,6 +1,9 @@
+using System.IdentityModel.Tokens.Jwt;
 using Amazon;
 using Amazon.Runtime;
 using Amazon.SimpleEmail;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using SherpaBackEnd.Email.Application;
 using SherpaBackEnd.Shared.Infrastructure.Persistence;
 using SherpaBackEnd.Shared.Infrastructure.Serializers;
@@ -48,9 +51,10 @@ builder.Services.AddScoped<ISurveyService, SurveyService>();
 
 builder.Services.AddScoped<IEmailService, SesEmailService>(provider =>
 {
-    RegionEndpoint clientConfig = builder.Environment.IsDevelopment()? RegionEndpoint.EUCentral1 : RegionEndpoint.EUWest1;
-    string defaultEmail = builder.Environment.IsDevelopment()? "paula.masutier@codurance.com" : "sherpa@codurance.com";
-    
+    RegionEndpoint clientConfig =
+        builder.Environment.IsDevelopment() ? RegionEndpoint.EUCentral1 : RegionEndpoint.EUWest1;
+    string defaultEmail = builder.Environment.IsDevelopment() ? "paula.masutier@codurance.com" : "sherpa@codurance.com";
+
     var accessKey = Environment.GetEnvironmentVariable("AWS_SES_ACCESS_KEY");
     var secretKey = Environment.GetEnvironmentVariable("AWS_SES_SECRET_KEY");
     var basicAwsCredentials = new BasicAWSCredentials(accessKey, secretKey);
@@ -59,17 +63,43 @@ builder.Services.AddScoped<IEmailService, SesEmailService>(provider =>
 });
 
 builder.Services.AddSingleton<ISurveyNotificationsRepository, MongoSurveyNotificationRepository>();
-builder.Services.AddScoped<IEmailTemplateFactory, EmailTemplateFactory>(provider => new EmailTemplateFactory(provider.GetService<IHttpContextAccessor>()!));
+builder.Services.AddScoped<IEmailTemplateFactory, EmailTemplateFactory>(provider =>
+    new EmailTemplateFactory(provider.GetService<IHttpContextAccessor>()!));
 builder.Services.AddScoped<IGuidService, GuidService>();
 builder.Services.AddScoped<ISurveyNotificationService, SurveyNotificationService>();
 
 builder.Services.AddScoped<ISurveyResponsesFileService, SurveyResponsesCsvFileService>();
+
+// Auth
+var validAudience = builder.Configuration["Cognito:AppClientId"].ToString();
+var validIssuer = builder.Configuration["Cognito:Authority"].ToString();
+
+// Register authentication schemes, and specify the default authentication scheme
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+    {
+        options.Authority = validIssuer;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateLifetime = true,
+            AudienceValidator = (audiences, securityToken, validationParameters) =>
+            {
+                var castedToken = (JwtSecurityToken)securityToken;
+                var clientId = castedToken?.Payload?["client_id"];
+                return validAudience.Equals(clientId);
+            }
+        };
+    });
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
 
 var app = builder.Build();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

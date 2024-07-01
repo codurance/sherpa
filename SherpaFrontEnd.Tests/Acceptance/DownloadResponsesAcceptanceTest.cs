@@ -23,6 +23,7 @@ public class DownloadResponsesAcceptanceTest
     private readonly TestContext _testCtx;
     private readonly Mock<HttpMessageHandler> _handlerMock;
     private readonly Mock<IHttpClientFactory> _httpClientFactory;
+    private readonly Mock<IAuthService> _authService;
     private readonly FakeNavigationManager _navManager;
     private readonly SurveyService _surveyService;
     private readonly TeamServiceHttpClient _teamDataService;
@@ -35,13 +36,16 @@ public class DownloadResponsesAcceptanceTest
         _handlerMock = new Mock<HttpMessageHandler>();
         var httpClient = new HttpClient(_handlerMock.Object, false) { BaseAddress = new Uri("http://host") };
         _httpClientFactory = new Mock<IHttpClientFactory>();
+        _authService = new Mock<IAuthService>();
+        _authService.Setup(auth => auth.DecorateWithToken(It.IsAny<HttpRequestMessage>()))
+            .ReturnsAsync((HttpRequestMessage requestMessage) => requestMessage);
         _httpClientFactory.Setup(factory => factory.CreateClient("SherpaBackEnd")).Returns(httpClient);
         var auth = _testCtx.AddTestAuthorization();
         auth.SetAuthorized("Demo user");
         auth.SetClaims(new[] { new Claim("username", "Demo user") });
-        _surveyService = new SurveyService(_httpClientFactory.Object);
+        _surveyService = new SurveyService(_httpClientFactory.Object, _authService.Object);
         _testCtx.Services.AddSingleton<ISurveyService>(_surveyService);
-        _teamDataService = new TeamServiceHttpClient(_httpClientFactory.Object);
+        _teamDataService = new TeamServiceHttpClient(_httpClientFactory.Object, _authService.Object);
         _testCtx.Services.AddSingleton<ITeamDataService>(_teamDataService);
 
         _navManager = _testCtx.Services.GetRequiredService<FakeNavigationManager>();

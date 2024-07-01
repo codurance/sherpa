@@ -20,6 +20,7 @@ public class TemplatesAcceptanceTests
 
 
     private readonly Mock<IHttpClientFactory> _httpClientFactory;
+    private readonly Mock<IAuthService> _authService;
 
     private readonly ITemplateService _templateService;
     private readonly TestContext _ctx;
@@ -32,7 +33,10 @@ public class TemplatesAcceptanceTests
         var httpClient = new HttpClient(_handlerMock.Object, false) { BaseAddress = new Uri("http://host") };
         _httpClientFactory = new Mock<IHttpClientFactory>();
         _httpClientFactory.Setup(factory => factory.CreateClient("SherpaBackEnd")).Returns(httpClient);
-        _templateService = new TemplateService(_httpClientFactory.Object);
+        _authService = new Mock<IAuthService>();
+        _authService.Setup(auth => auth.DecorateWithToken(It.IsAny<HttpRequestMessage>()))
+            .ReturnsAsync((HttpRequestMessage requestMessage) => requestMessage);
+        _templateService = new TemplateService(_httpClientFactory.Object, _authService.Object);
         _ctx = new TestContext();
         _ctx.Services.AddBlazoredModal();
         _ctx.Services.AddSingleton<ITemplateService>(_templateService);

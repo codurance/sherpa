@@ -20,14 +20,16 @@
 
     <TabControl InitialTab="@Tab">
         <TabPage Text="Analysis">
-            <button>Send a new survey</button>
+            <button @onclick="RedirectToLaunchSurveyPage" type="button" class="bg-primary-red-principal-800 hover:bg-primary-red-900 rounded-lg px-6 py-2 text-white font-semibold text-sm">
+                Launch new survey
+            </button>
         </TabPage>
         <TabPage Text="Surveys" Args="@Surveys">
             @if (Surveys != null && Surveys.Count > 0)
             {
                 <div class="my-5 flex justify-between items-center rounded-3xl gap-2.5">
                     <h2 class="flex-grow text-title-h3 text-primary-dark-principal">All surveys launched in the team</h2>
-                    <button type="button" class="bg-primary-red-principal-800 hover:bg-primary-red-900 rounded-lg px-6 py-2 text-white font-semibold text-sm">
+                    <button @onclick="RedirectToLaunchSurveyPage" type="button" class="bg-primary-red-principal-800 hover:bg-primary-red-900 rounded-lg px-6 py-2 text-white font-semibold text-sm">
                         <i class="las la-plus"></i>
                         Launch new survey
                     </button>
@@ -44,9 +46,8 @@
                     <p class="text-center text-gray-700 text-base">
                         Let's begin the journey towards a stronger, more effective team!
                     </p>
-                    <button type="button" class="flex items-center focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-4">
-                        <img src="/img/button-paper-plane.svg" alt="Paper Plane Icon" class="w-4 h-4 mr-2">
-                        Send first survey
+                    <button @onclick="RedirectToLaunchSurveyPage" type="button" class="bg-primary-red-principal-800 hover:bg-primary-red-900 rounded-lg px-6 py-2 text-white font-semibold text-sm">
+                        Launch first survey
                     </button>
                 </div>
             }
@@ -110,6 +111,11 @@
             Console.WriteLine(error);
             NavigationManager.NavigateTo(NavigationManager.BaseUri + "error");
         }
+    }
+
+    private void RedirectToLaunchSurveyPage()
+    {
+        NavigationManager.NavigateTo(NavigationManager.BaseUri + "survey/delivery-settings?template=Hackman%20Model");
     }
 
 }
