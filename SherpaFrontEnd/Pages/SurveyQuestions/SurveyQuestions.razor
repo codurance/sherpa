@@ -77,6 +77,7 @@
                                 <p class="flex-1 py-2 px-2 text-primary-dark-principal text-center text-xs">@footLabel</p>
                             }
                         </div>
+
                     </fieldset>
                 }
             </form>
@@ -135,7 +136,17 @@
         var questionHasFiveAnswers = question.Responses[Languages.ENGLISH].Length == 5;
         var questionHasFourAnswers = question.Responses[Languages.ENGLISH].Length == 4;
 
-        
+
+        if (question is { Component: HackmanComponent.ExpertCoaching, Subcomponent: HackmanSubComponent.Overall } && _selectedLanguage == Languages.ENGLISH)
+        {
+            return new[] { "Very unhelpful", "Unhelpful", "Neutral", "Helpful", "Very helpful" };
+        }
+
+        if (question is { Component: "Expert Coaching", Subcomponent: "Overall" } && _selectedLanguage == Languages.SPANISH)
+        {
+            return new[] { "Muy poco útil", "Poco útil", "Neutro", "Útil", "Muy útil" };
+        }
+
         if (isShortAnswer && questionHasFiveAnswers && _selectedLanguage == Languages.ENGLISH)
         {
             return new[] { "Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree" };
