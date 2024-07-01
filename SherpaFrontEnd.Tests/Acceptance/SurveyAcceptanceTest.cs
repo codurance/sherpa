@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using System.Security.Claims;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
+using Blazored.LocalStorage;
 using Blazored.Modal;
 using Bunit;
 using Bunit.TestDoubles;
@@ -39,6 +40,9 @@ public class SurveyAcceptanceTest
         _testOutputHelper = testOutputHelper;
         _testCtx = new TestContext();
         _testCtx.Services.AddBlazoredModal();
+        _testCtx.Services.AddBlazoredLocalStorage();
+        _testCtx.Services.AddScoped<ICookiesService, CookiesService>();
+        _testCtx.JSInterop.Setup<string>("localStorage.getItem", "CookiesAcceptedDate");
         _handlerMock = new Mock<HttpMessageHandler>();
         _templates = new[] { new TemplateWithoutQuestions("Hackman Model", 30) };
         _teams = new[] { new Team(Guid.NewGuid(), "Demo Team") };
