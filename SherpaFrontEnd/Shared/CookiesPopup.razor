@@ -1,5 +1,6 @@
 @using SherpaFrontEnd.Services
 @inject ICookiesService CookiesService
+@inject IJSRuntime JsRuntime
 
 <div class="@(_display ? "fixed bottom-0 mb-8" : "hidden")" role="dialog"><span>To find out more about our Cookies policy here. Once you are done, please, come back and accept them.</span><button @onclick="HandleClick">Accept</button></div>
 
@@ -14,14 +15,23 @@
         {
             _display = true;
             StateHasChanged();
+            return;
         }
+        
+        await StartCollectingData();
     }
-    
+
     private async Task HandleClick()
     {
         await CookiesService.AcceptCookies();
+        await StartCollectingData();
         _display = false;
         StateHasChanged();
+    }
+
+    private async Task StartCollectingData()
+    {
+        await JsRuntime.InvokeVoidAsync("startCollectingAnalyticsData");
     }
 
 }

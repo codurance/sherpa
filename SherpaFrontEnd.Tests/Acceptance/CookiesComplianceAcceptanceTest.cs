@@ -9,6 +9,7 @@ namespace BlazorApp.Tests.Acceptance;
 
 public class CookiesComplianceAcceptanceTest : IAsyncDisposable
 {
+    private const string FunctionName = "startCollectingAnalyticsData";
     private const string CookiesAcceptedDate = "CookiesAcceptedDate";
     private readonly TestContext _testCtx;
     private ILocalStorageService _mockLocalStorage;
@@ -16,9 +17,11 @@ public class CookiesComplianceAcceptanceTest : IAsyncDisposable
     public CookiesComplianceAcceptanceTest()
     {
         _testCtx = new TestContext();
+        _testCtx.JSInterop.SetupVoid(FunctionName).SetVoidResult();
         _testCtx.Services.AddScoped<ICookiesService, CookiesService>();
         _mockLocalStorage = _testCtx.AddBlazoredLocalStorage();
     }
+
 
     [Fact]
     public async Task ShouldLetTheUserAcceptCookiesIfTheyHaveNotBeenApprovedYet()
@@ -40,6 +43,7 @@ public class CookiesComplianceAcceptanceTest : IAsyncDisposable
         
         popupElement = app.FindElementByCssSelectorAndTextContent("div[role=\"dialog\"]", "To find out more about our Cookies policy here. Once you are done, please, come back and accept them.");
         AssertPopupIsNotShown(popupElement);
+        _testCtx.JSInterop.VerifyInvoke(FunctionName);
     }
 
     [Fact]
@@ -63,6 +67,7 @@ public class CookiesComplianceAcceptanceTest : IAsyncDisposable
         
         popupElement = app.FindElementByCssSelectorAndTextContent("div[role=\"dialog\"]", "To find out more about our Cookies policy here. Once you are done, please, come back and accept them.");
         AssertPopupIsNotShown(popupElement);
+        _testCtx.JSInterop.VerifyInvoke(FunctionName);
     }
 
     private static void AssertPopupIsShown(IElement? cookiesPopup)
