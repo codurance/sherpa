@@ -137,37 +137,47 @@
         var questionHasFourAnswers = question.Responses[Languages.ENGLISH].Length == 4;
 
 
-        if (question is { Component: HackmanComponent.ExpertCoaching, Subcomponent: HackmanSubComponent.Overall } && _selectedLanguage == Languages.ENGLISH)
+        if (question is { Component: HackmanComponent.ExpertCoaching, Subcomponent: HackmanSubComponent.Overall } && IsEnglish())
         {
             return new[] { "Very unhelpful", "Unhelpful", "Neutral", "Helpful", "Very helpful" };
         }
 
-        if (question is { Component: "Expert Coaching", Subcomponent: "Overall" } && _selectedLanguage == Languages.SPANISH)
+        if (question is { Component: HackmanComponent.ExpertCoaching, Subcomponent: HackmanSubComponent.Overall } && IsSpanish())
         {
             return new[] { "Muy poco útil", "Poco útil", "Neutro", "Útil", "Muy útil" };
         }
 
-        if (isShortAnswer && questionHasFiveAnswers && _selectedLanguage == Languages.ENGLISH)
+        if (isShortAnswer && questionHasFiveAnswers && IsEnglish())
         {
             return new[] { "Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree" };
         }
 
-        if (isShortAnswer && questionHasFiveAnswers && _selectedLanguage == Languages.SPANISH)
+        if (isShortAnswer && questionHasFiveAnswers && IsSpanish())
         {
             return new[] { "Totalmente en desacuerdo", "En desacuerdo", "Neutral", "De acuerdo", "Totalmente de acuerdo" };
         }
 
-        if (isShortAnswer && questionHasFourAnswers && _selectedLanguage == Languages.ENGLISH)
+        if (isShortAnswer && questionHasFourAnswers && IsEnglish())
         {
             return new[] { "Strongly Disagree", "Disagree", "Agree", "Strongly Agree" };
         }
 
-        if (isShortAnswer && questionHasFourAnswers && _selectedLanguage == Languages.SPANISH)
+        if (isShortAnswer && questionHasFourAnswers && IsSpanish())
         {
             return new[] { "Totalmente en desacuerdo", "En desacuerdo", "De acuerdo", "Totalmente de acuerdo" };
         }
 
         return Array.Empty<string>();
+    }
+
+    private bool IsSpanish()
+    {
+        return _selectedLanguage == Languages.SPANISH;
+    }
+
+    private bool IsEnglish()
+    {
+        return _selectedLanguage == Languages.ENGLISH;
     }
 
     private async Task SubmitAction()
