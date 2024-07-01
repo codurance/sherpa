@@ -1,3 +1,4 @@
+using AngleSharp.Dom;
 using Blazored.LocalStorage;
 using Bunit;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,19 +25,31 @@ public class CookiesComplianceAcceptanceTest
         var app = _testCtx.RenderComponent<CookiesPopup>();
         
 
-        var cookiesPopup = app.FindElementByCssSelectorAndTextContent("div[role=\"dialog\"]", "To find out more about our Cookies policy here. Once you are done, please, come back and accept them.");
+        var popupElement = app.FindElementByCssSelectorAndTextContent("div[role=\"dialog\"]", "To find out more about our Cookies policy here. Once you are done, please, come back and accept them.");
         
         var acceptedLocalStorageEntry = await GetAcceptedLocalStorageEntry();
         Assert.Null(acceptedLocalStorageEntry);
  
-        Assert.NotNull(cookiesPopup);
-        
-        
-        var approveButton = cookiesPopup.QuerySelector("button");
+        AssertPopupIsShown(popupElement);
+
+        var approveButton = app.FindElementByCssSelectorAndTextContent("button", "Accept");
         approveButton!.Click();
 
         acceptedLocalStorageEntry = await _mockLocalStorage.GetItemAsync<String>("CookiesAcceptedDate");
         Assert.NotNull(acceptedLocalStorageEntry);
+        
+        popupElement = app.FindElementByCssSelectorAndTextContent("div[role=\"dialog\"]", "To find out more about our Cookies policy here. Once you are done, please, come back and accept them.");
+        AssertPopupIsNotShown(popupElement);
+    }
+
+    private static void AssertPopupIsShown(IElement? cookiesPopup)
+    {
+        Assert.Contains(cookiesPopup!.ClassList, c => c == "fixed");
+    }
+    
+    private static void AssertPopupIsNotShown(IElement? cookiesPopup)
+    {
+        Assert.Contains(cookiesPopup!.ClassList, c => c == "hidden");
     }
 
     private ValueTask<string?> GetAcceptedLocalStorageEntry()
