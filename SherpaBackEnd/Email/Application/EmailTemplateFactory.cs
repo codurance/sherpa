@@ -37,7 +37,7 @@ public class EmailTemplateFactory : IEmailTemplateFactory
                 TextBody = text,
             };
         }).ToList();
-        return new EmailTemplate("NewSurvey", recipients);
+        return new EmailTemplate("NewSurvey", "Team Diagnostic - You have a new survey to answer", recipients);
     }
 
     private NewSurveyTemplateModel CreateNewSurveyTemplateModel(SurveyNotification.Domain.SurveyNotification notification)

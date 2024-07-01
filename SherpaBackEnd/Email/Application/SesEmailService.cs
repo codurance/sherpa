@@ -8,7 +8,6 @@ namespace SherpaBackEnd.Email.Application;
 
 public class SesEmailService : IEmailService
 {
-    private const string TemplateName = "answer_survey_template";
     private readonly AmazonSimpleEmailServiceClient _amazonEmailService;
     private readonly string _defaultEmail;
 
@@ -22,12 +21,8 @@ public class SesEmailService : IEmailService
     {
         try
         {
-            await _amazonEmailService.DeleteTemplateAsync(new DeleteTemplateRequest()
-            {
-                TemplateName = TemplateName
-            });
-            await GetTemplate(TemplateName);
-            var request = CreateBulkTemplatedEmailRequest(emailTemplate, TemplateName);
+            await GetTemplate(emailTemplate);
+            var request = CreateBulkTemplatedEmailRequest(emailTemplate);
             await _amazonEmailService.SendBulkTemplatedEmailAsync(request);
         }
         catch (Exception e)
@@ -36,27 +31,27 @@ public class SesEmailService : IEmailService
         }
     }
 
-    private async Task GetTemplate(string templateName)
+    private async Task GetTemplate(EmailTemplate emailTemplate)
     {
         try
         {
             var templateRequest = new GetTemplateRequest()
             {
-                TemplateName = templateName
+                TemplateName = emailTemplate.TemplateName
             };
             await _amazonEmailService.GetTemplateAsync(templateRequest);
         }
         catch (Exception e)
         {
-            await CreateDefaultSurveyTemplate();
+            await CreateDefaultSurveyTemplate(emailTemplate);
         }
     }
 
-    private async Task CreateDefaultSurveyTemplate()
+    private async Task CreateDefaultSurveyTemplate(EmailTemplate emailTemplate)
     {
         try
         {
-            var templateRequest = CreateTemplateRequest(TemplateName);
+            var templateRequest = CreateTemplateRequest(emailTemplate);
             await _amazonEmailService.CreateTemplateAsync(templateRequest);
         }
         catch (Exception e)
@@ -66,22 +61,21 @@ public class SesEmailService : IEmailService
         }
     }
 
-    private CreateTemplateRequest CreateTemplateRequest(string templateName)
+    private CreateTemplateRequest CreateTemplateRequest(EmailTemplate emailTemplate)
     {
         return new CreateTemplateRequest
         {
             Template = new Amazon.SimpleEmail.Model.Template
             {
-                TemplateName = templateName,
-                SubjectPart = "Pending Survey",
+                TemplateName = emailTemplate.TemplateName,
+                SubjectPart = emailTemplate.Subject,
                 HtmlPart = @"{{html-body}}",
                 TextPart = @"{{text-body}}"
             }
         };
     }
 
-    private SendBulkTemplatedEmailRequest CreateBulkTemplatedEmailRequest(EmailTemplate emailTemplate,
-        string templateName)
+    private SendBulkTemplatedEmailRequest CreateBulkTemplatedEmailRequest(EmailTemplate emailTemplate)
     {
         var bulkEmailDestinations = emailTemplate.Recipients.ConvertAll(recipient => new BulkEmailDestination
         {
@@ -104,7 +98,7 @@ public class SesEmailService : IEmailService
         {
             Destinations = bulkEmailDestinations,
             Source = _defaultEmail,
-            Template = templateName,
+            Template = emailTemplate.TemplateName,
             DefaultTemplateData = JsonConvert.SerializeObject(new Dictionary<string, string>
             {
                 { "html-body", "Something went wrong" }, { "text-body", "Something went wrong" }
