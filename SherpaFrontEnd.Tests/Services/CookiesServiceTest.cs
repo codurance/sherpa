@@ -39,6 +39,22 @@ public class CookiesServiceTest
     }
 
     [Fact]
+    public async Task ShouldReturnCookiesAcceptedIfEntryExistsAndIsWithinSixMonths()
+    {
+        var localStorageMock = new Mock<ILocalStorageService>();
+        
+        var fiveMonthsAgo = DateTimeOffset.Now.AddMonths(-5).ToUnixTimeMilliseconds();
+        localStorageMock.Setup(mock => mock.GetItemAsync<long?>("CookiesAcceptedDate", It.IsAny<CancellationToken>())).ReturnsAsync(fiveMonthsAgo);
+        
+        var cookiesService = new CookiesService(localStorageMock.Object);
+        var areCookiesAccepted = await cookiesService.AreCookiesAccepted();
+        
+        localStorageMock.Verify(mock => mock.GetItemAsync<long?>("CookiesAcceptedDate", It.IsAny<CancellationToken>()), Times.Once);
+        
+        Assert.True(areCookiesAccepted);
+    }
+
+    [Fact]
     public void ShouldSetCookiesAcceptedEntry()
     {
         var localStorageMock = new Mock<ILocalStorageService>();
