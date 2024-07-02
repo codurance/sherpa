@@ -210,7 +210,7 @@ public class SurveyQuestionsTest
     }
 
     [Fact]
-    public async Task ShouldSendAnswerSurveyDtoToSurveyServiceAndShowThankYouMessageOnSubmit()
+    public async Task ShouldSendAnswerSurveyDtoToSurveyServiceAndShowThankYouMessageInEnglishOnSubmit()
     {
         var ResponseSpanish1 = "SPA_1";
         var ResponseSpanish2 = "SPA_2";
@@ -378,4 +378,92 @@ public class SurveyQuestionsTest
         var contactCoachElement = appComponent.FindElementByCssSelectorAndTextContent("p", "Please contact your coach");
         Assert.NotNull(contactCoachElement);
     }
+
+
+    [Fact]
+    public async Task ShouldSendAnswerSurveyDtoToSurveyServiceAndShowThankYouMessageInSpanishOnSubmit()
+    {
+        var ResponseSpanish1 = "SPA_1";
+        var ResponseSpanish2 = "SPA_2";
+        var ResponseSpanish3 = "SPA_3";
+        var ResponseEnglish1 = "ENG_1";
+        var ResponseEnglish2 = "ENG_2";
+        var ResponseEnglish3 = "ENG_3";
+        var Position = 1;
+        var Reverse = false;
+
+        var firstQuestion = new Question(new Dictionary<string, string>()
+            {
+                { Languages.SPANISH, "Primera pregunta en espanol" },
+                { Languages.ENGLISH, "First Question in english" },
+            }, new Dictionary<string, string[]>()
+            {
+                {
+                    Languages.SPANISH, new[] { ResponseSpanish1, ResponseSpanish2, ResponseSpanish3 }
+                },
+                {
+                    Languages.ENGLISH, new[] { ResponseEnglish1, ResponseEnglish2, ResponseEnglish3 }
+                }
+            }, Reverse,
+            HackmanSubComponent.InterpersonalPeerCoaching,
+            HackmanSubcategory.Delimited, HackmanComponent.SenseOfUrgency, 1);
+
+        var secondQuestion = new Question(new Dictionary<string, string>()
+            {
+                { Languages.SPANISH, "Segunda pregunta en espanol" },
+                { Languages.ENGLISH, "Second Question in english" },
+            }, new Dictionary<string, string[]>()
+            {
+                {
+                    Languages.SPANISH, new[] { ResponseSpanish1, ResponseSpanish2, ResponseSpanish3 }
+                },
+                {
+                    Languages.ENGLISH, new[] { ResponseEnglish1, ResponseEnglish2, ResponseEnglish3 }
+                }
+            }, Reverse,
+            HackmanSubComponent.InterpersonalPeerCoaching,
+            HackmanSubcategory.Delimited, HackmanComponent.SenseOfUrgency, 2);
+
+        var questions = new List<Question>() { firstQuestion, secondQuestion };
+
+        _surveyService.Setup(service => service.GetSurveyNotificationById(_surveyNotificationId))
+            .ReturnsAsync(new SurveyNotification(Guid.NewGuid(), _surveyId, _memberId));
+        _surveyService.Setup(service => service.GetSurveyQuestionsBySurveyId(_surveyId)).ReturnsAsync(questions);
+
+        var appComponent =
+            _ctx.RenderComponent<SurveyQuestions>(
+                ComponentParameter.CreateParameter("SurveyNotificationId", _surveyNotificationId)
+            );
+
+        var survey = appComponent.Find("form[id='survey']");
+
+        var selectLanguageOption = appComponent.Find("select");
+        selectLanguageOption.Change(new ChangeEventArgs(){Value = Languages.SPANISH});
+            
+        var question1 = 1;
+        var question2 = 2;
+        var question1AnswerIndex = 1;
+        var question1Answer = firstQuestion.Responses[Languages.SPANISH][question1AnswerIndex];
+        var question2AnswerIndex = 1;
+        var question2Answer = secondQuestion.Responses[Languages.SPANISH][question2AnswerIndex];
+
+        var question1AnswerElement = appComponent.Find($"input[id='{question1}-{question1AnswerIndex}']");
+        question1AnswerElement.Change(new ChangeEventArgs());
+        var question2AnswerElement = appComponent.Find($"input[id='{question2}-{question2AnswerIndex}']");
+        question2AnswerElement.Change(new ChangeEventArgs());
+
+        var surveyResponse = new SurveyResponse(_memberId, new List<QuestionResponse>()
+        {
+            new(question1, question1Answer),
+            new(question2, question2Answer)
+        });
+        var answerSurveyDto = new AnswerSurveyDto(_memberId, _surveyId, surveyResponse);
+
+        survey.Submit();
+        _surveyService.Verify(service => service.SubmitSurveyResponse(answerSurveyDto));
+
+        var thankYouTitleInSpanish = appComponent.FindElementByCssSelectorAndTextContent("h1", "¡Gracias por tu respuesta!");
+        Assert.NotNull(thankYouTitleInSpanish);
+    }
+
 }
