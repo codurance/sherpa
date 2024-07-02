@@ -1354,7 +1354,7 @@
       {
         "statement": {
           "SPANISH": "Cuando miembros de equipos en la organización tienen problemas trabajando juntos no hay nadie disponible para ayudarles.",
-          "ENGLISH": "When members of teams in this organization have trouble working together, there is no one available to help them out. (R)"
+          "ENGLISH": "When members of teams in this organization have trouble working together, there is no one available to help them out. "
         },
         "responses": {
           "SPANISH": [
@@ -1381,7 +1381,7 @@
       {
         "statement": {
           "SPANISH": "Los equipos en esta organización tiene acceso a coaches que les pueden ayudar a aprender sobre sus logros y errores.",
-          "ENGLISH": "Teams in this organization have access to “coaches” who can help them learn from their successes and mistakes. (R)"
+          "ENGLISH": "Teams in this organization have access to “coaches” who can help them learn from their successes and mistakes. "
         },
         "responses": {
           "SPANISH": [
@@ -2045,7 +2045,7 @@
       {
         "statement": {
           "SPANISH": "Nuestro equipo con frecuencia cae en rutinas sin sentido, sin darse cuenta de los cambios que pueden haber ocurrido en nuestra situación",
-          "ENGLISH": "Our team often falls into mindless routines, without noticing any changes that may have occurred in our situation. (R)"
+          "ENGLISH": "Our team often falls into mindless routines, without noticing any changes that may have occurred in our situation. "
         },
         "responses": {
           "SPANISH": [
@@ -2072,7 +2072,7 @@
       {
         "statement": {
           "SPANISH": "Nuestro equipo tiene una gran dificultad a la hora de implementar los planes que hacemos para proceder con una tarea",
-          "ENGLISH": "Our team has a great deal of difficulty actually carrying out the plans we make for how we will proceed with the task. (R)"
+          "ENGLISH": "Our team has a great deal of difficulty actually carrying out the plans we make for how we will proceed with the task. "
         },
         "responses": {
           "SPANISH": [
