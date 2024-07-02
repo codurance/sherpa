@@ -1,0 +1,33 @@
+﻿h2 {
+    font-weight: 600;
+    font-size: 24px;
+}
+
+p {
+    font-weight: 400;
+    font-size: 16px;
+    text-align: center;
+}
+
+th, td {
+    padding-top: 16px;
+    padding-bottom: 16px;
+    text-align: center;
+}
+
+td {
+    padding-left: 12px;
+    padding-right: 12px;
+}
+
+tr>td:nth-child(2) {
+    text-align: start;
+}
+
+thead tr {
+    border-bottom: 1px solid var(--gray--900);
+}
+
+tbody tr {
+    border-bottom: 1px solid var(--gray--800);
+}
