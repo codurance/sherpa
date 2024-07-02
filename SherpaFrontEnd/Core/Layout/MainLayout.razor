@@ -10,7 +10,6 @@
             <div class="bg-primary-dark-principal pl-4 sidebar">
                 <NavMenu/>
             </div>
-
             <div class="flex flex-col flex-1">
                 <div class="flex gap-8 px-8 flex-row-reverse py-6 bg-gray-white border-b border-primary-dark-100">
                     <LoginDisplay/>
@@ -21,12 +20,7 @@
             </div>
         </Authorized>
         <NotAuthorized>
-            <div class="flex justify-center items-center w-screen h-screen">
-                <div class="flex flex-col items-center gap-2">
-                    <p>You're logged out</p>
-                    <button class="btn btn-primary" @onclick="RedirectToLogin">Log in</button>
-                </div>
-            </div>
+            <RedirectToLogin/>
         </NotAuthorized>
         <Authorizing>
             <div class="flex justify-center items-center w-screen h-screen">
@@ -35,11 +29,3 @@
         </Authorizing>
     </AuthorizeView>
 </div>
-
-@code
-{
-    private async Task RedirectToLogin()
-    {
-        NavigationManager.NavigateTo("authentication/login");
-    }
-}

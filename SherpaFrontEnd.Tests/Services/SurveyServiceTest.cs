@@ -9,9 +9,7 @@ using SherpaFrontEnd.Services;
 using Newtonsoft.Json;
 using SherpaFrontEnd.Dtos.Survey;
 using SherpaFrontEnd.Dtos.Team;
-using HackmanComponent = SherpaFrontEnd.Dtos.Survey.HackmanComponent;
 using HackmanSubcategory = SherpaFrontEnd.Dtos.Survey.HackmanSubcategory;
-using HackmanSubcomponent = SherpaFrontEnd.Dtos.Survey.HackmanSubcomponent;
 using IQuestion = SherpaFrontEnd.Dtos.Survey.IQuestion;
 using Languages = SherpaFrontEnd.Dtos.Survey.Languages;
 using Template = SherpaFrontEnd.Dtos.Survey.Template;
@@ -191,8 +189,8 @@ public class SurveyServiceTest
                     Languages.ENGLISH, new[] { ResponseEnglish1, ResponseEnglish2, ResponseEnglish3 }
                 }
             }, Reverse,
-            HackmanComponent.INTERPERSONAL_PEER_COACHING,
-            HackmanSubcategory.DELIMITED, HackmanSubcomponent.SENSE_OF_URGENCY, Position);
+            HackmanSubComponent.InterpersonalPeerCoaching,
+            HackmanSubcategory.Delimited, HackmanComponent.SenseOfUrgency, Position);
 
         var questions = new List<IQuestion>() { question };
         var questionsListJson = await JsonContent.Create(questions).ReadAsStringAsync();

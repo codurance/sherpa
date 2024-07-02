@@ -121,8 +121,8 @@ public class AnswerSurveyAcceptanceTest
                     Languages.ENGLISH, new[] { ResponseEnglish1, ResponseEnglish2, ResponseEnglish3 }
                 }
             }, Reverse,
-            HackmanComponent.INTERPERSONAL_PEER_COACHING,
-            HackmanSubcategory.DELIMITED, HackmanSubcomponent.SENSE_OF_URGENCY, Position);
+            HackmanSubComponent.InterpersonalPeerCoaching,
+            HackmanSubcategory.Delimited, HackmanComponent.SenseOfUrgency, Position);
 
         var surveyTitle = "Title";
         var survey = new Survey(_surveyId, new User(Guid.NewGuid(), "Lucia"), Status.Draft, new DateTime(), surveyTitle,
@@ -205,8 +205,8 @@ public class AnswerSurveyAcceptanceTest
                     Languages.ENGLISH, new[] { ResponseEnglish1, ResponseEnglish2, ResponseEnglish3 }
                 }
             }, Reverse,
-            HackmanComponent.INTERPERSONAL_PEER_COACHING,
-            HackmanSubcategory.DELIMITED, HackmanSubcomponent.SENSE_OF_URGENCY, Position);
+            HackmanSubComponent.InterpersonalPeerCoaching,
+            HackmanSubcategory.Delimited, HackmanComponent.SenseOfUrgency, Position);
 
         var secondQuestion = new Question(new Dictionary<string, string>()
             {
@@ -221,8 +221,8 @@ public class AnswerSurveyAcceptanceTest
                     Languages.ENGLISH, new[] { ResponseEnglish1, ResponseEnglish2, ResponseEnglish3 }
                 }
             }, Reverse,
-            HackmanComponent.INTERPERSONAL_PEER_COACHING,
-            HackmanSubcategory.DELIMITED, HackmanSubcomponent.SENSE_OF_URGENCY, Position);
+            HackmanSubComponent.InterpersonalPeerCoaching,
+            HackmanSubcategory.Delimited, HackmanComponent.SenseOfUrgency, Position);
 
         var questions = new List<Question>() { firstQuestion, secondQuestion };
 
@@ -297,8 +297,8 @@ public class AnswerSurveyAcceptanceTest
                     Languages.ENGLISH, new[] { ResponseEnglish1, ResponseEnglish2, ResponseEnglish3 }
                 }
             }, Reverse,
-            HackmanComponent.INTERPERSONAL_PEER_COACHING,
-            HackmanSubcategory.DELIMITED, HackmanSubcomponent.SENSE_OF_URGENCY, Position);
+            HackmanSubComponent.InterpersonalPeerCoaching,
+            HackmanSubcategory.Delimited, HackmanComponent.SenseOfUrgency, Position);
 
         var secondQuestion = new Question(new Dictionary<string, string>()
             {
@@ -313,8 +313,8 @@ public class AnswerSurveyAcceptanceTest
                     Languages.ENGLISH, new[] { ResponseEnglish1, ResponseEnglish2, ResponseEnglish3 }
                 }
             }, Reverse,
-            HackmanComponent.INTERPERSONAL_PEER_COACHING,
-            HackmanSubcategory.DELIMITED, HackmanSubcomponent.SENSE_OF_URGENCY, Position);
+            HackmanSubComponent.InterpersonalPeerCoaching,
+            HackmanSubcategory.Delimited, HackmanComponent.SenseOfUrgency, Position);
 
         var questions = new List<Question>() { firstQuestion, secondQuestion };
 
