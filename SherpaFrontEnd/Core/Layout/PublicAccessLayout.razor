@@ -1,3 +1,10 @@
 @inherits LayoutComponentBase
+@inject NavigationManager NavManager
 
-<div>@Body</div>
+<div>
+    @if (!NavManager.Uri.Contains("cookie-policy"))
+    {
+        <CookiesPopup/>
+    }
+    @Body
+</div>

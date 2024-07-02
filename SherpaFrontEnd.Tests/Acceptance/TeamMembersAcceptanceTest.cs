@@ -2,7 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Security.Claims;
 using AngleSharp.Dom;
-
+using Blazored.LocalStorage;
 using Blazored.Modal;
 using Bunit;
 using Bunit.TestDoubles;
@@ -32,6 +32,9 @@ public class TeamMembersAcceptanceTest
         _output = output;
         _testCtx = new TestContext();
         _testCtx.Services.AddBlazoredModal();
+        _testCtx.Services.AddBlazoredLocalStorage();
+        _testCtx.Services.AddScoped<ICookiesService, CookiesService>();
+        _testCtx.JSInterop.Setup<string>("localStorage.getItem", "CookiesAcceptedDate");
         _httpHandlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
         _factoryHttpClient = new Mock<IHttpClientFactory>();
         _authService = new Mock<IAuthService>();
