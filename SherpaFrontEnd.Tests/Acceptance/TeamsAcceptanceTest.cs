@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using System.Security.Claims;
 using Blazored.LocalStorage;
 using Blazored.Modal;
+using Blazored.Toast;
 using Bunit;
 using Bunit.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,6 +37,7 @@ public class TeamsAcceptanceTest
         _testCtx = new TestContext();
         _testCtx.Services.AddBlazoredModal();
         _testCtx.Services.AddBlazoredLocalStorage();
+        _testCtx.Services.AddBlazoredToast();
         _testCtx.Services.AddScoped<ICookiesService, CookiesService>();
         _testCtx.JSInterop.Setup<string>("localStorage.getItem", "CookiesAcceptedDate");
         _httpHandlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
