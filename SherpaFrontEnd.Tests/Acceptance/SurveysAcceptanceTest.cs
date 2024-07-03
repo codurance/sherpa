@@ -46,6 +46,7 @@ public class SurveysAcceptanceTest
         _testCtx.Services.AddSingleton<ITeamDataService>(_teamsService);
         _testCtx.Services.AddSingleton<IGuidService>(_guidService.Object);
         _testCtx.Services.AddSingleton<ISurveyService>(_surveyService);
+        _testCtx.Services.AddScoped<IToastNotificationService, BlazoredToastService>();
         const string baseUrl = "http://localhost";
         var httpClient = new HttpClient(_httpHandlerMock.Object, false) { BaseAddress = new Uri(baseUrl) };
         _factoryHttpClient.Setup(_ => _.CreateClient("SherpaBackEnd")).Returns(httpClient);

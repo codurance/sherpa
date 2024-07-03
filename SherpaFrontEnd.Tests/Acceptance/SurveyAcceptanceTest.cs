@@ -62,6 +62,7 @@ public class SurveyAcceptanceTest
         _testCtx.Services.AddSingleton<ISurveyService>(_surveyService);
         _guidService = new Mock<IGuidService>();
         _testCtx.Services.AddSingleton<IGuidService>(_guidService.Object);
+        _testCtx.Services.AddScoped<IToastNotificationService, BlazoredToastService>();
         _guidService.Setup(service => service.GenerateRandomGuid()).Returns(_surveyId);
         var auth = _testCtx.AddTestAuthorization();
         auth.SetAuthorized("Demo user");
