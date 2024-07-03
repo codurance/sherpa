@@ -252,6 +252,81 @@ public class TeamsAcceptanceTest
         Assert.NotNull(analysisTab);
         Assert.NotNull(sendNewSurveyTeam);
     }
+    
+    [Fact]
+    private async Task ShouldShowSuccessToastNotificationWhenTeamIsCreated()
+    {
+        //GIVEN that an Org coach is on the page for creating a team
+
+        var emptyTeamsList = new List<Team>() { };
+        var emptyTeamListJson = await JsonContent.Create(emptyTeamsList).ReadAsStringAsync();
+        var responseEmpty = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(emptyTeamListJson)
+        };
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, "", responseEmpty);
+
+        var creationResponse = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.Created,
+        };
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Post, "", creationResponse);
+
+        var teamsListComponent = _testCtx.RenderComponent<App>();
+
+        _navMan.NavigateTo("/teams-list-page");
+
+        var createNewTeamButton = teamsListComponent.FindElementByCssSelectorAndTextContent("button", "Create new team");
+        Assert.NotNull(createNewTeamButton);
+
+        createNewTeamButton.Click();
+
+        //    WHEN he enters a team name
+        //    and clicks on Confirm
+
+        var teamId = Guid.NewGuid();
+
+        _guidService.Setup(service => service.GenerateRandomGuid()
+        ).Returns(teamId);
+
+        const string teamName = "Team name";
+        var newTeam = new Team(teamId, teamName);
+        var newTeamAsJson = await JsonContent.Create(newTeam).ReadAsStringAsync();
+
+        var teamResponse = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(newTeamAsJson)
+        };
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, $"/team/{teamId.ToString()}", teamResponse);
+        
+        var teamSurveysResponse = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(emptyTeamListJson)
+        };
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, $"/team/{teamId.ToString()}/surveys", teamSurveysResponse);
+
+        var teamNameLabel = teamsListComponent.FindElementByCssSelectorAndTextContent("label", "Team name");
+        var teamNameInputId = teamNameLabel.Attributes.GetNamedItem("for");
+        var teamNameInput = teamsListComponent.Find($"#{teamNameInputId.TextContent}");
+        Assert.NotNull(teamNameInput);
+
+        teamNameInput.Change("Demo team");
+
+        var confirmButton = teamsListComponent.FindElementByCssSelectorAndTextContent("button", "Confirm");
+        Assert.NotNull(confirmButton);
+
+        confirmButton.Click();
+
+        // THEN he should see a success toast notification with the message "Team created successfully"
+        teamsListComponent.WaitForAssertion(() => Assert.NotNull(teamsListComponent.FindElementByCssSelectorAndTextContent("p", "Team created successfully")));
+    }
 
     [Fact]
     public async Task ShouldBeAbleToClickCancelInTeamCreationFormAndStayInTheSamePage()

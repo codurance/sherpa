@@ -3,6 +3,7 @@
 @using SherpaFrontEnd.Dtos.Team
 @inject ITeamDataService TeamDataService;
 @inject IGuidService GuidService;
+@inject IToastNotificationService ToastService
 @inject NavigationManager NavManager
 @inject IJSRuntime JS
 
@@ -49,6 +50,7 @@
 
             var newUri = NavManager.BaseUri + $"team-content/{teamId.ToString()}";
             NavManager.NavigateTo(newUri);
+            ToastService.ShowSuccess("Team created successfully");
         }
         catch
         {
