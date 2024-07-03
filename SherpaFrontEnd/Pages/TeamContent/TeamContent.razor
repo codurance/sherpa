@@ -7,8 +7,6 @@
 @inject ISurveyService SurveyService
 @inject NavigationManager NavigationManager
 @inject IJSRuntime Js
-@inject IToastService ToastService
-
 
 @page "/team-content/{teamId:guid}/{tab?}"
 
@@ -97,8 +95,6 @@
 
         // Re-fetch team
         await FetchTeam();
-        
-        ToastService.ShowSuccess("Team Member created successfully");
     }
 
 

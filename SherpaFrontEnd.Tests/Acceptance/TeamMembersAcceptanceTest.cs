@@ -258,14 +258,13 @@ public class TeamMembersAcceptanceTest
 
         var addMemberButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Add member");
         Assert.NotNull(addMemberButton);
-
+        addMemberButton.Click();
         
-        
-        //*THEN* They should be redirected to the members page and I see a toast message with the result (success/error) of the action.
+        //*THEN* They should see a toast message with the result (success/error) of the action.
         appComponent.WaitForAssertion(() =>
         {
             Assert.NotNull(
-                appComponent.FindElementByCssSelectorAndTextContent("p", "Team Member successfully created"));
+                appComponent.FindElementByCssSelectorAndTextContent("p", "Team Member created successfully"));
         });
     }
 }
