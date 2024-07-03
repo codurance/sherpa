@@ -1,0 +1,24 @@
+@using SherpaFrontEnd.Dtos.Survey
+
+@if (SelectedLanguage == Languages.ENGLISH)
+{
+    <div class="mt-10 mb-8 flex w-3/4 flex-col rounded-lg border bg-white px-16 py-10 max-w-[740px] border-primary-dark-100">
+        <h1 class="text-2xl">Thank you for your reply!</h1>
+        <p>
+            Thank you for taking the time to complete this survey. Your honest feedback is essential for creating a more motivating work environment for everyone.
+        </p>
+    </div>
+}
+else if (SelectedLanguage == Languages.SPANISH)
+{
+    <div class="mt-10 mb-8 flex w-3/4 flex-col rounded-lg border bg-white px-16 py-10 max-w-[740px] border-primary-dark-100">
+        <h1 class="text-2xl">¡Gracias por tu respuesta!</h1>
+        <p>
+            Gracias por tomarte el tiempo para completar esta encuesta. Tu opinión sincera es esencial para crear un ambiente de trabajo más motivador para todos.
+        </p>
+    </div>
+}
+
+@code {
+    [Parameter] public string? SelectedLanguage { get; set; }
+}
