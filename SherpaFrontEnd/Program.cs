@@ -26,6 +26,7 @@ builder.Services.AddScoped<ITeamDataService, TeamServiceHttpClient>();
 builder.Services.AddScoped<ITemplateService, TemplateService>();
 builder.Services.AddScoped<IGuidService, GuidService>();
 builder.Services.AddScoped<ISurveyService, SurveyService>();
+builder.Services.AddScoped<IToastNotificationService, BlazoredToastService>();
 builder.Services.AddScoped<ICookiesService, CookiesService>();
 builder.Services.AddBlazoredModal();
 builder.Services.AddBlazoredLocalStorage();

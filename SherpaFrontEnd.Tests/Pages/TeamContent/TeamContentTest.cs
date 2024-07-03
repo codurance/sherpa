@@ -24,6 +24,7 @@ public class TeamContentTest
     private Mock<ISurveyService> _mockSurveyService;
     private readonly Mock<IGuidService> _mockGuidService;
     private readonly FakeNavigationManager _navManager;
+    private Mock<IToastNotificationService> _mockToastService;
 
     public TeamContentTest(ITestOutputHelper testOutputHelper)
     {
@@ -32,9 +33,11 @@ public class TeamContentTest
         _mockTeamService = new Mock<ITeamDataService>();
         _mockSurveyService = new Mock<ISurveyService>();
         _mockGuidService = new Mock<IGuidService>();
+        _mockToastService = new Mock<IToastNotificationService>();
         _testContext.Services.AddScoped(s => _mockTeamService.Object);
         _testContext.Services.AddSingleton<ISurveyService>(_mockSurveyService.Object);
         _testContext.Services.AddSingleton<IGuidService>(_mockGuidService.Object);
+        _testContext.Services.AddSingleton<IToastNotificationService>(_mockToastService.Object);
         _navManager = _testContext.Services.GetRequiredService<FakeNavigationManager>();
     }
 
@@ -267,6 +270,59 @@ public class TeamContentTest
 
         Assert.Equal("GetTeamById", mockMethodInvocations[2].Method.Name);
         CustomAssertions.StringifyEquals(teamId, mockMethodInvocations[2].Arguments[0]);
+    }
+
+    [Fact]
+    public void ShouldShowSuccessToastNotificationWhenAddedATeamMember()
+    {
+        var teamId = Guid.NewGuid();
+        var teamMember = new TeamMember(Guid.NewGuid(), "Full name", "Some position", "demo@demo.com");
+
+        _mockGuidService.Setup(service => service.GenerateRandomGuid()).Returns(teamMember.Id);
+        _mockTeamService.Setup(service => service.GetTeamById(teamId)).ReturnsAsync(new Team(teamId, "Team name"));
+        _mockSurveyService.Setup(service => service.GetAllSurveysByTeam(teamId)).ReturnsAsync(new List<Survey>());
+
+        var cut = _testContext.RenderComponent<TeamContent>(
+            ComponentParameter.CreateParameter("TeamId", teamId)
+        );
+
+        var membersTab = cut.FindElementByCssSelectorAndTextContent("a:not(a[href])", "Members");
+
+        Assert.NotNull(membersTab);
+        membersTab.Click();
+
+        cut.WaitForAssertion(() =>
+            Assert.NotNull(cut.FindElementByCssSelectorAndTextContent("button", "Add member")));
+
+        var addTeamMemberButton = cut.FindElementByCssSelectorAndTextContent("button", "Add member");
+        Assert.NotNull(addTeamMemberButton);
+
+        addTeamMemberButton.Click();
+
+        var fullNameLabel = cut.FindElementByCssSelectorAndTextContent("label", "Full name");
+        var fullNameInputId = fullNameLabel.Attributes.GetNamedItem("for");
+        var teamMemberNameInput = cut.Find($"#{fullNameInputId.TextContent}");
+        Assert.NotNull(teamMemberNameInput);
+        teamMemberNameInput.Change(teamMember.FullName);
+
+        var positionLabel = cut.FindElementByCssSelectorAndTextContent("label", "Position");
+        var positionInputId = positionLabel.Attributes.GetNamedItem("for");
+        var positionInput = cut.Find($"#{positionInputId.TextContent}");
+        Assert.NotNull(positionInput);
+        positionInput.Change(teamMember.Position);
+
+        var emailLabel = cut.FindElementByCssSelectorAndTextContent("label", "Email");
+        var emailInputId = emailLabel.Attributes.GetNamedItem("for");
+        var emailInput = cut.Find($"#{emailInputId.TextContent}");
+        Assert.NotNull(emailInput);
+        emailInput.Change(teamMember.Email);
+
+        var addMemberButton = cut.FindElementByCssSelectorAndTextContent("button", "Add member");
+        Assert.NotNull(addMemberButton);
+
+        addMemberButton.Click();
+        
+        _mockToastService.Verify(service => service.ShowSuccess("Team Member created successfully"));
     }
 
     [Fact]

@@ -5,6 +5,7 @@ using AngleSharp.Dom;
 using Blazored.LocalStorage;
 using Blazored.Modal;
 using Blazored.Toast;
+using Blazored.Toast.Services;
 using Bunit;
 using Bunit.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
@@ -48,6 +49,11 @@ public class TeamMembersAcceptanceTest
         _testCtx.Services.AddSingleton<ITeamDataService>(_teamsService);
         _testCtx.Services.AddSingleton<ISurveyService>(_surveyService);
         _testCtx.Services.AddSingleton<IGuidService>(_guidService.Object);
+        _testCtx.Services.AddScoped<IToastNotificationService>(sp =>
+        {
+            var toastService = sp.GetRequiredService<IToastService>();
+            return new BlazoredToastService(toastService);
+        });
         const string baseUrl = "http://localhost";
         var httpClient = new HttpClient(_httpHandlerMock.Object, false) { BaseAddress = new Uri(baseUrl) };
         _factoryHttpClient.Setup(_ => _.CreateClient("SherpaBackEnd")).Returns(httpClient);
@@ -262,9 +268,6 @@ public class TeamMembersAcceptanceTest
         
         //*THEN* They should see a toast message with the result (success/error) of the action.
         appComponent.WaitForAssertion(() =>
-        {
-            Assert.NotNull(
-                appComponent.FindElementByCssSelectorAndTextContent("p", "Team Member created successfully"));
-        });
+            Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("p", "Team Member created successfully")));
     }
 }
