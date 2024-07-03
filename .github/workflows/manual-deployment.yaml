@@ -5,59 +5,47 @@ on:
 
 jobs:
   deploy:
-    runs-on: gha-runner-scale-set
-    steps: 
-    - name: Checkout
-      uses: actions/checkout@v3
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
 
-    - name: Setting up dotnet SDK
-      uses: actions/setup-dotnet@v2
-      with:
-        dotnet-version: '6.0.x'
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.0'
 
-    - name: Setting up node
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
+      - name: Install dependencies
+        run: dotnet restore
 
-    - name: Installing zip
-      run:  sudo apt install -y zip
+      - name: Build
+        run: |
+          cd SherpaBackEnd
+          dotnet build --configuration Release --no-restore
+          dotnet publish -c Release -f net6.0 -o ./publish --runtime linux-x64 /p:PublishProfile=EBDeploy 
 
-    - name: Installing AWS CLI v2
-      run:  |
-        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o /tmp/awscliv2.zip
-        unzip -q /tmp/awscliv2.zip -d /tmp
-        rm /tmp/awscliv2.zip
-        sudo /tmp/aws/install --update
-        rm -rf /tmp/aws/
+      - name: Zip application
+        run: |
+          cd SherpaBackEnd/publish
+          zip -r ../sherpa-backend.zip .
+          cd ..
 
-    - name: Building & Publishing backend
-      run: |
-        cd SherpaBackEnd
-        dotnet build --configuration Release
-        dotnet publish -c Release -f net6.0 -o ./publish --runtime linux-x64 /p:PublishProfile=EBDeploy 
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
 
-    - name: Zipping application
-      run: |
-        cd SherpaBackEnd/publish
-        zip -r ../sherpa-backend.zip .
-        cd ..
+      - name: Deploy artifact to S3 bucket
+        run: |
+          aws s3 cp SherpaBackEnd/sherpa-backend.zip s3://sherpa-source-code-versions/sherpa-backend-1.${{ github.run_number }}.zip 
 
-    - name: Configuring AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: eu-central-1
+      - name: Create application version
+        run: |
+          aws elasticbeanstalk create-application-version --application-name Sherpa --version-label 1.${{ github.run_number }} --source-bundle S3Bucket="sherpa-source-code-versions",S3Key="sherpa-backend-1.${{ github.run_number }}.zip" 
 
-    - name: Deploying artifact to S3 bucket
-      run: |
-        aws s3 cp SherpaBackEnd/sherpa-backend.zip s3://sherpa-source-code-versions/sherpa-backend-1.${{ github.run_number }}.zip 
-
-    - name: Creating application version
-      run: |
-        aws elasticbeanstalk create-application-version --application-name Sherpa --version-label 1.${{ github.run_number }} --source-bundle S3Bucket="sherpa-source-code-versions",S3Key="sherpa-backend-1.${{ github.run_number }}.zip" 
+      - name: Update environment
+        run: |
+          aws elasticbeanstalk update-environment --environment-name Sherpa-dev --version-label 1.${{ github.run_number }}
         
-    - name: Updating environment
-      run: |
-        aws elasticbeanstalk update-environment --environment-name Sherpa-dev --version-label 1.${{ github.run_number }}
