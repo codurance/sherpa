@@ -3,6 +3,7 @@
 @using SherpaFrontEnd.Dtos.Survey
 @using SherpaFrontEnd.Dtos.Team
 @using SherpaFrontEnd.Pages.TeamContent.Components
+@using SherpaFrontEnd.Shared.Graphs
 @inject ITeamDataService TeamDataService
 @inject ISurveyService SurveyService
 @inject NavigationManager NavigationManager
@@ -20,6 +21,16 @@
 
     <TabControl InitialTab="@Tab">
         <TabPage Text="Analysis">
+            <ColumnsChart
+                categories=@(new List<string> { "Cat1", "Cat2", "Cat3" })
+                series=@(new List<ColumnsChart.ColumnSeries> { new() { Name = "Series1", Data = new List<double> { 1, 2, 3 } }, new() { Name = "Series2", Data = new List<double> { 4, 5, 6 } } })
+                yaxis=@(new ColumnsChart.YAxis() { Title = new ColumnsChart.YAxis.YAxisTitle() { Text = "Some title for the Y axis" } })/>
+            <HorizontalColumnsCharts
+                categories=@(new List<string> { "Cat1", "Cat2", "Cat3" })
+                series=@(new List<HorizontalColumnsCharts.ColumnSeries> { new() { Name = "Series1", Data = new List<double> { 1, 2, 3 } }, new() { Name = "Series2", Data = new List<double> { 4, 5, 6 } } , new() { Name = "Series3", Data = new List<double> { 3, 5, 7 } }})
+            />
+            
+            <ScatterPlotChart />
             <button @onclick="RedirectToLaunchSurveyPage" type="button" class="bg-primary-red-principal-800 hover:bg-primary-red-900 rounded-lg px-6 py-2 text-white font-semibold text-sm">
                 Launch new survey
             </button>
@@ -81,7 +92,6 @@
         Emails = Team!.Members.Select(m => m.Email).ToList();
         Surveys = await SurveyService.GetAllSurveysByTeam(TeamId);
     }
-
 
     private async Task FetchTeam()
     {

@@ -1,0 +1,36 @@
+@inject IJSRuntime JsRuntime;
+
+<div id="@_id"></div>
+
+@code {
+    readonly string _id = Guid.NewGuid().ToString();
+    
+    [Parameter] public List<ColumnSeries> series { get; set; }
+    
+    [Parameter] public List<string> categories { get; set; }
+    
+    [Parameter] public YAxis yaxis { get; set; }
+
+    public class YAxis
+    {
+        public YAxisTitle Title { get; set; }
+        
+        
+        public class YAxisTitle
+        {
+            public string Text { get; set; }
+        }
+    }
+
+    public class ColumnSeries
+    {
+        public string Name { get; set; }
+        public List<double> Data { get; set; }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool _)
+    {
+        await JsRuntime.InvokeVoidAsync("generateColumnsChart", _id, series, categories, yaxis);
+    }
+
+}

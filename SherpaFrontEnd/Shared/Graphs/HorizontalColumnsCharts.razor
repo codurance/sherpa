@@ -1,0 +1,23 @@
+@inject IJSRuntime JsRuntime;
+
+<div id="@_id"></div>
+
+@code {
+    readonly string _id = Guid.NewGuid().ToString();
+    
+    [Parameter] public List<ColumnSeries> series { get; set; }
+    
+    [Parameter] public List<string> categories { get; set; }
+
+    public class ColumnSeries
+    {
+        public string Name { get; set; }
+        public List<double> Data { get; set; }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool _)
+    {
+        await JsRuntime.InvokeVoidAsync("generateHorizontalColumnsChart", _id, series, categories);
+    }
+
+}
