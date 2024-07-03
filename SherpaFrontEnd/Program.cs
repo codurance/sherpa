@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Blazored.LocalStorage;
 using Blazored.Modal;
+using Blazored.Toast;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using SherpaFrontEnd;
@@ -28,6 +29,7 @@ builder.Services.AddScoped<ISurveyService, SurveyService>();
 builder.Services.AddScoped<ICookiesService, CookiesService>();
 builder.Services.AddBlazoredModal();
 builder.Services.AddBlazoredLocalStorage();
+builder.Services.AddBlazoredToast();
 
 builder.Services.AddOidcAuthentication(options =>
 {

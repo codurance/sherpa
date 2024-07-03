@@ -4,6 +4,7 @@ using System.Security.Claims;
 using AngleSharp.Dom;
 using Blazored.LocalStorage;
 using Blazored.Modal;
+using Blazored.Toast;
 using Bunit;
 using Bunit.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,6 +34,7 @@ public class TeamMembersAcceptanceTest
         _testCtx = new TestContext();
         _testCtx.Services.AddBlazoredModal();
         _testCtx.Services.AddBlazoredLocalStorage();
+        _testCtx.Services.AddBlazoredToast();
         _testCtx.Services.AddScoped<ICookiesService, CookiesService>();
         _testCtx.JSInterop.Setup<string>("localStorage.getItem", "CookiesAcceptedDate");
         _httpHandlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
@@ -51,7 +53,7 @@ public class TeamMembersAcceptanceTest
         _factoryHttpClient.Setup(_ => _.CreateClient("SherpaBackEnd")).Returns(httpClient);
         var auth = _testCtx.AddTestAuthorization();
         auth.SetAuthorized("Demo user");
-        auth.SetClaims(new []{new Claim("username", "Demo user")});
+        auth.SetClaims(new[] { new Claim("username", "Demo user") });
 
         _navMan = _testCtx.Services.GetRequiredService<FakeNavigationManager>();
     }
@@ -88,19 +90,20 @@ public class TeamMembersAcceptanceTest
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(teamWithNewMemberJson)
         };
-        
+
         _guidService.Setup(service => service.GenerateRandomGuid()).Returns(teamMember.Id);
-        
-        _httpHandlerMock.SetupRequest(HttpMethod.Get, $"/team/{teamId.ToString()}", teamResponse, teamWithNewMemberResponse);
+
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, $"/team/{teamId.ToString()}", teamResponse,
+            teamWithNewMemberResponse);
 
         var emptySurveyResponse = new HttpResponseMessage()
         {
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent("[]")
         };
-        
+
         _httpHandlerMock.SetupRequest(HttpMethod.Get, $"/team/{teamId.ToString()}/surveys", emptySurveyResponse);
-        
+
         _httpHandlerMock.SetupRequest(HttpMethod.Patch, "", creationResponse);
 
         var appComponent = _testCtx.RenderComponent<App>();
@@ -131,7 +134,9 @@ public class TeamMembersAcceptanceTest
         var addMemberTitle = appComponent.FindElementByCssSelectorAndTextContent("h3", "Add member");
         Assert.NotNull(addMemberTitle);
 
-        var addMemberDescription = appComponent.FindElementByCssSelectorAndTextContent("p", "Add team member by filling in the required information");
+        var addMemberDescription =
+            appComponent.FindElementByCssSelectorAndTextContent("p",
+                "Add team member by filling in the required information");
         Assert.NotNull(addMemberDescription);
 
         var fullNameLabel = appComponent.FindElementByCssSelectorAndTextContent("label", "Full name");
@@ -154,19 +159,113 @@ public class TeamMembersAcceptanceTest
 
         var addMemberButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Add member");
         Assert.NotNull(addMemberButton);
-        
+
         // AND WHEN clicking on Add member
 
         addMemberButton.Click();
-        
-        appComponent.WaitForAssertion(() =>  Assert.Null(appComponent.FindElementByCssSelectorAndTextContent("h3", "Add member")));
-        
+
+        appComponent.WaitForAssertion(() =>
+            Assert.Null(appComponent.FindElementByCssSelectorAndTextContent("h3", "Add member")));
+
         // THEN the created member should be in the members table
 
-        appComponent.WaitForAssertion(() => Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("td", teamMember.FullName)));
-        
+        appComponent.WaitForAssertion(() =>
+            Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("td", teamMember.FullName)));
+
         Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("td", teamMember.Position));
-        
+
         Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("td", teamMember.Email));
+    }
+
+    [Fact]
+    public async Task ShouldShowSuccessToastWhenTeamMemberAddedToTeam()
+    {
+        //*GIVEN* An Org. Coach is in the team member creation modal
+        const string teamName = "Team name";
+        var teamId = Guid.NewGuid();
+        var team = new Team(teamId, teamName);
+        var teamJson = await JsonContent.Create(team).ReadAsStringAsync();
+        var teamResponse = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(teamJson)
+        };
+
+        var creationResponse = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.Created,
+        };
+
+        var teamWithNewMember = new Team(teamId, teamName);
+        var teamMember =
+            new TeamMember(Guid.NewGuid(), "Nick Choudhry", "CraftsPerson-In-Training", "demo@codurance.es");
+        teamWithNewMember.Members.Add(teamMember);
+
+        var teamWithNewMemberJson = await JsonContent.Create(teamWithNewMember).ReadAsStringAsync();
+
+        var teamWithNewMemberResponse = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(teamWithNewMemberJson)
+        };
+
+        _guidService.Setup(service => service.GenerateRandomGuid()).Returns(teamMember.Id);
+
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, $"/team/{teamId.ToString()}", teamResponse,
+            teamWithNewMemberResponse);
+
+        var emptySurveyResponse = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent("[]")
+        };
+
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, $"/team/{teamId.ToString()}/surveys", emptySurveyResponse);
+
+        _httpHandlerMock.SetupRequest(HttpMethod.Patch, "", creationResponse);
+
+        var appComponent = _testCtx.RenderComponent<App>();
+        _navMan.NavigateTo($"/team-content/{teamId}/members");
+        appComponent.WaitForAssertion(
+            () => Assert.Equal($"http://localhost/team-content/{teamId}/members", _navMan.Uri));
+
+        appComponent.WaitForAssertion(() =>
+            Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("button", "Add member")));
+
+        var addTeamMemberButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Add member");
+        Assert.NotNull(addTeamMemberButton);
+
+        addTeamMemberButton.Click();
+        //*WHEN* They add a team member
+        
+        var fullNameLabel = appComponent.FindElementByCssSelectorAndTextContent("label", "Full name");
+        var fullNameInputId = fullNameLabel.Attributes.GetNamedItem("for");
+        var teamMemberNameInput = appComponent.Find($"#{fullNameInputId.TextContent}");
+        Assert.NotNull(teamMemberNameInput);
+        teamMemberNameInput.Change(teamMember.FullName);
+
+        var positionLabel = appComponent.FindElementByCssSelectorAndTextContent("label", "Position");
+        var positionInputId = positionLabel.Attributes.GetNamedItem("for");
+        var positionInput = appComponent.Find($"#{positionInputId.TextContent}");
+        Assert.NotNull(positionInput);
+        positionInput.Change(teamMember.Position);
+
+        var emailLabel = appComponent.FindElementByCssSelectorAndTextContent("label", "Email");
+        var emailInputId = emailLabel.Attributes.GetNamedItem("for");
+        var emailInput = appComponent.Find($"#{emailInputId.TextContent}");
+        Assert.NotNull(emailInput);
+        emailInput.Change(teamMember.Email);
+
+        var addMemberButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Add member");
+        Assert.NotNull(addMemberButton);
+
+        
+        
+        //*THEN* They should be redirected to the members page and I see a toast message with the result (success/error) of the action.
+        appComponent.WaitForAssertion(() =>
+        {
+            Assert.NotNull(
+                appComponent.FindElementByCssSelectorAndTextContent("p", "Team Member successfully created"));
+        });
     }
 }
