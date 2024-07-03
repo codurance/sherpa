@@ -421,6 +421,72 @@ public class SurveyAcceptanceTest
     }
 
     [Fact]
+    public async Task ShouldShowSuccessToastNotificationWhenLaunchingSurveyAndWasSuccessful()
+    {
+        // GIVEN that an Org coach is on the Review survey page after creating a survey
+        var deadline = DateTime.Now;
+        var templateWithoutQuestions = new TemplateWithoutQuestions("Hackman Model", 30);
+        var survey = new SurveyWithoutQuestions(
+            _surveyId, 
+            new User(Guid.NewGuid(), "Lucia"), 
+            Status.Draft, 
+            deadline, 
+            "Survey Test",
+            SurveyCopy.DefaultDescription(), 
+            Array.Empty<Response>(), 
+            _teams[0], 
+            templateWithoutQuestions);
+        
+        var surveyJson = await JsonContent.Create(survey).ReadAsStringAsync();
+        var surveyResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(surveyJson)
+        };
+        
+        _handlerMock.SetupRequest(HttpMethod.Get, $"survey/{_surveyId}", surveyResponse);
+        
+        var appComponent = _testCtx.RenderComponent<App>();
+
+        var targetPage = $"http://localhost/survey/draft-review/{_surveyId}";
+
+        _navManager.NavigateTo(targetPage);
+        
+        // WHEN he clicks on Launch survey
+        // AND it is launched successfully
+        var launchResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.Created,
+        };
+
+        var teamJson = await JsonContent.Create(survey.Team).ReadAsStringAsync();
+        var teamResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(teamJson)
+        };
+
+        var teamSurveysJson = await JsonContent.Create(new List<Survey>()).ReadAsStringAsync();
+        var teamSurveysResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(teamSurveysJson)
+        };
+        
+        _handlerMock.SetupRequest(HttpMethod.Post, "survey-notifications", launchResponse);
+        _handlerMock.SetupRequest(HttpMethod.Get, $"/team/{survey.Team.Id}", teamResponse);
+        _handlerMock.SetupRequest(HttpMethod.Get, $"/team/{survey.Team.Id}/surveys", teamSurveysResponse);
+        
+        var launchSurveyButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Launch survey");
+        Assert.NotNull(launchSurveyButton);
+        
+        launchSurveyButton.Click();
+        
+        // THEN he should see a toast message with the message "Survey launched successfully"
+        appComponent.WaitForAssertion(() => Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("p", "Survey launched successfully")));
+    }
+
+    [Fact]
     public async Task ShouldBeRedirectedToErrorPageWhenLaunchingSurveyAndWasUnsuccessful()
     {
         // GIVEN that an Org coach is on the Review survey page after creating a survey
