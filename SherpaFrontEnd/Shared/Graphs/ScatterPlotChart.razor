@@ -17,7 +17,9 @@
 
     protected override async Task OnAfterRenderAsync(bool _)
     {
-        await JsRuntime.InvokeVoidAsync("generateHorizontalColumnsChart", _id, series, categories);
+        await JsRuntime.InvokeVoidAsync("generateScatterPlotChart", _id, series, categories);
     }
+    
+    
 
 }
