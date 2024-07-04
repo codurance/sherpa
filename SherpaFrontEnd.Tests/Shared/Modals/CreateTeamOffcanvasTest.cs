@@ -19,6 +19,7 @@ public class CreateTeamOffcanvasTest
     private readonly Mock<ITeamDataService> _teamService;
     private readonly FakeNavigationManager _navMan;
     private readonly Guid _teamId;
+    private readonly Mock<IToastNotificationService> _toastService;
 
     public CreateTeamOffcanvasTest()
     {
@@ -31,6 +32,9 @@ public class CreateTeamOffcanvasTest
         
         _teamService = new Mock<ITeamDataService>();
         _testCtx.Services.AddSingleton<ITeamDataService>(_teamService.Object);
+        
+        _toastService = new Mock<IToastNotificationService>();
+        _testCtx.Services.AddSingleton<IToastNotificationService>(_toastService.Object);
 
         _navMan = _testCtx.Services.GetRequiredService<FakeNavigationManager>();
     }
@@ -76,6 +80,27 @@ public class CreateTeamOffcanvasTest
         
         _teamService.Verify(service => service.AddTeam(It.IsAny<Team>()));
         Assert.Equal($"http://localhost/team-content/{_teamId.ToString()}", _navMan.Uri);
+    }
+
+    [Fact]
+    public void ShouldShowSuccessToastNotificationWhenCreatedTeam()
+    {
+        var component = _testCtx.RenderComponent<CreateTeamOffcanvas>();
+        
+        var teamNameLabel = component.FindElementByCssSelectorAndTextContent("label", "Team name");
+        var teamNameInputId = teamNameLabel.Attributes.GetNamedItem("for");
+        var teamNameInput = component.Find($"#{teamNameInputId.TextContent}");
+        Assert.NotNull(teamNameInput);
+
+        const string teamName = "Demo team";
+        teamNameInput.Change(teamName);
+        
+        var confirmButton = component.FindElementByCssSelectorAndTextContent("button", "Confirm");
+        Assert.NotNull(confirmButton);
+        
+        confirmButton.Click();
+        
+        _toastService.Verify(service => service.ShowSuccess("Team created successfully"));
     }
     
     [Fact]

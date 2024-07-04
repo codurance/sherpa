@@ -2,6 +2,7 @@
 @using SherpaFrontEnd.Dtos
 @using SherpaFrontEnd.Services
 @inject ISurveyService SurveyService
+@inject IToastNotificationService ToastService
 @inject NavigationManager NavigationManager
 
 <div class="flex-1 bg-gray-100 p-8">
@@ -80,6 +81,7 @@
         {
             await SurveyService.LaunchSurvey(SurveyId);
             NavigationManager.NavigateTo(NavigationManager.BaseUri + $"team-content/{_survey.Team.Id}/surveys");
+            ToastService.ShowSuccess("Survey launched successfully");
         }
         catch
         {

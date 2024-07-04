@@ -17,6 +17,7 @@ public class SurveyDraftReviewTest
     private Guid _surveyId = Guid.NewGuid();
     private readonly TestContext _ctx;
     private readonly Mock<ISurveyService> _surveyService;
+    private readonly Mock<IToastNotificationService> _toastService;
     private readonly FakeNavigationManager _navMan;
 
     public SurveyDraftReviewTest()
@@ -24,7 +25,9 @@ public class SurveyDraftReviewTest
         _ctx = new TestContext();
         _surveyService
             = new Mock<ISurveyService>();
+        _toastService = new Mock<IToastNotificationService>();
         _ctx.Services.AddSingleton<ISurveyService>(_surveyService.Object);
+        _ctx.Services.AddSingleton<IToastNotificationService>(_toastService.Object);
         _navMan = _ctx.Services.GetRequiredService<FakeNavigationManager>();
     }
 
@@ -116,6 +119,33 @@ public class SurveyDraftReviewTest
             Assert.Equal(
                 $"http://localhost/team-content/{survey.Team.Id}/surveys",
                 _navMan.Uri));
+    }
+    
+    [Fact]
+    public void ShouldShowSuccessToastNotificationWhenLaunchSurveyButtonIsClicked()
+    {
+        var deadline = DateTime.Now;
+        var templateWithoutQuestions = new TemplateWithoutQuestions("Hackman Model", 30);
+        var survey = new SurveyWithoutQuestions(
+            _surveyId,
+            new User(Guid.NewGuid(), "Lucia"),
+            Status.Draft,
+            deadline,
+            "Title",
+            "Description",
+            Array.Empty<Response>(),
+            new Team(Guid.NewGuid(), "Demo Team"),
+            templateWithoutQuestions);
+
+        _surveyService.Setup(service => service.GetSurveyWithoutQuestionsById(_surveyId)).ReturnsAsync(
+            survey);
+        var appComponent =
+            _ctx.RenderComponent<SurveyDraftReview>(ComponentParameter.CreateParameter("SurveyId", _surveyId));
+
+        var launchSurveyButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Launch survey");
+        launchSurveyButton.Click();
+
+        _toastService.Verify(service => service.ShowSuccess("Survey launched successfully"));
     }
 
     [Fact]

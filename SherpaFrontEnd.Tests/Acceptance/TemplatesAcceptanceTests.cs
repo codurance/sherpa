@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using System.Security.Claims;
 using Blazored.LocalStorage;
 using Blazored.Modal;
+using Blazored.Toast;
 using Bunit;
 using Bunit.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,6 +41,7 @@ public class TemplatesAcceptanceTests
         _ctx = new TestContext();
         _ctx.Services.AddBlazoredModal();
         _ctx.Services.AddBlazoredLocalStorage();
+        _ctx.Services.AddBlazoredToast();
         _ctx.Services.AddScoped<ICookiesService, CookiesService>();
         _ctx.JSInterop.Setup<string>("localStorage.getItem", "CookiesAcceptedDate");
         _ctx.Services.AddSingleton<ITemplateService>(_templateService);
