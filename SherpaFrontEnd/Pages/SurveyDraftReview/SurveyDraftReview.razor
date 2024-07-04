@@ -80,13 +80,15 @@
         try
         {
             await SurveyService.LaunchSurvey(SurveyId);
-            NavigationManager.NavigateTo(NavigationManager.BaseUri + $"team-content/{_survey.Team.Id}/surveys");
             ToastService.ShowSuccess("Survey launched successfully");
         }
         catch
         {
-            NavigationManager.NavigateTo(NavigationManager.BaseUri + $"team-content/{_survey.Team.Id}/surveys");
             ToastService.ShowError("The survey wasn't launched successfully, please try again");
+        }
+        finally
+        {
+            NavigationManager.NavigateTo(NavigationManager.BaseUri + $"team-content/{_survey.Team.Id}/surveys");
         }
     }
 
