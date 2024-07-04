@@ -487,7 +487,7 @@ public class SurveyAcceptanceTest
     }
 
     [Fact]
-    public async Task ShouldBeRedirectedToErrorPageWhenLaunchingSurveyAndWasUnsuccessful()
+    public async Task ShouldBeRedirectedTeamPageAndShowErrorToastNotificationWhenLaunchingSurveyAndWasUnsuccessful()
     {
         // GIVEN that an Org coach is on the Review survey page after creating a survey
         var deadline = DateTime.Now;
@@ -532,10 +532,17 @@ public class SurveyAcceptanceTest
         
         launchSurveyButton.Click();
         
-        // THEN he should be redirected on the Error page
+        // THEN he should be redirected on the Team page, Surveys tab
+        // AND he should see the following info:
         appComponent.WaitForAssertion(() =>
             Assert.Equal(
-                "http://localhost/error",
+                $"http://localhost/team-content/{_teams[0].Id.ToString()}/surveys",
                 _navManager.Uri));
+        
+        // team title
+        appComponent.FindElementByCssSelectorAndTextContent("h3", survey.Team.Name);
+        
+        // AND he should see an error toast notification
+        appComponent.WaitForAssertion(() => Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("p", "The survey wasn't launched successfully, please try again")));
     }
 }

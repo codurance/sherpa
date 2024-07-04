@@ -122,7 +122,7 @@ public class SurveyDraftReviewTest
     }
     
     [Fact]
-    public void ShouldShowSuccessToastNotificationWhenLaunchSurveyButtonIsClicked()
+    public void ShouldSendSuccessToastNotificationWhenLaunchSurveyButtonIsClicked()
     {
         var deadline = DateTime.Now;
         var templateWithoutQuestions = new TemplateWithoutQuestions("Hackman Model", 30);
@@ -149,7 +149,7 @@ public class SurveyDraftReviewTest
     }
 
     [Fact]
-    public void ShouldNavigateToErrorPageWhenLaunchSurveyServiceThrowsAndError()
+    public void ShouldNavigateToTeamPageAndSendErrorToastNotificationWhenLaunchSurveyServiceThrowsAndError()
     {
         var deadline = DateTime.Now;
         var templateWithoutQuestions = new TemplateWithoutQuestions("Hackman Model", 30);
@@ -175,7 +175,9 @@ public class SurveyDraftReviewTest
 
         appComponent.WaitForAssertion(() =>
             Assert.Equal(
-                $"http://localhost/error",
+                $"http://localhost/team-content/{survey.Team.Id}/surveys",
                 _navMan.Uri));
+        
+        _toastService.Verify(service => service.ShowError("The survey wasn't launched successfully, please try again"));
     }
 }
