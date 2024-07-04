@@ -1,8 +1,9 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
 using System.Security.Claims;
-
+using Blazored.LocalStorage;
 using Blazored.Modal;
+using Blazored.Toast;
 using Bunit;
 using Bunit.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,6 +36,10 @@ public class TeamsAcceptanceTest
 
         _testCtx = new TestContext();
         _testCtx.Services.AddBlazoredModal();
+        _testCtx.Services.AddBlazoredLocalStorage();
+        _testCtx.Services.AddBlazoredToast();
+        _testCtx.Services.AddScoped<ICookiesService, CookiesService>();
+        _testCtx.JSInterop.Setup<string>("localStorage.getItem", "CookiesAcceptedDate");
         _httpHandlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
         _factoryHttpClient = new Mock<IHttpClientFactory>();
         _authService = new Mock<IAuthService>();
@@ -46,6 +51,7 @@ public class TeamsAcceptanceTest
         _testCtx.Services.AddSingleton<ITeamDataService>(_teamsService);
         _testCtx.Services.AddSingleton<IGuidService>(_guidService.Object);
         _testCtx.Services.AddSingleton<ISurveyService>(_surveyService);
+        _testCtx.Services.AddScoped<IToastNotificationService, BlazoredToastService>();
         const string baseUrl = "http://localhost";
         var httpClient = new HttpClient(_httpHandlerMock.Object, false) { BaseAddress = new Uri(baseUrl) };
         _factoryHttpClient.Setup(_ => _.CreateClient("SherpaBackEnd")).Returns(httpClient);
@@ -245,6 +251,81 @@ public class TeamsAcceptanceTest
 
         Assert.NotNull(analysisTab);
         Assert.NotNull(sendNewSurveyTeam);
+    }
+    
+    [Fact]
+    private async Task ShouldShowSuccessToastNotificationWhenTeamIsCreated()
+    {
+        //GIVEN that an Org coach is on the page for creating a team
+
+        var emptyTeamsList = new List<Team>() { };
+        var emptyTeamListJson = await JsonContent.Create(emptyTeamsList).ReadAsStringAsync();
+        var responseEmpty = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(emptyTeamListJson)
+        };
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, "", responseEmpty);
+
+        var creationResponse = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.Created,
+        };
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Post, "", creationResponse);
+
+        var teamsListComponent = _testCtx.RenderComponent<App>();
+
+        _navMan.NavigateTo("/teams-list-page");
+
+        var createNewTeamButton = teamsListComponent.FindElementByCssSelectorAndTextContent("button", "Create new team");
+        Assert.NotNull(createNewTeamButton);
+
+        createNewTeamButton.Click();
+
+        //    WHEN he enters a team name
+        //    and clicks on Confirm
+
+        var teamId = Guid.NewGuid();
+
+        _guidService.Setup(service => service.GenerateRandomGuid()
+        ).Returns(teamId);
+
+        const string teamName = "Team name";
+        var newTeam = new Team(teamId, teamName);
+        var newTeamAsJson = await JsonContent.Create(newTeam).ReadAsStringAsync();
+
+        var teamResponse = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(newTeamAsJson)
+        };
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, $"/team/{teamId.ToString()}", teamResponse);
+        
+        var teamSurveysResponse = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(emptyTeamListJson)
+        };
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, $"/team/{teamId.ToString()}/surveys", teamSurveysResponse);
+
+        var teamNameLabel = teamsListComponent.FindElementByCssSelectorAndTextContent("label", "Team name");
+        var teamNameInputId = teamNameLabel.Attributes.GetNamedItem("for");
+        var teamNameInput = teamsListComponent.Find($"#{teamNameInputId.TextContent}");
+        Assert.NotNull(teamNameInput);
+
+        teamNameInput.Change("Demo team");
+
+        var confirmButton = teamsListComponent.FindElementByCssSelectorAndTextContent("button", "Confirm");
+        Assert.NotNull(confirmButton);
+
+        confirmButton.Click();
+
+        // THEN he should see a success toast notification with the message "Team created successfully"
+        teamsListComponent.WaitForAssertion(() => Assert.NotNull(teamsListComponent.FindElementByCssSelectorAndTextContent("p", "Team created successfully")));
     }
 
     [Fact]

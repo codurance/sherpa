@@ -1,5 +1,7 @@
 using System.Text.Json;
+using Blazored.LocalStorage;
 using Blazored.Modal;
+using Blazored.Toast;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using SherpaFrontEnd;
@@ -24,7 +26,11 @@ builder.Services.AddScoped<ITeamDataService, TeamServiceHttpClient>();
 builder.Services.AddScoped<ITemplateService, TemplateService>();
 builder.Services.AddScoped<IGuidService, GuidService>();
 builder.Services.AddScoped<ISurveyService, SurveyService>();
+builder.Services.AddScoped<IToastNotificationService, BlazoredToastService>();
+builder.Services.AddScoped<ICookiesService, CookiesService>();
 builder.Services.AddBlazoredModal();
+builder.Services.AddBlazoredLocalStorage();
+builder.Services.AddBlazoredToast();
 
 builder.Services.AddOidcAuthentication(options =>
 {

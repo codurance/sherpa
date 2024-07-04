@@ -22,6 +22,7 @@ public class TeamListTest
     private readonly Mock<ITeamDataService> _mockTeamService;
     private readonly Mock<IGuidService> _mockGuidService;
     private readonly FakeNavigationManager _navMan;
+    private readonly Mock<IToastNotificationService> _toastService;
 
     public TeamListTest()
     {
@@ -30,6 +31,8 @@ public class TeamListTest
         _testContext.Services.AddScoped(s => _mockTeamService.Object);
         _mockGuidService = new Mock<IGuidService>();
         _testContext.Services.AddScoped(s => _mockGuidService.Object);
+        _toastService = new Mock<IToastNotificationService>();
+        _testContext.Services.AddSingleton<IToastNotificationService>(_toastService.Object);
         _navMan = _testContext.Services.GetRequiredService<FakeNavigationManager>();
     }
 

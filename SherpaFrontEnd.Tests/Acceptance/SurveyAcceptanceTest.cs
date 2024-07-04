@@ -3,7 +3,9 @@ using System.Net.Http.Json;
 using System.Security.Claims;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
+using Blazored.LocalStorage;
 using Blazored.Modal;
+using Blazored.Toast;
 using Bunit;
 using Bunit.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
@@ -39,6 +41,10 @@ public class SurveyAcceptanceTest
         _testOutputHelper = testOutputHelper;
         _testCtx = new TestContext();
         _testCtx.Services.AddBlazoredModal();
+        _testCtx.Services.AddBlazoredLocalStorage();
+        _testCtx.Services.AddBlazoredToast();
+        _testCtx.Services.AddScoped<ICookiesService, CookiesService>();
+        _testCtx.JSInterop.Setup<string>("localStorage.getItem", "CookiesAcceptedDate");
         _handlerMock = new Mock<HttpMessageHandler>();
         _templates = new[] { new TemplateWithoutQuestions("Hackman Model", 30) };
         _teams = new[] { new Team(Guid.NewGuid(), "Demo Team") };
@@ -56,6 +62,7 @@ public class SurveyAcceptanceTest
         _testCtx.Services.AddSingleton<ISurveyService>(_surveyService);
         _guidService = new Mock<IGuidService>();
         _testCtx.Services.AddSingleton<IGuidService>(_guidService.Object);
+        _testCtx.Services.AddScoped<IToastNotificationService, BlazoredToastService>();
         _guidService.Setup(service => service.GenerateRandomGuid()).Returns(_surveyId);
         var auth = _testCtx.AddTestAuthorization();
         auth.SetAuthorized("Demo user");
@@ -411,6 +418,72 @@ public class SurveyAcceptanceTest
         
         // team title
         appComponent.FindElementByCssSelectorAndTextContent("h3", survey.Team.Name);
+    }
+
+    [Fact]
+    public async Task ShouldShowSuccessToastNotificationWhenLaunchingSurveyAndWasSuccessful()
+    {
+        // GIVEN that an Org coach is on the Review survey page after creating a survey
+        var deadline = DateTime.Now;
+        var templateWithoutQuestions = new TemplateWithoutQuestions("Hackman Model", 30);
+        var survey = new SurveyWithoutQuestions(
+            _surveyId, 
+            new User(Guid.NewGuid(), "Lucia"), 
+            Status.Draft, 
+            deadline, 
+            "Survey Test",
+            SurveyCopy.DefaultDescription(), 
+            Array.Empty<Response>(), 
+            _teams[0], 
+            templateWithoutQuestions);
+        
+        var surveyJson = await JsonContent.Create(survey).ReadAsStringAsync();
+        var surveyResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(surveyJson)
+        };
+        
+        _handlerMock.SetupRequest(HttpMethod.Get, $"survey/{_surveyId}", surveyResponse);
+        
+        var appComponent = _testCtx.RenderComponent<App>();
+
+        var targetPage = $"http://localhost/survey/draft-review/{_surveyId}";
+
+        _navManager.NavigateTo(targetPage);
+        
+        // WHEN he clicks on Launch survey
+        // AND it is launched successfully
+        var launchResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.Created,
+        };
+
+        var teamJson = await JsonContent.Create(survey.Team).ReadAsStringAsync();
+        var teamResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(teamJson)
+        };
+
+        var teamSurveysJson = await JsonContent.Create(new List<Survey>()).ReadAsStringAsync();
+        var teamSurveysResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(teamSurveysJson)
+        };
+        
+        _handlerMock.SetupRequest(HttpMethod.Post, "survey-notifications", launchResponse);
+        _handlerMock.SetupRequest(HttpMethod.Get, $"/team/{survey.Team.Id}", teamResponse);
+        _handlerMock.SetupRequest(HttpMethod.Get, $"/team/{survey.Team.Id}/surveys", teamSurveysResponse);
+        
+        var launchSurveyButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Launch survey");
+        Assert.NotNull(launchSurveyButton);
+        
+        launchSurveyButton.Click();
+        
+        // THEN he should see a toast message with the message "Survey launched successfully"
+        appComponent.WaitForAssertion(() => Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("p", "Survey launched successfully")));
     }
 
     [Fact]

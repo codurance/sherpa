@@ -1,7 +1,9 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Security.Claims;
+using Blazored.LocalStorage;
 using Blazored.Modal;
+using Blazored.Toast;
 using Bunit;
 using Bunit.TestDoubles;
 using Microsoft.AspNetCore.Components;
@@ -34,6 +36,10 @@ public class AnswerSurveyAcceptanceTest
         _testOutputHelper = testOutputHelper;
         _testCtx = new TestContext();
         _testCtx.Services.AddBlazoredModal();
+        _testCtx.Services.AddBlazoredLocalStorage();
+        _testCtx.Services.AddBlazoredToast();
+        _testCtx.Services.AddScoped<ICookiesService, CookiesService>();
+        _testCtx.JSInterop.Setup<string>("localStorage.getItem", "CookiesAcceptedDate");
         _handlerMock = new Mock<HttpMessageHandler>();
         var httpClient = new HttpClient(_handlerMock.Object, false) { BaseAddress = new Uri("http://host") };
         _httpClientFactory = new Mock<IHttpClientFactory>();
