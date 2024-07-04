@@ -18,6 +18,6 @@ public class BlazoredToastService : IToastNotificationService
 
     public void ShowError(string message)
     {
-        throw new NotImplementedException();
+        _toastService.ShowError(message);
     }
 }

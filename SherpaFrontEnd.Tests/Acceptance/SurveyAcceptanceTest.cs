@@ -518,14 +518,30 @@ public class SurveyAcceptanceTest
 
         _navManager.NavigateTo(targetPage);
         
-        // WHEN he clicks on Launch survey
-        // AND it is launched unsuccessfully
+        var teamJson = await JsonContent.Create(survey.Team).ReadAsStringAsync();
+        var teamResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(teamJson)
+        };
+
+        var teamSurveysJson = await JsonContent.Create(new List<Survey>()).ReadAsStringAsync();
+        var teamSurveysResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(teamSurveysJson)
+        };
         
         var launchResponse = new HttpResponseMessage
         {
             StatusCode = HttpStatusCode.InternalServerError,
         };
         _handlerMock.SetupRequest(HttpMethod.Post, "survey-notifications", launchResponse);
+        _handlerMock.SetupRequest(HttpMethod.Get, $"/team/{survey.Team.Id}", teamResponse);
+        _handlerMock.SetupRequest(HttpMethod.Get, $"/team/{survey.Team.Id}/surveys", teamSurveysResponse);
+        
+        // WHEN he clicks on Launch survey
+        // AND it is launched unsuccessfully
         
         var launchSurveyButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Launch survey");
         Assert.NotNull(launchSurveyButton);
