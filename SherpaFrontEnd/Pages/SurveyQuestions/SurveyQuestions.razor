@@ -33,7 +33,7 @@
         </select>
         @if (_survey != null)
         {
-            <div class="mt-6 mb-8 flex w-3/4 flex-col rounded-lg border bg-white px-16 py-10 max-w-[740px] border-primary-dark-100">
+            <div class="mt-6 mb-8 flex w-3/4 flex-col rounded-lg border bg-white py-10 max-w-2xl border-primary-dark-100">
                 <h2 class="mb-2 text-2xl text-primary-dark-principal font-semibold">@_survey.Title</h2>
                 <p class="text-primary-dark-principal">
                     @foreach (var line in _survey.Description.Split("\n"))
@@ -48,7 +48,7 @@
 
         @if (_questions != null)
         {
-            <form id="survey" class="rounded-lg border bg-white px-16 py-2 pb-10 w-3/4 max-w-[740px] border-primary-dark-100" @onsubmit="SubmitAction">
+            <form id="survey" class="rounded-lg border bg-white py-2 pb-10 w-3/4 max-w-2xl border-primary-dark-100" @onsubmit="SubmitAction">
                 @foreach (var question in _questions.OrderBy(q => q.Position))
                 {
                     <fieldset class="flex flex-col items-center">
@@ -70,7 +70,7 @@
                         <div class="flex w-full justify-between">
                             @foreach (var footLabel in GetFootLabels(question))
                             {
-                                <p class="flex-1 py-2 px-2 text-primary-dark-principal text-center text-xs">@footLabel</p>
+                                <p class="flex-1 py-2 px-2 text-primary-dark-principal text-center text-[10px] sm:text-xs">@footLabel</p>
                             }
                         </div>
 
