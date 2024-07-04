@@ -5,9 +5,9 @@
 @using SherpaFrontEnd.Pages.TeamContent.Components
 @inject ITeamDataService TeamDataService
 @inject ISurveyService SurveyService
+@inject IToastNotificationService ToastService
 @inject NavigationManager NavigationManager
 @inject IJSRuntime Js
-
 
 @page "/team-content/{teamId:guid}/{tab?}"
 
@@ -96,6 +96,8 @@
 
         // Re-fetch team
         await FetchTeam();
+        
+        ToastService.ShowSuccess("Team Member created successfully");
     }
 
 

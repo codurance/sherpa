@@ -1,4 +1,5 @@
 ﻿@inject NavigationManager NavigationManager
+@using Blazored.Toast.Configuration
 @using SherpaFrontEnd.Core.NavMenu
 
 @inherits LayoutComponentBase
@@ -6,7 +7,8 @@
 <div class="page">
     <AuthorizeView>
         <Authorized>
-            <CookiesPopup />
+            <BlazoredToasts  Position="ToastPosition.TopCenter"/>
+            <CookiesPopup/>
             <div class="bg-primary-dark-principal pl-4 sidebar">
                 <NavMenu/>
             </div>
