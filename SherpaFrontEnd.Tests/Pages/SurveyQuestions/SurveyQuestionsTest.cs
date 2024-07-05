@@ -6,7 +6,6 @@ using Moq;
 using SherpaFrontEnd.Dtos;
 using SherpaFrontEnd.Dtos.Survey;
 using SherpaFrontEnd.Dtos.Team;
-using SherpaFrontEnd.Pages;
 using SherpaFrontEnd.Pages.SurveyQuestions;
 using SherpaFrontEnd.Services;
 
@@ -19,6 +18,7 @@ public class SurveyQuestionsTest
     private Guid _surveyNotificationId = Guid.NewGuid();
     private readonly TestContext _ctx;
     private readonly Mock<ISurveyService> _surveyService;
+    private readonly Mock<ICachedResponseService> _cachedResponseService;
     private readonly FakeNavigationManager _navigationManager;
 
     public SurveyQuestionsTest()
@@ -26,7 +26,9 @@ public class SurveyQuestionsTest
         _ctx = new TestContext();
         _surveyService
             = new Mock<ISurveyService>();
+        _cachedResponseService = new Mock<ICachedResponseService>();
         _ctx.Services.AddSingleton<ISurveyService>(_surveyService.Object);
+        _ctx.Services.AddSingleton<ICachedResponseService>(_cachedResponseService.Object);
         _navigationManager = _ctx.Services.GetRequiredService<FakeNavigationManager>();
     }
 
@@ -40,7 +42,6 @@ public class SurveyQuestionsTest
         );
 
         _surveyService.Verify(service => service.GetSurveyNotificationById(_surveyNotificationId), Times.Once);
-
         _surveyService.Verify(service => service.GetSurveyWithoutQuestionsById(_surveyId), Times.Once);
         _surveyService.Verify(service => service.GetSurveyQuestionsBySurveyId(_surveyId), Times.Once);
     }
@@ -464,6 +465,83 @@ public class SurveyQuestionsTest
 
         var thankYouTitleInSpanish = appComponent.FindElementByCssSelectorAndTextContent("h1", "¡Gracias por tu respuesta!");
         Assert.NotNull(thankYouTitleInSpanish);
+    }
+
+    [Fact]
+    public void ShouldCallCachedResponseServiceWhenLoadingSurveyQuestions()
+    {
+        _surveyService.Setup(service => service.GetSurveyNotificationById(_surveyNotificationId))
+            .ReturnsAsync(new SurveyNotification(Guid.NewGuid(), _surveyId, _memberId));
+        
+        _ctx.RenderComponent<SurveyQuestions>(
+            ComponentParameter.CreateParameter("SurveyNotificationId", _surveyNotificationId)
+        );
+        
+        _cachedResponseService.Verify(service => service.GetBy(_surveyNotificationId), Times.Once);
+    }
+    
+    [Fact]
+    public void ShouldAssignResponsesFromCachedResponsesWhenLoadingSurveyQuestions()
+    {
+         var ResponseSpanish1 = "SPA_1";
+        var ResponseSpanish2 = "SPA_2";
+        var ResponseSpanish3 = "SPA_3";
+        var ResponseEnglish1 = "ENG_1";
+        var ResponseEnglish2 = "ENG_2";
+        var ResponseEnglish3 = "ENG_3";
+        var Position = 1;
+        var Reverse = false;
+
+        var firstQuestion = new Question(new Dictionary<string, string>()
+            {
+                { Languages.SPANISH, "Primera pregunta en espanol" },
+                { Languages.ENGLISH, "First Question in english" },
+            }, new Dictionary<string, string[]>()
+            {
+                {
+                    Languages.SPANISH, new[] { ResponseSpanish1, ResponseSpanish2, ResponseSpanish3 }
+                },
+                {
+                    Languages.ENGLISH, new[] { ResponseEnglish1, ResponseEnglish2, ResponseEnglish3 }
+                }
+            }, Reverse,
+            HackmanSubComponent.InterpersonalPeerCoaching,
+            HackmanSubcategory.Delimited, HackmanComponent.SenseOfUrgency, 1);
+
+        var secondQuestion = new Question(new Dictionary<string, string>()
+            {
+                { Languages.SPANISH, "Segunda pregunta en espanol" },
+                { Languages.ENGLISH, "Second Question in english" },
+            }, new Dictionary<string, string[]>()
+            {
+                {
+                    Languages.SPANISH, new[] { ResponseSpanish1, ResponseSpanish2, ResponseSpanish3 }
+                },
+                {
+                    Languages.ENGLISH, new[] { ResponseEnglish1, ResponseEnglish2, ResponseEnglish3 }
+                }
+            }, Reverse,
+            HackmanSubComponent.InterpersonalPeerCoaching,
+            HackmanSubcategory.Delimited, HackmanComponent.SenseOfUrgency, 2);
+
+        var questions = new List<Question>() { firstQuestion, secondQuestion };
+        var question1Answer = firstQuestion.Responses[Languages.ENGLISH][1];
+
+        var cachedResponses = new Dictionary<int, string>(){{1, question1Answer}};
+        _cachedResponseService.Setup(service => service.GetBy(_surveyNotificationId))
+            .ReturnsAsync(cachedResponses);
+        
+        _surveyService.Setup(service => service.GetSurveyNotificationById(_surveyNotificationId))
+            .ReturnsAsync(new SurveyNotification(Guid.NewGuid(), _surveyId, _memberId));
+        _surveyService.Setup(service => service.GetSurveyQuestionsBySurveyId(_surveyId)).ReturnsAsync(questions);
+
+        var appComponent =
+            _ctx.RenderComponent<SurveyQuestions>(
+                ComponentParameter.CreateParameter("SurveyNotificationId", _surveyNotificationId)
+            );
+        
+        var question1Answered = appComponent.Find($"input[value='{question1Answer}']");
+        Assert.Equal("checked", question1Answered.Attributes.GetNamedItem("data-testid")?.Value);
     }
 
 }

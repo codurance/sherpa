@@ -5,6 +5,7 @@
 @using SherpaFrontEnd.Core.Layout
 @using SherpaFrontEnd.Pages.SurveyQuestions.Components
 @inject ISurveyService SurveyService
+@inject ICachedResponseService CachedResponseService
 @inject NavigationManager NavigationManager
 @layout PublicAccessLayout
 
@@ -116,6 +117,7 @@
         try
         {
             var surveyNotification = await SurveyService.GetSurveyNotificationById(SurveyNotificationId);
+            Answers = await CachedResponseService.GetBy(SurveyNotificationId);
             _surveyId = surveyNotification.SurveyId;
             _memberId = surveyNotification.TeamMemberId;
             _survey = await SurveyService.GetSurveyWithoutQuestionsById(_surveyId);
