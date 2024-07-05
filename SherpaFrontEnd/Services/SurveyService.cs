@@ -33,7 +33,15 @@ public class SurveyService : ISurveyService
     public async Task<SurveyWithoutQuestions?> GetSurveyWithoutQuestionsById(Guid id)
     {
         var client = _httpClientFactory.CreateClient(SherpaBackend);
-        return await client.GetFromJsonAsync<SurveyWithoutQuestions>($"/survey/{id.ToString()}");
+        
+        var httpRequestMessage =
+            new HttpRequestMessage(HttpMethod.Get, $"/survey/{id.ToString()}");
+
+        var httpResponseMessage = await client.SendAsync(httpRequestMessage);
+        var responseString = await httpResponseMessage.Content.ReadAsStringAsync();
+
+        return JsonSerializer.Deserialize<SurveyWithoutQuestions>(responseString,
+            new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
     }
 
     public async Task<List<Survey>?> GetAllSurveysByTeam(Guid teamId)
