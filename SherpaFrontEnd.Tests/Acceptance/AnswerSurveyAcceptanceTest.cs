@@ -369,4 +369,107 @@ public class AnswerSurveyAcceptanceTest
         var contactCoachElement = appComponent.FindElementByCssSelectorAndTextContent("p", "Please contact your coach");
         Assert.NotNull(contactCoachElement);
     }
+
+    [Fact]
+    public async Task UserShouldSeeTheResponsesThatWereAlreadySelectedInPreviousSession()
+    {
+        // GIVEN I'm in the survey answer page
+        var ResponseSpanish1 = "SPA_1";
+        var ResponseSpanish2 = "SPA_2";
+        var ResponseSpanish3 = "SPA_3";
+        var ResponseEnglish1 = "ENG_1";
+        var ResponseEnglish2 = "ENG_2";
+        var ResponseEnglish3 = "ENG_3";
+        var Position = 1;
+        var Reverse = false;
+        
+        var firstQuestion = new Question(new Dictionary<string, string>()
+            {
+                { Languages.SPANISH, "Primera pregunta en espanol" },
+                { Languages.ENGLISH, "First Question in english" },
+            }, new Dictionary<string, string[]>()
+            {
+                {
+                    Languages.SPANISH, new[] { ResponseSpanish1, ResponseSpanish2, ResponseSpanish3 }
+                },
+                {
+                    Languages.ENGLISH, new[] { ResponseEnglish1, ResponseEnglish2, ResponseEnglish3 }
+                }
+            }, Reverse,
+            HackmanSubComponent.InterpersonalPeerCoaching,
+            HackmanSubcategory.Delimited, HackmanComponent.SenseOfUrgency, Position);
+
+        var secondQuestion = new Question(new Dictionary<string, string>()
+            {
+                { Languages.SPANISH, "Segunda pregunta en espanol" },
+                { Languages.ENGLISH, "Second Question in english" },
+            }, new Dictionary<string, string[]>()
+            {
+                {
+                    Languages.SPANISH, new[] { ResponseSpanish1, ResponseSpanish2, ResponseSpanish3 }
+                },
+                {
+                    Languages.ENGLISH, new[] { ResponseEnglish1, ResponseEnglish2, ResponseEnglish3 }
+                }
+            }, Reverse,
+            HackmanSubComponent.InterpersonalPeerCoaching,
+            HackmanSubcategory.Delimited, HackmanComponent.SenseOfUrgency, Position);
+        
+        var question1Answer = firstQuestion.Responses[Languages.ENGLISH][1];
+        var question2Answer = secondQuestion.Responses[Languages.ENGLISH][1];
+        
+        var questions = new List<Question>() { firstQuestion, secondQuestion };
+
+        var surveyTitle = "Title";
+        var survey = new Survey(_surveyId, new User(Guid.NewGuid(), "Lucia"), Status.Draft, new DateTime(), surveyTitle,
+            "Description", Array.Empty<Response>(), null, new Template("Hackman"));
+        var surveyJson = await JsonContent.Create(survey).ReadAsStringAsync();
+        var surveyResponse = new HttpResponseMessage()
+            { StatusCode = HttpStatusCode.OK, Content = new StringContent(surveyJson) };
+        var questionsJson = await JsonContent.Create(questions).ReadAsStringAsync();
+        var questionsResponse = new HttpResponseMessage()
+            { StatusCode = HttpStatusCode.OK, Content = new StringContent(questionsJson) };
+        var submitAnswersResponse = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.Created
+        };
+        var surveyNotificationJson = await JsonContent.Create(_surveyNotification).ReadAsStringAsync();
+        var surveyNotificationResponse = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(surveyNotificationJson)
+        };
+
+        _handlerMock.SetupRequest(HttpMethod.Get, $"/survey-notifications/{_surveyNotificationId}",
+            surveyNotificationResponse, surveyNotificationResponse);
+        _handlerMock.SetupRequest(HttpMethod.Get, $"/survey/{_surveyId}", surveyResponse, surveyResponse);
+        _handlerMock.SetupRequest(HttpMethod.Get, $"/survey/{_surveyId}/questions", questionsResponse, questionsResponse);
+        _handlerMock.SetupRequest(HttpMethod.Post, $"/survey/{_surveyId}/team-members/{_teamMemberId}",
+            submitAnswersResponse, submitAnswersResponse);
+        
+        var appComponent = _testCtx.RenderComponent<App>();
+        var answerSurveyPage = $"/answer-survey/{_surveyNotificationId}";
+
+        _navManager.NavigateTo(answerSurveyPage);
+
+        // WHEN I fill some answers
+        var question1AnswerElement = appComponent.Find($"input[value='{question1Answer}']");
+        question1AnswerElement.Change(new ChangeEventArgs());
+
+        // AND I close the survey
+        _navManager.NavigateTo("/cookie-policy");
+        
+
+        
+        // THEN, when I come back to the form, I can see the already filled answers
+        _navManager.NavigateTo(answerSurveyPage);
+        var question1Answered = appComponent.Find($"input[value='{question1Answer}']");
+        var question2Answered = appComponent.Find($"input[value='{question2Answer}']");
+
+        // Assert value of question1AnswerElement and question2AnswerElement
+        Assert.NotNull(question1Answered);
+        Assert.NotNull(question2Answered);
+        Assert.Equal("checked", question1Answered.Attributes.GetNamedItem("data-testid")?.Value);
+        Assert.Equal("unchecked", question2Answered.Attributes.GetNamedItem("data-testid")?.Value);
+    }
 }
