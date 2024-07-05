@@ -1,3 +1,4 @@
+let chart;
 window.generateColumnsChart = function (elementId, series, categories, yaxis) {
     const targetElement = document.getElementById(elementId);
 
@@ -239,7 +240,13 @@ window.generateScatterPlotChart = function (elementId, series, categories) {
         }
     };
 
-    const chart = new ApexCharts(targetElement, options);
+    chart = new ApexCharts(targetElement, options);
     chart.render();
+}
 
+window.updateScatterPlotChartSeries = function (chartId, series){
+    console.log(chartId);
+    console.log(series);
+    if(!chart) return;
+    chart.updateSeries(series, true);
 }

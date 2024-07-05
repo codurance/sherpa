@@ -19,7 +19,15 @@
     {
         await JsRuntime.InvokeVoidAsync("generateScatterPlotChart", _id, series, categories);
     }
-    
-    
+
+    protected override async Task OnParametersSetAsync()
+    {
+        foreach (var serie in series)
+        {
+            Console.WriteLine(serie);
+        }
+        await JsRuntime.InvokeVoidAsync("updateScatterPlotChartSeries", _id, series);
+        //return base.OnParametersSetAsync();
+    }
 
 }

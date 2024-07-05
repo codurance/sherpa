@@ -9,7 +9,6 @@
 @inject NavigationManager NavigationManager
 @inject IJSRuntime Js
 
-
 @page "/team-content/{teamId:guid}/{tab?}"
 
 @if (Team != null && Surveys != null)
@@ -166,6 +165,10 @@
     {
         SelectedSurveyName = e.Value.ToString();
         columnSeries = GetSeriesForSelectedSurvey();
+        foreach (var series in columnSeries)
+        {
+            Console.WriteLine($"Series: {series.Name}");
+        }
         StateHasChanged();
     }
     

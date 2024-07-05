@@ -25,6 +25,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Analysis\Infrastructure\Http\" />
       <Folder Include="Helpers" />
     </ItemGroup>
 
