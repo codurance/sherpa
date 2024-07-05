@@ -19,4 +19,16 @@ public class BlazoredToastServiceTest
         
         toastMock.Verify(service => service.ShowSuccess("Test 1", It.IsAny<Action<ToastSettings>>()));
     }
+
+    [Fact]
+    public void ShouldShowAnErrorToastNotification()
+    {
+        var toastMock = new Mock<IToastService>();
+        
+        var blazoredToastService = new BlazoredToastService(toastMock.Object);
+
+        blazoredToastService.ShowError("Test 1 error");
+        
+        toastMock.Verify(service => service.ShowError("Test 1 error", It.IsAny<Action<ToastSettings>>()));
+    }
 }
