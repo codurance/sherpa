@@ -459,8 +459,6 @@ public class AnswerSurveyAcceptanceTest
         // AND I close the survey
         _navManager.NavigateTo("/cookie-policy");
         
-
-        
         // THEN, when I come back to the form, I can see the already filled answers
         _navManager.NavigateTo(answerSurveyPage);
         var question1Answered = appComponent.Find($"input[value='{question1Answer}']");
