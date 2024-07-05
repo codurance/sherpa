@@ -39,6 +39,7 @@ public class AnswerSurveyAcceptanceTest
         _testCtx.Services.AddBlazoredLocalStorage();
         _testCtx.Services.AddBlazoredToast();
         _testCtx.Services.AddScoped<ICookiesService, CookiesService>();
+        _testCtx.Services.AddScoped<ICachedResponseService, CachedResponseService>();
         _testCtx.JSInterop.Setup<string>("localStorage.getItem", "CookiesAcceptedDate");
         _handlerMock = new Mock<HttpMessageHandler>();
         var httpClient = new HttpClient(_handlerMock.Object, false) { BaseAddress = new Uri("http://host") };
