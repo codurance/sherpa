@@ -487,7 +487,7 @@ public class SurveyAcceptanceTest
     }
 
     [Fact]
-    public async Task ShouldBeRedirectedToErrorPageWhenLaunchingSurveyAndWasUnsuccessful()
+    public async Task ShouldBeRedirectedTeamPageAndShowErrorToastNotificationWhenLaunchingSurveyAndWasUnsuccessful()
     {
         // GIVEN that an Org coach is on the Review survey page after creating a survey
         var deadline = DateTime.Now;
@@ -518,24 +518,47 @@ public class SurveyAcceptanceTest
 
         _navManager.NavigateTo(targetPage);
         
-        // WHEN he clicks on Launch survey
-        // AND it is launched unsuccessfully
+        var teamJson = await JsonContent.Create(survey.Team).ReadAsStringAsync();
+        var teamResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(teamJson)
+        };
+
+        var teamSurveysJson = await JsonContent.Create(new List<Survey>()).ReadAsStringAsync();
+        var teamSurveysResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(teamSurveysJson)
+        };
         
         var launchResponse = new HttpResponseMessage
         {
             StatusCode = HttpStatusCode.InternalServerError,
         };
         _handlerMock.SetupRequest(HttpMethod.Post, "survey-notifications", launchResponse);
+        _handlerMock.SetupRequest(HttpMethod.Get, $"/team/{survey.Team.Id}", teamResponse);
+        _handlerMock.SetupRequest(HttpMethod.Get, $"/team/{survey.Team.Id}/surveys", teamSurveysResponse);
+        
+        // WHEN he clicks on Launch survey
+        // AND it is launched unsuccessfully
         
         var launchSurveyButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Launch survey");
         Assert.NotNull(launchSurveyButton);
         
         launchSurveyButton.Click();
         
-        // THEN he should be redirected on the Error page
+        // THEN he should be redirected on the Team page, Surveys tab
+        // AND he should see the following info:
         appComponent.WaitForAssertion(() =>
             Assert.Equal(
-                "http://localhost/error",
+                $"http://localhost/team-content/{_teams[0].Id.ToString()}/surveys",
                 _navManager.Uri));
+        
+        // team title
+        appComponent.FindElementByCssSelectorAndTextContent("h3", survey.Team.Name);
+        
+        // AND he should see an error toast notification
+        appComponent.WaitForAssertion(() => Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("p", "The survey wasn't launched successfully, please try again")));
     }
 }

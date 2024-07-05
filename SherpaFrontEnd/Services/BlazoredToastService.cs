@@ -15,4 +15,9 @@ public class BlazoredToastService : IToastNotificationService
     {
         _toastService.ShowSuccess(message);
     }
+
+    public void ShowError(string message)
+    {
+        _toastService.ShowError(message);
+    }
 }
