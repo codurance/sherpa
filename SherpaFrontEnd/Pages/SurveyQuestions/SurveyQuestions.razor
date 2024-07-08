@@ -68,7 +68,8 @@
                                         data-testid="@(GetDataTestId(question, response))"
                                         id="@question.Position-@Array.IndexOf(question.Responses[_selectedLanguage], @response)"
                                         name="@question.Position" value="@response" required
-                                        @onchange="() => SaveResponse(question, response)">
+                                        @onchange="() => SaveResponse(question, response)"
+                                        checked="@(IsResponseChecked(question, response))">
                                     <label class="flex-1 py-2 px-2 text-primary-dark-principal peer-checked:peer-focus:text-white peer-checked:text-white hover:bg-primary-dark-100 peer-focus:text-primary-dark-principal peer-active:bg-primary-dark-100 peer-focus:bg-primary-dark-100 peer-checked:peer-focus:bg-[#1D233C] peer-checked:bg-[#1D233C] rounded-md text-center" for="@question.Position-@Array.IndexOf(question.Responses[_selectedLanguage], @response)">@response</label>
                                 </div>
                             }
@@ -106,11 +107,6 @@
     private Dictionary<int, string> Responses;
     private bool _isComplete = false;
     private bool _isError = false;
-
-    protected override void OnInitialized()
-    {
-        Responses = new Dictionary<int, string>();
-    }
     
     protected override async Task OnInitializedAsync()
     {
@@ -206,14 +202,20 @@
             _isError = true;
         }
     }
-
-    private string GetDataTestId(Question question, string response)
+    
+    private bool IsResponseChecked(Question question, string response)
     {
         if (Responses.ContainsKey(question.Position))
         {
-            return Responses[question.Position] == response ? "checked" : "unchecked";
+            return Responses[question.Position] == response;
         }
-        return "unchecked";
+
+        return false;
+    }
+
+    private string GetDataTestId(Question question, string response)
+    {
+        return IsResponseChecked(question, response) ? "checked" : "unchecked";
     }
 
 }
