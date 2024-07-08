@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Security.Claims;
+using AngleSharp.Dom;
 using Blazored.LocalStorage;
 using Blazored.Modal;
 using Blazored.Toast;
@@ -309,11 +310,8 @@ public class AnswerSurveyAcceptanceTest : IAsyncDisposable
         _navManager.NavigateTo(answerSurveyPage);
 
         // WHEN I fill one response
-        var secondResponseIndex = 1;
-        var response1ElementId = firstQuestion.Position + "-" + secondResponseIndex;
-        var response2ElementId = secondQuestion.Position + "-" + secondResponseIndex;
 
-        var response1Element = appComponent.Find($"input[id='{response1ElementId}']");
+        var response1Element = FindQuestionResponse(appComponent, firstQuestion, 1);
         response1Element.Change(new ChangeEventArgs());
 
         // AND I close the survey
@@ -321,8 +319,8 @@ public class AnswerSurveyAcceptanceTest : IAsyncDisposable
         
         // THEN, when I come back to the form, I can see the already filled answers
         _navManager.NavigateTo(answerSurveyPage);
-        var respondedQuestion1 = appComponent.Find($"input[id='{response1ElementId}']");
-        var respondedQuestion2 = appComponent.Find($"input[id='{response2ElementId}']");
+        var respondedQuestion1 = FindQuestionResponse(appComponent, firstQuestion, 1);
+        var respondedQuestion2 = FindQuestionResponse(appComponent, secondQuestion, 1);
 
         // Assert value of question1AnswerElement and question2AnswerElement
         Assert.NotNull(respondedQuestion1);
@@ -330,7 +328,12 @@ public class AnswerSurveyAcceptanceTest : IAsyncDisposable
         Assert.Equal("checked", respondedQuestion1.Attributes.GetNamedItem("data-testid")?.Value);
         Assert.Equal("unchecked", respondedQuestion2.Attributes.GetNamedItem("data-testid")?.Value);
     }
-    
+
+    private IElement FindQuestionResponse(IRenderedComponent<App> appComponent, Question question, int responseIndex)
+    {
+        return appComponent.Find($"input[id='{question.Position + "-" + responseIndex}']");
+    }
+
     private void SetupQuestions(out Question firstQuestion, out Question secondQuestion)
     {
         var responseSpanish1 = "SPA_1";
