@@ -342,7 +342,7 @@ public class SurveyQuestionsTest
     }
 
     [Fact]
-    public void ShouldCacheEachResponse()
+    public void ShouldSaveEachResponseInCache()
     {
         SetupQuestions(out var firstQuestion, out var secondQuestion);
         
