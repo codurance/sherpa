@@ -194,6 +194,7 @@
         try
         {
             await SurveyService.SubmitSurveyResponse(answerSurveyDto);
+            await CachedResponseService.Clear(SurveyNotificationId);
             _isComplete = true;
         }
         catch (Exception e)

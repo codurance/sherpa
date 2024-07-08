@@ -21,4 +21,9 @@ public class LocalStorageCachedResponseService : ICachedResponseService
     {
         await _localStorageService.SetItemAsync($"response-{surveyNotificationId}", responses);
     }
+
+    public Task Clear(Guid surveyNotificationId)
+    {
+        throw new NotImplementedException();
+    }
 }

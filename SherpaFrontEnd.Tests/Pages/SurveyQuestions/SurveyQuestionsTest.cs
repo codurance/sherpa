@@ -1,8 +1,10 @@
+using AngleSharp.Dom;
 using Bunit;
 using Bunit.TestDoubles;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
+using SherpaFrontEnd;
 using SherpaFrontEnd.Dtos;
 using SherpaFrontEnd.Dtos.Survey;
 using SherpaFrontEnd.Dtos.Team;
@@ -368,6 +370,40 @@ public class SurveyQuestionsTest
         var expectedCachedResponses = new Dictionary<int, string>(){{1, question1Answer}};
         
         _cachedResponseService.Verify(service => service.Save(_surveyNotificationId, expectedCachedResponses));
+    }
+
+    [Fact]
+    public void ShouldEmptyResponseInCacheWhenSubmit()
+    {
+        SetupQuestions(out var question, out _);
+        
+        var questions = new List<Question>() { question };
+        
+        _cachedResponseService.Setup(service => service.GetBy(_surveyNotificationId))
+            .ReturnsAsync(new Dictionary<int, string>());
+        
+        _surveyService.Setup(service => service.GetSurveyNotificationById(_surveyNotificationId))
+            .ReturnsAsync(new SurveyNotification(Guid.NewGuid(), _surveyId, _memberId));
+        _surveyService.Setup(service => service.GetSurveyQuestionsBySurveyId(_surveyId)).ReturnsAsync(questions);
+
+        var appComponent =
+            _ctx.RenderComponent<SurveyQuestions>(
+                ComponentParameter.CreateParameter("SurveyNotificationId", _surveyNotificationId)
+            );
+
+        var question1Element = FindQuestionResponse(appComponent, question, 1);
+        Assert.NotNull(question1Element);
+        question1Element.Change(new ChangeEventArgs());
+        
+        var survey = appComponent.Find("form[id='survey']");
+        survey.Submit();
+
+        _cachedResponseService.Verify(service => service.Clear(_surveyNotificationId));
+    }
+    
+    private IElement FindQuestionResponse(IRenderedComponent<SurveyQuestions> appComponent, Question question, int responseIndex)
+    {
+        return appComponent.Find($"input[id='{question.Position + "-" + responseIndex}']");
     }
 
     private void SetupQuestions(out Question firstQuestion, out Question secondQuestion)
