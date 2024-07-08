@@ -137,24 +137,14 @@ public class AnswerSurveyAcceptanceTest : IAsyncDisposable
                 question.Statement[selectedLanguage.ToUpper()]);
         Assert.NotNull(surveyQuestionElement);
 
-        var surveyResponseLabel1 =
-            appComponent.FindElementByCssSelectorAndTextContent("label",
-                question.Responses[selectedLanguage.ToUpper()][0]);
-        var surveyResponseLabel2 =
-            appComponent.FindElementByCssSelectorAndTextContent("label",
-                question.Responses[selectedLanguage.ToUpper()][1]);
-        var surveyResponseLabel3 =
-            appComponent.FindElementByCssSelectorAndTextContent("label",
-                question.Responses[selectedLanguage.ToUpper()][2]);
-
         var surveyResponseInput1 =
-            appComponent.Find($"input[id='{surveyResponseLabel1.Attributes.GetNamedItem("for").Value}']");
+            FindQuestionResponse(appComponent, question, 0);
         Assert.NotNull(surveyResponseInput1);
         var surveyResponseInput2 =
-            appComponent.Find($"input[id='{surveyResponseLabel2.Attributes.GetNamedItem("for").Value}']");
+            FindQuestionResponse(appComponent, question, 1);
         Assert.NotNull(surveyResponseInput2);
         var surveyResponseInput3 =
-            appComponent.Find($"input[id='{surveyResponseLabel3.Attributes.GetNamedItem("for").Value}']");
+            FindQuestionResponse(appComponent, question, 2);
         Assert.NotNull(surveyResponseInput3);
     }
 
@@ -197,12 +187,9 @@ public class AnswerSurveyAcceptanceTest : IAsyncDisposable
         var answerSurveyPage = $"/answer-survey/{_surveyNotificationId}";
         _navManager.NavigateTo(answerSurveyPage);
 
-        var question1Answer = firstQuestion.Responses[Languages.ENGLISH][1];
-        var question2Answer = secondQuestion.Responses[Languages.ENGLISH][1];
-
-        var question1AnswerElement = appComponent.Find($"input[value='{question1Answer}']");
+        var question1AnswerElement = FindQuestionResponse(appComponent, firstQuestion, 1);
         question1AnswerElement.Change(new ChangeEventArgs());
-        var question2AnswerElement = appComponent.Find($"input[value='{question2Answer}']");
+        var question2AnswerElement = FindQuestionResponse(appComponent, secondQuestion, 1);
         question2AnswerElement.Change(new ChangeEventArgs());
 
         var surveyElement = appComponent.Find("form[id='survey']");
@@ -249,13 +236,11 @@ public class AnswerSurveyAcceptanceTest : IAsyncDisposable
         var appComponent = _testCtx.RenderComponent<App>();
         var answerSurveyPage = $"/answer-survey/{_surveyNotificationId}";
         _navManager.NavigateTo(answerSurveyPage);
-        
-        var question1Answer = firstQuestion.Responses[Languages.ENGLISH][1];
-        var question2Answer = secondQuestion.Responses[Languages.ENGLISH][1];
 
-        var question1AnswerElement = appComponent.Find($"input[value='{question1Answer}']");
+        // var question1AnswerElement = appComponent.Find($"input[value='{question1Answer}']");
+        var question1AnswerElement = FindQuestionResponse(appComponent, firstQuestion, 1);
         question1AnswerElement.Change(new ChangeEventArgs());
-        var question2AnswerElement = appComponent.Find($"input[value='{question2Answer}']");
+        var question2AnswerElement = FindQuestionResponse(appComponent, secondQuestion, 1);
         question2AnswerElement.Change(new ChangeEventArgs());
 
         var surveyElement = appComponent.Find("form[id='survey']");
@@ -300,10 +285,11 @@ public class AnswerSurveyAcceptanceTest : IAsyncDisposable
         _handlerMock.SetupRequest(HttpMethod.Get, $"/survey-notifications/{_surveyNotificationId}",
             surveyNotificationResponse, surveyNotificationResponse);
         _handlerMock.SetupRequest(HttpMethod.Get, $"/survey/{_surveyId}", surveyResponse, surveyResponse);
-        _handlerMock.SetupRequest(HttpMethod.Get, $"/survey/{_surveyId}/questions", questionsResponse, questionsResponse);
+        _handlerMock.SetupRequest(HttpMethod.Get, $"/survey/{_surveyId}/questions", questionsResponse,
+            questionsResponse);
         _handlerMock.SetupRequest(HttpMethod.Post, $"/survey/{_surveyId}/team-members/{_teamMemberId}",
             submitAnswersResponse, submitAnswersResponse);
-        
+
         var appComponent = _testCtx.RenderComponent<App>();
         var answerSurveyPage = $"/answer-survey/{_surveyNotificationId}";
 
@@ -316,7 +302,7 @@ public class AnswerSurveyAcceptanceTest : IAsyncDisposable
 
         // AND I close the survey
         _navManager.NavigateTo("/cookie-policy");
-        
+
         // THEN, when I come back to the form, I can see the already filled answers
         _navManager.NavigateTo(answerSurveyPage);
         var respondedQuestion1 = FindQuestionResponse(appComponent, firstQuestion, 1);
