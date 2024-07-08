@@ -6,7 +6,6 @@ namespace BlazorApp.Tests.Services;
 
 public class CachedResponseServiceTest
 {
-
     [Fact]
     public async Task ShouldReturnAnEmptyDictionaryWhenThereAreNoCachedResponses()
     {
@@ -18,7 +17,7 @@ public class CachedResponseServiceTest
         var expected = new Dictionary<int, string>();
         Assert.Equal(expected, actual);
     }
-    
+
     [Fact]
     public async Task ShouldReturnCachedResponses()
     {
@@ -26,15 +25,23 @@ public class CachedResponseServiceTest
 
         var localStorageMock = new Mock<ILocalStorageService>();
 
-        localStorageMock.Setup(mock => mock.GetItemAsync<Dictionary<int, string>?>("response-" + surveyNotificationId));
+        localStorageMock
+            .Setup(mock =>
+                mock.GetItemAsync<Dictionary<int, string>?>($"response-{surveyNotificationId}", CancellationToken.None))
+            .ReturnsAsync(new Dictionary<int, string>()
+            {
+                { 1, "ENG_1" },
+                { 2, "ENG_1" },
+                { 3, "ENG_1" },
+            });
         var sut = new CachedResponseService(localStorageMock.Object);
 
         var actual = await sut.GetBy(surveyNotificationId);
         var expected = new Dictionary<int, string>()
         {
-            {1, "ENG_1"},
-            {2, "ENG_1"},
-            {3, "ENG_1"},
+            { 1, "ENG_1" },
+            { 2, "ENG_1" },
+            { 3, "ENG_1" },
         };
         Assert.Equal(expected, actual);
     }
