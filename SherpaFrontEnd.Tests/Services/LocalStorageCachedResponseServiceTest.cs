@@ -61,4 +61,16 @@ public class LocalStorageCachedResponseServiceTest
         
         localStorageMock.Verify(localStorage => localStorage.SetItemAsync($"response-{surveyNotificationId}", responses, CancellationToken.None));
     }
+
+    [Fact]
+    public async Task ShouldClearResponses()
+    {
+        var localStorageMock = new Mock<ILocalStorageService>();
+        var localStorageCachedResponseService = new LocalStorageCachedResponseService(localStorageMock.Object);
+
+        var surveyNotificationId = Guid.NewGuid();
+        await localStorageCachedResponseService.Clear(surveyNotificationId);
+        
+        localStorageMock.Verify(localStorage => localStorage.RemoveItemAsync($"response-{surveyNotificationId}", CancellationToken.None));
+    }
 }
