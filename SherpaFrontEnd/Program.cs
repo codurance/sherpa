@@ -28,6 +28,7 @@ builder.Services.AddScoped<IGuidService, GuidService>();
 builder.Services.AddScoped<ISurveyService, SurveyService>();
 builder.Services.AddScoped<IToastNotificationService, BlazoredToastService>();
 builder.Services.AddScoped<ICookiesService, CookiesService>();
+builder.Services.AddScoped<ICachedResponseService, LocalStorageCachedResponseService>();
 builder.Services.AddBlazoredModal();
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddBlazoredToast();
