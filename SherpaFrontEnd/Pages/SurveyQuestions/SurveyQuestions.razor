@@ -103,13 +103,13 @@
     private SurveyWithoutQuestions? _survey;
     private List<Question>? _questions;
     private string _selectedLanguage = Languages.ENGLISH;
-    private Dictionary<int, string> Answers;
+    private Dictionary<int, string> Responses;
     private bool _isComplete = false;
     private bool _isError = false;
 
     protected override void OnInitialized()
     {
-        Answers = new Dictionary<int, string>();
+        Responses = new Dictionary<int, string>();
     }
     
     protected override async Task OnInitializedAsync()
@@ -117,7 +117,7 @@
         try
         {
             var surveyNotification = await SurveyService.GetSurveyNotificationById(SurveyNotificationId);
-            Answers = await CachedResponseService.GetBy(SurveyNotificationId);
+            Responses = await CachedResponseService.GetBy(SurveyNotificationId);
             _surveyId = surveyNotification.SurveyId;
             _memberId = surveyNotification.TeamMemberId;
             _survey = await SurveyService.GetSurveyWithoutQuestionsById(_surveyId);
@@ -131,8 +131,8 @@
     
     private void SaveResponse(Question question, string response)
     {
-        Answers[question.Position] = response;
-        CachedResponseService.Save(SurveyNotificationId, Answers);
+        Responses[question.Position] = response;
+        CachedResponseService.Save(SurveyNotificationId, Responses);
     }
 
     private string GetFlexDirection(IQuestion question)
@@ -192,7 +192,7 @@
 
     private async Task SubmitAction()
     {
-        var questionResponses = Answers.Select(pair => new QuestionResponse(pair.Key, pair.Value)).ToList();
+        var questionResponses = Responses.Select(pair => new QuestionResponse(pair.Key, pair.Value)).ToList();
         var answerSurveyDto = new AnswerSurveyDto(_memberId, _surveyId, new SurveyResponse(_memberId, questionResponses));
 
         try
@@ -209,9 +209,9 @@
 
     private string GetDataTestId(Question question, string response)
     {
-        if (Answers.ContainsKey(question.Position))
+        if (Responses.ContainsKey(question.Position))
         {
-            return Answers[question.Position] == response ? "checked" : "unchecked";
+            return Responses[question.Position] == response ? "checked" : "unchecked";
         }
         return "unchecked";
     }
