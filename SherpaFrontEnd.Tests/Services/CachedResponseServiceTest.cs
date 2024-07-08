@@ -25,24 +25,20 @@ public class CachedResponseServiceTest
 
         var localStorageMock = new Mock<ILocalStorageService>();
 
-        localStorageMock
-            .Setup(mock =>
-                mock.GetItemAsync<Dictionary<int, string>?>($"response-{surveyNotificationId}", CancellationToken.None))
-            .ReturnsAsync(new Dictionary<int, string>()
-            {
-                { 1, "ENG_1" },
-                { 2, "ENG_1" },
-                { 3, "ENG_1" },
-            });
-        var sut = new CachedResponseService(localStorageMock.Object);
-
-        var actual = await sut.GetBy(surveyNotificationId);
         var expected = new Dictionary<int, string>()
         {
             { 1, "ENG_1" },
-            { 2, "ENG_1" },
+            { 2, "ENG_3" },
             { 3, "ENG_1" },
         };
+        
+        localStorageMock
+            .Setup(mock =>
+                mock.GetItemAsync<Dictionary<int, string>?>($"response-{surveyNotificationId}", CancellationToken.None))
+            .ReturnsAsync(expected);
+        var sut = new CachedResponseService(localStorageMock.Object);
+
+        var actual = await sut.GetBy(surveyNotificationId);
         Assert.Equal(expected, actual);
     }
 }
