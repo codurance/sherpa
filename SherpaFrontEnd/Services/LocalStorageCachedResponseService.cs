@@ -2,11 +2,11 @@ using Blazored.LocalStorage;
 
 namespace SherpaFrontEnd.Services;
 
-public class CachedResponseService : ICachedResponseService
+public class LocalStorageCachedResponseService : ICachedResponseService
 {
     private readonly ILocalStorageService _localStorageService;
 
-    public CachedResponseService(ILocalStorageService localStorageService)
+    public LocalStorageCachedResponseService(ILocalStorageService localStorageService)
     {
         _localStorageService = localStorageService;
     }

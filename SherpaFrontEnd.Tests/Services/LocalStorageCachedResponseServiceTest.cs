@@ -4,14 +4,14 @@ using SherpaFrontEnd.Services;
 
 namespace BlazorApp.Tests.Services;
 
-public class CachedResponseServiceTest
+public class LocalStorageCachedResponseServiceTest
 {
     [Fact]
     public async Task ShouldReturnAnEmptyDictionaryWhenThereAreNoCachedResponses()
     {
         var localStorageMock = new Mock<ILocalStorageService>();
 
-        var sut = new CachedResponseService(localStorageMock.Object);
+        var sut = new LocalStorageCachedResponseService(localStorageMock.Object);
 
         var actual = await sut.GetBy(Guid.NewGuid());
         var expected = new Dictionary<int, string>();
@@ -36,7 +36,7 @@ public class CachedResponseServiceTest
             .Setup(mock =>
                 mock.GetItemAsync<Dictionary<int, string>?>($"response-{surveyNotificationId}", CancellationToken.None))
             .ReturnsAsync(expected);
-        var sut = new CachedResponseService(localStorageMock.Object);
+        var sut = new LocalStorageCachedResponseService(localStorageMock.Object);
 
         var actual = await sut.GetBy(surveyNotificationId);
         Assert.Equal(expected, actual);
