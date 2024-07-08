@@ -16,7 +16,7 @@ using Xunit.Abstractions;
 
 namespace BlazorApp.Tests.Acceptance;
 
-public class AnswerSurveyAcceptanceTest
+public class AnswerSurveyAcceptanceTest : IAsyncDisposable
 {
     private readonly ITestOutputHelper _testOutputHelper;
     private readonly TestContext _testCtx;
@@ -30,17 +30,17 @@ public class AnswerSurveyAcceptanceTest
     private Guid _teamMemberId = Guid.NewGuid();
     private SurveyNotification _surveyNotification;
     private Mock<IAuthService> _authService;
+    private readonly ILocalStorageService _mockLocalStorage;
 
     public AnswerSurveyAcceptanceTest(ITestOutputHelper testOutputHelper)
     {
         _testOutputHelper = testOutputHelper;
         _testCtx = new TestContext();
         _testCtx.Services.AddBlazoredModal();
-        _testCtx.Services.AddBlazoredLocalStorage();
         _testCtx.Services.AddBlazoredToast();
         _testCtx.Services.AddScoped<ICookiesService, CookiesService>();
         _testCtx.Services.AddScoped<ICachedResponseService, LocalStorageCachedResponseService>();
-        _testCtx.JSInterop.Setup<string>("localStorage.getItem", "CookiesAcceptedDate");
+        _mockLocalStorage = _testCtx.AddBlazoredLocalStorage();
         _handlerMock = new Mock<HttpMessageHandler>();
         var httpClient = new HttpClient(_handlerMock.Object, false) { BaseAddress = new Uri("http://host") };
         _httpClientFactory = new Mock<IHttpClientFactory>();
@@ -351,7 +351,7 @@ public class AnswerSurveyAcceptanceTest
         var appComponent = _testCtx.RenderComponent<App>();
         var answerSurveyPage = $"/answer-survey/{_surveyNotificationId}";
         _navManager.NavigateTo(answerSurveyPage);
-
+        
         var question1Answer = firstQuestion.Responses[Languages.ENGLISH][1];
         var question2Answer = secondQuestion.Responses[Languages.ENGLISH][1];
 
@@ -381,7 +381,6 @@ public class AnswerSurveyAcceptanceTest
         var ResponseEnglish1 = "ENG_1";
         var ResponseEnglish2 = "ENG_2";
         var ResponseEnglish3 = "ENG_3";
-        var Position = 1;
         var Reverse = false;
         
         var firstQuestion = new Question(new Dictionary<string, string>()
@@ -398,7 +397,7 @@ public class AnswerSurveyAcceptanceTest
                 }
             }, Reverse,
             HackmanSubComponent.InterpersonalPeerCoaching,
-            HackmanSubcategory.Delimited, HackmanComponent.SenseOfUrgency, Position);
+            HackmanSubcategory.Delimited, HackmanComponent.SenseOfUrgency, 1);
 
         var secondQuestion = new Question(new Dictionary<string, string>()
             {
@@ -414,7 +413,7 @@ public class AnswerSurveyAcceptanceTest
                 }
             }, Reverse,
             HackmanSubComponent.InterpersonalPeerCoaching,
-            HackmanSubcategory.Delimited, HackmanComponent.SenseOfUrgency, Position);
+            HackmanSubcategory.Delimited, HackmanComponent.SenseOfUrgency, 2);
         
         var question1Answer = firstQuestion.Responses[Languages.ENGLISH][1];
         var question2Answer = secondQuestion.Responses[Languages.ENGLISH][1];
@@ -453,22 +452,31 @@ public class AnswerSurveyAcceptanceTest
 
         _navManager.NavigateTo(answerSurveyPage);
 
-        // WHEN I fill some answers
-        var question1AnswerElement = appComponent.Find($"input[value='{question1Answer}']");
-        question1AnswerElement.Change(new ChangeEventArgs());
+        // WHEN I fill one response
+        var secondResponseIndex = 1;
+        var response1ElementId = firstQuestion.Position + "-" + secondResponseIndex;
+        var response2ElementId = secondQuestion.Position + "-" + secondResponseIndex;
+
+        var response1Element = appComponent.Find($"input[id='{response1ElementId}']");
+        response1Element.Change(new ChangeEventArgs());
 
         // AND I close the survey
         _navManager.NavigateTo("/cookie-policy");
         
         // THEN, when I come back to the form, I can see the already filled answers
         _navManager.NavigateTo(answerSurveyPage);
-        var question1Answered = appComponent.Find($"input[value='{question1Answer}']");
-        var question2Answered = appComponent.Find($"input[value='{question2Answer}']");
+        var respondedQuestion1 = appComponent.Find($"input[id='{response1ElementId}']");
+        var respondedQuestion2 = appComponent.Find($"input[id='{response2ElementId}']");
 
         // Assert value of question1AnswerElement and question2AnswerElement
-        Assert.NotNull(question1Answered);
-        Assert.NotNull(question2Answered);
-        Assert.Equal("checked", question1Answered.Attributes.GetNamedItem("data-testid")?.Value);
-        Assert.Equal("unchecked", question2Answered.Attributes.GetNamedItem("data-testid")?.Value);
+        Assert.NotNull(respondedQuestion1);
+        Assert.NotNull(respondedQuestion2);
+        Assert.Equal("checked", respondedQuestion1.Attributes.GetNamedItem("data-testid")?.Value);
+        Assert.Equal("unchecked", respondedQuestion2.Attributes.GetNamedItem("data-testid")?.Value);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _mockLocalStorage.ClearAsync();
     }
 }
