@@ -341,6 +341,35 @@ public class SurveyQuestionsTest
         Assert.Equal("checked", question1Answered.Attributes.GetNamedItem("data-testid")?.Value);
     }
 
+    [Fact]
+    public void ShouldCacheEachResponse()
+    {
+        SetupQuestions(out var firstQuestion, out var secondQuestion);
+        
+        var questions = new List<Question>() { firstQuestion, secondQuestion };
+        var question1Answer = firstQuestion.Responses[Languages.ENGLISH][1];
+        
+        _cachedResponseService.Setup(service => service.GetBy(_surveyNotificationId))
+            .ReturnsAsync(new Dictionary<int, string>());
+        
+        _surveyService.Setup(service => service.GetSurveyNotificationById(_surveyNotificationId))
+            .ReturnsAsync(new SurveyNotification(Guid.NewGuid(), _surveyId, _memberId));
+        _surveyService.Setup(service => service.GetSurveyQuestionsBySurveyId(_surveyId)).ReturnsAsync(questions);
+
+        var appComponent =
+            _ctx.RenderComponent<SurveyQuestions>(
+                ComponentParameter.CreateParameter("SurveyNotificationId", _surveyNotificationId)
+            );
+        
+        var question1Element = appComponent.Find($"input[value='{question1Answer}']");
+        Assert.NotNull(question1Element);
+        question1Element.Change(new ChangeEventArgs());
+        
+        var expectedCachedResponses = new Dictionary<int, string>(){{1, question1Answer}};
+        
+        _cachedResponseService.Verify(service => service.Save(_surveyNotificationId, expectedCachedResponses));
+    }
+
     private void SetupQuestions(out Question firstQuestion, out Question secondQuestion)
     {
         var responseSpanish1 = "SPA_1";
