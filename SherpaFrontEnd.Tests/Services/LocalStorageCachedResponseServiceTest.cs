@@ -41,4 +41,24 @@ public class LocalStorageCachedResponseServiceTest
         var actual = await sut.GetBy(surveyNotificationId);
         Assert.Equal(expected, actual);
     }
+    
+    
+    [Fact]
+    public async Task ShouldSaveResponsesInLocalStorage()
+    {
+        var localStorageMock = new Mock<ILocalStorageService>();
+        var localStorageCachedResponseService = new LocalStorageCachedResponseService(localStorageMock.Object);
+
+        var responses = new Dictionary<int, string>()
+        {
+            { 1, "ENG_1" },
+            { 2, "ENG_3" },
+            { 3, "ENG_1" },
+        };
+
+        var surveyNotificationId = Guid.NewGuid();
+        await localStorageCachedResponseService.Save(surveyNotificationId, responses);
+        
+        localStorageMock.Verify(localStorage => localStorage.SetItemAsync($"response-{surveyNotificationId}", responses, CancellationToken.None));
+    }
 }

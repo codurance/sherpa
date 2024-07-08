@@ -17,8 +17,8 @@ public class LocalStorageCachedResponseService : ICachedResponseService
         return cachedResponses ?? new Dictionary<int, string>();
     }
 
-    public Task Save(Guid surveyNotificationId, Dictionary<int, string> responses)
+    public async Task Save(Guid surveyNotificationId, Dictionary<int, string> responses)
     {
-        throw new NotImplementedException();
+        await _localStorageService.SetItemAsync($"response-{surveyNotificationId}", responses);
     }
 }
