@@ -11,9 +11,14 @@ public class CachedResponseService : ICachedResponseService
         _localStorageService = localStorageService;
     }
 
-    public Task<Dictionary<int, string>> GetBy(Guid surveyNotificationId)
+    public async Task<Dictionary<int, string>> GetBy(Guid surveyNotificationId)
     {
-        
-        return Task.FromResult(new Dictionary<int, string>());
+        var cachedResponses = await _localStorageService.GetItemAsync<Dictionary<int, string>>($"response-{surveyNotificationId}");
+        if (cachedResponses == null)
+        {
+            return new Dictionary<int, string>();
+        }
+
+        return cachedResponses;
     }
 }
