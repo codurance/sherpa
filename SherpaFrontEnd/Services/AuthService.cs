@@ -7,12 +7,12 @@ namespace SherpaFrontEnd.Services;
 public class AuthService : IAuthService
 {
     private readonly IAccessTokenProvider _tokenProvider;
-    private NavigationManager _navigationManager;
+    private INavigationService  _navigationService;
 
-    public AuthService(IAccessTokenProvider tokenProvider, NavigationManager navigationManager)
+    public AuthService(IAccessTokenProvider tokenProvider, INavigationService navigationService)
     {
         _tokenProvider = tokenProvider;
-        _navigationManager = navigationManager;
+        _navigationService = navigationService;
     }
 
     public async Task<HttpRequestMessage> DecorateWithToken(HttpRequestMessage request)
@@ -21,7 +21,8 @@ public class AuthService : IAuthService
         requestAccessToken.TryGetToken(out var token);
         if (token == null)
         {
-            _navigationManager.NavigateTo($"authentication/login?returnUrl={Uri.EscapeDataString(_navigationManager.Uri)}");
+            _navigationService.NavigateTo($"authentication/login?returnUrl={Uri.EscapeDataString(_navigationService.CurrentUri)}");
+            return request;
         }
 
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token.Value);

@@ -28,4 +28,21 @@ public class AuthServiceTest
         Assert.Equal(expectedToken.Value, request.Headers.Authorization?.Parameter);
     }
     
+    [Fact]
+    public async Task ShouldRedirectToLoginPageWhenTokenIsExpired1()
+    {
+        var tokenProviderMock = new Mock<IAccessTokenProvider>();
+        var navigationService = new Mock<INavigationService>();
+
+        var accessTokenMock = new AccessTokenResult(AccessTokenResultStatus.RequiresRedirect, null, "");
+        tokenProviderMock.Setup(tp => tp.RequestAccessToken()).ReturnsAsync(accessTokenMock);
+        navigationService.SetupGet(ns => ns.CurrentUri).Returns("http://localhost");
+
+        var authService = new AuthService(tokenProviderMock.Object, navigationService.Object);
+
+        await authService.DecorateWithToken(new HttpRequestMessage());
+    
+        navigationService.Verify(service => service.NavigateTo(It.Is<string>(uri => uri.Contains("authentication/login"))), Times.Once);
+    }
+    
 }
