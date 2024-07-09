@@ -35,8 +35,12 @@ builder.Services.AddBlazoredToast();
 
 builder.Services.AddOidcAuthentication(options =>
 {
+    var id = Environment.GetEnvironmentVariable("COGNITO_CLIENT_ID");
+    Console.WriteLine("ClientID " + id);
     options.ProviderOptions.Authority = builder.Configuration["Cognito:Authority"];
     options.ProviderOptions.ClientId = builder.Configuration["Cognito:ClientId"];
+    // options.ProviderOptions.Authority = Environment.GetEnvironmentVariable("COGNITO_AUTHORITY");
+    // options.ProviderOptions.ClientId = Environment.GetEnvironmentVariable("COGNITO_CLIENT_ID");
     options.ProviderOptions.RedirectUri = builder.HostEnvironment.BaseAddress + builder.Configuration["Cognito:RedirectUri"];
     options.ProviderOptions.PostLogoutRedirectUri = builder.HostEnvironment.BaseAddress + builder.Configuration["Cognito:PostLogoutRedirectUri"];
     options.ProviderOptions.ResponseType = "code";

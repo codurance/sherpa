@@ -86,8 +86,8 @@ builder.Services.AddScoped<ISurveyNotificationService, SurveyNotificationService
 builder.Services.AddScoped<ISurveyResponsesFileService, SurveyResponsesCsvFileService>();
 
 // Auth
-var validAudience = builder.Configuration["Cognito:AppClientId"].ToString();
-var validIssuer = builder.Configuration["Cognito:Authority"].ToString();
+var validAudience = Environment.GetEnvironmentVariable("COGNITO_CLIENT_ID");
+var validIssuer = Environment.GetEnvironmentVariable("COGNITO_AUTHORITY");
 
 // Register authentication schemes, and specify the default authentication scheme
 builder.Services
@@ -126,8 +126,8 @@ app.UseSwagger();
 app.UseSwaggerUI();
 app.UseHttpsRedirection();
 
-app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
+app.UseBlazorFrameworkFiles();
 
 app.UseRouting();
 app.UseCors("CorsPolicy");
