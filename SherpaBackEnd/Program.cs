@@ -3,6 +3,7 @@ using Amazon;
 using Amazon.Runtime;
 using Amazon.SimpleEmail;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Hosting.StaticWebAssets;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SherpaBackEnd.Email.Application;
@@ -23,8 +24,10 @@ using SherpaBackEnd.Template.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Load different environment json files
+StaticWebAssetsLoader.UseStaticWebAssets(builder.Environment, builder.Configuration);
 
+// Add services to the container.
 builder.Services.AddControllers()
     .AddJsonOptions(options => { options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter()); })
     .AddNewtonsoftJson();
@@ -126,8 +129,8 @@ app.UseSwagger();
 app.UseSwaggerUI();
 app.UseHttpsRedirection();
 
-app.UseStaticFiles();
 app.UseBlazorFrameworkFiles();
+app.UseStaticFiles();
 
 app.UseRouting();
 app.UseCors("CorsPolicy");
