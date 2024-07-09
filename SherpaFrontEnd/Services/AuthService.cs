@@ -21,7 +21,7 @@ public class AuthService : IAuthService
         requestAccessToken.TryGetToken(out var token);
         if (token == null)
         {
-            _navigationManager.NavigateTo("/authentication/logged-out");
+            _navigationManager.NavigateTo($"authentication/login?returnUrl={Uri.EscapeDataString(_navigationManager.Uri)}");
         }
 
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token.Value);
