@@ -1,12 +1,13 @@
+using AngleSharp.Dom;
 using Bunit;
 using Bunit.TestDoubles;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
+using SherpaFrontEnd;
 using SherpaFrontEnd.Dtos;
 using SherpaFrontEnd.Dtos.Survey;
 using SherpaFrontEnd.Dtos.Team;
-using SherpaFrontEnd.Pages;
 using SherpaFrontEnd.Pages.SurveyQuestions;
 using SherpaFrontEnd.Services;
 
@@ -19,6 +20,7 @@ public class SurveyQuestionsTest
     private Guid _surveyNotificationId = Guid.NewGuid();
     private readonly TestContext _ctx;
     private readonly Mock<ISurveyService> _surveyService;
+    private readonly Mock<ICachedResponseService> _cachedResponseService;
     private readonly FakeNavigationManager _navigationManager;
 
     public SurveyQuestionsTest()
@@ -26,7 +28,9 @@ public class SurveyQuestionsTest
         _ctx = new TestContext();
         _surveyService
             = new Mock<ISurveyService>();
+        _cachedResponseService = new Mock<ICachedResponseService>();
         _ctx.Services.AddSingleton<ISurveyService>(_surveyService.Object);
+        _ctx.Services.AddSingleton<ICachedResponseService>(_cachedResponseService.Object);
         _navigationManager = _ctx.Services.GetRequiredService<FakeNavigationManager>();
     }
 
@@ -40,7 +44,6 @@ public class SurveyQuestionsTest
         );
 
         _surveyService.Verify(service => service.GetSurveyNotificationById(_surveyNotificationId), Times.Once);
-
         _surveyService.Verify(service => service.GetSurveyWithoutQuestionsById(_surveyId), Times.Once);
         _surveyService.Verify(service => service.GetSurveyQuestionsBySurveyId(_surveyId), Times.Once);
     }
@@ -63,6 +66,8 @@ public class SurveyQuestionsTest
 
         _surveyService.Setup(service => service.GetSurveyNotificationById(_surveyNotificationId))
             .ReturnsAsync(new SurveyNotification(Guid.NewGuid(), _surveyId, _memberId));
+        _cachedResponseService.Setup(service => service.GetBy(_surveyNotificationId))
+            .ReturnsAsync(new Dictionary<int, string>());
         _surveyService.Setup(service => service.GetSurveyWithoutQuestionsById(_surveyId)).ReturnsAsync(survey);
 
         var appComponent =
@@ -80,37 +85,14 @@ public class SurveyQuestionsTest
     [Fact]
     public async Task ShouldDisplaySingleSurveyQuestionRetrievedFromSurveyService()
     {
-        var QuestionInSpanish = "Question in spanish";
-        var QuestionInEnglish = "Question in english";
-        var ResponseSpanish1 = "SPA_1";
-        var ResponseSpanish2 = "SPA_2";
-        var ResponseSpanish3 = "SPA_3";
-        var ResponseEnglish1 = "ENG_1";
-        var ResponseEnglish2 = "ENG_2";
-        var ResponseEnglish3 = "ENG_3";
-        var Position = 1;
-        var Reverse = false;
-
-        var question = new Question(new Dictionary<string, string>()
-            {
-                { Languages.SPANISH, QuestionInSpanish },
-                { Languages.ENGLISH, QuestionInEnglish },
-            }, new Dictionary<string, string[]>()
-            {
-                {
-                    Languages.SPANISH, new[] { ResponseSpanish1, ResponseSpanish2, ResponseSpanish3 }
-                },
-                {
-                    Languages.ENGLISH, new[] { ResponseEnglish1, ResponseEnglish2, ResponseEnglish3 }
-                }
-            }, Reverse,
-            HackmanSubComponent.InterpersonalPeerCoaching,
-            HackmanSubcategory.Delimited, HackmanComponent.SenseOfUrgency, Position);
+        SetupQuestions(out var question, out var secondQuestion);
 
         var questions = new List<Question>() { question };
 
         _surveyService.Setup(service => service.GetSurveyNotificationById(_surveyNotificationId))
             .ReturnsAsync(new SurveyNotification(Guid.NewGuid(), _surveyId, _memberId));
+        _cachedResponseService.Setup(service => service.GetBy(_surveyNotificationId))
+            .ReturnsAsync(new Dictionary<int, string>());
         _surveyService.Setup(service => service.GetSurveyQuestionsBySurveyId(_surveyId)).ReturnsAsync(questions);
 
         var appComponent =
@@ -132,51 +114,14 @@ public class SurveyQuestionsTest
     [Fact]
     public async Task ShouldDisplayMultipleSurveyQuestionRetrievedFromSurveyService()
     {
-        var ResponseSpanish1 = "SPA_1";
-        var ResponseSpanish2 = "SPA_2";
-        var ResponseSpanish3 = "SPA_3";
-        var ResponseEnglish1 = "ENG_1";
-        var ResponseEnglish2 = "ENG_2";
-        var ResponseEnglish3 = "ENG_3";
-        var Position = 1;
-        var Reverse = false;
-
-        var firstQuestion = new Question(new Dictionary<string, string>()
-            {
-                { Languages.SPANISH, "Primera pregunta en espanol" },
-                { Languages.ENGLISH, "First Question in english" },
-            }, new Dictionary<string, string[]>()
-            {
-                {
-                    Languages.SPANISH, new[] { ResponseSpanish1, ResponseSpanish2, ResponseSpanish3 }
-                },
-                {
-                    Languages.ENGLISH, new[] { ResponseEnglish1, ResponseEnglish2, ResponseEnglish3 }
-                }
-            }, Reverse,
-            HackmanSubComponent.InterpersonalPeerCoaching,
-            HackmanSubcategory.Delimited, HackmanComponent.SenseOfUrgency, Position);
-
-        var secondQuestion = new Question(new Dictionary<string, string>()
-            {
-                { Languages.SPANISH, "Segunda pregunta en espanol" },
-                { Languages.ENGLISH, "Second Question in english" },
-            }, new Dictionary<string, string[]>()
-            {
-                {
-                    Languages.SPANISH, new[] { ResponseSpanish1, ResponseSpanish2, ResponseSpanish3 }
-                },
-                {
-                    Languages.ENGLISH, new[] { ResponseEnglish1, ResponseEnglish2, ResponseEnglish3 }
-                }
-            }, Reverse,
-            HackmanSubComponent.InterpersonalPeerCoaching,
-            HackmanSubcategory.Delimited, HackmanComponent.SenseOfUrgency, Position);
-
+        SetupQuestions(out var firstQuestion, out var secondQuestion);
+        
         var questions = new List<Question>() { firstQuestion, secondQuestion };
 
         _surveyService.Setup(service => service.GetSurveyNotificationById(_surveyNotificationId))
             .ReturnsAsync(new SurveyNotification(Guid.NewGuid(), _surveyId, _memberId));
+        _cachedResponseService.Setup(service => service.GetBy(_surveyNotificationId))
+            .ReturnsAsync(new Dictionary<int, string>());
         _surveyService.Setup(service => service.GetSurveyQuestionsBySurveyId(_surveyId)).ReturnsAsync(questions);
 
         var appComponent =
@@ -201,6 +146,8 @@ public class SurveyQuestionsTest
     {
         _surveyService.Setup(service => service.GetSurveyNotificationById(_surveyNotificationId))
             .ReturnsAsync(new SurveyNotification(Guid.NewGuid(), _surveyId, _memberId));
+        _cachedResponseService.Setup(service => service.GetBy(_surveyNotificationId))
+            .ReturnsAsync(new Dictionary<int, string>());
         _surveyService.Setup(service => service.GetSurveyWithoutQuestionsById(_surveyId)).ThrowsAsync(new Exception());
 
         var appComponent = _ctx.RenderComponent<SurveyQuestions>(
@@ -212,51 +159,14 @@ public class SurveyQuestionsTest
     [Fact]
     public async Task ShouldSendAnswerSurveyDtoToSurveyServiceAndShowThankYouMessageInEnglishOnSubmit()
     {
-        var ResponseSpanish1 = "SPA_1";
-        var ResponseSpanish2 = "SPA_2";
-        var ResponseSpanish3 = "SPA_3";
-        var ResponseEnglish1 = "ENG_1";
-        var ResponseEnglish2 = "ENG_2";
-        var ResponseEnglish3 = "ENG_3";
-        var Position = 1;
-        var Reverse = false;
-
-        var firstQuestion = new Question(new Dictionary<string, string>()
-            {
-                { Languages.SPANISH, "Primera pregunta en espanol" },
-                { Languages.ENGLISH, "First Question in english" },
-            }, new Dictionary<string, string[]>()
-            {
-                {
-                    Languages.SPANISH, new[] { ResponseSpanish1, ResponseSpanish2, ResponseSpanish3 }
-                },
-                {
-                    Languages.ENGLISH, new[] { ResponseEnglish1, ResponseEnglish2, ResponseEnglish3 }
-                }
-            }, Reverse,
-            HackmanSubComponent.InterpersonalPeerCoaching,
-            HackmanSubcategory.Delimited, HackmanComponent.SenseOfUrgency, 1);
-
-        var secondQuestion = new Question(new Dictionary<string, string>()
-            {
-                { Languages.SPANISH, "Segunda pregunta en espanol" },
-                { Languages.ENGLISH, "Second Question in english" },
-            }, new Dictionary<string, string[]>()
-            {
-                {
-                    Languages.SPANISH, new[] { ResponseSpanish1, ResponseSpanish2, ResponseSpanish3 }
-                },
-                {
-                    Languages.ENGLISH, new[] { ResponseEnglish1, ResponseEnglish2, ResponseEnglish3 }
-                }
-            }, Reverse,
-            HackmanSubComponent.InterpersonalPeerCoaching,
-            HackmanSubcategory.Delimited, HackmanComponent.SenseOfUrgency, 2);
+        SetupQuestions(out var firstQuestion, out var secondQuestion);
 
         var questions = new List<Question>() { firstQuestion, secondQuestion };
 
         _surveyService.Setup(service => service.GetSurveyNotificationById(_surveyNotificationId))
             .ReturnsAsync(new SurveyNotification(Guid.NewGuid(), _surveyId, _memberId));
+        _cachedResponseService.Setup(service => service.GetBy(_surveyNotificationId))
+            .ReturnsAsync(new Dictionary<int, string>());
         _surveyService.Setup(service => service.GetSurveyQuestionsBySurveyId(_surveyId)).ReturnsAsync(questions);
 
         var appComponent =
@@ -295,51 +205,14 @@ public class SurveyQuestionsTest
     [Fact]
     public void ShouldShowUnableToSubmitSurveyResponseWhenServiceThrowsError()
     {
-        var ResponseSpanish1 = "SPA_1";
-        var ResponseSpanish2 = "SPA_2";
-        var ResponseSpanish3 = "SPA_3";
-        var ResponseEnglish1 = "ENG_1";
-        var ResponseEnglish2 = "ENG_2";
-        var ResponseEnglish3 = "ENG_3";
-        var Position = 1;
-        var Reverse = false;
-
-        var firstQuestion = new Question(new Dictionary<string, string>()
-            {
-                { Languages.SPANISH, "Primera pregunta en espanol" },
-                { Languages.ENGLISH, "First Question in english" },
-            }, new Dictionary<string, string[]>()
-            {
-                {
-                    Languages.SPANISH, new[] { ResponseSpanish1, ResponseSpanish2, ResponseSpanish3 }
-                },
-                {
-                    Languages.ENGLISH, new[] { ResponseEnglish1, ResponseEnglish2, ResponseEnglish3 }
-                }
-            }, Reverse,
-            HackmanSubComponent.InterpersonalPeerCoaching,
-            HackmanSubcategory.Delimited, HackmanComponent.SenseOfUrgency, 1);
-
-        var secondQuestion = new Question(new Dictionary<string, string>()
-            {
-                { Languages.SPANISH, "Segunda pregunta en espanol" },
-                { Languages.ENGLISH, "Second Question in english" },
-            }, new Dictionary<string, string[]>()
-            {
-                {
-                    Languages.SPANISH, new[] { ResponseSpanish1, ResponseSpanish2, ResponseSpanish3 }
-                },
-                {
-                    Languages.ENGLISH, new[] { ResponseEnglish1, ResponseEnglish2, ResponseEnglish3 }
-                }
-            }, Reverse,
-            HackmanSubComponent.InterpersonalPeerCoaching,
-            HackmanSubcategory.Delimited, HackmanComponent.SenseOfUrgency, 2);
+        SetupQuestions(out var firstQuestion, out var secondQuestion);
 
         var questions = new List<Question>() { firstQuestion, secondQuestion };
 
         _surveyService.Setup(service => service.GetSurveyNotificationById(_surveyNotificationId))
             .ReturnsAsync(new SurveyNotification(Guid.NewGuid(), _surveyId, _memberId));
+        _cachedResponseService.Setup(service => service.GetBy(_surveyNotificationId))
+            .ReturnsAsync(new Dictionary<int, string>());
         _surveyService.Setup(service => service.GetSurveyQuestionsBySurveyId(_surveyId)).ReturnsAsync(questions);
 
         var appComponent =
@@ -383,51 +256,14 @@ public class SurveyQuestionsTest
     [Fact]
     public async Task ShouldSendAnswerSurveyDtoToSurveyServiceAndShowThankYouMessageInSpanishOnSubmit()
     {
-        var ResponseSpanish1 = "SPA_1";
-        var ResponseSpanish2 = "SPA_2";
-        var ResponseSpanish3 = "SPA_3";
-        var ResponseEnglish1 = "ENG_1";
-        var ResponseEnglish2 = "ENG_2";
-        var ResponseEnglish3 = "ENG_3";
-        var Position = 1;
-        var Reverse = false;
-
-        var firstQuestion = new Question(new Dictionary<string, string>()
-            {
-                { Languages.SPANISH, "Primera pregunta en espanol" },
-                { Languages.ENGLISH, "First Question in english" },
-            }, new Dictionary<string, string[]>()
-            {
-                {
-                    Languages.SPANISH, new[] { ResponseSpanish1, ResponseSpanish2, ResponseSpanish3 }
-                },
-                {
-                    Languages.ENGLISH, new[] { ResponseEnglish1, ResponseEnglish2, ResponseEnglish3 }
-                }
-            }, Reverse,
-            HackmanSubComponent.InterpersonalPeerCoaching,
-            HackmanSubcategory.Delimited, HackmanComponent.SenseOfUrgency, 1);
-
-        var secondQuestion = new Question(new Dictionary<string, string>()
-            {
-                { Languages.SPANISH, "Segunda pregunta en espanol" },
-                { Languages.ENGLISH, "Second Question in english" },
-            }, new Dictionary<string, string[]>()
-            {
-                {
-                    Languages.SPANISH, new[] { ResponseSpanish1, ResponseSpanish2, ResponseSpanish3 }
-                },
-                {
-                    Languages.ENGLISH, new[] { ResponseEnglish1, ResponseEnglish2, ResponseEnglish3 }
-                }
-            }, Reverse,
-            HackmanSubComponent.InterpersonalPeerCoaching,
-            HackmanSubcategory.Delimited, HackmanComponent.SenseOfUrgency, 2);
-
+        SetupQuestions(out var firstQuestion, out var secondQuestion);
+        
         var questions = new List<Question>() { firstQuestion, secondQuestion };
 
         _surveyService.Setup(service => service.GetSurveyNotificationById(_surveyNotificationId))
             .ReturnsAsync(new SurveyNotification(Guid.NewGuid(), _surveyId, _memberId));
+        _cachedResponseService.Setup(service => service.GetBy(_surveyNotificationId))
+            .ReturnsAsync(new Dictionary<int, string>());
         _surveyService.Setup(service => service.GetSurveyQuestionsBySurveyId(_surveyId)).ReturnsAsync(questions);
 
         var appComponent =
@@ -466,4 +302,151 @@ public class SurveyQuestionsTest
         Assert.NotNull(thankYouTitleInSpanish);
     }
 
+    [Fact]
+    public void ShouldCallCachedResponseServiceWhenLoadingSurveyQuestions()
+    {
+        _surveyService.Setup(service => service.GetSurveyNotificationById(_surveyNotificationId))
+            .ReturnsAsync(new SurveyNotification(Guid.NewGuid(), _surveyId, _memberId));
+        _cachedResponseService.Setup(service => service.GetBy(_surveyNotificationId))
+            .ReturnsAsync(new Dictionary<int, string>());
+        
+        _ctx.RenderComponent<SurveyQuestions>(
+            ComponentParameter.CreateParameter("SurveyNotificationId", _surveyNotificationId)
+        );
+        
+        _cachedResponseService.Verify(service => service.GetBy(_surveyNotificationId), Times.Once);
+    }
+    
+    [Fact]
+    public void ShouldAssignResponsesFromCachedResponsesWhenLoadingSurveyQuestions()
+    {
+        SetupQuestions(out var firstQuestion, out var secondQuestion);
+        
+        var questions = new List<Question>() { firstQuestion, secondQuestion };
+        var question1Answer = firstQuestion.Responses[Languages.ENGLISH][1];
+
+        var cachedResponses = new Dictionary<int, string>(){{1, question1Answer}};
+        
+        _cachedResponseService.Setup(service => service.GetBy(_surveyNotificationId))
+            .ReturnsAsync(cachedResponses);
+        
+        _surveyService.Setup(service => service.GetSurveyNotificationById(_surveyNotificationId))
+            .ReturnsAsync(new SurveyNotification(Guid.NewGuid(), _surveyId, _memberId));
+        _surveyService.Setup(service => service.GetSurveyQuestionsBySurveyId(_surveyId)).ReturnsAsync(questions);
+
+        var appComponent =
+            _ctx.RenderComponent<SurveyQuestions>(
+                ComponentParameter.CreateParameter("SurveyNotificationId", _surveyNotificationId)
+            );
+        
+        var question1Answered = appComponent.Find($"input[value='{question1Answer}']");
+        Assert.Equal("checked", question1Answered.Attributes.GetNamedItem("data-testid")?.Value);
+    }
+
+    [Fact]
+    public void ShouldSaveEachResponseInCache()
+    {
+        SetupQuestions(out var firstQuestion, out var secondQuestion);
+        
+        var questions = new List<Question>() { firstQuestion, secondQuestion };
+        var question1Answer = firstQuestion.Responses[Languages.ENGLISH][1];
+        
+        _cachedResponseService.Setup(service => service.GetBy(_surveyNotificationId))
+            .ReturnsAsync(new Dictionary<int, string>());
+        
+        _surveyService.Setup(service => service.GetSurveyNotificationById(_surveyNotificationId))
+            .ReturnsAsync(new SurveyNotification(Guid.NewGuid(), _surveyId, _memberId));
+        _surveyService.Setup(service => service.GetSurveyQuestionsBySurveyId(_surveyId)).ReturnsAsync(questions);
+
+        var appComponent =
+            _ctx.RenderComponent<SurveyQuestions>(
+                ComponentParameter.CreateParameter("SurveyNotificationId", _surveyNotificationId)
+            );
+        
+        var question1Element = appComponent.Find($"input[value='{question1Answer}']");
+        Assert.NotNull(question1Element);
+        question1Element.Change(new ChangeEventArgs());
+        
+        var expectedCachedResponses = new Dictionary<int, string>(){{1, question1Answer}};
+        
+        _cachedResponseService.Verify(service => service.Save(_surveyNotificationId, expectedCachedResponses));
+    }
+
+    [Fact]
+    public void ShouldEmptyResponseInCacheWhenSubmit()
+    {
+        SetupQuestions(out var question, out _);
+        
+        var questions = new List<Question>() { question };
+        
+        _cachedResponseService.Setup(service => service.GetBy(_surveyNotificationId))
+            .ReturnsAsync(new Dictionary<int, string>());
+        
+        _surveyService.Setup(service => service.GetSurveyNotificationById(_surveyNotificationId))
+            .ReturnsAsync(new SurveyNotification(Guid.NewGuid(), _surveyId, _memberId));
+        _surveyService.Setup(service => service.GetSurveyQuestionsBySurveyId(_surveyId)).ReturnsAsync(questions);
+
+        var appComponent =
+            _ctx.RenderComponent<SurveyQuestions>(
+                ComponentParameter.CreateParameter("SurveyNotificationId", _surveyNotificationId)
+            );
+
+        var question1Element = FindQuestionResponse(appComponent, question, 1);
+        Assert.NotNull(question1Element);
+        question1Element.Change(new ChangeEventArgs());
+        
+        var survey = appComponent.Find("form[id='survey']");
+        survey.Submit();
+
+        _cachedResponseService.Verify(service => service.Clear(_surveyNotificationId));
+    }
+    
+    private IElement FindQuestionResponse(IRenderedComponent<SurveyQuestions> appComponent, Question question, int responseIndex)
+    {
+        return appComponent.Find($"input[id='{question.Position + "-" + responseIndex}']");
+    }
+
+    private void SetupQuestions(out Question firstQuestion, out Question secondQuestion)
+    {
+        var responseSpanish1 = "SPA_1";
+        var responseSpanish2 = "SPA_2";
+        var responseSpanish3 = "SPA_3";
+        var responseEnglish1 = "ENG_1";
+        var responseEnglish2 = "ENG_2";
+        var responseEnglish3 = "ENG_3";
+        var reverse = false;
+
+        firstQuestion = new Question(new Dictionary<string, string>()
+            {
+                { Languages.SPANISH, "Primera pregunta en espanol" },
+                { Languages.ENGLISH, "First Question in english" },
+            }, new Dictionary<string, string[]>()
+            {
+                {
+                    Languages.SPANISH, new[] { responseSpanish1, responseSpanish2, responseSpanish3 }
+                },
+                {
+                    Languages.ENGLISH, new[] { responseEnglish1, responseEnglish2, responseEnglish3 }
+                }
+            }, reverse,
+            HackmanSubComponent.InterpersonalPeerCoaching,
+            HackmanSubcategory.Delimited, HackmanComponent.SenseOfUrgency, 1);
+
+        secondQuestion = new Question(new Dictionary<string, string>()
+            {
+                { Languages.SPANISH, "Segunda pregunta en espanol" },
+                { Languages.ENGLISH, "Second Question in english" },
+            }, new Dictionary<string, string[]>()
+            {
+                {
+                    Languages.SPANISH, new[] { responseSpanish1, responseSpanish2, responseSpanish3 }
+                },
+                {
+                    Languages.ENGLISH, new[] { responseEnglish1, responseEnglish2, responseEnglish3 }
+                }
+            }, reverse,
+            HackmanSubComponent.InterpersonalPeerCoaching,
+            HackmanSubcategory.Delimited, HackmanComponent.SenseOfUrgency, 2);
+    }
+    
 }
