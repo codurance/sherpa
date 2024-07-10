@@ -43,6 +43,6 @@ public class AuthServiceTest
         await authService.DecorateWithToken(new HttpRequestMessage());
     
         navigationService.Verify(service => service.NavigateTo(It.Is<string>(uri => uri.Contains("authentication/login"))), Times.Once);
+        navigationService.VerifyGet(service => service.CurrentUri);
     }
-    
 }
