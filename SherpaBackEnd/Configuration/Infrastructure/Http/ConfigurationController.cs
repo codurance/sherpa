@@ -5,7 +5,7 @@ using SherpaBackEnd.Configuration.Domain;
 namespace SherpaBackEnd.Configuration.Infrastructure.Http;
 
 [ApiController]
-[Route("")]
+[Route("configuration")]
 public class ConfigurationController
 {
 
