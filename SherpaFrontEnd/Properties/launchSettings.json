@@ -15,7 +15,9 @@
       "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
       "applicationUrl": "https://localhost:7071;http://localhost:5191",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "COGNITO_AUTHORITY": "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_3Vr6XoNpq",
+        "COGNITO_CLIENT_ID": "4e3iqhodqo124t9mmt60lh72ju"
       }
     },
     "IIS Express": {

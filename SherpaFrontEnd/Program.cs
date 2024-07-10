@@ -41,5 +41,4 @@ builder.Services.AddOidcAuthentication(options =>
     options.ProviderOptions.PostLogoutRedirectUri = builder.HostEnvironment.BaseAddress + builder.Configuration["Cognito:PostLogoutRedirectUri"];
     options.ProviderOptions.ResponseType = "code";
 });
-
 await builder.Build().RunAsync();

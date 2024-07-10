@@ -3,6 +3,7 @@ using Amazon;
 using Amazon.Runtime;
 using Amazon.SimpleEmail;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Hosting.StaticWebAssets;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SherpaBackEnd.Email.Application;
@@ -23,8 +24,10 @@ using SherpaBackEnd.Template.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Load different environment json files
+StaticWebAssetsLoader.UseStaticWebAssets(builder.Environment, builder.Configuration);
 
+// Add services to the container.
 builder.Services.AddControllers()
     .AddJsonOptions(options => { options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter()); })
     .AddNewtonsoftJson();
@@ -86,8 +89,8 @@ builder.Services.AddScoped<ISurveyNotificationService, SurveyNotificationService
 builder.Services.AddScoped<ISurveyResponsesFileService, SurveyResponsesCsvFileService>();
 
 // Auth
-var validAudience = builder.Configuration["Cognito:AppClientId"].ToString();
-var validIssuer = builder.Configuration["Cognito:Authority"].ToString();
+var validAudience = Environment.GetEnvironmentVariable("COGNITO_CLIENT_ID");
+var validIssuer = Environment.GetEnvironmentVariable("COGNITO_AUTHORITY");
 
 // Register authentication schemes, and specify the default authentication scheme
 builder.Services
