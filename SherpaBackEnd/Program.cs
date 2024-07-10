@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting.StaticWebAssets;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using SherpaBackEnd.Configuration.Application;
+using SherpaBackEnd.Configuration.Domain;
+using SherpaBackEnd.Configuration.Infrastructure.Persistence;
 using SherpaBackEnd.Email.Application;
 using SherpaBackEnd.Shared.Infrastructure.Persistence;
 using SherpaBackEnd.Shared.Infrastructure.Serializers;
@@ -85,6 +88,8 @@ builder.Services.AddScoped<IEmailTemplateFactory, EmailTemplateFactory>(provider
     new EmailTemplateFactory(provider.GetService<IHttpContextAccessor>()!));
 builder.Services.AddScoped<IGuidService, GuidService>();
 builder.Services.AddScoped<ISurveyNotificationService, SurveyNotificationService>();
+builder.Services.AddScoped<IConfigurationService, ConfigurationService>();
+builder.Services.AddScoped<IConfigurationRepository, EnvironmentVariablesConfigurationRepository>();
 
 builder.Services.AddScoped<ISurveyResponsesFileService, SurveyResponsesCsvFileService>();
 
