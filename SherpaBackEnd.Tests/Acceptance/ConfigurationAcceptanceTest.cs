@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Moq;
 using SherpaBackEnd.Configuration.Application;
 using SherpaBackEnd.Configuration.Domain;
 using SherpaBackEnd.Configuration.Infrastructure.Http;
@@ -12,15 +13,15 @@ public class ConfigurationAcceptanceTest
     [Fact]
     public async void ShouldBeAbleToRetrieveConfiguration()
     {
-        var environmentVariablesService = new EnvironmentVariablesConfigurationRepository();
-        var configurationService = new ConfigurationService(environmentVariablesService);
-        
-        var configurationController = new ConfigurationController(configurationService);
-
         var cognitoClientId = "12345";
         var cognitoAuthority = "http://localhost";
-        
         var expected = new SherpaConfiguration(cognitoClientId, cognitoAuthority);
+        var mockConfiguration = new SherpaConfiguration(cognitoClientId, cognitoAuthority);
+        var configurationRepository = new Mock<IConfigurationRepository>();
+        configurationRepository.Setup(repository => repository.GetConfiguration()).ReturnsAsync(mockConfiguration);
+        var configurationService = new ConfigurationService(configurationRepository.Object);
+        
+        var configurationController = new ConfigurationController(configurationService);
         
         var response = await configurationController.GetConfig();
         
