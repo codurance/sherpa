@@ -5,7 +5,7 @@ using SherpaBackEnd.Configuration.Application;
 using SherpaBackEnd.Configuration.Domain;
 using SherpaBackEnd.Configuration.Infrastructure.Http;
 
-namespace SherpaBackEnd.Tests.Controllers;
+namespace SherpaBackEnd.Tests.Configuration.Infrastructure.Http;
 
 public class ConfigurationControllerTest
 {
