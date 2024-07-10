@@ -5,6 +5,7 @@ using Blazored.Toast;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using SherpaFrontEnd;
+using SherpaFrontEnd.Dtos;
 using SherpaFrontEnd.Serializers;
 using SherpaFrontEnd.Services;
 
@@ -34,6 +35,17 @@ builder.Services.AddBlazoredModal();
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddBlazoredToast();
 
+// POC
+var client = new HttpClient(){BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)};
+var httpRequestMessage =
+    new HttpRequestMessage(HttpMethod.Get, $"/survey/44177fd8-685f-4a13-9c88-e2a75f84eaec");
+
+var httpResponseMessage = await client.SendAsync(httpRequestMessage);
+var responseString = await httpResponseMessage.Content.ReadAsStringAsync();
+
+var result = JsonSerializer.Deserialize<SurveyWithoutQuestions>(responseString,
+    new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+Console.WriteLine("ClientID: " + builder.Configuration["Cognito:ClientId"]);
 builder.Services.AddOidcAuthentication(options =>
 {
     options.ProviderOptions.Authority = builder.Configuration["Cognito:Authority"];
