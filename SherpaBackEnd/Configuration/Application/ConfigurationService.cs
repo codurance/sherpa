@@ -13,6 +13,6 @@ public class ConfigurationService : IConfigurationService
 
     public async Task<SherpaConfiguration> GetConfiguration()
     {
-        throw new NotImplementedException();
+        return await _configurationRepository.GetConfiguration();
     }
 }
