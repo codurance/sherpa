@@ -1,4 +1,4 @@
-name: Upload backend pro
+name: Upload backend prod
 
 on:
   workflow_dispatch:
