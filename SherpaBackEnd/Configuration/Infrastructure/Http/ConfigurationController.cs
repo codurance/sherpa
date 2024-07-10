@@ -16,6 +16,7 @@ public class ConfigurationController
         _configurationService = configurationService;
     }
 
+    [HttpGet]
     public async Task<ActionResult<SherpaConfiguration>> GetConfig()
     {
         var sherpaConfiguration = await _configurationService.GetConfiguration();
