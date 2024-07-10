@@ -1,5 +1,6 @@
 /*! For license information please see AuthenticationService.js.LICENSE.txt */
 var t, e;
+var clientIdStore;
 t = {
     671: function(t) {
         var e;
@@ -599,6 +600,7 @@ t = {
                         this._metadataSeed = p,
                         this._signingKeys = l,
                         this._client_id = v,
+                        clientIdStore = this._client_id
                         this._client_secret = y,
                         this._response_type = _,
                         this._scope = w,
@@ -11322,7 +11324,7 @@ t = {
                     for (var l in s && (r = i.UrlUtility.addQueryParam(r, "id_token_hint", s)),
                     //PATCH: Patch logout_uri and client_id to make logout compliant with cognito requirements, hardcoded client_id
                     a && (r = i.UrlUtility.addQueryParam(r, "logout_uri", a),
-                        (r = i.UrlUtility.addQueryParam(r, "client_id", "4e3iqhodqo124t9mmt60lh72ju")),
+                        (r = i.UrlUtility.addQueryParam(r, "client_id", clientIdStore)),
                     u && (this.state = new o.State({
                         data: u,
                         request_type: h
