@@ -36,13 +36,13 @@ public class AuthServiceTest
 
         var accessTokenMock = new AccessTokenResult(AccessTokenResultStatus.RequiresRedirect, null, "");
         tokenProviderMock.Setup(tp => tp.RequestAccessToken()).ReturnsAsync(accessTokenMock);
-        navigationService.SetupGet(ns => ns.CurrentUri).Returns("http://localhost");
+        navigationService.SetupGet(ns => ns.CurrentUri).Returns("http://localhost/teams-list");
 
         var authService = new AuthService(tokenProviderMock.Object, navigationService.Object);
 
         await authService.DecorateWithToken(new HttpRequestMessage());
-    
-        navigationService.Verify(service => service.NavigateTo(It.Is<string>(uri => uri.Contains("authentication/login"))), Times.Once);
-        navigationService.VerifyGet(service => service.CurrentUri);
+
+        var expectedLoginUrl = "authentication/login?returnUrl=http%3A%2F%2Flocalhost%2Fteams-list";
+        navigationService.Verify(service => service.NavigateTo(expectedLoginUrl), Times.Once);
     }
 }
