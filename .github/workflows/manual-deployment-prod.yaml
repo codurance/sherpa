@@ -1,0 +1,55 @@
+name: Upload backend prod
+
+on:
+  workflow_dispatch:
+    # inputs:
+    #   branch:
+    #     description: "Branch"
+    #     required: true
+    #     default: "develop"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: "6.0"
+
+      - name: Install dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: |
+          cd SherpaBackEnd
+          dotnet build --configuration Release --no-restore
+          dotnet publish -c Release -f net6.0 -o ./publish --runtime linux-x64 /p:PublishProfile=EBDeploy
+
+      - name: Zip application
+        run: |
+          cd SherpaBackEnd/publish
+          zip -r ../sherpa-backend.zip .
+          cd ..
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_PRO }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_PRO }}
+          aws-region: eu-west-1
+
+      - name: Deploy artifact to S3 bucket
+        run: |
+          aws s3 cp SherpaBackEnd/sherpa-backend.zip s3://sherpa-source-code-versions-pro/sherpa-backend-1.${{ github.run_number }}.zip
+
+      # - name: Create application version
+      #   run: |
+      #     aws elasticbeanstalk create-application-version --application-name Sherpa --version-label 1.${{ github.run_number }} --source-bundle S3Bucket="sherpa-source-code-versions-pro",S3Key="sherpa-backend-1.${{ github.run_number }}.zip"
+
+      # - name: Update environment
+      #   run: |
+      #     aws elasticbeanstalk update-environment --environment-name Sherpa-prod --version-label 1.${{ github.run_number }}
