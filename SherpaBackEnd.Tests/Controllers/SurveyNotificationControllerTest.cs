@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Shared.Test.Helpers;
 using SherpaBackEnd.Exceptions;
-using SherpaBackEnd.Survey.Infrastructure.Http;
 using SherpaBackEnd.SurveyNotification.Application;
 using SherpaBackEnd.SurveyNotification.Infrastructure.Http;
 using SherpaBackEnd.SurveyNotification.Infrastructure.Http.Dto;

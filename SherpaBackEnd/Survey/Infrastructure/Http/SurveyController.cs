@@ -1,11 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Net.Http.Headers;
 using SherpaBackEnd.Exceptions;
 using SherpaBackEnd.Survey.Application;
 using SherpaBackEnd.Survey.Domain.Exceptions;
 using SherpaBackEnd.Survey.Infrastructure.Http.Dto;
-using SherpaFrontEnd.Dtos.Survey;
 using AnswerSurveyDto = SherpaBackEnd.Survey.Infrastructure.Http.Dto.AnswerSurveyDto;
 using IQuestion = SherpaBackEnd.Template.Domain.IQuestion;
 
