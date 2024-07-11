@@ -16,10 +16,7 @@ builder.Services.AddHttpClient("SherpaBackEnd", client =>
     client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
-builder.Services.Configure<JsonSerializerOptions>(options =>
-{
-    options.Converters.Add(new DateOnlyJsonConverter());
-});
+builder.Services.Configure<JsonSerializerOptions>(options => { options.Converters.Add(new DateOnlyJsonConverter()); });
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<INavigationService, NavigationService>();
@@ -34,12 +31,18 @@ builder.Services.AddBlazoredModal();
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddBlazoredToast();
 
+var client = new HttpClient() { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) };
+var environmentVariablesService = new EnvironmentVariablesService(client);
+var environmentVariables = await environmentVariablesService.GetVariables();
+
 builder.Services.AddOidcAuthentication(options =>
 {
-    options.ProviderOptions.Authority = builder.Configuration["Cognito:Authority"];
-    options.ProviderOptions.ClientId = builder.Configuration["Cognito:ClientId"];
-    options.ProviderOptions.RedirectUri = builder.HostEnvironment.BaseAddress + builder.Configuration["Cognito:RedirectUri"];
-    options.ProviderOptions.PostLogoutRedirectUri = builder.HostEnvironment.BaseAddress + builder.Configuration["Cognito:PostLogoutRedirectUri"];
+    options.ProviderOptions.Authority = environmentVariables?.CognitoAuthority;
+    options.ProviderOptions.ClientId = environmentVariables?.CognitoClientId;
+    options.ProviderOptions.RedirectUri =
+        builder.HostEnvironment.BaseAddress + builder.Configuration["Cognito:RedirectUri"];
+    options.ProviderOptions.PostLogoutRedirectUri = builder.HostEnvironment.BaseAddress +
+                                                    builder.Configuration["Cognito:PostLogoutRedirectUri"];
     options.ProviderOptions.ResponseType = "code";
 });
 await builder.Build().RunAsync();
