@@ -15,7 +15,7 @@ public class EnvironmentVariablesService
     public async Task<EnvironmentVariables?> GetVariables()
     {
         var httpRequestMessage =
-            new HttpRequestMessage(HttpMethod.Get, "/configuration");
+            new HttpRequestMessage(HttpMethod.Get, "/configuration-variables");
 
         var httpResponseMessage = await _httpClient.SendAsync(httpRequestMessage);
         var responseString = await httpResponseMessage.Content.ReadAsStringAsync();

@@ -1,17 +1,17 @@
-namespace SherpaBackEnd.Configuration.Domain;
+namespace SherpaBackEnd.ConfigurationVariables.Domain;
 
-public class SherpaConfiguration
+public class SherpaConfigurationVariables
 {
+    public string CognitoClientId { get; }
+    public string CognitoAuthority { get; }
     
-    public string CognitoClientId { get; init; }
-    public string CognitoAuthority { get; init; }
-    public SherpaConfiguration(string cognitoClientId, string cognitoAuthority)
+    public SherpaConfigurationVariables(string cognitoClientId, string cognitoAuthority)
     {
         CognitoClientId = cognitoClientId;
         CognitoAuthority = cognitoAuthority;
     }
 
-    protected bool Equals(SherpaConfiguration other)
+    protected bool Equals(SherpaConfigurationVariables other)
     {
         return CognitoClientId == other.CognitoClientId && CognitoAuthority == other.CognitoAuthority;
     }
@@ -21,7 +21,7 @@ public class SherpaConfiguration
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != this.GetType()) return false;
-        return Equals((SherpaConfiguration)obj);
+        return Equals((SherpaConfigurationVariables)obj);
     }
 
     public override int GetHashCode()

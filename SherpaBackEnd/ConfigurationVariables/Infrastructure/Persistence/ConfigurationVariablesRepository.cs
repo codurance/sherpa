@@ -1,15 +1,15 @@
-using SherpaBackEnd.Configuration.Domain;
+using SherpaBackEnd.ConfigurationVariables.Domain;
 
-namespace SherpaBackEnd.Configuration.Infrastructure.Persistence;
+namespace SherpaBackEnd.ConfigurationVariables.Infrastructure.Persistence;
 
-public class EnvironmentVariablesConfigurationRepository : IConfigurationRepository
+public class ConfigurationVariablesRepository : IConfigurationVariablesRepository
 {
-    public Task<SherpaConfiguration> GetConfiguration()
+    public Task<SherpaConfigurationVariables> GetConfigurationVariables()
     {
         var cognitoClientId = Environment.GetEnvironmentVariable("COGNITO_CLIENT_ID");
         var cognitoAuthority = Environment.GetEnvironmentVariable("COGNITO_AUTHORITY");
         
-        var sherpaConfiguration = new SherpaConfiguration(
+        var sherpaConfiguration = new SherpaConfigurationVariables(
             cognitoClientId ?? string.Empty,
             cognitoAuthority ?? string.Empty
         );

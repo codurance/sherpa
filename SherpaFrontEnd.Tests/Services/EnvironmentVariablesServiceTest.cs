@@ -29,7 +29,7 @@ public class EnvironmentVariablesServiceTest
             StatusCode = HttpStatusCode.OK,
             Content = new StringContent(environmentVariablesJson)
         };
-        _handlerMock.SetupRequest(HttpMethod.Get, "/configuration", environmentVariablesResponse);
+        _handlerMock.SetupRequest(HttpMethod.Get, "/configuration-variables", environmentVariablesResponse);
 
         var environmentVariablesService = new EnvironmentVariablesService(_httpClient);
         var actualEnvironmentVariables = await environmentVariablesService.GetVariables();
