@@ -1,4 +1,4 @@
-name: Upload backend
+name: Upload backend staging
 
 on:
   push:
