@@ -2,11 +2,6 @@ name: Upload backend prod
 
 on:
   workflow_dispatch:
-    inputs:
-      branch:
-        description: "Branch"
-        required: true
-        default: "develop"
 
 jobs:
   deploy:
