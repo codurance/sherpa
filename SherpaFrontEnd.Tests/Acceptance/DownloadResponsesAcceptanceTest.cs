@@ -76,7 +76,7 @@ public class DownloadResponsesAcceptanceTest
         var surveys = new List<Survey>()
         {
             new Survey(surveyId, new User(Guid.NewGuid(), "Lucia"), Status.Draft, new DateTime(), surveyTitle,
-                "Description", Array.Empty<Response>(), null, new Template("Hackman"))
+                "Description", Array.Empty<Response>(), new Team(), new Template("Hackman"))
         };
         var surveyJson = await JsonContent.Create(surveys).ReadAsStringAsync();
         var surveyResponse = new HttpResponseMessage()
@@ -142,7 +142,7 @@ public class DownloadResponsesAcceptanceTest
         var surveys = new List<Survey>()
         {
             new Survey(surveyId, new User(Guid.NewGuid(), "Lucia"), Status.Draft, new DateTime(), "title",
-                "Description", Array.Empty<Response>(), null, new Template("Hackman"))
+                "Description", Array.Empty<Response>(), new Team(), new Template("Hackman"))
         };
         var surveyJson = await JsonContent.Create(surveys).ReadAsStringAsync();
         var surveyResponse = new HttpResponseMessage()
