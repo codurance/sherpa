@@ -1,0 +1,25 @@
+﻿@inject NavigationManager NavigationManager
+
+<div class="py-5 flex justify-center items-center flex-col bg-indigo-50 rounded-3xl gap-2.5">
+    <img src="/img/empty-survey-icon.svg" alt="Empty Survey Icon" class="w-8 h-8">
+    <p class="text-center text-primary-dark-principal text-xl font-semibold leading-tight mb-1">
+        @Title
+    </p>
+    <p class="text-center text-gray-700 text-base">
+        @Description
+    </p>
+    <button @onclick="RedirectToLaunchSurveyPage" type="button" class="bg-primary-red-principal-800 hover:bg-primary-red-900 rounded-lg px-6 py-2 text-white font-semibold text-sm">
+        @Button
+    </button>
+</div>
+
+@code {
+    [Parameter] public string? Title { get; set; }
+    [Parameter] public string? Description { get; set; }
+    [Parameter] public string? Button { get; set; }
+
+    private void RedirectToLaunchSurveyPage()
+    {
+        NavigationManager.NavigateTo(NavigationManager.BaseUri + "survey/delivery-settings?template=Hackman%20Model");
+    }
+}

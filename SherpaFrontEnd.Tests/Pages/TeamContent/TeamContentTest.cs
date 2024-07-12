@@ -1,13 +1,10 @@
-﻿using AngleSharp.Dom;
-using Bunit;
+﻿using Bunit;
 using Bunit.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Shared.Test.Helpers;
 using SherpaFrontEnd.Dtos.Survey;
 using SherpaFrontEnd.Dtos.Team;
-using SherpaFrontEnd.Model;
-using SherpaFrontEnd.Pages;
 using SherpaFrontEnd.Pages.TeamContent;
 using SherpaFrontEnd.Pages.TeamContent.Components;
 using SherpaFrontEnd.Services;

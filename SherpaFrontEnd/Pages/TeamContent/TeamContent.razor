@@ -3,6 +3,7 @@
 @using SherpaFrontEnd.Dtos.Survey
 @using SherpaFrontEnd.Dtos.Team
 @using SherpaFrontEnd.Pages.TeamContent.Components
+@using SherpaFrontEnd.Core.Components
 @inject ITeamDataService TeamDataService
 @inject ISurveyService SurveyService
 @inject IToastNotificationService ToastService
@@ -38,18 +39,10 @@
             }
             @if (Surveys != null && Surveys.Count == 0)
             {
-                <div class="py-5 flex justify-center items-center flex-col bg-indigo-50 rounded-3xl gap-2.5">
-                    <img src="/img/empty-survey-icon.svg" alt="Empty Survey Icon" class="w-8 h-8">
-                    <p class="text-center text-primary-dark-principal text-xl font-semibold leading-tight mb-1">
-                        You don’t have any surveys yet
-                    </p>
-                    <p class="text-center text-gray-700 text-base">
-                        Let's begin the journey towards a stronger, more effective team!
-                    </p>
-                    <button @onclick="RedirectToLaunchSurveyPage" type="button" class="bg-primary-red-principal-800 hover:bg-primary-red-900 rounded-lg px-6 py-2 text-white font-semibold text-sm">
-                        Launch first survey
-                    </button>
-                </div>
+                <SurveysEmpty
+                    Title="You don’t have any surveys yet"
+                    Description="Let's begin the journey towards a stronger, more effective team!"
+                    Button="Launch first survey" />
             }
         </TabPage>
         <TabPage Text="Members" Args="@Team.Members">
