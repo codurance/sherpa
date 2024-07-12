@@ -149,84 +149,14 @@ public class SurveysAcceptanceTest
         var newTeamId = Guid.NewGuid();
         var newTeam = new Team(newTeamId, newTeamName);
         
-        _guidService.Setup(service => service.GenerateRandomGuid()
-        ).Returns(newTeamId);
-
-        var emptyTeamsList = new List<Team>(){};
-        var emptyTeamListJson = await JsonContent.Create(emptyTeamsList).ReadAsStringAsync();
-        var emptyTeamsListResponse = new HttpResponseMessage()
-        {
-            StatusCode = HttpStatusCode.OK,
-            Content = new StringContent(emptyTeamListJson)
-        };
+        await SetupSurveyForTeam(newTeam);
         
-        _httpHandlerMock.SetupRequest(HttpMethod.Get, "/team",emptyTeamsListResponse );
-        
-        var creationResponse = new HttpResponseMessage()
-        {
-            StatusCode = HttpStatusCode.Created,
-        };
-        
-        _httpHandlerMock.SetupRequest(HttpMethod.Post,"",creationResponse);
-        
-        var singleTeamJson = await JsonContent.Create(newTeam).ReadAsStringAsync();
-        var singleTeamResponse = new HttpResponseMessage()
-        {
-            StatusCode = HttpStatusCode.OK,
-            Content = new StringContent(singleTeamJson)
-        };
-        
-        _httpHandlerMock.SetupRequest(HttpMethod.Get, $"/team/{newTeamId.ToString()}", singleTeamResponse);
-        
-        var userOne = new User(Guid.NewGuid(), "user");
-        var SurveyList = new List<Survey>()
-        {
-            new Survey(Guid.NewGuid(), userOne, Status.Draft, new DateTime(), "title", "description",
-                Array.Empty<Response>(), newTeam, new Template("template"))
-        };
-        var SurveyListJson = await JsonContent.Create(SurveyList).ReadAsStringAsync();
-        var SurveyListResponse = new HttpResponseMessage()
-        {
-            StatusCode = HttpStatusCode.OK,
-            Content = new StringContent(SurveyListJson)
-        };
-        
-        _httpHandlerMock.SetupRequest(HttpMethod.Get, $"/team/{newTeamId.ToString()}/surveys",SurveyListResponse );
-
         var appComponent = _testCtx.RenderComponent<App>();
         
-        var teamsListPage = "teams-list-page";
-        var teamsPageLink = appComponent.Find($"a[href='{teamsListPage}']");
-        Assert.NotNull(teamsPageLink);
+        NavigateToTeamPage(appComponent, newTeam);
 
-        _navMan.NavigateTo($"/{teamsListPage}");
-        appComponent.WaitForAssertion(() => Assert.Equal($"http://localhost/teams-list-page", _navMan.Uri));
-
-        var createNewTeamButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Create new team");
-        Assert.NotNull(createNewTeamButton);
-
-        createNewTeamButton.Click();
+        GoToSurveysTab(appComponent);
         
-        var teamNameLabel = appComponent.FindElementByCssSelectorAndTextContent("label", "Team name");
-        var teamNameInputId = teamNameLabel.Attributes.GetNamedItem("for");
-        var teamNameInput = appComponent.Find($"#{teamNameInputId.TextContent}");
-        Assert.NotNull(teamNameInput);
-
-        teamNameInput.Change(newTeamName);
-        
-        var confirmButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Confirm");
-        Assert.NotNull(confirmButton);
-
-        confirmButton.Click();
-        
-        appComponent.WaitForAssertion(() => Assert.Equal($"http://localhost/team-content/{newTeamId.ToString()}", _navMan.Uri));
-        
-        var teamSurveysTabPage = appComponent.FindElementByCssSelectorAndTextContent("a:not(a[href])", "Surveys");
-        Assert.NotNull(teamSurveysTabPage);
-        
-        teamSurveysTabPage.Click();
-        
-        appComponent.WaitForAssertion(() => Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("h2", "All surveys launched in the team")));
         Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("button", "Launch new survey"));
     }
     
