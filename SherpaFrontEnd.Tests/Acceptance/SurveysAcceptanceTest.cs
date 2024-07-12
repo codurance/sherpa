@@ -229,4 +229,108 @@ public class SurveysAcceptanceTest
         appComponent.WaitForAssertion(() => Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("h2", "All surveys launched in the team")));
         Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("button", "Launch new survey"));
     }
+    
+    [Fact]
+    public async Task ShouldBeAbleToViewParticipationRateInSurveyPageFromSurveyTabWhenUserHasSurveys()
+    {
+        const string newTeamName = "Team with surveys";
+        var newTeamId = Guid.NewGuid();
+        var newTeam = new Team(newTeamId, newTeamName);
+
+        var survey = await SetupSurveyForTeam(newTeam);
+        
+        var appComponent = _testCtx.RenderComponent<App>();
+        
+        NavigateToTeamPage(appComponent, newTeam);
+
+        GoToSurveysTab(appComponent);
+
+        var participantsElement = appComponent.FindElementByCssSelectorAndTextContent("div",$"{survey.Responses.Length} / {survey.Team.Members.Count}");
+        Assert.NotNull(participantsElement);
+    }
+    
+
+    private async Task<Survey> SetupSurveyForTeam(Team team)
+    {
+        _guidService.Setup(service => service.GenerateRandomGuid()
+        ).Returns(team.Id);
+
+        var emptyTeamsList = new List<Team>(){};
+        var emptyTeamListJson = await JsonContent.Create(emptyTeamsList).ReadAsStringAsync();
+        var emptyTeamsListResponse = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(emptyTeamListJson)
+        };
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, "/team",emptyTeamsListResponse );
+        
+        var creationResponse = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.Created,
+        };
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Post,"",creationResponse);
+        
+        var singleTeamJson = await JsonContent.Create(team).ReadAsStringAsync();
+        var singleTeamResponse = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(singleTeamJson)
+        };
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, $"/team/{team.Id.ToString()}", singleTeamResponse);
+        
+        var userOne = new User(Guid.NewGuid(), "user");
+        var survey = new Survey(Guid.NewGuid(), userOne, Status.InProgress, new DateTime(), "title", "description",
+            new []{new Response()}, team, new Template("template"));
+        var surveyList = new List<Survey>(){ survey };
+        var surveyListJson = await JsonContent.Create(surveyList).ReadAsStringAsync();
+        var surveyListResponse = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(surveyListJson)
+        };
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, $"/team/{team.Id.ToString()}/surveys",surveyListResponse );
+        return survey;
+    }
+    
+    private void NavigateToTeamPage(IRenderedComponent<App> appComponent, Team team)
+    {
+        var teamsListPage = "teams-list-page";
+        var teamsPageLink = appComponent.Find($"a[href='{teamsListPage}']");
+        Assert.NotNull(teamsPageLink);
+
+        _navMan.NavigateTo($"/{teamsListPage}");
+        appComponent.WaitForAssertion(() => Assert.Equal($"http://localhost/teams-list-page", _navMan.Uri));
+
+        var createNewTeamButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Create new team");
+        Assert.NotNull(createNewTeamButton);
+
+        createNewTeamButton.Click();
+        
+        var teamNameLabel = appComponent.FindElementByCssSelectorAndTextContent("label", "Team name");
+        var teamNameInputId = teamNameLabel.Attributes.GetNamedItem("for");
+        var teamNameInput = appComponent.Find($"#{teamNameInputId.TextContent}");
+        Assert.NotNull(teamNameInput);
+
+        teamNameInput.Change(team.Name);
+        
+        var confirmButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Confirm");
+        Assert.NotNull(confirmButton);
+
+        confirmButton.Click();
+        appComponent.WaitForAssertion(() => Assert.Equal($"http://localhost/team-content/{team.Id.ToString()}", _navMan.Uri));
+    }
+    
+    private static void GoToSurveysTab(IRenderedComponent<App> appComponent)
+    {
+        var teamSurveysTabPage = appComponent.FindElementByCssSelectorAndTextContent("a:not(a[href])", "Surveys");
+        Assert.NotNull(teamSurveysTabPage);
+        
+        teamSurveysTabPage.Click();
+        
+        appComponent.WaitForAssertion(() => Assert.NotNull(appComponent.FindElementByCssSelectorAndTextContent("h2", "All surveys launched in the team")));
+    }
 }

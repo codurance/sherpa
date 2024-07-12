@@ -19,8 +19,11 @@ public class SurveyTableTest
     {
         var userOne = new User(Guid.NewGuid(), "testUser");
         const string newTeamName = "Team with survey";
+        
+        var teamMemberId = Guid.NewGuid();
+        var teamMember = new TeamMember(teamMemberId, "Some name", "Some position", "some@email.com");
         var testTeamId = Guid.NewGuid();
-        var testTeam = new Team(testTeamId, newTeamName);
+        var testTeam = new Team(testTeamId, newTeamName, new List<TeamMember> { teamMember });
 
         var testSurvey = new List<Survey>
         {
@@ -53,6 +56,7 @@ public class SurveyTableTest
             Assert.NotNull(rows.FirstOrDefault(element => element.ToMarkup().Contains(survey.Template.Name), null));
             Assert.NotNull(rows.FirstOrDefault(element => element.ToMarkup().Contains(survey.Coach.Name), null));
             Assert.NotNull(rows.FirstOrDefault(element => element.ToMarkup().Contains(Status.Draft.ToString()), null));
+            Assert.NotNull(rows.FirstOrDefault(element => element.ToMarkup().Contains($"{survey.Responses.Length} / {survey.Team.Members.Count}"), null));
         }
     }
 }
