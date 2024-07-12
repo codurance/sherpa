@@ -1,7 +1,7 @@
 using Bunit;
 using Bunit.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
-using SherpaFrontEnd.Core.Components;
+using SherpaFrontEnd.Pages.TeamContent.Components;
 
 namespace BlazorApp.Tests.Components;
 
