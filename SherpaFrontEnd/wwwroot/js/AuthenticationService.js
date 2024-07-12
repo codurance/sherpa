@@ -11322,7 +11322,7 @@ t = {
                         throw n.Log.error("SignoutRequest.ctor: No url passed"),
                         new Error("url");
                     for (var l in s && (r = i.UrlUtility.addQueryParam(r, "id_token_hint", s)),
-                    //PATCH: Patch logout_uri and client_id to make logout compliant with cognito requirements, hardcoded client_id
+                    //PATCH: Patch logout_uri and client_id to make logout compliant with cognito requirements
                     a && (r = i.UrlUtility.addQueryParam(r, "logout_uri", a),
                         (r = i.UrlUtility.addQueryParam(r, "client_id", clientIdStore)),
                     u && (this.state = new o.State({
