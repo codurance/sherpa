@@ -21,4 +21,11 @@ public class Team
         Id = id;
         Name = name;
     }
+    
+    public Team(Guid id, string name, List<TeamMember> members)
+    {
+        Id = id;
+        Name = name;
+        Members = members;
+    }
 }
