@@ -21,12 +21,22 @@
 
     <TabControl InitialTab="@Tab">
         <TabPage Text="Analysis">
-            <button @onclick="RedirectToLaunchSurveyPage" type="button" class="bg-primary-red-principal-800 hover:bg-primary-red-900 rounded-lg px-6 py-2 text-white font-semibold text-sm">
-                Launch new survey
-            </button>
+            @if (Surveys is { Count: > 0 })
+            {
+                <button @onclick="RedirectToLaunchSurveyPage" type="button" class="bg-primary-red-principal-800 hover:bg-primary-red-900 rounded-lg px-6 py-2 text-white font-semibold text-sm">
+                    Launch new survey
+                </button>
+            }
+            @if (Surveys is { Count: 0 })
+            {
+                <SurveysEmpty
+                    Title="Here you will see the analysis reports from the surveys"
+                    Description="Let's begin the journey towards a stronger, more effective team!"
+                    Button="Launch first survey"/>
+            }
         </TabPage>
         <TabPage Text="Surveys" Args="@Surveys">
-            @if (Surveys != null && Surveys.Count > 0)
+            @if (Surveys is { Count: > 0 })
             {
                 <div class="my-5 flex justify-between items-center rounded-3xl gap-2.5">
                     <h2 class="flex-grow text-title-h3 text-primary-dark-principal">All surveys launched in the team</h2>
@@ -37,7 +47,7 @@
                 </div>
                 <SurveyTable DownloadSurveyResponses="@DownloadSurveyResponses" Surveys="Surveys" Flags="SurveyFlags ?? new SurveyTableFeatureFlags()"/>
             }
-            @if (Surveys != null && Surveys.Count == 0)
+            @if (Surveys is { Count: 0 })
             {
                 <SurveysEmpty
                     Title="You don’t have any surveys yet"

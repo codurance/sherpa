@@ -39,7 +39,8 @@ public class SurveysEmptyTest
     [Fact]
     public void ShouldRedirectToCreateSurveyPageWhenButtonClicked()
     {
-        var appComponent = _testContext.RenderComponent<SurveysEmpty>();
+        var buttonText = "Launch first survey";
+        var appComponent = _testContext.RenderComponent<SurveysEmpty>(ComponentParameter.CreateParameter("Button", buttonText));
 
         var launchSurveyButton = appComponent.FindElementByCssSelectorAndTextContent("button", "Launch first survey");
         Assert.NotNull(launchSurveyButton);
