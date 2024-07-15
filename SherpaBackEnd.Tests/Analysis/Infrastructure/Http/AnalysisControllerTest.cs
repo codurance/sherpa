@@ -1,14 +1,14 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Moq;
 using Shared.Test.Helpers;
 using SherpaBackEnd.Analysis.Application;
 using SherpaBackEnd.Analysis.Infrastructure.Http;
 using SherpaBackEnd.Analysis.Infrastructure.Http.Dto;
-using SherpaBackEnd.ConfigurationVariables.Domain;
 
-namespace SherpaBackEnd.Tests.Acceptance;
+namespace SherpaBackEnd.Tests.Analysis.Infrastructure.Http;
 
-public class AnalysisAcceptanceTest
+public class AnalysisControllerTest
 {
     [Fact]
     public async Task ShouldBeAbleToRetrieveTheGeneralResultsFromATeamId()
@@ -21,8 +21,9 @@ public class AnalysisAcceptanceTest
         var series = new List<ColumnSeries<double>>() { survey1, survey2 };
         var columnChart = new ColumnChart<double>(categories, series, 1);
         var expected = new GeneralResultsDto(columnChart);
-        var analysisService = new AnalysisService();
-        var analysisController = new AnalysisController(analysisService);
+        var analysisServiceMock = new Mock<IAnalysisService>();
+        analysisServiceMock.Setup(analysisService => analysisService.GetGeneralResults()).ReturnsAsync(expected);
+        var analysisController = new AnalysisController(analysisServiceMock.Object);
         
         var response = await analysisController.GetGeneralResults();
         
@@ -32,4 +33,5 @@ public class AnalysisAcceptanceTest
         
         CustomAssertions.StringifyEquals(expected, generalResults);
     }
+
 }
