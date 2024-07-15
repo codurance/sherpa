@@ -3,6 +3,7 @@ using Bunit;
 using Bunit.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
+using Newtonsoft.Json;
 using Shared.Test.Helpers;
 using SherpaFrontEnd.Dtos.Analysis;
 using SherpaFrontEnd.Dtos.Survey;
@@ -11,6 +12,7 @@ using SherpaFrontEnd.Pages.TeamContent;
 using SherpaFrontEnd.Pages.TeamContent.Components;
 using SherpaFrontEnd.Services;
 using Xunit.Abstractions;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace BlazorApp.Tests.Pages;
 
@@ -40,6 +42,7 @@ public class TeamContentTest
         _testContext.Services.AddSingleton<IGuidService>(_mockGuidService.Object);
         _testContext.Services.AddSingleton<IToastNotificationService>(_mockToastService.Object);
         _testContext.Services.AddSingleton<IAnalysisService>(_mockAnalysisService.Object);
+        _testContext.JSInterop.SetupVoid("generateColumnsChart", _ => true);
         _navManager = _testContext.Services.GetRequiredService<FakeNavigationManager>();
     }
 
@@ -491,17 +494,16 @@ public class TeamContentTest
             new Survey(Guid.NewGuid(), userOne, Status.Draft, new DateTime(), "title", "description",
                 Array.Empty<Response>(), team, new Template("template"))
         });
+        var generalResultsDto = SetupGeneralResultsDto();
+        _mockAnalysisService.Setup(service => service.GetGeneralResults(team.Id)).ReturnsAsync(generalResultsDto);
 
         _mockTeamService.Setup(m => m.GetTeamById(It.IsAny<Guid>())).ReturnsAsync(team);
         var teamContentComponent =
             _testContext.RenderComponent<TeamContent>(ComponentParameter.CreateParameter("TeamId", teamId));
-
-        var generalResultsDto = SetupGeneralResultsDto();
-        _mockAnalysisService.Setup(service => service.GetGeneralResults(team.Id)).ReturnsAsync(generalResultsDto);
         
         var jsRuntimeInvocation = _testContext.JSInterop.Invocations.ToList().Find(invocation => invocation.Identifier.Equals("generateColumnsChart"));
         Assert.NotNull(jsRuntimeInvocation.Identifier);
-        Assert.Contains(generalResultsDto.ColumnChart, jsRuntimeInvocation.Arguments);
+        Assert.Equal(generalResultsDto.ColumnChart, jsRuntimeInvocation.Arguments[1]);
         var generalResultsColumnChartId = "general-results-column-chart";
         Assert.Contains(generalResultsColumnChartId, jsRuntimeInvocation.Arguments);
         var divToRenderColumnChart = teamContentComponent.Find($"div[id='{generalResultsColumnChartId}']");

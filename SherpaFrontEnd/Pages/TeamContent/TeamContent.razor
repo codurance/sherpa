@@ -4,6 +4,7 @@
 @using SherpaFrontEnd.Dtos.Team
 @using SherpaFrontEnd.Pages.TeamContent.Components
 @using SherpaFrontEnd.Core.Components
+@using SherpaFrontEnd.Dtos.Analysis
 @inject ITeamDataService TeamDataService
 @inject ISurveyService SurveyService
 @inject IToastNotificationService ToastService
@@ -24,9 +25,9 @@
         <TabPage Text="Analysis">
             @if (Surveys is { Count: > 0 })
             {
-                <button @onclick="RedirectToLaunchSurveyPage" type="button" class="bg-primary-red-principal-800 hover:bg-primary-red-900 rounded-lg px-6 py-2 text-white font-semibold text-sm">
-                    Launch new survey
-                </button>
+                <div id="@_generalResultsColumnChartId">
+                    
+                </div>
             }
             @if (Surveys is { Count: 0 })
             {
@@ -70,12 +71,15 @@
 
     [Parameter] public string Tab { get; set; }
     [Parameter] public SurveyTableFeatureFlags? SurveyFlags { get; set; }
+    private string _generalResultsColumnChartId = "general-results-column-chart";
 
     public Team? Team { get; set; }
 
     private List<string> Emails { get; set; } = new();
 
     private List<Survey>? Surveys { get; set; }
+    
+    private GeneralResultsDto GeneralResults { get; set; }
 
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
 
@@ -84,7 +88,7 @@
         await FetchTeam();
         Emails = Team!.Members.Select(m => m.Email).ToList();
         Surveys = await SurveyService.GetAllSurveysByTeam(TeamId);
-        await AnalysisService.GetGeneralResults(TeamId);
+        GeneralResults = await AnalysisService.GetGeneralResults(TeamId);
     }
 
 
@@ -123,6 +127,11 @@
     private void RedirectToLaunchSurveyPage()
     {
         NavigationManager.NavigateTo(NavigationManager.BaseUri + "survey/delivery-settings?template=Hackman%20Model");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await Js.InvokeVoidAsync("generateColumnsChart", _generalResultsColumnChartId, GeneralResults.ColumnChart);
     }
 
 }
