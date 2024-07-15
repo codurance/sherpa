@@ -6,8 +6,6 @@ using Moq;
 using Shared.Test.Helpers;
 using SherpaFrontEnd.Dtos.Survey;
 using SherpaFrontEnd.Dtos.Team;
-using SherpaFrontEnd.Model;
-using SherpaFrontEnd.Pages;
 using SherpaFrontEnd.Pages.TeamContent;
 using SherpaFrontEnd.Pages.TeamContent.Components;
 using SherpaFrontEnd.Services;
@@ -54,14 +52,13 @@ public class TeamContentTest
         _mockTeamService.Setup(m => m.GetTeamById(It.IsAny<Guid>())).ReturnsAsync(team);
         _mockSurveyService.Setup(m => m.GetAllSurveysByTeam(It.IsAny<Guid>())).ReturnsAsync(new List<Survey>());
 
-
         var teamDetailsPage = _testContext.RenderComponent<TeamContent>();
         teamDetailsPage.WaitForAssertion(() =>
         {
             Assert.NotNull(teamDetailsPage.FindElementByCssSelectorAndTextContent("h1", teamName));
         });
         var analysisTab = teamDetailsPage.FindElementByCssSelectorAndTextContent("li", "Analysis");
-        var launchSurveyButton = teamDetailsPage.FindElementByCssSelectorAndTextContent("button", "Launch new survey");
+        var launchSurveyButton = teamDetailsPage.FindElementByCssSelectorAndTextContent("button", "Launch first survey");
 
         Assert.NotNull(analysisTab);
         Assert.NotNull(launchSurveyButton);
@@ -103,11 +100,8 @@ public class TeamContentTest
         _mockTeamService.Setup(m => m.GetTeamById(It.IsAny<Guid>())).ReturnsAsync(team);
         var teamContentComponent =
             _testContext.RenderComponent<TeamContent>(ComponentParameter.CreateParameter("TeamId", teamId));
-
-        var surveyTabPage = teamContentComponent.FindElementByCssSelectorAndTextContent("a:not(a[href])", "Surveys");
-        Assert.NotNull(surveyTabPage);
-        surveyTabPage.Click();
-
+        
+        GoToTab(teamContentComponent, "Surveys");
 
         teamContentComponent.WaitForAssertion(() =>
         {
@@ -143,11 +137,8 @@ public class TeamContentTest
         _mockTeamService.Setup(m => m.GetTeamById(It.IsAny<Guid>())).ReturnsAsync(team);
         var teamContentComponent =
             _testContext.RenderComponent<TeamContent>(ComponentParameter.CreateParameter("TeamId", teamId));
-
-        var surveyTabPage = teamContentComponent.FindElementByCssSelectorAndTextContent("a:not(a[href])", "Surveys");
-
-        Assert.NotNull(surveyTabPage);
-        surveyTabPage.Click();
+        
+        GoToTab(teamContentComponent, "Surveys");
 
         teamContentComponent.WaitForAssertion(() =>
             Assert.NotNull(
@@ -159,6 +150,32 @@ public class TeamContentTest
         
         teamContentComponent.WaitForAssertion(() =>
             Assert.Equal("http://localhost/survey/delivery-settings?template=Hackman%20Model", _navManager.Uri));
+    }
+    
+    [Fact]
+    public void ShouldShowNoSurveysInAnalysisWhenThereAreNoSurveys()
+    {
+        const string teamName = "Demo team";
+        var teamId = Guid.NewGuid();
+        var team = new Team
+        {
+            Name = teamName,
+            Id = teamId
+        };
+
+        _mockSurveyService.Setup(_ => _.GetAllSurveysByTeam(teamId)).ReturnsAsync(new List<Survey>());
+
+        _mockTeamService.Setup(m => m.GetTeamById(It.IsAny<Guid>())).ReturnsAsync(team);
+        var teamContentComponent =
+            _testContext.RenderComponent<TeamContent>(ComponentParameter.CreateParameter("TeamId", teamId));
+
+        GoToTab(teamContentComponent, "Analysis");
+
+        teamContentComponent.WaitForAssertion(() =>
+        {
+            Assert.NotNull(teamContentComponent.FindElementByCssSelectorAndTextContent("p", "Let's begin the journey towards a stronger, more effective team!"));
+        });
+        Assert.NotNull(teamContentComponent.FindElementByCssSelectorAndTextContent("p", "Here you will see the analysis reports from the surveys"));
     }
 
     [Fact]
@@ -183,11 +200,8 @@ public class TeamContentTest
         var teamContentComponent =
             _testContext.RenderComponent<TeamContent>(ComponentParameter.CreateParameter("TeamId", teamId),
                 ComponentParameter.CreateParameter("SurveyFlags", new SurveyTableFeatureFlags(true, true, true)));
-
-        var surveyTabPage = teamContentComponent.FindElementByCssSelectorAndTextContent("a:not(a[href])", "Surveys");
-        Assert.NotNull(surveyTabPage);
-        surveyTabPage.Click();
-
+        
+        GoToTab(teamContentComponent, "Surveys");
 
         var surveyName = teamContentComponent.FindElementByCssSelectorAndTextContent("th", "Survey title");
         var template = teamContentComponent.FindElementByCssSelectorAndTextContent("th", "Template");
@@ -454,5 +468,12 @@ public class TeamContentTest
         downloadResponsesButton.Click();
 
         teamContent.WaitForAssertion(() => Assert.Equal("http://localhost/error", _navManager.Uri));
+    }
+    
+    private static void GoToTab(IRenderedComponent<TeamContent> teamContentComponent, string tabName)
+    {
+        var tabPage = teamContentComponent.FindElementByCssSelectorAndTextContent("a:not(a[href])", tabName);
+        Assert.NotNull(tabPage);
+        tabPage.Click();
     }
 }

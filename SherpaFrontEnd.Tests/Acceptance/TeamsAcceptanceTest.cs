@@ -244,10 +244,9 @@ public class TeamsAcceptanceTest
         _navMan.NavigateTo($"/team-content/{teamId.ToString()}");
         
         teamsListComponent.WaitForAssertion(() => Assert.NotNull(teamsListComponent.FindElementByCssSelectorAndTextContent("h1", teamName)));
-
-
+        
         var analysisTab = teamsListComponent.FindElementByCssSelectorAndTextContent("li", "Analysis");
-        var sendNewSurveyTeam = teamsListComponent.FindElementByCssSelectorAndTextContent("button", "Launch new survey");
+        var sendNewSurveyTeam = teamsListComponent.FindElementByCssSelectorAndTextContent("button", "Launch first survey");
 
         Assert.NotNull(analysisTab);
         Assert.NotNull(sendNewSurveyTeam);
