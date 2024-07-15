@@ -34,7 +34,10 @@ window.generateColumnsChart = function (elementId, series, categories, yaxis) {
         xaxis: {
             categories
         },
-        yaxis,
+        yaxis: {
+            max: 1,
+            ...yaxis
+        },
         fill: {
             type: 'image',
             image: {
