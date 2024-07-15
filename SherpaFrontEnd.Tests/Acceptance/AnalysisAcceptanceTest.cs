@@ -77,6 +77,26 @@ public class AnalysisAcceptanceTest
         
         _navMan.NavigateTo($"team-content/{newTeam.Id}");
         
+        var generalResults = SetupGeneralResultsDto();
+
+        var generalResultsJson = await JsonContent.Create(generalResults).ReadAsStringAsync();
+        var generalResultsResponse = new HttpResponseMessage()
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(generalResultsJson)
+        };
+        
+        _httpHandlerMock.SetupRequest(HttpMethod.Get, $"team/{newTeam.Id}/analysis/general-results", generalResultsResponse);
+        
+        var jsRuntimeInvocation = _testCtx.JSInterop.Invocations.ToList().Find(invocation => invocation.Identifier.Equals("generateColumnsChart"));
+        Assert.NotNull(jsRuntimeInvocation.Identifier);
+        Assert.Contains(generalResults.ColumnChart, jsRuntimeInvocation.Arguments);
+        var firstCategory = appComponent.FindElementByCssSelectorAndTextContent("text",generalResults.ColumnChart.Categories[0]);
+        Assert.NotNull(firstCategory);
+    }
+
+    private GeneralResultsDto SetupGeneralResultsDto()
+    {
         var categories = new string[]
         {
             "Real team",
@@ -101,22 +121,6 @@ public class AnalysisAcceptanceTest
         var columnChart = new ColumnChart<double>(categories, series, maxValue);
         
         var generalResults = new GeneralResultsDto(columnChart);
-
-        var generalResultsJson = await JsonContent.Create(generalResults).ReadAsStringAsync();
-        var generalResultsResponse = new HttpResponseMessage()
-        {
-            StatusCode = HttpStatusCode.OK,
-            Content = new StringContent(generalResultsJson)
-        };
-        
-        _httpHandlerMock.SetupRequest(HttpMethod.Get, $"team/{newTeam.Id}/analysis/general-results", generalResultsResponse);
-        
-        var jsRuntimeInvocation = _testCtx.JSInterop.Invocations.ToList().Find(invocation => invocation.Identifier.Equals("generateColumnsChart"));
-        Assert.NotNull(jsRuntimeInvocation.Identifier);
-        Assert.Contains(series, jsRuntimeInvocation.Arguments);
-        Assert.Contains(categories, jsRuntimeInvocation.Arguments);
-        Assert.Contains(maxValue, jsRuntimeInvocation.Arguments);
-        var firstCategory = appComponent.FindElementByCssSelectorAndTextContent("text",categories[0]);
-        Assert.NotNull(firstCategory);
+        return generalResults;
     }
 }

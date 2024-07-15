@@ -7,6 +7,7 @@
 @inject ITeamDataService TeamDataService
 @inject ISurveyService SurveyService
 @inject IToastNotificationService ToastService
+@inject IAnalysisService AnalysisService
 @inject NavigationManager NavigationManager
 @inject IJSRuntime Js
 
@@ -83,6 +84,7 @@
         await FetchTeam();
         Emails = Team!.Members.Select(m => m.Email).ToList();
         Surveys = await SurveyService.GetAllSurveysByTeam(TeamId);
+        await AnalysisService.GetGeneralResults(TeamId);
     }
 
 
