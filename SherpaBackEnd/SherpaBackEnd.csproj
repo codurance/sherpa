@@ -25,6 +25,8 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Analysis\Application\" />
+      <Folder Include="Analysis\Domain\" />
       <Folder Include="Helpers" />
     </ItemGroup>
 
