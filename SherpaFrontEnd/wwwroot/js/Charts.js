@@ -38,12 +38,6 @@ window.generateColumnsChart = function (elementId, series, categories, yaxis) {
             max: 1,
             ...yaxis
         },
-        fill: {
-            type: 'image',
-            image: {
-                src: ["./img/charts/tortoise-shell.svg", "./img/charts/bermuda-traingle.png", "./img/charts/wavey-fingerprint.png"],
-            },
-        },
         legend: {
             position: "top",
             fontSize: '20px',
@@ -95,7 +89,12 @@ window.generateColumnsChart = function (elementId, series, categories, yaxis) {
 
     const chart = new ApexCharts(targetElement, options);
     chart.render();
-
+    if (series.length > 4) {
+        const defaultDeselectedSeries = series.slice(0, -4);
+        defaultDeselectedSeries.forEach(seriesElement => {
+            chart.hideSeries(seriesElement.name)
+        })
+    }
 }
 
 window.generateHorizontalColumnsChart = function (elementId, series, categories) {
@@ -243,13 +242,7 @@ window.generateScatterPlotChart = function (elementId, series, categories) {
         }
     };
 
-    chart = new ApexCharts(targetElement, options);
+    const chart = new ApexCharts(targetElement, options);
     chart.render();
-}
 
-window.updateScatterPlotChartSeries = function (chartId, series){
-    console.log(chartId);
-    console.log(series);
-    if(!chart) return;
-    chart.updateSeries(series, true);
 }

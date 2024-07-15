@@ -9,6 +9,7 @@
 @inject NavigationManager NavigationManager
 @inject IJSRuntime Js
 
+
 @page "/team-content/{teamId:guid}/{tab?}"
 
 @if (Team != null && Surveys != null)
@@ -22,7 +23,7 @@
         <TabPage Text="Analysis">
             <ColumnsChart
                 categories=@(new List<string> { "Cat1", "Cat2", "Cat3" })
-                series=@(new List<ColumnsChart.ColumnSeries> { new() { Name = "Survey1", Data = new List<double> { 0.1, 0.2, 0.3 } }, new() { Name = "Series2", Data = new List<double> { 0.4, 0.5, 0.6 } } })
+                series=@(new List<ColumnsChart.ColumnSeries> { new() { Name = "Survey 1", Data = new List<double> { 1, 2, 3 } }, new() { Name = "Survey 2", Data = new List<double> { 4, 5, 6 } }, new() { Name = "Survey 3", Data = new List<double> { 7, 8, 9 } }, new() { Name = "Survey 4", Data = new List<double> { 5, 3, 4 } }, new() { Name = "Survey 5", Data = new List<double> { 2, 5, 4 } } })
                 yaxis=@(new ColumnsChart.YAxis() { Title = new ColumnsChart.YAxis.YAxisTitle() { Text = "Some title for the Y axis" } })/>
             <HorizontalColumnsCharts
                 categories=@(new List<string> { "Cat1", "Cat2", "Cat3" })
@@ -165,10 +166,6 @@
     {
         SelectedSurveyName = e.Value.ToString();
         columnSeries = GetSeriesForSelectedSurvey();
-        foreach (var series in columnSeries)
-        {
-            Console.WriteLine($"Series: {series.Name}");
-        }
         StateHasChanged();
     }
     
