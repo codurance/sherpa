@@ -40,20 +40,6 @@ window.generateColumnsChart = function (elementId, series, categories, yaxis) {
         },
         legend: {
             position: "top",
-            fontSize: '20px',
-            markers: {
-                fillColors: ["transparent", "transparent", "transparent"],
-                offsetX: -5,
-                offsetY: -5,
-                customHTML: [
-                    function() {
-                        return `<div onclick="handleLegendClick()" style="display: block; width: 20px; height: 20px; padding: 2px; border: 1px solid green; border-radius: 5px"><span style="display: block; width: 100%; height: 100%; object-fit: cover; background-image: url('./img/charts/tortoise-shell.svg'); border-radius: 3px" /></div>`
-                    }, 
-                    function() {
-                        return `<div onclick="handleLegendClick()" style="display: block; width: 20px; height: 20px; padding: 2px; border: 1px solid blue; border-radius: 5px"><span style="display: block; width: 100%; height: 100%; object-fit: cover; background-image: url('./img/charts/bermuda-traingle.png'); border-radius: 3px" /></div>`
-                    }
-                ],
-            },
         },
         annotations: {
             yaxis: [{
@@ -242,7 +228,14 @@ window.generateScatterPlotChart = function (elementId, series, categories) {
         }
     };
 
-    const chart = new ApexCharts(targetElement, options);
+    chart = new ApexCharts(targetElement, options);
     chart.render();
 
+}
+
+window.updateScatterPlotChartSeries = function (chartId, series){
+    console.log(chartId);
+    console.log(series);
+    if(!chart) return;
+    chart.updateSeries(series, true);
 }
