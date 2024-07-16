@@ -22,10 +22,11 @@ public class AnalysisControllerTest
         var columnChart = new ColumnChart<double>(categories, series, 1);
         var expected = new GeneralResultsDto(columnChart);
         var analysisServiceMock = new Mock<IAnalysisService>();
-        analysisServiceMock.Setup(analysisService => analysisService.GetGeneralResults()).ReturnsAsync(expected);
+        var teamId = Guid.NewGuid();
+        analysisServiceMock.Setup(analysisService => analysisService.GetGeneralResults(teamId)).ReturnsAsync(expected);
         var analysisController = new AnalysisController(analysisServiceMock.Object);
         
-        var response = await analysisController.GetGeneralResults();
+        var response = await analysisController.GetGeneralResults(teamId);
         
         var resultObject = Assert.IsType<OkObjectResult>(response.Result);
         Assert.Equal(StatusCodes.Status200OK, resultObject.StatusCode);

@@ -4,5 +4,5 @@ namespace SherpaBackEnd.Analysis.Application;
 
 public interface IAnalysisService
 {
-    Task<GeneralResultsDto> GetGeneralResults();
+    Task<GeneralResultsDto> GetGeneralResults(Guid teamId);
 }
