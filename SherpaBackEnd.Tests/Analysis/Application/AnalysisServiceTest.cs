@@ -2,6 +2,7 @@ using Moq;
 using Shared.Test.Helpers;
 using SherpaBackEnd.Analysis.Application;
 using SherpaBackEnd.Analysis.Domain;
+using SherpaBackEnd.Analysis.Domain.Exceptions;
 using SherpaBackEnd.Analysis.Domain.Persistence;
 using SherpaBackEnd.Analysis.Infrastructure.Http.Dto;
 using SherpaBackEnd.Survey.Domain.Persistence;
@@ -23,7 +24,7 @@ public class AnalysisServiceTest
         var survey5 = new ColumnSeries<double>("Survey 5", new List<double>() { 0.8, 0.7, 0.5, 0.5, 0.9 });
 
         var series = new List<ColumnSeries<double>>() { survey1, survey2, survey3, survey4, survey5 };
-        var columnChart = new ColumnChart<double>(categories, series, new ColumnChartConfig<double>(1,0.25,2));
+        var columnChart = new ColumnChart<double>(categories, series, new ColumnChartConfig<double>(1, 0.25, 2));
         var generalMetrics = new GeneralMetrics(0.9, 0.75);
         var metrics = new Metrics(generalMetrics);
         var expected = new GeneralResultsDto(columnChart, metrics);
@@ -33,7 +34,6 @@ public class AnalysisServiceTest
         surveyRepository.Setup(repository => repository.GetAllSurveysWithResponsesFromTeam(teamId))
             .ReturnsAsync(new List<Survey.Domain.Survey>
             {
-                
             });
         var templateAnalysisRepository = new Mock<ITemplateAnalysisRepository>();
         var templateName = "Hackman Model";
@@ -56,8 +56,24 @@ public class AnalysisServiceTest
         CustomAssertions.StringifyEquals(expected, actual);
 
         // Surveys
-        
+
 
         // ColumnCharts
+    }
+
+    [Fact]
+    public async Task ShouldThrowTeamNotFoundErrorWhenTeamIdIsNotFound()
+    {
+        var teamId = Guid.NewGuid();
+        var templateAnalysisRepository = new Mock<ITemplateAnalysisRepository>();
+        var surveyRepository = new Mock<ISurveyRepository>();
+
+        surveyRepository.Setup(repository => repository.GetAllSurveysWithResponsesFromTeam(teamId))
+            .ThrowsAsync(new TeamNotFoundException("Team ID is not found"));
+        
+        var analysisService = new AnalysisService(surveyRepository.Object, templateAnalysisRepository.Object);
+        var exceptionThrown = await Assert.ThrowsAsync<TeamNotFoundException>(async () =>
+            await analysisService.GetGeneralResults(teamId));
+        Assert.IsType<TeamNotFoundException>(exceptionThrown);
     }
 }
