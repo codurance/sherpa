@@ -4,6 +4,7 @@
 @using SherpaFrontEnd.Dtos.Team
 @using SherpaFrontEnd.Pages.TeamContent.Components
 @using SherpaFrontEnd.Dtos.Analysis
+@using SherpaFrontEnd.Pages.TeamContent.Graphs
 @inject ITeamDataService TeamDataService
 @inject ISurveyService SurveyService
 @inject IToastNotificationService ToastService
@@ -25,7 +26,7 @@
             @if (Surveys is { Count: > 0 })
             {
                 <h2 class="font-normal text-title-h2--semibold leading-6 mt-9 mb-9 text-primary-dark-principal ml-3.5">General results</h2>
-                <div id="@_generalResultsColumnChartId"></div>
+                <GeneralResultsColumnChart GeneralResults="@GeneralResults" />
             }
             @if (Surveys is { Count: 0 })
             {
@@ -69,7 +70,6 @@
 
     [Parameter] public string Tab { get; set; }
     [Parameter] public SurveyTableFeatureFlags? SurveyFlags { get; set; }
-    private string _generalResultsColumnChartId = "general-results-column-chart";
 
     public Team? Team { get; set; }
 
@@ -127,8 +127,5 @@
         NavigationManager.NavigateTo(NavigationManager.BaseUri + "survey/delivery-settings?template=Hackman%20Model");
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        await Js.InvokeVoidAsync("generateColumnsChart", _generalResultsColumnChartId, GeneralResults?.ColumnChart);
-    }
+    
 }
