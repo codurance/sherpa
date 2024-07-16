@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Shared.Test.Helpers;
 using SherpaBackEnd.Analysis.Application;
+using SherpaBackEnd.Analysis.Domain.Exceptions;
 using SherpaBackEnd.Analysis.Infrastructure.Http;
 using SherpaBackEnd.Analysis.Infrastructure.Http.Dto;
 
@@ -35,6 +36,21 @@ public class AnalysisControllerTest
         var generalResults = Assert.IsType<GeneralResultsDto>(resultObject.Value);
         
         CustomAssertions.StringifyEquals(expected, generalResults);
+    }
+
+    [Fact]
+    public async Task ShouldReturnAnErrorIfTheTeamIdDoesNotExist()
+    {
+        var analysisServiceMock = new Mock<IAnalysisService>();
+        var teamId = Guid.NewGuid();
+        var teamNotFoundException = new TeamNotFoundException("Team ID is not found");
+        analysisServiceMock.Setup(analysisService => analysisService.GetGeneralResults(teamId)).ThrowsAsync(teamNotFoundException);
+        var analysisController = new AnalysisController(analysisServiceMock.Object);
+        
+        var response = await analysisController.GetGeneralResults(teamId);
+        
+        var resultObject = Assert.IsType<ObjectResult>(response.Result);
+        Assert.Equal(StatusCodes.Status404NotFound, resultObject.StatusCode);
     }
 
 }
