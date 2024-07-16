@@ -23,6 +23,7 @@ public class AnalysisAcceptanceTest
     private FakeNavigationManager _navMan;
     private Mock<HttpMessageHandler> _httpHandlerMock;
     private Mock<IHttpClientFactory>  _factoryHttpClient;
+    private Mock<IAuthService> _authService;
 
     public AnalysisAcceptanceTest()
     {
@@ -31,15 +32,25 @@ public class AnalysisAcceptanceTest
         _testCtx.Services.AddBlazoredLocalStorage();
         _testCtx.Services.AddBlazoredToast();
         _testCtx.Services.AddScoped<ICookiesService, CookiesService>();
+        _testCtx.Services.AddScoped<IAnalysisService, AnalysisService>();
+        _testCtx.Services.AddScoped<IToastNotificationService, BlazoredToastService>();
+        _testCtx.Services.AddScoped<ISurveyService, SurveyService>();
+        _testCtx.Services.AddScoped<ITeamDataService, TeamServiceHttpClient>();
+        _authService = new Mock<IAuthService>();
+        _authService.Setup(auth => auth.DecorateWithToken(It.IsAny<HttpRequestMessage>()))
+            .ReturnsAsync((HttpRequestMessage requestMessage) => requestMessage);
+        _testCtx.Services.AddSingleton<IAuthService>(_authService.Object);
         _testCtx.JSInterop.Setup<string>("localStorage.getItem", "CookiesAcceptedDate");
         _httpHandlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
         _factoryHttpClient = new Mock<IHttpClientFactory>();
         const string baseUrl = "http://localhost";
         var httpClient = new HttpClient(_httpHandlerMock.Object, false) { BaseAddress = new Uri(baseUrl) };
         _factoryHttpClient.Setup(_ => _.CreateClient("SherpaBackEnd")).Returns(httpClient);
+        _testCtx.Services.AddSingleton<IHttpClientFactory>(_factoryHttpClient.Object);
         var auth = _testCtx.AddTestAuthorization();
         auth.SetAuthorized("Demo user");
         auth.SetClaims(new []{new Claim("username", "Demo user")});
+        _testCtx.JSInterop.SetupVoid("generateColumnsChart", _ => true);
         _navMan =  _testCtx.Services.GetRequiredService<FakeNavigationManager>();
     }
 
@@ -50,7 +61,6 @@ public class AnalysisAcceptanceTest
         var newTeamId = Guid.NewGuid();
         var newTeam = new Team(newTeamId, newTeamName);
         
-        var appComponent = _testCtx.RenderComponent<App>();
         
         var singleTeamJson = await JsonContent.Create(newTeam).ReadAsStringAsync();
         var singleTeamResponse = new HttpResponseMessage()
@@ -74,9 +84,6 @@ public class AnalysisAcceptanceTest
         
         _httpHandlerMock.SetupRequest(HttpMethod.Get, $"/team/{newTeam.Id.ToString()}/surveys",surveyListResponse );
 
-        
-        _navMan.NavigateTo($"team-content/{newTeam.Id}");
-        
         var generalResults = SetupGeneralResultsDto();
 
         var generalResultsJson = await JsonContent.Create(generalResults).ReadAsStringAsync();
@@ -88,6 +95,14 @@ public class AnalysisAcceptanceTest
         
         _httpHandlerMock.SetupRequest(HttpMethod.Get, $"team/{newTeam.Id}/analysis/general-results", generalResultsResponse);
         
+        var appComponent = _testCtx.RenderComponent<App>();
+        
+        _navMan.NavigateTo($"team-content/{newTeam.Id}");
+        
+        appComponent.WaitForAssertion(() =>
+        {
+            Assert.Equal($"http://localhost/team-content/{newTeam.Id}", _navMan.Uri);
+        });
         var jsRuntimeInvocation = _testCtx.JSInterop.Invocations.ToList().Find(invocation => invocation.Identifier.Equals("generateColumnsChart"));
         Assert.NotNull(jsRuntimeInvocation.Identifier);
         Assert.Contains(generalResults.ColumnChart, jsRuntimeInvocation.Arguments);

@@ -4,6 +4,10 @@ window.generateColumnsChart = function (elementId, chartData) {
     if (!targetElement || targetElement.innerHTML !== "") {
         return;
     }
+    
+    if (!chartData) {
+        return;
+    }
 
     const options = {
         series: chartData.series,

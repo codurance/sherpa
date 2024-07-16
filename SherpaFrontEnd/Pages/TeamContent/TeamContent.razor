@@ -3,7 +3,6 @@
 @using SherpaFrontEnd.Dtos.Survey
 @using SherpaFrontEnd.Dtos.Team
 @using SherpaFrontEnd.Pages.TeamContent.Components
-@using SherpaFrontEnd.Core.Components
 @using SherpaFrontEnd.Dtos.Analysis
 @inject ITeamDataService TeamDataService
 @inject ISurveyService SurveyService
@@ -25,9 +24,7 @@
         <TabPage Text="Analysis">
             @if (Surveys is { Count: > 0 })
             {
-                <div id="@_generalResultsColumnChartId">
-                    
-                </div>
+                <div id="@_generalResultsColumnChartId"></div>
             }
             @if (Surveys is { Count: 0 })
             {
@@ -79,7 +76,7 @@
 
     private List<Survey>? Surveys { get; set; }
     
-    private GeneralResultsDto GeneralResults { get; set; }
+    private GeneralResultsDto? GeneralResults { get; set; }
 
     [CascadingParameter] public IModalService Modal { get; set; } = default!;
 
@@ -131,7 +128,6 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await Js.InvokeVoidAsync("generateColumnsChart", _generalResultsColumnChartId, GeneralResults.ColumnChart);
+        await Js.InvokeVoidAsync("generateColumnsChart", _generalResultsColumnChartId, GeneralResults?.ColumnChart);
     }
-
 }
