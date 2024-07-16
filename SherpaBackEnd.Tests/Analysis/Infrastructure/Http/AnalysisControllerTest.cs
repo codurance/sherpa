@@ -6,6 +6,7 @@ using SherpaBackEnd.Analysis.Application;
 using SherpaBackEnd.Analysis.Domain.Exceptions;
 using SherpaBackEnd.Analysis.Infrastructure.Http;
 using SherpaBackEnd.Analysis.Infrastructure.Http.Dto;
+using SherpaBackEnd.Helpers.Analysis;
 
 namespace SherpaBackEnd.Tests.Analysis.Infrastructure.Http;
 
@@ -14,16 +15,8 @@ public class AnalysisControllerTest
     [Fact]
     public async Task ShouldBeAbleToRetrieveTheGeneralResultsFromATeamId()
     {
-        var categories = new[]
-            { "Real Team", "Compelling Direction", "Expert Coaching", "Enable Structure", "Supportive Coaching" };
-        var survey1 = new ColumnSeries<double>("Survey 1", new List<double>() { 0.5, 0.5, 0.2, 0.1, 0.8 });
-        var survey2 = new ColumnSeries<double>("Survey 2", new List<double>() { 0.5, 0.5, 0.2, 0.1, 0.8 });
-
-        var series = new List<ColumnSeries<double>>() { survey1, survey2 };
-        var columnChart = new ColumnChart<double>(categories, series, new ColumnChartConfig<double>(1,0.25,2));
-        var generalMetrics = new GeneralMetrics(0.9, 0.75);
-        var metrics = new Metrics(generalMetrics);
-        var expected = new GeneralResultsDto(columnChart, metrics);
+        var expected = GeneralResultsDtoBuilder.Build();
+        
         var analysisServiceMock = new Mock<IAnalysisService>();
         var teamId = Guid.NewGuid();
         analysisServiceMock.Setup(analysisService => analysisService.GetGeneralResults(teamId)).ReturnsAsync(expected);
