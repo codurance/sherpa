@@ -501,6 +501,8 @@ public class TeamContentTest
         var teamContentComponent =
             _testContext.RenderComponent<TeamContent>(ComponentParameter.CreateParameter("TeamId", teamId));
         
+        var generalResultsTitle = teamContentComponent.FindElementByCssSelectorAndTextContent("h2", "General results");
+        Assert.NotNull(generalResultsTitle);
         var jsRuntimeInvocation = _testContext.JSInterop.Invocations.ToList().Find(invocation => invocation.Identifier.Equals("generateColumnsChart"));
         Assert.NotNull(jsRuntimeInvocation.Identifier);
         Assert.Equal(generalResultsDto.ColumnChart, jsRuntimeInvocation.Arguments[1]);

@@ -105,6 +105,8 @@ public class AnalysisAcceptanceTest
         {
             Assert.Equal($"http://localhost/team-content/{newTeam.Id}", _navMan.Uri);
         });
+        var generalResultsTitle = appComponent.FindElementByCssSelectorAndTextContent("h2", "General results");
+        Assert.NotNull(generalResultsTitle);
         var jsRuntimeInvocation = _testCtx.JSInterop.Invocations.ToList()
             .Find(invocation => invocation.Identifier.Equals("generateColumnsChart"));
         Assert.NotNull(jsRuntimeInvocation.Identifier);
