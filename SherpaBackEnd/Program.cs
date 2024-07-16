@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting.StaticWebAssets;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using SherpaBackEnd.Analysis.Application;
 using SherpaBackEnd.ConfigurationVariables.Application;
 using SherpaBackEnd.ConfigurationVariables.Domain;
 using SherpaBackEnd.ConfigurationVariables.Infrastructure.Persistence;
@@ -92,6 +93,9 @@ builder.Services.AddScoped<IConfigurationVariablesService, ConfigurationVariable
 builder.Services.AddScoped<IConfigurationVariablesRepository, ConfigurationVariablesRepository>();
 
 builder.Services.AddScoped<ISurveyResponsesFileService, SurveyResponsesCsvFileService>();
+
+builder.Services.AddScoped<IAnalysisService, AnalysisService>();
+
 
 // Auth
 var validAudience = Environment.GetEnvironmentVariable("COGNITO_CLIENT_ID");
