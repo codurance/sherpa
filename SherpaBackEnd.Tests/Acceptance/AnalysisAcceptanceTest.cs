@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.VisualStudio.TestPlatform.Common.Telemetry;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Moq;
@@ -73,8 +74,9 @@ public class AnalysisAcceptanceTest
         var survey5 = new ColumnSeries<double>("Survey 5", new List<double>() { 0.8, 0.7, 0.5, 0.5, 0.9 });
 
         var series = new List<ColumnSeries<double>>() { survey1, survey2, survey3, survey4, survey5 };
-        var columnChart = new ColumnChart<double>(categories, series, 1);
-        var expected = new GeneralResultsDto(columnChart);
+        var columnChart = new ColumnChart<double>(categories, series, new ColumnChartConfig<double>(1,0.25,2));
+        var metrics = new Metrics(0.9,0.75);
+        var expected = new GeneralResultsDto(columnChart, metrics);
         var surveyRepository = new MongoSurveyRepository(_databaseSettings);
         var templateAnalysisRepository = new MongoTemplateAnalysisRepository(_databaseSettings);
         var analysisService = new AnalysisService(surveyRepository, templateAnalysisRepository);

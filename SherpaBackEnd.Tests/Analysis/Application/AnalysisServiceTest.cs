@@ -19,8 +19,9 @@ public class AnalysisServiceTest
         var survey2 = new ColumnSeries<double>("Survey 2", new List<double>() { 0.5, 0.5, 0.2, 0.1, 0.8 });
 
         var series = new List<ColumnSeries<double>>() { survey1, survey2 };
-        var columnChart = new ColumnChart<double>(categories, series, 1);
-        var expected = new GeneralResultsDto(columnChart);
+        var columnChart = new ColumnChart<double>(categories, series, new ColumnChartConfig<double>(1,0.25,2));
+        var metrics = new Metrics(0.9,0.75);
+        var expected = new GeneralResultsDto(columnChart, metrics);
 
         var teamId = Guid.NewGuid();
         var surveyRepository = new Mock<ISurveyRepository>();
