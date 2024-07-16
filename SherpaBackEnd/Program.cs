@@ -97,7 +97,7 @@ builder.Services.AddScoped<IConfigurationVariablesRepository, ConfigurationVaria
 builder.Services.AddScoped<ISurveyResponsesFileService, SurveyResponsesCsvFileService>();
 
 builder.Services.AddScoped<IAnalysisService, AnalysisService>();
-builder.Services.AddScoped<ITemplateAnalysisRepository, MongoTemplateAnalysisRepository>();
+builder.Services.AddScoped<IAnalysisRepository, MongoAnalysisRepository>();
 
 
 // Auth

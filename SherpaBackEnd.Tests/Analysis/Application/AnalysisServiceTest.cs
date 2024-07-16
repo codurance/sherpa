@@ -24,7 +24,7 @@ public class AnalysisServiceTest
             .ReturnsAsync(new List<Survey.Domain.Survey>
             {
             });
-        var templateAnalysisRepository = new Mock<ITemplateAnalysisRepository>();
+        var templateAnalysisRepository = new Mock<IAnalysisRepository>();
         var templateName = "Hackman Model";
 
         var questions = new Dictionary<int, Question>()
@@ -54,7 +54,7 @@ public class AnalysisServiceTest
     public async Task ShouldThrowTeamNotFoundErrorWhenTeamIdIsNotFound()
     {
         var teamId = Guid.NewGuid();
-        var templateAnalysisRepository = new Mock<ITemplateAnalysisRepository>();
+        var templateAnalysisRepository = new Mock<IAnalysisRepository>();
         var surveyRepository = new Mock<ISurveyRepository>();
 
         surveyRepository.Setup(repository => repository.GetAllSurveysWithResponsesFromTeam(teamId))

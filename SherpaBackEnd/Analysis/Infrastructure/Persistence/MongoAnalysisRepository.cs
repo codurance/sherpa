@@ -7,12 +7,12 @@ using SherpaBackEnd.Shared.Infrastructure.Persistence;
 
 namespace SherpaBackEnd.Analysis.Infrastructure.Persistence;
 
-public class MongoTemplateAnalysisRepository : ITemplateAnalysisRepository
+public class MongoAnalysisRepository : IAnalysisRepository
 {
     
     private readonly IMongoCollection<BsonDocument> _abstractTemplatesCollection;
 
-    public MongoTemplateAnalysisRepository(IOptions<DatabaseSettings> databaseSettings)
+    public MongoAnalysisRepository(IOptions<DatabaseSettings> databaseSettings)
     {
         var mongoClient = new MongoClient(databaseSettings.Value.ConnectionString);
 
@@ -24,6 +24,11 @@ public class MongoTemplateAnalysisRepository : ITemplateAnalysisRepository
     }
 
     public Task<TemplateAnalysis> GetTemplateAnalysisByName(string name)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<SurveyResult> GetSurveyResultsByTeamIdAndTemplateName(Guid teamId, string name)
     {
         throw new NotImplementedException();
     }

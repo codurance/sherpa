@@ -79,7 +79,7 @@ public class AnalysisAcceptanceTest
         var metrics = new Metrics(generalMetrics);
         var expected = new GeneralResultsDto(columnChart, metrics);
         var surveyRepository = new MongoSurveyRepository(_databaseSettings);
-        var templateAnalysisRepository = new MongoTemplateAnalysisRepository(_databaseSettings);
+        var templateAnalysisRepository = new MongoAnalysisRepository(_databaseSettings);
         var analysisService = new AnalysisService(surveyRepository, templateAnalysisRepository);
         var analysisController = new AnalysisController(analysisService);
         var teamId = Guid.NewGuid();
