@@ -2,12 +2,10 @@ namespace SherpaBackEnd.Analysis.Infrastructure.Http.Dto;
 
 public class Metrics
 {
-    public double Average { get; }
-    public double Aspirational { get; }
+    public GeneralMetrics General { get; }
 
-    public Metrics(double average, double aspirational)
+    public Metrics(GeneralMetrics general)
     {
-        Average = average;
-        Aspirational = aspirational;
+        General = general;
     }
 }

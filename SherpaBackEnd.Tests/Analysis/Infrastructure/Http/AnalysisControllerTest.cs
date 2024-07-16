@@ -20,7 +20,8 @@ public class AnalysisControllerTest
 
         var series = new List<ColumnSeries<double>>() { survey1, survey2 };
         var columnChart = new ColumnChart<double>(categories, series, new ColumnChartConfig<double>(1,0.25,2));
-        var metrics = new Metrics(0.9,0.75);
+        var generalMetrics = new GeneralMetrics(0.9, 0.75);
+        var metrics = new Metrics(generalMetrics);
         var expected = new GeneralResultsDto(columnChart, metrics);
         var analysisServiceMock = new Mock<IAnalysisService>();
         var teamId = Guid.NewGuid();
