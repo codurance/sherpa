@@ -17,7 +17,7 @@ public class AnalysisController
     }
 
     [Authorize]
-    [HttpGet]
+    [HttpGet("team/{teamId:guid}/analysis/general-results")]
     public async Task<ActionResult<GeneralResultsDto>> GetGeneralResults()
     {
         var generalResults = await _analysisService.GetGeneralResults();
