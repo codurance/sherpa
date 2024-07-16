@@ -3,13 +3,16 @@ using Bunit;
 using Bunit.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
+using Newtonsoft.Json;
 using Shared.Test.Helpers;
+using SherpaFrontEnd.Dtos.Analysis;
 using SherpaFrontEnd.Dtos.Survey;
 using SherpaFrontEnd.Dtos.Team;
 using SherpaFrontEnd.Pages.TeamContent;
 using SherpaFrontEnd.Pages.TeamContent.Components;
 using SherpaFrontEnd.Services;
 using Xunit.Abstractions;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace BlazorApp.Tests.Pages;
 
@@ -23,6 +26,7 @@ public class TeamContentTest
     private readonly Mock<IGuidService> _mockGuidService;
     private readonly FakeNavigationManager _navManager;
     private Mock<IToastNotificationService> _mockToastService;
+    private Mock<IAnalysisService> _mockAnalysisService;
 
     public TeamContentTest(ITestOutputHelper testOutputHelper)
     {
@@ -32,10 +36,13 @@ public class TeamContentTest
         _mockSurveyService = new Mock<ISurveyService>();
         _mockGuidService = new Mock<IGuidService>();
         _mockToastService = new Mock<IToastNotificationService>();
+        _mockAnalysisService = new Mock<IAnalysisService>();
         _testContext.Services.AddScoped(s => _mockTeamService.Object);
         _testContext.Services.AddSingleton<ISurveyService>(_mockSurveyService.Object);
         _testContext.Services.AddSingleton<IGuidService>(_mockGuidService.Object);
         _testContext.Services.AddSingleton<IToastNotificationService>(_mockToastService.Object);
+        _testContext.Services.AddSingleton<IAnalysisService>(_mockAnalysisService.Object);
+        _testContext.JSInterop.SetupVoid("generateColumnsChart", _ => true);
         _navManager = _testContext.Services.GetRequiredService<FakeNavigationManager>();
     }
 
@@ -95,7 +102,7 @@ public class TeamContentTest
             Id = teamId
         };
 
-        _mockSurveyService.Setup(_ => _.GetAllSurveysByTeam(teamId)).ReturnsAsync(new List<Survey>());
+        _mockSurveyService.Setup(service => service.GetAllSurveysByTeam(teamId)).ReturnsAsync(new List<Survey>());
 
         _mockTeamService.Setup(m => m.GetTeamById(It.IsAny<Guid>())).ReturnsAsync(team);
         var teamContentComponent =
@@ -128,7 +135,7 @@ public class TeamContentTest
         };
         var userOne = new User(Guid.NewGuid(), "user");
 
-        _mockSurveyService.Setup(_ => _.GetAllSurveysByTeam(teamId)).ReturnsAsync(new List<Survey>()
+        _mockSurveyService.Setup(service => service.GetAllSurveysByTeam(teamId)).ReturnsAsync(new List<Survey>()
         {
             new Survey(Guid.NewGuid(), userOne, Status.Draft, new DateTime(), "title", "description",
                 Array.Empty<Response>(), team, new Template("template"))
@@ -163,7 +170,7 @@ public class TeamContentTest
             Id = teamId
         };
 
-        _mockSurveyService.Setup(_ => _.GetAllSurveysByTeam(teamId)).ReturnsAsync(new List<Survey>());
+        _mockSurveyService.Setup(service => service.GetAllSurveysByTeam(teamId)).ReturnsAsync(new List<Survey>());
 
         _mockTeamService.Setup(m => m.GetTeamById(It.IsAny<Guid>())).ReturnsAsync(team);
         var teamContentComponent =
@@ -190,7 +197,7 @@ public class TeamContentTest
         };
         var userOne = new User(Guid.NewGuid(), "user");
 
-        _mockSurveyService.Setup(_ => _.GetAllSurveysByTeam(teamId)).ReturnsAsync(new List<Survey>()
+        _mockSurveyService.Setup(service => service.GetAllSurveysByTeam(teamId)).ReturnsAsync(new List<Survey>()
         {
             new Survey(Guid.NewGuid(), userOne, Status.Draft, new DateTime(), "title", "description",
                 Array.Empty<Response>(), team, new Template("template"))
@@ -362,7 +369,7 @@ public class TeamContentTest
             )
         };
 
-        _mockSurveyService.Setup(_ => _.GetAllSurveysByTeam(teamId)).ReturnsAsync(testSurveys);
+        _mockSurveyService.Setup(service => service.GetAllSurveysByTeam(teamId)).ReturnsAsync(testSurveys);
 
         _mockTeamService.Setup(m => m.GetTeamById(It.IsAny<Guid>())).ReturnsAsync(team);
 
@@ -410,7 +417,7 @@ public class TeamContentTest
             )
         };
 
-        _mockSurveyService.Setup(_ => _.GetAllSurveysByTeam(teamId)).ReturnsAsync(testSurveys);
+        _mockSurveyService.Setup(service => service.GetAllSurveysByTeam(teamId)).ReturnsAsync(testSurveys);
 
         _mockTeamService.Setup(m => m.GetTeamById(It.IsAny<Guid>())).ReturnsAsync(team);
 
@@ -452,7 +459,7 @@ public class TeamContentTest
             )
         };
 
-        _mockSurveyService.Setup(_ => _.GetAllSurveysByTeam(teamId)).ReturnsAsync(testSurveys);
+        _mockSurveyService.Setup(service => service.GetAllSurveysByTeam(teamId)).ReturnsAsync(testSurveys);
 
         _mockTeamService.Setup(m => m.GetTeamById(It.IsAny<Guid>())).ReturnsAsync(team);
         _mockSurveyService.Setup(service => service.DownloadSurveyResponses(surveyId)).ThrowsAsync(new Exception());
@@ -469,11 +476,75 @@ public class TeamContentTest
 
         teamContent.WaitForAssertion(() => Assert.Equal("http://localhost/error", _navManager.Uri));
     }
+
+    [Fact]
+    public void ShouldRenderGeneralResultsColumnChart()
+    {
+        const string teamName = "Demo team";
+        var teamId = Guid.NewGuid();
+        var team = new Team
+        {
+            Name = teamName,
+            Id = teamId
+        };
+        var userOne = new User(Guid.NewGuid(), "user");
+
+        _mockSurveyService.Setup(service => service.GetAllSurveysByTeam(teamId)).ReturnsAsync(new List<Survey>()
+        {
+            new Survey(Guid.NewGuid(), userOne, Status.Draft, new DateTime(), "title", "description",
+                Array.Empty<Response>(), team, new Template("template"))
+        });
+        var generalResultsDto = SetupGeneralResultsDto();
+        _mockAnalysisService.Setup(service => service.GetGeneralResults(team.Id)).ReturnsAsync(generalResultsDto);
+
+        _mockTeamService.Setup(m => m.GetTeamById(It.IsAny<Guid>())).ReturnsAsync(team);
+        var teamContentComponent =
+            _testContext.RenderComponent<TeamContent>(ComponentParameter.CreateParameter("TeamId", teamId));
+        
+        var generalResultsTitle = teamContentComponent.FindElementByCssSelectorAndTextContent("h2", "General results");
+        Assert.NotNull(generalResultsTitle);
+        var jsRuntimeInvocation = _testContext.JSInterop.Invocations.ToList().Find(invocation => invocation.Identifier.Equals("generateColumnsChart"));
+        Assert.NotNull(jsRuntimeInvocation.Identifier);
+        Assert.Equal(generalResultsDto.ColumnChart, jsRuntimeInvocation.Arguments[1]);
+        var generalResultsColumnChartId = "general-results-column-chart";
+        Assert.Contains(generalResultsColumnChartId, jsRuntimeInvocation.Arguments);
+        var divToRenderColumnChart = teamContentComponent.Find($"div[id='{generalResultsColumnChartId}']");
+        Assert.NotNull(divToRenderColumnChart);
+    }
     
     private static void GoToTab(IRenderedComponent<TeamContent> teamContentComponent, string tabName)
     {
         var tabPage = teamContentComponent.FindElementByCssSelectorAndTextContent("a:not(a[href])", tabName);
         Assert.NotNull(tabPage);
         tabPage.Click();
+    }
+    
+    private GeneralResultsDto SetupGeneralResultsDto()
+    {
+        var categories = new string[]
+        {
+            "Real team",
+            "Compelling direction",
+            "Expert coaching",
+            "Enable structure",
+            "Supportive org coaching"
+        };
+        var maxValue = 1.0;
+        
+        var firstSurvey = new ColumnSeries<double>("Survey 1", new List<double>(){ 0.5,
+            0.5,
+            0.5,
+            0.5,
+            0.5});
+        var secondSurvey = new ColumnSeries<double>("Survey 2", new List<double>(){ 0.5,
+            0.5,
+            0.5,
+            0.5,
+            0.5});
+        var series = new List<ColumnSeries<double>>(){firstSurvey, secondSurvey};
+        var columnChart = new ColumnChart<double>(categories, series, maxValue);
+        
+        var generalResults = new GeneralResultsDto(columnChart);
+        return generalResults;
     }
 }

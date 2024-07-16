@@ -54,6 +54,8 @@ public class DownloadResponsesAcceptanceTest
         _testCtx.Services.AddSingleton<ISurveyService>(_surveyService);
         _teamDataService = new TeamServiceHttpClient(_httpClientFactory.Object, _authService.Object);
         _testCtx.Services.AddSingleton<ITeamDataService>(_teamDataService);
+        _testCtx.Services.AddSingleton<IAnalysisService>(new Mock<IAnalysisService>().Object);
+        _testCtx.JSInterop.SetupVoid("generateColumnsChart", _ => true);
 
         _navManager = _testCtx.Services.GetRequiredService<FakeNavigationManager>();
     }

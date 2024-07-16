@@ -58,6 +58,8 @@ public class TeamsAcceptanceTest
         var auth = _testCtx.AddTestAuthorization();
         auth.SetAuthorized("Demo user");
         auth.SetClaims(new []{new Claim("username", "Demo user")});
+        _testCtx.Services.AddSingleton<IAnalysisService>(new Mock<IAnalysisService>().Object);
+        _testCtx.JSInterop.SetupVoid("generateColumnsChart", _ => true);
         _navMan = _testCtx.Services.GetRequiredService<FakeNavigationManager>();
     }
 

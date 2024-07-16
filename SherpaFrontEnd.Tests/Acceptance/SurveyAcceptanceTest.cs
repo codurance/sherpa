@@ -67,6 +67,8 @@ public class SurveyAcceptanceTest
         var auth = _testCtx.AddTestAuthorization();
         auth.SetAuthorized("Demo user");
         auth.SetClaims(new[] { new Claim("username", "Demo user") });
+        _testCtx.Services.AddSingleton<IAnalysisService>(new Mock<IAnalysisService>().Object);
+        _testCtx.JSInterop.SetupVoid("generateColumnsChart", _ => true);
         _navManager = _testCtx.Services.GetRequiredService<FakeNavigationManager>();
     }
 
