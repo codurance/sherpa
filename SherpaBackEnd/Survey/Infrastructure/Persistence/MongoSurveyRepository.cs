@@ -49,6 +49,11 @@ public class MongoSurveyRepository : ISurveyRepository
                 .Select(survey => survey!).ToList();
     }
 
+    public async Task<IEnumerable<Domain.Survey>> GetAllSurveysWithResponsesFromTeam(Guid teamId)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<Domain.Survey?> GetSurveyById(Guid surveyId)
     {
         var mSurvey = await _surveyCollection.Find(survey => survey.Id == surveyId).FirstOrDefaultAsync();

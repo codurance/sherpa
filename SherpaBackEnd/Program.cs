@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Hosting.StaticWebAssets;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SherpaBackEnd.Analysis.Application;
+using SherpaBackEnd.Analysis.Domain.Persistence;
+using SherpaBackEnd.Analysis.Infrastructure.Persistence;
 using SherpaBackEnd.ConfigurationVariables.Application;
 using SherpaBackEnd.ConfigurationVariables.Domain;
 using SherpaBackEnd.ConfigurationVariables.Infrastructure.Persistence;
@@ -95,6 +97,7 @@ builder.Services.AddScoped<IConfigurationVariablesRepository, ConfigurationVaria
 builder.Services.AddScoped<ISurveyResponsesFileService, SurveyResponsesCsvFileService>();
 
 builder.Services.AddScoped<IAnalysisService, AnalysisService>();
+builder.Services.AddScoped<ITemplateAnalysisRepository, MongoTemplateAnalysisRepository>();
 
 
 // Auth

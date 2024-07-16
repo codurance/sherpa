@@ -19,13 +19,16 @@ public class AnalysisControllerTest
         var survey2 = new ColumnSeries<double>("Survey 2", new List<double>() { 0.5, 0.5, 0.2, 0.1, 0.8 });
 
         var series = new List<ColumnSeries<double>>() { survey1, survey2 };
-        var columnChart = new ColumnChart<double>(categories, series, 1);
-        var expected = new GeneralResultsDto(columnChart);
+        var columnChart = new ColumnChart<double>(categories, series, new ColumnChartConfig<double>(1,0.25,2));
+        var generalMetrics = new GeneralMetrics(0.9, 0.75);
+        var metrics = new Metrics(generalMetrics);
+        var expected = new GeneralResultsDto(columnChart, metrics);
         var analysisServiceMock = new Mock<IAnalysisService>();
-        analysisServiceMock.Setup(analysisService => analysisService.GetGeneralResults()).ReturnsAsync(expected);
+        var teamId = Guid.NewGuid();
+        analysisServiceMock.Setup(analysisService => analysisService.GetGeneralResults(teamId)).ReturnsAsync(expected);
         var analysisController = new AnalysisController(analysisServiceMock.Object);
         
-        var response = await analysisController.GetGeneralResults();
+        var response = await analysisController.GetGeneralResults(teamId);
         
         var resultObject = Assert.IsType<OkObjectResult>(response.Result);
         Assert.Equal(StatusCodes.Status200OK, resultObject.StatusCode);
