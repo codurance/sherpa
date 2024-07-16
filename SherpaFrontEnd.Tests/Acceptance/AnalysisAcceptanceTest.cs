@@ -111,6 +111,7 @@ public class AnalysisAcceptanceTest
             .Find(invocation => invocation.Identifier.Equals("generateColumnsChart"));
         Assert.NotNull(jsRuntimeInvocation.Identifier);
         CustomAssertions.StringifyEquals(generalResults.ColumnChart, jsRuntimeInvocation.Arguments[1]);
+        CustomAssertions.StringifyEquals(generalResults.Metrics.General, jsRuntimeInvocation.Arguments[2]);
     }
 
     private GeneralResultsDto SetupGeneralResultsDto()

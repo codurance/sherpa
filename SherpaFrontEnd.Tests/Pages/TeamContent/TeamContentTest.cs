@@ -506,6 +506,8 @@ public class TeamContentTest
         var jsRuntimeInvocation = _testContext.JSInterop.Invocations.ToList().Find(invocation => invocation.Identifier.Equals("generateColumnsChart"));
         Assert.NotNull(jsRuntimeInvocation.Identifier);
         Assert.Equal(generalResultsDto.ColumnChart, jsRuntimeInvocation.Arguments[1]);
+        Assert.Equal(generalResultsDto.Metrics.General, jsRuntimeInvocation.Arguments[2]);
+
         var generalResultsColumnChartId = "general-results-column-chart";
         Assert.Contains(generalResultsColumnChartId, jsRuntimeInvocation.Arguments);
         var divToRenderColumnChart = teamContentComponent.Find($"div[id='{generalResultsColumnChartId}']");
