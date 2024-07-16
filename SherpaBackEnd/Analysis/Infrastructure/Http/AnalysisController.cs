@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SherpaBackEnd.Analysis.Application;
 using SherpaBackEnd.Analysis.Infrastructure.Http.Dto;
@@ -15,6 +16,7 @@ public class AnalysisController
         _analysisService = analysisService;
     }
 
+    [Authorize]
     [HttpGet]
     public async Task<ActionResult<GeneralResultsDto>> GetGeneralResults()
     {
