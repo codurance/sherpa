@@ -21,8 +21,8 @@ window.generateColumnsChart = function (elementId, chartData) {
         plotOptions: {
             bar: {
                 horizontal: false,
-                columnWidth: '35%',
-                borderRadius: 10,
+                columnWidth: '60%',
+                borderRadius: 0,
                 borderRadiusApplication: "end",
             },
         },
@@ -39,34 +39,38 @@ window.generateColumnsChart = function (elementId, chartData) {
         },
         yaxis: {
             max: chartData.maxValue,
+            stepSize: 0.25,
+            decimalsInFloat: 2,
         },
         legend: {
             position: "top",
+            horizontalAlign: "left",
+            offsetX: -6
         },
         annotations: {
             yaxis: [{
-                y: 2,
+                y: 0.47,
                 strokeDashArray: 5,
-                borderColor: "#ff0000",
+                borderColor: "#e44f00",
                 width: '100%',
                 label: {
-                    borderColor: "#ff0000",
+                    borderColor: "#e44f00",
                     style: {
                         color: '#fff',
-                        background: '#ff0000',
+                        background: '#e44f00',
                     },
                     text: 'Average'
                 }
             }, {
-                y: 5,
+                y: 0.75,
                 strokeDashArray: 5,
-                borderColor: "#ff8c00",
+                borderColor: "#008d73",
                 width: '100%',
                 label: {
-                    borderColor: "#ff8c00",
+                    borderColor: "#008d73",
                     style: {
                         color: '#fff',
-                        background: '#ff8c00',
+                        background: '#008d73',
                     },
                     text: 'Aspirational'
                 }
