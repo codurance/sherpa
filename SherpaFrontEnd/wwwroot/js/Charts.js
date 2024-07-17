@@ -41,6 +41,14 @@ window.generateColumnsChart = function (elementId, series, categories, yaxis) {
         legend: {
             position: "top",
         },
+        fill: {
+            type: 'pattern',
+            opacity: 1,
+            pattern: {
+                style: ['circles', 'slantedLines', 'verticalLines', 'horizontalLines'], // string or array of strings
+
+            }
+        },
         annotations: {
             yaxis: [{
                 y: 2,
