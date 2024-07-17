@@ -85,7 +85,7 @@ public class AnalysisAcceptanceTest
 
         _httpHandlerMock.SetupRequest(HttpMethod.Get, $"/team/{newTeam.Id.ToString()}/surveys", surveyListResponse);
 
-        var generalResults = SetupGeneralResultsDto();
+        var generalResults = AnalysisHelper.BuildGeneralResultsDto();
 
         var generalResultsJson = await JsonContent.Create(generalResults).ReadAsStringAsync();
         var generalResultsResponse = new HttpResponseMessage()
@@ -111,40 +111,6 @@ public class AnalysisAcceptanceTest
             .Find(invocation => invocation.Identifier.Equals("generateColumnsChart"));
         Assert.NotNull(jsRuntimeInvocation.Identifier);
         CustomAssertions.StringifyEquals(generalResults.ColumnChart, jsRuntimeInvocation.Arguments[1]);
-    }
-
-    private GeneralResultsDto SetupGeneralResultsDto()
-    {
-        var categories = new string[]
-        {
-            "Real team",
-            "Compelling direction",
-            "Expert coaching",
-            "Enable structure",
-            "Supportive org coaching"
-        };
-        var maxValue = 1.0;
-
-        var firstSurvey = new ColumnSeries<double>("Survey 1", new List<double>()
-        {
-            0.5,
-            0.5,
-            0.5,
-            0.5,
-            0.5
-        });
-        var secondSurvey = new ColumnSeries<double>("Survey 2", new List<double>()
-        {
-            0.5,
-            0.5,
-            0.5,
-            0.5,
-            0.5
-        });
-        var series = new List<ColumnSeries<double>>() { firstSurvey, secondSurvey };
-        var columnChart = new ColumnChart<double>(categories, series, maxValue);
-
-        var generalResults = new GeneralResultsDto(columnChart);
-        return generalResults;
+        CustomAssertions.StringifyEquals(generalResults.Metrics.General, jsRuntimeInvocation.Arguments[2]);
     }
 }

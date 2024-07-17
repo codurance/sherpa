@@ -2,7 +2,6 @@
 using System.Net.Http.Json;
 using Moq;
 using Shared.Test.Helpers;
-using SherpaFrontEnd.Dtos.Analysis;
 using SherpaFrontEnd.Services;
 
 namespace BlazorApp.Tests.Services;
@@ -29,15 +28,7 @@ public class AnalysisServiceTest
     public async Task ShouldDoAGetHttpCallWhenCallingGetGeneralResults()
     {
         var teamId = Guid.NewGuid();
-        var categories = new string[]
-        {
-            "Real team",
-        };
-        var maxValue = 1.0;
-        var survey = new ColumnSeries<double>("Survey 1", new List<double>(){ 0.5 });
-        var series = new List<ColumnSeries<double>>(){survey};
-        var columnChart = new ColumnChart<double>(categories, series, maxValue);
-        var generalResults = new GeneralResultsDto(columnChart);
+        var generalResults = AnalysisHelper.BuildGeneralResultsDto();
 
         var generalResultsJson = await JsonContent.Create(generalResults).ReadAsStringAsync();
         var response = new HttpResponseMessage()

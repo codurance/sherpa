@@ -1,4 +1,4 @@
-window.generateColumnsChart = function (elementId, chartData) {
+window.generateColumnsChart = function (elementId, chartData, generalMetrics) {
     const targetElement = document.getElementById(elementId);
 
     if (!targetElement || targetElement.innerHTML !== "") {
@@ -38,9 +38,9 @@ window.generateColumnsChart = function (elementId, chartData) {
             categories: chartData.categories,
         },
         yaxis: {
-            max: chartData.maxValue,
-            stepSize: 0.25,
-            decimalsInFloat: 2,
+            max: chartData.config.maxValue,
+            stepSize: chartData.config.stepSize,
+            decimalsInFloat: chartData.config.decimalsInFloat,
         },
         legend: {
             position: "top",
@@ -49,7 +49,7 @@ window.generateColumnsChart = function (elementId, chartData) {
         },
         annotations: {
             yaxis: [{
-                y: 0.47,
+                y: generalMetrics.average,
                 strokeDashArray: 5,
                 borderColor: "#e44f00",
                 width: '100%',
@@ -62,7 +62,7 @@ window.generateColumnsChart = function (elementId, chartData) {
                     text: 'Average'
                 }
             }, {
-                y: 0.75,
+                y: generalMetrics.aspirational,
                 strokeDashArray: 5,
                 borderColor: "#008d73",
                 width: '100%',

@@ -7,6 +7,6 @@
     
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await Js.InvokeVoidAsync("generateColumnsChart", _chartId, GeneralResults?.ColumnChart);
+        await Js.InvokeVoidAsync("generateColumnsChart", _chartId, GeneralResults?.ColumnChart, GeneralResults?.Metrics.General);
     }
 }
