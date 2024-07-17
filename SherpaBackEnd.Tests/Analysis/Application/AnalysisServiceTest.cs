@@ -18,7 +18,7 @@ public class AnalysisServiceTest
         var teamId = Guid.NewGuid();
 
         var analysisRepository = new Mock<IAnalysisRepository>();
-        var templateName = "Hackman template";
+        var templateName = "Hackman Model";
 
         var surveys = AnalysisHelper.BuildSurveyResponses();
 
@@ -39,7 +39,7 @@ public class AnalysisServiceTest
         var analysisRepository = new Mock<IAnalysisRepository>();
 
         analysisRepository
-            .Setup(repository => repository.GetAnalysisByTeamIdAndTemplateName(teamId, "Hackman template"))
+            .Setup(repository => repository.GetAnalysisByTeamIdAndTemplateName(teamId, "Hackman Model"))
             .ThrowsAsync(new TeamNotFoundException("Team ID is not found"));
 
         var analysisService = new AnalysisService(analysisRepository.Object);

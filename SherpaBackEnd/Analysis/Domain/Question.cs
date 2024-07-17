@@ -10,12 +10,15 @@ public class Question
 
     public bool Reverse { get; }
     
-    public Question(string category, string? subCategory, int position, bool reverse)
+    public List<string> Options { get; }
+    
+    public Question(string category, string? subCategory, int position, bool reverse, List<string> options)
     {
         Category = category;
         SubCategory = subCategory;
         Position = position;
         Reverse = reverse;
+        Options = options;
     }
 
 }

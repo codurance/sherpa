@@ -19,17 +19,8 @@ public class HackmanAnalysisTest
             new("Real Team", "1", false, options),
         };
         var participants = new List<Participant<string>> { new(responses) };
-
-        var template = new TemplateAnalysis("Hackman template", new Dictionary<int, Question>()
-        {
-            [1] = new("Real Team", null, 1, false),
-            [2] = new("Compelling Direction", null, 1, false),
-            [3] = new("Expert Coaching", null, 1, false),
-            [4] = new("Enable Structure", null, 1, false),
-            [5] = new("Supportive Coaching", null, 1, false),
-            [6] = new("Real Team", null, 1, false),
-        });
-        var surveys = new List<SurveyResponses<string>>() { new("Survey 1", participants, template) };
+        
+        var surveys = new List<SurveyAnalysisData<string>>() { new("Survey 1", participants) };
         var expected = AnalysisHelper.GetHackmanCategories();
 
         var actual = new HackmanAnalysis(surveys).Categories;
@@ -51,19 +42,10 @@ public class HackmanAnalysisTest
             new("Real Team", "1", false, options),
         };
         var participants = new List<Participant<string>> { new(responses) };
-
-        var template = new TemplateAnalysis("Hackman template", new Dictionary<int, Question>()
-        {
-            [1] = new("Real Team", null, 1, false),
-            [2] = new("Compelling Direction", null, 1, false),
-            [3] = new("Expert Coaching", null, 1, false),
-            [4] = new("Enable Structure", null, 1, false),
-            [5] = new("Supportive Coaching", null, 1, false),
-            [6] = new("Real Team", null, 1, false),
-        });
+        
         var surveyTitle = "Survey 1";
-        var surveyResponses = new SurveyResponses<string>(surveyTitle, participants, template);
-        var surveys = new List<SurveyResponses<string>>() { surveyResponses };
+        var surveyResponses = new SurveyAnalysisData<string>(surveyTitle, participants);
+        var surveys = new List<SurveyAnalysisData<string>>() { surveyResponses };
         var surveyResult = new SurveyResult<string>(surveyTitle);
         surveyResult.Categories = AnalysisHelper.GetHackmanCategories();
         var expected = new List<SurveyResult<string>>() { surveyResult };

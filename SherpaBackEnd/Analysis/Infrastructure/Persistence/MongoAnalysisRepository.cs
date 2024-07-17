@@ -9,8 +9,8 @@ namespace SherpaBackEnd.Analysis.Infrastructure.Persistence;
 
 public class MongoAnalysisRepository : IAnalysisRepository
 {
-    
-    private readonly IMongoCollection<BsonDocument> _abstractTemplatesCollection;
+    private readonly IMongoCollection<MSurvey> _surveyCollection;
+    private readonly IMongoCollection<BsonDocument> _templateCollection;
 
     public MongoAnalysisRepository(IOptions<DatabaseSettings> databaseSettings)
     {
@@ -19,17 +19,23 @@ public class MongoAnalysisRepository : IAnalysisRepository
         var mongoDatabase = mongoClient.GetDatabase(
             databaseSettings.Value.DatabaseName);
 
-        _abstractTemplatesCollection = mongoDatabase.GetCollection<BsonDocument>(
+        _surveyCollection = mongoDatabase.GetCollection<MSurvey>(
+            databaseSettings.Value.SurveyCollectionName);
+
+        _templateCollection = mongoDatabase.GetCollection<BsonDocument>(
             databaseSettings.Value.TemplateCollectionName);
     }
 
-    public Task<TemplateAnalysis> GetTemplateAnalysisByName(string name)
+    public async Task<HackmanAnalysis> GetAnalysisByTeamIdAndTemplateName(Guid teamId, string templateName)
     {
-        throw new NotImplementedException();
-    }
-
-    public Task<HackmanAnalysis> GetAnalysisByTeamIdAndTemplateName(Guid teamId, string name)
-    {
-        throw new NotImplementedException();
+        var mSurveys = await _surveyCollection.Find(survey => survey.Team == teamId).ToListAsync();
+        var surveyRawTemplate = await _templateCollection.Find(template => template["name"] == templateName)
+            .FirstOrDefaultAsync();
+        
+        var templateAnalysis = MTemplateAnalysis.ParseTemplate(templateName, surveyRawTemplate);
+        var surveyAnalysisDatas =
+            mSurveys.Select(s => MSurveyAnalysisData.ToSurveyAnalysisData(s, templateAnalysis)).ToList();
+        
+        return new HackmanAnalysis(surveyAnalysisDatas);
     }
 }

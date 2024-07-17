@@ -8,10 +8,10 @@ public class HackmanAnalysis
     public double Average { get; } = 0.75;
     public readonly double Aspirational = 0.75;
 
-    public HackmanAnalysis(List<SurveyResponses<string>> surveyResponses)
+    public HackmanAnalysis(List<SurveyAnalysisData<string>> surveyAnalysisDatas)
     {
         Categories = new HashSet<string>();
-        foreach (var survey in surveyResponses)
+        foreach (var survey in surveyAnalysisDatas)
         {
             var surveyResult = new SurveyResult<string>(survey.Title);
             foreach (var participant in survey.Participants)

@@ -22,25 +22,15 @@ public static class AnalysisHelper
         return new GeneralResultsDto(columnChart, metrics);
     }
 
-    public static List<SurveyResponses<string>> BuildSurveyResponses()
+    public static List<SurveyAnalysisData<string>> BuildSurveyResponses()
     {
-
-        var questions = new Dictionary<int, Question>()
+        return new List<SurveyAnalysisData<string>>
         {
-            [0] = new("Real team", "Delimited", 0, false),
-            [1] = new("Expert Coaching", "Extent and focus of coaching provided by peers.", 1, true),
-            [1] = new("Real team", "Interdependent", 2, false),
-        };
-        var templateAnalysis = new TemplateAnalysis("Hackman template", questions);
-        
-        
-        return new List<SurveyResponses<string>>
-        {
-            new("Survey 1", BuildParticipants(), templateAnalysis),
-            new("Survey 2", BuildParticipants(), templateAnalysis),
-            new("Survey 3", BuildParticipants(), templateAnalysis),
-            new("Survey 4", BuildParticipants(), templateAnalysis),
-            new("Survey 5", BuildParticipants(), templateAnalysis),
+            new("Survey 1", BuildParticipants()),
+            new("Survey 2", BuildParticipants()),
+            new("Survey 3", BuildParticipants()),
+            new("Survey 4", BuildParticipants()),
+            new("Survey 5", BuildParticipants()),
         };
     }
 

@@ -15,7 +15,7 @@ public class AnalysisService : IAnalysisService
     public async Task<GeneralResultsDto> GetGeneralResults(Guid teamId)
     {
         var hackmanAnalysis =
-            await _analysisRepository.GetAnalysisByTeamIdAndTemplateName(teamId, "Hackman template");
+            await _analysisRepository.GetAnalysisByTeamIdAndTemplateName(teamId, "Hackman Model");
         var generalResults = GeneralResultsDto.FromAnalysis(hackmanAnalysis);
         return generalResults;
     }
