@@ -1,13 +1,12 @@
 using SherpaBackEnd.Analysis.Infrastructure.Http.Dto;
 
-namespace SherpaBackEnd.Helpers.Analysis;
+namespace SherpaBackEnd.Tests.Helpers.Analysis;
 
-public static class GeneralResultsDtoBuilder
+public static class AnalysisHelper
 {
-    public static GeneralResultsDto Build()
+    public static GeneralResultsDto BuildGeneralResultsDto()
     {
-        var categories = new[]
-            { "Real Team", "Compelling Direction", "Expert Coaching", "Enable Structure", "Supportive Coaching" };
+        var categories = GetHackmanCategories();
         var survey1 = new ColumnSeries<double>("Survey 1", new List<double>() { 0.5, 0.5, 0.2, 0.1, 0.8 });
         var survey2 = new ColumnSeries<double>("Survey 2", new List<double>() { 0.5, 0.6, 0.2, 0.4, 0.7 });
         var survey3 = new ColumnSeries<double>("Survey 3", new List<double>() { 0.6, 0.6, 0.3, 0.5, 0.6 });
@@ -19,5 +18,11 @@ public static class GeneralResultsDtoBuilder
         var generalMetrics = new GeneralMetrics(0.9, 0.75);
         var metrics = new Metrics(generalMetrics);
         return new GeneralResultsDto(columnChart, metrics);
+    }
+
+    public static List<string> GetHackmanCategories()
+    {
+        return new List<string>()
+            { "Real Team", "Compelling Direction", "Expert Coaching", "Enable Structure", "Supportive Coaching" };
     }
 }

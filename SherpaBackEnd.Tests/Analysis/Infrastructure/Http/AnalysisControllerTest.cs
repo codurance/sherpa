@@ -6,7 +6,7 @@ using SherpaBackEnd.Analysis.Application;
 using SherpaBackEnd.Analysis.Domain.Exceptions;
 using SherpaBackEnd.Analysis.Infrastructure.Http;
 using SherpaBackEnd.Analysis.Infrastructure.Http.Dto;
-using SherpaBackEnd.Helpers.Analysis;
+using SherpaBackEnd.Tests.Helpers.Analysis;
 
 namespace SherpaBackEnd.Tests.Analysis.Infrastructure.Http;
 
@@ -15,7 +15,7 @@ public class AnalysisControllerTest
     [Fact]
     public async Task ShouldBeAbleToRetrieveTheGeneralResultsFromATeamId()
     {
-        var expected = GeneralResultsDtoBuilder.Build();
+        var expected = AnalysisHelper.BuildGeneralResultsDto();
         
         var analysisServiceMock = new Mock<IAnalysisService>();
         var teamId = Guid.NewGuid();

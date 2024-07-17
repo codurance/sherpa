@@ -4,5 +4,5 @@ public interface IAnalysisRepository
 {
     Task<TemplateAnalysis> GetTemplateAnalysisByName(string name);
 
-    Task<SurveyResult> GetSurveyResultsByTeamIdAndTemplateName(Guid teamId, string name);
+    Task<HackmanAnalysis> GetAnalysisByTeamIdAndTemplateName(Guid teamId, string name);
 }

@@ -28,7 +28,7 @@ public class MongoAnalysisRepository : IAnalysisRepository
         throw new NotImplementedException();
     }
 
-    public Task<SurveyResult> GetSurveyResultsByTeamIdAndTemplateName(Guid teamId, string name)
+    public Task<HackmanAnalysis> GetAnalysisByTeamIdAndTemplateName(Guid teamId, string name)
     {
         throw new NotImplementedException();
     }
