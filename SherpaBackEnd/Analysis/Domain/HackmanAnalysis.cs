@@ -17,7 +17,7 @@ public class HackmanAnalysis
             foreach (var response in survey.Responses)
             {
                 Categories.Add(response.Category);
-                surveyResult.AddNewResponseForCategory(response);
+                surveyResult.AddResponse(response);
             }
             surveyResult.Categories = Categories.ToList();
             surveyResult.NumberOfParticipants = survey.Responses.Count;

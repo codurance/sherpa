@@ -4,5 +4,5 @@ public class CategoryResult
 {
     public string Name { get; }
     
-    public int NumberOfPositives { get; }
+    public int NumberOfPositives { get; set; }
 }

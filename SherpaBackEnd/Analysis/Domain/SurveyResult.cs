@@ -14,10 +14,10 @@ public class SurveyResult<T>
         Title = title;
     }
 
-    public void AddNewResponseForCategory(Response<T> response)
+    public void AddResponse(Response<T> response)
     {
         // Perform some logic to check if it's possitive
-        // response.IsPositive();
+        response.IsPositive();
         if (CategoryResults.ContainsKey(response.Category))
         {
             // CategoryResults[response.Category].NumberOfPositives++;
