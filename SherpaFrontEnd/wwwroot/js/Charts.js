@@ -5,6 +5,12 @@ window.generateColumnsChart = function (elementId, series, categories, yaxis) {
     if (!targetElement || targetElement.innerHTML !== "") {
         return;
     }
+    const patterns = ['squares', 'slantedLines', 'verticalLines', 'horizontalLines']
+    const colors = ["#DC0AB4", "#0BB4FF", "#50E991", "#E6D800", "#9B19F5", "#E60049", "#B3D4FF", "#FFA300", "#00BFA0"]
+    const repeatedPatternsForAllSurveys = [];
+    for (let i = 0; i < series.length; i++) {
+        repeatedPatternsForAllSurveys.push(patterns[i % patterns.length]);
+    }
 
     const options = {
         series,
@@ -28,8 +34,10 @@ window.generateColumnsChart = function (elementId, series, categories, yaxis) {
         },
         stroke: {
             show: true,
-            width: 4,
-            colors: ['transparent']
+            // width: 4,
+            // colors: ['transparent']
+            width: 2,
+            colors: colors
         },
         xaxis: {
             categories
@@ -41,12 +49,13 @@ window.generateColumnsChart = function (elementId, series, categories, yaxis) {
         legend: {
             position: "top",
         },
+        colors: colors,
         fill: {
-            type: 'pattern',
+            colors: colors,
+            type: "pattern",
             opacity: 1,
             pattern: {
-                style: ['circles', 'slantedLines', 'verticalLines', 'horizontalLines'], // string or array of strings
-
+                style: repeatedPatternsForAllSurveys,
             }
         },
         annotations: {
