@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Newtonsoft.Json;
 using Shared.Test.Helpers;
-using SherpaFrontEnd.Dtos.Analysis;
 using SherpaFrontEnd.Dtos.Survey;
 using SherpaFrontEnd.Dtos.Team;
 using SherpaFrontEnd.Pages.TeamContent;
@@ -494,7 +493,7 @@ public class TeamContentTest
             new Survey(Guid.NewGuid(), userOne, Status.Draft, new DateTime(), "title", "description",
                 Array.Empty<Response>(), team, new Template("template"))
         });
-        var generalResultsDto = SetupGeneralResultsDto();
+        var generalResultsDto = AnalysisHelper.BuildGeneralResultsDto();
         _mockAnalysisService.Setup(service => service.GetGeneralResults(team.Id)).ReturnsAsync(generalResultsDto);
 
         _mockTeamService.Setup(m => m.GetTeamById(It.IsAny<Guid>())).ReturnsAsync(team);
@@ -519,42 +518,5 @@ public class TeamContentTest
         var tabPage = teamContentComponent.FindElementByCssSelectorAndTextContent("a:not(a[href])", tabName);
         Assert.NotNull(tabPage);
         tabPage.Click();
-    }
-    
-    private GeneralResultsDto SetupGeneralResultsDto()
-    {
-        var categories = new string[]
-        {
-            "Real team",
-            "Compelling direction",
-            "Expert coaching",
-            "Enable structure",
-            "Supportive org coaching"
-        };
-        var columnChartConfig = new ColumnChartConfig<double>(1.0, 0.25, 2);
-        var firstSurvey = new ColumnSeries<double>("Survey 1", new List<double>()
-        {
-            0.5,
-            0.5,
-            0.5,
-            0.5,
-            0.5
-        });
-        var secondSurvey = new ColumnSeries<double>("Survey 2", new List<double>()
-        {
-            0.5,
-            0.5,
-            0.5,
-            0.5,
-            0.5
-        });
-        var series = new List<ColumnSeries<double>>() { firstSurvey, secondSurvey };
-        var columnChart = new ColumnChart<double>(categories, series, columnChartConfig);
-
-        var generalMetrics = new GeneralMetrics(0.50, 0.75);
-        var metrics = new Metrics(generalMetrics);
-        
-        var generalResults = new GeneralResultsDto(columnChart, metrics);
-        return generalResults;
     }
 }

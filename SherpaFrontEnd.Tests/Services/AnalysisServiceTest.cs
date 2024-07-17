@@ -2,7 +2,6 @@
 using System.Net.Http.Json;
 using Moq;
 using Shared.Test.Helpers;
-using SherpaFrontEnd.Dtos.Analysis;
 using SherpaFrontEnd.Services;
 
 namespace BlazorApp.Tests.Services;
@@ -29,7 +28,7 @@ public class AnalysisServiceTest
     public async Task ShouldDoAGetHttpCallWhenCallingGetGeneralResults()
     {
         var teamId = Guid.NewGuid();
-        var generalResults = SetupGeneralResultsDto();
+        var generalResults = AnalysisHelper.BuildGeneralResultsDto();
 
         var generalResultsJson = await JsonContent.Create(generalResults).ReadAsStringAsync();
         var response = new HttpResponseMessage()
@@ -47,42 +46,4 @@ public class AnalysisServiceTest
         _authService.Verify(auth => auth.DecorateWithToken(It.IsAny<HttpRequestMessage>()));
         CustomAssertions.StringifyEquals(generalResults, serviceResponse);
     }
-    
-    private GeneralResultsDto SetupGeneralResultsDto()
-    {
-        var categories = new string[]
-        {
-            "Real team",
-            "Compelling direction",
-            "Expert coaching",
-            "Enable structure",
-            "Supportive org coaching"
-        };
-        var columnChartConfig = new ColumnChartConfig<double>(1.0, 0.25, 2);
-        var firstSurvey = new ColumnSeries<double>("Survey 1", new List<double>()
-        {
-            0.5,
-            0.5,
-            0.5,
-            0.5,
-            0.5
-        });
-        var secondSurvey = new ColumnSeries<double>("Survey 2", new List<double>()
-        {
-            0.5,
-            0.5,
-            0.5,
-            0.5,
-            0.5
-        });
-        var series = new List<ColumnSeries<double>>() { firstSurvey, secondSurvey };
-        var columnChart = new ColumnChart<double>(categories, series, columnChartConfig);
-
-        var generalMetrics = new GeneralMetrics(0.50, 0.75);
-        var metrics = new Metrics(generalMetrics);
-        
-        var generalResults = new GeneralResultsDto(columnChart, metrics);
-        return generalResults;
-    }
-
 }
