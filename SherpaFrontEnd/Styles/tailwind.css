@@ -29,9 +29,10 @@
     --states---success--800: rgba(4, 149, 124, 1);
     --states---success--300: rgba(110, 216, 195, 1);
     --states---success--200: rgba(237, 255, 251, 1);
-    --states---informative--800: rgba(16, 144, 232, 1);
-    --states---informative--300: rgba(170, 217, 250, 1);
-    --states---informative--200: rgba(235, 247, 255, 1);
+    --states---informative--800: rgba(3, 98, 163, 1);
+    --states---informative--400: rgba(51, 159, 233, 1);
+    --states---informative--200: rgba(158, 216, 255, 1);
+    --states---informative--100: rgba(235, 247, 255, 1);
     --states---alert--800: rgba(237, 190, 2, 1);
     --states---alert--300: rgba(255, 247, 208, 1);
     --states---alert--200: rgba(254, 252, 242, 1);
