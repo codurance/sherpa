@@ -14,7 +14,7 @@ public class Response<T>
         Category = category;
         Value = value;
         Reverse = reverse;
-        Options = options;
+        Options = new List<T>(options);
         if (Reverse)
         {
             Options.Reverse();
@@ -23,7 +23,6 @@ public class Response<T>
 
     public bool IsPositive()
     {
-       
         var indexOfResponse = Options.IndexOf(Value) + 1;
 
         var indexOfOptionsMidPoint = Options.Count / 2 + 1;

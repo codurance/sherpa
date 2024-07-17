@@ -13,32 +13,22 @@ public class AnalysisServiceTest
     [Fact]
     public async Task ShouldBeAbleToRetrieveGeneralResultsFromATeamId()
     {
-        // Given
         var expected = AnalysisHelper.BuildGeneralResultsDto();
 
         var teamId = Guid.NewGuid();
 
         var analysisRepository = new Mock<IAnalysisRepository>();
-        var templateName = "Hackman Model";
+        var templateName = "Hackman template";
 
-        // var questions = new Dictionary<int, Question>()
-        // {
-        //     [0] = new("Real team", "Delimited", 0, false),
-        //     [1] = new("Expert Coaching", "Extent and focus of coaching provided by peers.", 1, true),
-        //     [1] = new("Real team", "Interdependent", 2, false),
-        // };
-
-        var surveys = new List<SurveyResponses<string>>();
+        var surveys = AnalysisHelper.BuildSurveyResponses();
 
         analysisRepository.Setup(repository => repository.GetAnalysisByTeamIdAndTemplateName(teamId, templateName))
             .ReturnsAsync(new HackmanAnalysis(surveys));
 
         var analysisService = new AnalysisService(analysisRepository.Object);
 
-        // When
         var actual = await analysisService.GetGeneralResults(teamId);
 
-        // Then
         CustomAssertions.StringifyEquals(expected, actual);
     }
 

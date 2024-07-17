@@ -1,5 +1,4 @@
 using SherpaBackEnd.Analysis.Domain;
-using SherpaBackEnd.Survey.Domain;
 using SherpaBackEnd.Tests.Helpers.Analysis;
 
 namespace SherpaBackEnd.Tests.Analysis.Domain;
@@ -19,6 +18,8 @@ public class HackmanAnalysisTest
             new("Supportive Coaching", "1", false, options),
             new("Real Team", "1", false, options),
         };
+        var participants = new List<Participant<string>> { new(responses) };
+
         var template = new TemplateAnalysis("Hackman template", new Dictionary<int, Question>()
         {
             [1] = new("Real Team", null, 1, false),
@@ -28,7 +29,7 @@ public class HackmanAnalysisTest
             [5] = new("Supportive Coaching", null, 1, false),
             [6] = new("Real Team", null, 1, false),
         });
-        var surveys = new List<SurveyResponses<string>>() { new("Survey 1", responses, template) };
+        var surveys = new List<SurveyResponses<string>>() { new("Survey 1", participants, template) };
         var expected = AnalysisHelper.GetHackmanCategories();
 
         var actual = new HackmanAnalysis(surveys).Categories;
@@ -49,6 +50,8 @@ public class HackmanAnalysisTest
             new("Supportive Coaching", "1", false, options),
             new("Real Team", "1", false, options),
         };
+        var participants = new List<Participant<string>> { new(responses) };
+
         var template = new TemplateAnalysis("Hackman template", new Dictionary<int, Question>()
         {
             [1] = new("Real Team", null, 1, false),
@@ -59,7 +62,7 @@ public class HackmanAnalysisTest
             [6] = new("Real Team", null, 1, false),
         });
         var surveyTitle = "Survey 1";
-        var surveyResponses = new SurveyResponses<string>(surveyTitle, responses, template);
+        var surveyResponses = new SurveyResponses<string>(surveyTitle, participants, template);
         var surveys = new List<SurveyResponses<string>>() { surveyResponses };
         var surveyResult = new SurveyResult<string>(surveyTitle);
         surveyResult.Categories = AnalysisHelper.GetHackmanCategories();

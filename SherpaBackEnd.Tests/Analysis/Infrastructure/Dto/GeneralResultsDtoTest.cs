@@ -1,3 +1,4 @@
+using Shared.Test.Helpers;
 using SherpaBackEnd.Analysis.Domain;
 using SherpaBackEnd.Analysis.Infrastructure.Http.Dto;
 using SherpaBackEnd.Tests.Helpers.Analysis;
@@ -9,10 +10,10 @@ public class GeneralResultsDtoTest
     [Fact]
     public void ShouldCreateAGeneralResultsDtoFromAHackmanAnalysis()
     {
-        var surveys = new List<SurveyResponses<string>>();
+        var surveys = AnalysisHelper.BuildSurveyResponses();
         var analysis = new HackmanAnalysis(surveys);
         var actual = GeneralResultsDto.FromAnalysis(analysis);
         var expected = AnalysisHelper.BuildGeneralResultsDto();
-        Assert.Equal(expected, actual);
+        CustomAssertions.StringifyEquals(expected, actual);
     }
 }

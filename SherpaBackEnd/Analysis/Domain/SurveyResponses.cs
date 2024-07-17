@@ -5,14 +5,15 @@ namespace SherpaBackEnd.Analysis.Domain;
 public class SurveyResponses<T>
 {
     public string Title { get; }
-    public List<Response<T>> Responses { get; }
+    
+    public List<Participant<T>> Participants { get; }
     
     public TemplateAnalysis Template { get; }
     
-    public SurveyResponses(string title, List<Response<T>> responses, TemplateAnalysis template)
+    public SurveyResponses(string title, List<Participant<T>> participants, TemplateAnalysis template)
     {
         Title = title;
-        Responses = responses;
+        Participants = participants;
         Template = template;
     }
     
