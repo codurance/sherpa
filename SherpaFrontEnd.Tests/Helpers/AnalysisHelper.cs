@@ -35,8 +35,23 @@ public static class AnalysisHelper
         var columnChart = new ColumnChart<double>(categories, series, columnChartConfig);
 
         var generalMetrics = new GeneralMetrics(0.50, 0.75);
-        var metrics = new Metrics(generalMetrics);
-        
+        var survey = new List<SurveyMetric>()
+        {
+            new SurveyMetric("Survey 1", 0.50),
+            new SurveyMetric("Survey 2", 0.66),
+            new SurveyMetric("Survey 3", 0.70),
+            new SurveyMetric("Survey 4", 0.83)
+        };
+        var lastSurveyCategoryMetrics = new List<LastSurveyCategoryMetric>()
+        {
+            new LastSurveyCategoryMetric("Real team", 0.74, false),
+            new LastSurveyCategoryMetric("Compelling direction", 0.64, false),
+            new LastSurveyCategoryMetric("Expert coaching", 0.81, true),
+            new LastSurveyCategoryMetric("Supportive org coaching", 0.88, true)
+        };
+
+        var metrics = new Metrics(generalMetrics, survey, lastSurveyCategoryMetrics);
+
         var generalResults = new GeneralResultsDto(columnChart, metrics);
         return generalResults;
     }

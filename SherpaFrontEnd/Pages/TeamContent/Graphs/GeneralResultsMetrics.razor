@@ -1,6 +1,6 @@
 @using SherpaFrontEnd.Dtos.Analysis
 <div class="grid grid-cols-2 md:grid-cols-2 gap-6">
-    @foreach (var survey in Metrics.Surveys)
+    @foreach (var survey in MetricsData.Surveys)
     {
     <div>
         <p>[@survey.Name]</p>
@@ -10,22 +10,27 @@
     }
 </div>
 @code {
-    public static GeneralMetrics GeneralMetrics = null;
+    private GeneralMetrics _generalMetrics = null;
 
-    public static List<SurveyMetric> Survey = new List<SurveyMetric>()
+    private List<SurveyMetric> _survey = new List<SurveyMetric>()
     {
         new SurveyMetric("Survey 1", 0.50),
         new SurveyMetric("Survey 2", 0.66),
         new SurveyMetric("Survey 3", 0.70),
         new SurveyMetric("Survey 4", 0.83)
     };
-    public static List<LastSurveyCategoryMetric> LastSurveyCategoryMetrics = new List<LastSurveyCategoryMetric>()
+    private List<LastSurveyCategoryMetric> _lastSurveyCategoryMetrics = new List<LastSurveyCategoryMetric>()
     {
         new LastSurveyCategoryMetric("Real team", 0.74, false),
         new LastSurveyCategoryMetric("Compelling direction", 0.64, false),
         new LastSurveyCategoryMetric("Expert coaching", 0.81, true),
         new LastSurveyCategoryMetric("Supportive org coaching", 0.88, true)
     };
-    public Metrics Metrics = new Metrics(GeneralMetrics, Survey, LastSurveyCategoryMetrics);
 
+    public Metrics MetricsData { get; set; }
+
+    protected override void OnInitialized()
+    {
+        MetricsData = new Metrics(_generalMetrics, _survey, _lastSurveyCategoryMetrics);
+    }
 }
