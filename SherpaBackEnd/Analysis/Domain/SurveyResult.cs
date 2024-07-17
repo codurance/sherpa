@@ -1,10 +1,31 @@
+using SherpaBackEnd.Survey.Domain;
+
 namespace SherpaBackEnd.Analysis.Domain;
 
-public class SurveyResult
+public class SurveyResult<T>
 {
     public string Title { get; }
-    public List<string> Categories { get; }
-    public int NumberOfParticipants { get; }
-    public Dictionary<string, CategoryResult> CategoryResults;
+    public List<string> Categories { get; set; }
+    public int NumberOfParticipants { get; set; }
+    public Dictionary<string, CategoryResult> CategoryResults = new();
+
+    public SurveyResult(string title)
+    {
+        Title = title;
+    }
+
+    public void AddNewResponseForCategory(Response<T> response)
+    {
+        // Perform some logic to check if it's possitive
+        // response.IsPositive();
+        if (CategoryResults.ContainsKey(response.Category))
+        {
+            // CategoryResults[response.Category].NumberOfPositives++;
+        }
+        else
+        {
+            CategoryResults.Add(response.Category, new CategoryResult());
+        }
+    }
     
 }

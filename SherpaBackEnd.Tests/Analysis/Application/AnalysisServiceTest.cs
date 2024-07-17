@@ -28,7 +28,7 @@ public class AnalysisServiceTest
         //     [1] = new("Real team", "Interdependent", 2, false),
         // };
 
-        var surveys = new List<SurveyResponses>();
+        var surveys = new List<SurveyResponses<string>>();
 
         analysisRepository.Setup(repository => repository.GetAnalysisByTeamIdAndTemplateName(teamId, templateName))
             .ReturnsAsync(new HackmanAnalysis(surveys));

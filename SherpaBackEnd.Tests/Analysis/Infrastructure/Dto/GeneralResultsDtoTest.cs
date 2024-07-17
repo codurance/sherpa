@@ -9,7 +9,7 @@ public class GeneralResultsDtoTest
     [Fact]
     public void ShouldCreateAGeneralResultsDtoFromAHackmanAnalysis()
     {
-        var surveys = new List<SurveyResponses>();
+        var surveys = new List<SurveyResponses<string>>();
         var analysis = new HackmanAnalysis(surveys);
         var actual = GeneralResultsDto.FromAnalysis(analysis);
         var expected = AnalysisHelper.BuildGeneralResultsDto();

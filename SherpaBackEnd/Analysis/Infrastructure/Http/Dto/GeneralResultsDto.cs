@@ -15,7 +15,7 @@ public class GeneralResultsDto
 
     public static GeneralResultsDto FromAnalysis(HackmanAnalysis hackmanAnalysis)
     {
-        List<ColumnSeries<double>> series = hackmanAnalysis.surveys
+        List<ColumnSeries<double>> series = hackmanAnalysis.Surveys
             .Select(survey => new ColumnSeries<double>(survey.Title, MapSurveyResultToColumnSeries(survey))).ToList();
 
         return new GeneralResultsDto(
@@ -26,7 +26,7 @@ public class GeneralResultsDto
             new Metrics(new GeneralMetrics(hackmanAnalysis.Average, hackmanAnalysis.Aspirational)));
     }
 
-    private static List<double> MapSurveyResultToColumnSeries(SurveyResult survey)
+    private static List<double> MapSurveyResultToColumnSeries(SurveyResult<string> survey)
     {
         return survey.Categories.Select(category =>
             survey.CategoryResults[category].NumberOfPositives / (double)survey.NumberOfParticipants).ToList();
