@@ -10,6 +10,7 @@ window.generateColumnsChart = function (elementId, chartData, generalMetrics) {
     }
 
     const options = {
+        colors: ["#DC0AB4", "#0BB4FF", "#50E991", "#E6D800", "#9B19F5", "#E60049", "#B3D4FF", "#FFA300", "#00BFA0"],
         series: chartData.series,
         chart: {
             type: 'bar',
