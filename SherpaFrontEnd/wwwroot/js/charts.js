@@ -9,6 +9,15 @@ window.generateColumnsChart = function (elementId, chartData, generalMetrics) {
         return;
     }
 
+    const categoriesWithLineBreaks = chartData.categories.map(categoryName => {
+        const words = categoryName.split(' ');
+        if (words.length <= 2) {
+            return categoryName;
+        } else {
+            return words;
+        }
+    })
+
     const options = {
         colors: ["#DC0AB4", "#0BB4FF", "#50E991", "#E6D800", "#9B19F5", "#E60049", "#B3D4FF", "#FFA300", "#00BFA0"],
         series: chartData.series,
@@ -36,7 +45,7 @@ window.generateColumnsChart = function (elementId, chartData, generalMetrics) {
             colors: ['transparent']
         },
         xaxis: {
-            categories: chartData.categories,
+            categories: categoriesWithLineBreaks,
         },
         yaxis: {
             max: chartData.config.maxValue,
