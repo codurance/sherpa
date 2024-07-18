@@ -16,18 +16,21 @@ public class GeneralResultsDto
     public static GeneralResultsDto FromAnalysis(HackmanAnalysis hackmanAnalysis)
     {
         List<ColumnSeries<double>> series = hackmanAnalysis.Surveys
-            .Select(survey => new ColumnSeries<double>(survey.Title, MapSurveyResultToColumnSeries(survey))).ToList();
+            .Select(survey =>
+                new ColumnSeries<double>(survey.Title, MapSurveyResultToColumnSeries(survey)))
+            .ToList();
 
         return new GeneralResultsDto(
             new ColumnChart<double>(
-                hackmanAnalysis.Categories.ToList(),
+                hackmanAnalysis.Categories,
                 series,
-                new ColumnChartConfig<double>(1, 0.25, 2)),
+                new ColumnChartConfig<double>(1, 0.1, 1)),
             new Metrics(new GeneralMetrics(hackmanAnalysis.Average, hackmanAnalysis.Aspirational)));
     }
 
     private static List<double> MapSurveyResultToColumnSeries(SurveyResult<string> survey)
     {
-        return survey.Categories.Select(category => survey.CategoryResults[category].PercentageOfPositives).ToList();
+        return survey.Categories.Where(category => survey.Categories.Contains(category))
+            .Select(category => survey.CategoryResults[category].PercentageOfPositives).ToList();
     }
 }

@@ -14,8 +14,8 @@ public class HackmanAnalysisTest
             new("Real Team", "1", false, options),
             new("Compelling Direction", "1", false, options),
             new("Expert Coaching", "1", false, options),
-            new("Enable Structure", "1", false, options),
-            new("Supportive Coaching", "1", false, options),
+            new("Enabling Structure", "1", false, options),
+            new("Supportive Organizational Context", "1", false, options),
             new("Real Team", "1", false, options),
         };
         var participants = new List<Participant<string>> { new(responses) };
@@ -37,8 +37,8 @@ public class HackmanAnalysisTest
             new("Real Team", "1", false, options),
             new("Compelling Direction", "1", false, options),
             new("Expert Coaching", "1", false, options),
-            new("Enable Structure", "1", false, options),
-            new("Supportive Coaching", "1", false, options),
+            new("Enabling Structure", "1", false, options),
+            new("Supportive Organizational Context", "1", false, options),
             new("Real Team", "1", false, options),
         };
         var participants = new List<Participant<string>> { new(responses) };

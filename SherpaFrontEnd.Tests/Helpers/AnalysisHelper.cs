@@ -11,7 +11,7 @@ public static class AnalysisHelper
             "Real team",
             "Compelling direction",
             "Expert coaching",
-            "Enable structure",
+            "Enabling Structure",
             "Supportive org coaching"
         };
         var columnChartConfig = new ColumnChartConfig<double>(1.0, 0.25, 2);

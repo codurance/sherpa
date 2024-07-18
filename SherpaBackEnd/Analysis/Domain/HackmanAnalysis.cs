@@ -1,10 +1,14 @@
+using MongoDB.Driver.Linq;
+
 namespace SherpaBackEnd.Analysis.Domain;
 
 public class HackmanAnalysis
 {
-    public HashSet<string> Categories { get; }
-    
-    public List<SurveyResult<string>> Surveys = new();
+    public List<string> Categories => GetCategories();
+
+    private readonly HashSet<string> _categories = new();
+
+    public readonly List<SurveyResult<string>> Surveys = new();
 
     public double Average => GetAverage();
 
@@ -12,7 +16,6 @@ public class HackmanAnalysis
 
     public HackmanAnalysis(List<SurveyAnalysisData<string>> surveyAnalysisDatas)
     {
-        Categories = new HashSet<string>();
         foreach (var survey in surveyAnalysisDatas)
         {
             var surveyResult = new SurveyResult<string>(survey.Title);
@@ -20,14 +23,28 @@ public class HackmanAnalysis
             {
                 foreach (var response in participant.Responses)
                 {
-                    Categories.Add(response.Category);
+                    _categories.Add(response.Category);
                     surveyResult.AddResponse(response);
                 }
             }
-            surveyResult.Categories = Categories.ToList();
+
+            surveyResult.Categories = Categories;
             surveyResult.NumberOfParticipants = survey.Participants.Count;
             Surveys.Add(surveyResult);
         }
+    }
+
+    private List<string> GetCategories()
+    {
+        var sortedCategories = new List<string>
+        {
+            "Real Team",
+            "Compelling Direction",
+            "Enabling Structure",
+            "Supportive Organizational Context",
+            "Expert Coaching"
+        };
+        return sortedCategories.Where(category => _categories.Contains(category)).ToList();
     }
 
     private double GetAverage()
