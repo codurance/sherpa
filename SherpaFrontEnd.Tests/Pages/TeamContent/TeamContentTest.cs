@@ -477,7 +477,7 @@ public class TeamContentTest
     }
 
     [Fact]
-    public void ShouldRenderGeneralResultsColumnChart()
+    public void ShouldRenderGeneralResultsColumnChartFromAnalysisTab()
     {
         const string teamName = "Demo team";
         var teamId = Guid.NewGuid();
@@ -511,6 +511,58 @@ public class TeamContentTest
         Assert.Contains(generalResultsColumnChartId, jsRuntimeInvocation.Arguments);
         var divToRenderColumnChart = teamContentComponent.Find($"div[id='{generalResultsColumnChartId}']");
         Assert.NotNull(divToRenderColumnChart);
+    }
+    
+    [Fact]
+    public void ShouldRenderGeneralResultsMetricsFromAnalysisTab()
+    {
+        const string teamName = "Demo team";
+        var teamId = Guid.NewGuid();
+        var team = new Team
+        {
+            Name = teamName,
+            Id = teamId
+        };
+        var userOne = new User(Guid.NewGuid(), "user");
+
+        _mockSurveyService.Setup(service => service.GetAllSurveysByTeam(teamId)).ReturnsAsync(new List<Survey>()
+        {
+            new Survey(Guid.NewGuid(), userOne, Status.Draft, new DateTime(), "title", "description",
+                Array.Empty<Response>(), team, new Template("template"))
+        });
+        var generalResultsDto = AnalysisHelper.BuildGeneralResultsDto();
+        _mockAnalysisService.Setup(service => service.GetGeneralResults(team.Id)).ReturnsAsync(generalResultsDto);
+
+        _mockTeamService.Setup(m => m.GetTeamById(It.IsAny<Guid>())).ReturnsAsync(team);
+        var teamContentComponent =
+            _testContext.RenderComponent<TeamContent>(ComponentParameter.CreateParameter("TeamId", teamId));
+        
+        var firstSurveyMetricName = teamContentComponent.FindElementByCssSelectorAndTextContent("p", "[SURVEY 1]");
+        Assert.NotNull(firstSurveyMetricName);
+        var firstSurveyMetricAverage = teamContentComponent.FindElementByCssSelectorAndTextContent("p", "50%");
+        Assert.NotNull(firstSurveyMetricAverage);
+            var thirdSurveyMetricName = teamContentComponent.FindElementByCssSelectorAndTextContent("p", "[SURVEY 3]");
+        Assert.NotNull(thirdSurveyMetricName);
+        var thirdSurveyMetricAverage = teamContentComponent.FindElementByCssSelectorAndTextContent("p", "70%");
+        Assert.NotNull(thirdSurveyMetricAverage);
+        
+        var informativeMessage = teamContentComponent.FindElementByCssSelectorAndTextContent("p",
+            "The following numbers are a comparison between the last and previous survey assessment");
+        Assert.NotNull(informativeMessage);
+        
+        var firstSurveyCategoryName = teamContentComponent.FindElementByCssSelectorAndTextContent("p", "Real team");
+        Assert.NotNull(firstSurveyCategoryName);
+        var firstSurveyCategoryAverage = teamContentComponent.FindElementByCssSelectorAndTextContent("p", "74%");
+        Assert.NotNull(firstSurveyCategoryAverage);
+        
+        var arrowUp = teamContentComponent.Find(".text-states-success-800");
+        Assert.NotNull(arrowUp);
+        Assert.Equal(2, teamContentComponent.FindAll(".text-states-success-800").Count);
+
+        var arrowDown = teamContentComponent.Find(".text-states-error-800");
+        Assert.NotNull(arrowDown);
+        Assert.Equal(3, teamContentComponent.FindAll(".text-states-error-800").Count);
+
     }
     
     private static void GoToTab(IRenderedComponent<TeamContent> teamContentComponent, string tabName)
