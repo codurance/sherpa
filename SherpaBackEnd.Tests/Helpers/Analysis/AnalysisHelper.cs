@@ -17,7 +17,20 @@ public static class AnalysisHelper
 
         var series = new List<ColumnSeries<double>>() { survey1, survey2, survey3, survey4, survey5 };
         var columnChart = new ColumnChart<double>(categories, series, new ColumnChartConfig<double>(1, 0.25, 2));
-        var generalMetrics = new GeneralMetrics(0.75, 0.75);
+        var generalMetrics = new GeneralMetrics(0.47, 0.75);
+        var metrics = new Metrics(generalMetrics);
+        return new GeneralResultsDto(columnChart, metrics);
+    }
+    
+    public static GeneralResultsDto BuildASingleSurveyGeneralResultsDto()
+    {
+        var data = new List<double>() { 0.5, 0.75, 1.0, 1.0, 1.0};
+        var categories = GetHackmanCategories();
+        var survey = new ColumnSeries<double>("Super Survey", data);
+
+        var series = new List<ColumnSeries<double>>() { survey };
+        var columnChart = new ColumnChart<double>(categories, series, new ColumnChartConfig<double>(1, 0.25, 2));
+        var generalMetrics = new GeneralMetrics(0.85, 0.75);
         var metrics = new Metrics(generalMetrics);
         return new GeneralResultsDto(columnChart, metrics);
     }
@@ -31,6 +44,36 @@ public static class AnalysisHelper
             new("Survey 3", BuildParticipants()),
             new("Survey 4", BuildParticipants()),
             new("Survey 5", BuildParticipants()),
+        };
+    }
+
+    public static List<SurveyAnalysisData<string>> BuildASurveyWithMultipleParticipants()
+    {
+        var options = new List<string>() { "1", "2", "3", "4", "5" };
+
+        return new List<SurveyAnalysisData<string>>()
+        {
+            new("Super Survey", new List<Participant<string>>()
+            {
+                new(new List<Response<string>>()
+                {
+                    new("Real Team", "1", false, options),
+                    new("Enabling Structure", "5", false, options),
+                    new("Enabling Structure", "5", false, options),
+                    new("Compelling Direction", "5", false, options),
+                    new("Expert Coaching", "5", false, options),
+                    new("Supportive Coaching", "5", false, options),
+                }),
+                new(new List<Response<string>>()
+                {
+                    new("Real Team", "5", false, options),
+                    new("Enabling Structure", "1", false, options),
+                    new("Enabling Structure", "5", false, options),
+                    new("Compelling Direction", "5", false, options),
+                    new("Expert Coaching", "5", false, options),
+                    new("Supportive Coaching", "5", false, options),
+                })
+            })
         };
     }
 

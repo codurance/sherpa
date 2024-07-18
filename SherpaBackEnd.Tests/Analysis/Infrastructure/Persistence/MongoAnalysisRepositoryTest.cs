@@ -7,6 +7,8 @@ using Shared.Test.Helpers;
 using SherpaBackEnd.Analysis.Domain;
 using SherpaBackEnd.Analysis.Infrastructure.Persistence;
 using SherpaBackEnd.Shared.Infrastructure.Persistence;
+using SherpaBackEnd.Tests.Helpers.Analysis;
+using SherpaBackEnd.Tests.Helpers.Analysis.Infrastructure;
 
 namespace SherpaBackEnd.Tests.Analysis.Infrastructure.Persistence;
 
@@ -27,7 +29,8 @@ public class MongoAnalysisRepositoryTest : IDisposable
     public async Task ShouldReturnAnEmptyAnalysisIfThereAreNoSurveys()
     {
         await InitialiseDatabaseClientAndCollections();
-        await InsertTemplate();
+        await MongoAnalysisHelper.InsertTemplate(_templateCollection);
+
 
         var teamId = Guid.NewGuid();
 
@@ -44,29 +47,12 @@ public class MongoAnalysisRepositoryTest : IDisposable
         var teamId = Guid.NewGuid();
 
         await InitialiseDatabaseClientAndCollections();
-        await InsertTemplate();
-        await InsertSurveyWithTeamId(teamId);
+        await MongoAnalysisHelper.InsertTemplate(_templateCollection);
+        await MongoAnalysisHelper.InsertSurveyWithTeamId(_surveyCollection, teamId);
 
         var options = new List<string>() { "1", "2", "3", "4", "5" };
         
-        var expected = new HackmanAnalysis(new List<SurveyAnalysisData<string>>()
-        {
-            new("Super Survey", new List<Participant<string>>()
-            {
-                new(new List<Response<string>>()
-                {
-                    new("Real Team", "1", false, options),
-                    new("Enabling Structure", "5", false, options),
-                    new("Enabling Structure", "5", false, options)
-                }),
-                new(new List<Response<string>>()
-                {
-                    new("Real Team", "5", false, options),
-                    new("Enabling Structure", "1", false, options),
-                    new("Enabling Structure", "5", false, options)
-                })
-            })
-        });
+        var expected = new HackmanAnalysis(AnalysisHelper.BuildASurveyWithMultipleParticipants());
 
 
         var analysisRepository = new MongoAnalysisRepository(_databaseSettings);
@@ -104,139 +90,4 @@ public class MongoAnalysisRepositoryTest : IDisposable
             _databaseSettings.Value.SurveyCollectionName);
     }
 
-    private async Task InsertTemplate()
-    {
-        await _templateCollection.InsertOneAsync(new BsonDocument
-        {
-            { "name", "Hackman Model" },
-            {
-                "questions", new BsonArray()
-                {
-                    new BsonDocument()
-                    {
-                        { "component", "Real Team" },
-                        { "position", "1" },
-                        { "reverse", BsonBoolean.False },
-                        {
-                            "responses", new BsonDocument()
-                            {
-                                { "SPANISH", new BsonArray() },
-                                {
-                                    "ENGLISH", new BsonArray()
-                                        { @"1", "2", "3", $"4", "5" }
-                                },
-                            }
-                        },
-                    },
-                    new BsonDocument()
-                    {
-                        { "component", "Enabling Structure" },
-                        { "position", "2" },
-                        { "reverse", BsonBoolean.False },
-                        {
-                            "responses", new BsonDocument()
-                            {
-                                { "SPANISH", new BsonArray() },
-                                {
-                                    "ENGLISH", new BsonArray()
-                                        { @"1", "2", "3", $"4", "5" }
-                                },
-                            }
-                        },
-                    },
-                    new BsonDocument()
-                    {
-                        { "component", "Enabling Structure" },
-                        { "position", "3" },
-                        { "reverse", BsonBoolean.False },
-                        {
-                            "responses", new BsonDocument()
-                            {
-                                { "SPANISH", new BsonArray() },
-                                {
-                                    "ENGLISH", new BsonArray()
-                                        { @"1", "2", "3", $"4", "5" }
-                                },
-                            }
-                        }
-                    }
-                }
-            },
-            { "minutesToComplete", 30 }
-        });
-    }
-
-    private async Task InsertSurveyWithTeamId(Guid teamId)
-    {
-        await _surveyCollection.InsertOneAsync(new BsonDocument
-        {
-            { "_id", "8caba1b3-c931-4b98-95c9-58ebac0045db" },
-            { "Title", "Super Survey" },
-            { "Status", 0 },
-            { "Deadline", new DateTime() },
-            { "Description", "Sample description" },
-            { "Team", teamId.ToString() },
-            { "Template", "Hackman Model" },
-            {
-                "Responses", new BsonArray()
-                {
-                    new BsonDocument()
-                    {
-                        { "TeamMemberId", "8a5f4cce-018a-4a6c-8901-44b729973c1d" },
-                        {
-                            "Answers", new BsonArray()
-                            {
-                                new BsonDocument
-                                {
-                                    { "Number", 1 },
-                                    { "Answer", "1" }
-                                },
-                                new BsonDocument
-                                {
-                                    { "Number", 2 },
-                                    { "Answer", "5" }
-                                },
-                                new BsonDocument
-                                {
-                                    { "Number", 3 },
-                                    { "Answer", "5" }
-                                },
-                            }
-                        }
-                    },
-                    new BsonDocument()
-                    {
-                        { "TeamMemberId", "8a5f4cce-018a-4a6c-8901-432121212bb1" },
-                        {
-                            "Answers", new BsonArray()
-                            {
-                                new BsonDocument
-                                {
-                                    { "Number", 1 },
-                                    { "Answer", "5" }
-                                },
-                                new BsonDocument
-                                {
-                                    { "Number", 2 },
-                                    { "Answer", "1" }
-                                },
-                                new BsonDocument
-                                {
-                                    { "Number", 3 },
-                                    { "Answer", "5" }
-                                },
-                            }
-                        }
-                    }
-                }
-            },
-            {
-                "Coach", new BsonDocument
-                {
-                    { "_id", "92fb4bb7-ef6a-44b4-b48c-d5c751d6d22d" },
-                    { "Name", "Lucia" }
-                }
-            }
-        });
-    }
 }

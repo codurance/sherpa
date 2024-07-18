@@ -9,6 +9,8 @@ public class SurveyResult<T>
     public int NumberOfParticipants { get; set; }
     public Dictionary<string, CategoryResult> CategoryResults = new();
 
+    public double Average => GetAverage();
+
     public SurveyResult(string title)
     {
         Title = title;
@@ -19,12 +21,19 @@ public class SurveyResult<T>
         if (!CategoryResults.ContainsKey(response.Category))
         {
             CategoryResults.Add(response.Category, new CategoryResult());
-
         }
+
         if (response.IsPositive())
         {
             CategoryResults[response.Category].NumberOfPositives++;
         }
+
+        CategoryResults[response.Category].TotalResponses++;
     }
-    
+
+    private double GetAverage()
+    {
+        return Math.Round(CategoryResults.ToList().Aggregate(0.0, (sum, result) => sum + result.Value.PercentageOfPositives) /
+               CategoryResults.Count, 2);
+    }
 }

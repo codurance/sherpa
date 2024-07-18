@@ -5,7 +5,9 @@ public class HackmanAnalysis
     public HashSet<string> Categories { get; }
     
     public List<SurveyResult<string>> Surveys = new();
-    public double Average { get; } = 0.75;
+
+    public double Average => GetAverage();
+
     public readonly double Aspirational = 0.75;
 
     public HackmanAnalysis(List<SurveyAnalysisData<string>> surveyAnalysisDatas)
@@ -26,7 +28,10 @@ public class HackmanAnalysis
             surveyResult.NumberOfParticipants = survey.Participants.Count;
             Surveys.Add(surveyResult);
         }
-        
-        
+    }
+
+    private double GetAverage()
+    {
+        return Math.Round(Surveys.Aggregate(0.0, (sum, survey) => sum + survey.Average) / Surveys.Count, 2);
     }
 }

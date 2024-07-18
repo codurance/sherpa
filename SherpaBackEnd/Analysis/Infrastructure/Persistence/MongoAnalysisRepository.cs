@@ -28,7 +28,7 @@ public class MongoAnalysisRepository : IAnalysisRepository
 
     public async Task<HackmanAnalysis> GetAnalysisByTeamIdAndTemplateName(Guid teamId, string templateName)
     {
-        var mSurveys = await _surveyCollection.Find(survey => survey.Team == teamId).ToListAsync();
+        var mSurveys = await _surveyCollection.Find(survey => survey.Team == teamId && survey.Responses.Count > 0).ToListAsync();
         var surveyRawTemplate = await _templateCollection.Find(template => template["name"] == templateName)
             .FirstOrDefaultAsync();
         

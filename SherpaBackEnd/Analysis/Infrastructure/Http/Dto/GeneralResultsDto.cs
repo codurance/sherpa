@@ -28,8 +28,6 @@ public class GeneralResultsDto
 
     private static List<double> MapSurveyResultToColumnSeries(SurveyResult<string> survey)
     {
-        return survey.Categories.Select(category =>
-                Math.Round(survey.CategoryResults[category].NumberOfPositives / (double)survey.NumberOfParticipants, 2))
-            .ToList();
+        return survey.Categories.Select(category => survey.CategoryResults[category].PercentageOfPositives).ToList();
     }
 }

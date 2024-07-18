@@ -15,6 +15,7 @@ using SherpaBackEnd.Analysis.Infrastructure.Persistence;
 using SherpaBackEnd.Shared.Infrastructure.Persistence;
 using SherpaBackEnd.Survey.Infrastructure.Http;
 using SherpaBackEnd.Tests.Helpers.Analysis;
+using SherpaBackEnd.Tests.Helpers.Analysis.Infrastructure;
 
 namespace SherpaBackEnd.Tests.Acceptance;
 
@@ -27,48 +28,25 @@ public class AnalysisAcceptanceTest
  
     private readonly ILogger<SurveyController> _logger = new Mock<ILogger<SurveyController>>().Object;
     private IOptions<DatabaseSettings> _databaseSettings;
-    private IMongoCollection<BsonDocument> _teamCollection;
-    private IMongoCollection<BsonDocument> _teamMemberCollection;
     private IMongoCollection<BsonDocument> _templateCollection;
     private IMongoCollection<BsonDocument> _surveyCollection;
-    
-    private async Task InitializeDbClientAndCollections()
-    {
-        await _mongoDbContainer.StartAsync();
-        _databaseSettings = Options.Create(new DatabaseSettings
-        {
-            DatabaseName = "Sherpa",
-            TeamsCollectionName = "Teams",
-            TeamMembersCollectionName = "TeamMembers",
-            SurveyCollectionName = "Surveys",
-            TemplateCollectionName = "Templates",
-            ConnectionString = $"mongodb://localhost:{_mongoDbContainer.GetMappedPublicPort(27017)}"
-        });
+    private IMongoDatabase? _mongoDatabase;
 
-        var mongoClient = new MongoClient(_databaseSettings.Value.ConnectionString);
-
-        var mongoDatabase = mongoClient.GetDatabase(
-            _databaseSettings.Value.DatabaseName);
-        
-        _templateCollection = mongoDatabase.GetCollection<BsonDocument>(
-            _databaseSettings.Value.TemplateCollectionName);
-        
-        _surveyCollection = mongoDatabase.GetCollection<BsonDocument>(
-            _databaseSettings.Value.SurveyCollectionName);
-    }
-    
-    
     [Fact]
     public async Task ShouldBeAbleToRetrieveTheGeneralResultsFromATeamId()
     {
-        await InitializeDbClientAndCollections();
+        await InitialiseDatabaseClientAndCollections();
+        
+        var teamId = Guid.NewGuid();
 
-        var expected = AnalysisHelper.BuildGeneralResultsDto();
+        await MongoAnalysisHelper.InsertTemplate(_templateCollection);
+        await MongoAnalysisHelper.InsertSurveyWithTeamId(_surveyCollection, teamId);
+        
+        var expected = AnalysisHelper.BuildASingleSurveyGeneralResultsDto();
         
         var analysisRepository = new MongoAnalysisRepository(_databaseSettings);
         var analysisService = new AnalysisService(analysisRepository);
         var analysisController = new AnalysisController(analysisService);
-        var teamId = Guid.NewGuid();
         
         var response = await analysisController.GetGeneralResults(teamId);
         
@@ -76,6 +54,35 @@ public class AnalysisAcceptanceTest
         Assert.Equal(StatusCodes.Status200OK, resultObject.StatusCode);
         var generalResults = Assert.IsType<GeneralResultsDto>(resultObject.Value);
         
-        CustomAssertions.StringifyEquals(expected, generalResults);
+        CustomAssertions.StringifyEquals(expected.Metrics, generalResults.Metrics);
+        Assert.Equal(expected.ColumnChart.Categories.Count, generalResults.ColumnChart.Categories.Count);
+        CustomAssertions.StringifyEquals(expected.ColumnChart.Config, generalResults.ColumnChart.Config);
+        CustomAssertions.StringifyEquals(expected.ColumnChart.Series, generalResults.ColumnChart.Series);
+
     }
+    
+    private async Task InitialiseDatabaseClientAndCollections()
+    {
+        await _mongoDbContainer.StartAsync();
+
+        _databaseSettings = Options.Create(new DatabaseSettings
+        {
+            DatabaseName = "Sherpa",
+            SurveyCollectionName = "Surveys",
+            TemplateCollectionName = "Templates",
+            ConnectionString = $"mongodb://localhost:{_mongoDbContainer.GetMappedPublicPort(27017)}"
+        });
+
+        var mongoClient = new MongoClient(_databaseSettings.Value.ConnectionString);
+
+        _mongoDatabase = mongoClient.GetDatabase(
+            _databaseSettings.Value.DatabaseName);
+
+        _templateCollection = _mongoDatabase.GetCollection<BsonDocument>(
+            _databaseSettings.Value.TemplateCollectionName);
+
+        _surveyCollection = _mongoDatabase.GetCollection<BsonDocument>(
+            _databaseSettings.Value.SurveyCollectionName);
+    }
+
 }
