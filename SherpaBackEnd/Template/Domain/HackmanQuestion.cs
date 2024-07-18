@@ -10,7 +10,6 @@ public class HackmanQuestion : IQuestion
     public string? Subcomponent{get;}
     public int Position{get;}
 
-
     public HackmanQuestion(Dictionary<string, string> statement, Dictionary<string, string[]> responses, bool reverse, string component, string subcategory, string? subcomponent, int position)
     {
         Statement = statement;
