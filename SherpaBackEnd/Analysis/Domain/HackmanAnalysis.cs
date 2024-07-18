@@ -14,9 +14,9 @@ public class HackmanAnalysis
 
     public readonly double Aspirational = 0.75;
 
-    public HackmanAnalysis(List<SurveyAnalysisData<string>> surveyAnalysisDatas)
+    public HackmanAnalysis(List<SurveyAnalysisData<string>> surveyAnalysisData)
     {
-        foreach (var survey in surveyAnalysisDatas)
+        foreach (var survey in surveyAnalysisData)
         {
             var surveyResult = new SurveyResult<string>(survey.Title);
             foreach (var participant in survey.Participants)
