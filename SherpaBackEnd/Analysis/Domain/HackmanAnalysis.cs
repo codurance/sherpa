@@ -32,6 +32,7 @@ public class HackmanAnalysis
 
     private double GetAverage()
     {
+        if (Surveys.Count == 0) return 0;
         return Math.Round(Surveys.Aggregate(0.0, (sum, survey) => sum + survey.Average) / Surveys.Count, 2);
     }
 }

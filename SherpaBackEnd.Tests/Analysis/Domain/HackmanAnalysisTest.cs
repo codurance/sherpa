@@ -55,4 +55,13 @@ public class HackmanAnalysisTest
         Assert.Equal(expected.Count, actual.Count);
         Assert.Equal(expected.First().Categories, actual.First().Categories);
     }
+    
+    [Fact]
+    public void ShouldReturnAverageZeroWithZeroSurveys()
+    {
+
+        var actual = new HackmanAnalysis(new List<SurveyAnalysisData<string>>());
+
+        Assert.Equal(0, actual.Average);
+    }
 }
