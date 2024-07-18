@@ -4,8 +4,8 @@
         @foreach (var survey in MetricsData.Surveys)
         {
             <div>
-                <p class="text-xs font-semibold text-primary-dark-400">[@survey.Name.ToUpper()]</p>
-                <p class="font-normal text-2xl text-primary-dark-principal leading-6">@ToPercentage(survey.Average)</p>
+                <p class="text-xs font-semibold text-primary-dark-400 mb-2.5">[@survey.Name.ToUpper()]</p>
+                <p class="font-normal text-2xl text-primary-dark-principal leading-6 mb-2.5">@ToPercentage(survey.Average)</p>
                 <p class="font-normal text-sm text-primary-dark-principal leading-5 whitespace-nowrap">Team Average</p>
             </div>
         }
@@ -17,7 +17,7 @@
         @foreach (var lastSurveyCategoryMetric in MetricsData.LastSurveyCategoryMetrics)
         {
             <div>
-                <p class="font-normal text-2xl text-primary-dark-principal leading-6">@ToPercentage(lastSurveyCategoryMetric.Average)</p>
+                <p class="font-normal text-2xl text-primary-dark-principal leading-6 mb-2.5">@ToPercentage(lastSurveyCategoryMetric.Average)</p>
                 <p class="font-normal text-sm text-primary-dark-principal leading-5 whitespace-nowrap">@lastSurveyCategoryMetric.Name</p>
             </div>
         }
