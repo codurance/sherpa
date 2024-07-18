@@ -95,7 +95,7 @@ public class MongoAnalysisHelper
                     },
                     new BsonDocument()
                     {
-                        { "component", "Supportive Coaching" },
+                        { "component", "Supportive Organizational Context" },
                         { "position", "6" },
                         { "reverse", BsonBoolean.False },
                         {
