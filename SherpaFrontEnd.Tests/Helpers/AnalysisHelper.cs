@@ -45,9 +45,10 @@ public static class AnalysisHelper
         var lastSurveyCategoryMetrics = new List<LastSurveyCategoryMetric>()
         {
             new LastSurveyCategoryMetric("Real team", 0.74, false),
-            new LastSurveyCategoryMetric("Compelling direction", 0.64, false),
+            new LastSurveyCategoryMetric("Enable Structure", 0.68, false),
             new LastSurveyCategoryMetric("Expert coaching", 0.81, true),
-            new LastSurveyCategoryMetric("Supportive org coaching", 0.88, true)
+            new LastSurveyCategoryMetric("Supportive org coaching", 0.88, true),
+            new LastSurveyCategoryMetric("Compelling direction", 0.64, false),
         };
 
         var metrics = new Metrics(generalMetrics, survey, lastSurveyCategoryMetrics);
