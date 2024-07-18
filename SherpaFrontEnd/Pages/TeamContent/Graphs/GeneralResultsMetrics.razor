@@ -1,4 +1,5 @@
 @using SherpaFrontEnd.Dtos.Analysis
+@using SherpaFrontEnd.Core.Icons
 <div class="flex flex-col gap-6 px-6">
     <div class="grid grid-cols-2 md:grid-cols-2 gap-x-6 gap-y-4">
         @foreach (var survey in MetricsData.Surveys)
@@ -10,15 +11,32 @@
             </div>
         }
     </div>
-    <div class="bg-states-informative-100 rounded-lg">
-        <p class="text-sm font-normal text-primary-dark-principal py-3 px-4 ">The following results show how the team feels they improved  between the first and the last surveys.</p>
+    <div class="bg-states-informative-100 rounded-lg flex gap-3 items-center text-states-informative-400 py-3 px-4">
+        <InfoCircle Width="26" Height="26"/>
+        <p class="text-sm font-normal text-primary-dark-principal">The following results show how the team feels they improved  between the penultimate and last surveys.</p>
     </div>
     <div class="grid grid-cols-2 md:grid-cols-2 gap-x-6 gap-y-4">
         @foreach (var lastSurveyCategoryMetric in MetricsData.LastSurveyCategoryMetrics)
         {
             <div>
-                <p class="font-normal text-2xl text-primary-dark-principal leading-6 mb-2.5">@ToPercentage(lastSurveyCategoryMetric.Average)</p>
-                <p class="font-normal text-sm text-primary-dark-principal leading-5 whitespace-nowrap">@lastSurveyCategoryMetric.Name</p>
+                <div class="flex gap-1">
+                    @if (lastSurveyCategoryMetric.HasImproved)
+                    {
+                        <div class="pt-0.5 text-states-success-800">
+                            <ArrowUp/>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="pt-0.5 text-states-error-800">
+                            <ArrowDown/>
+                        </div>
+                    }
+                    <div>
+                        <p class="font-normal text-2xl text-primary-dark-principal leading-6">@ToPercentage(lastSurveyCategoryMetric.Average)</p>
+                        <p class="font-normal text-sm text-primary-dark-principal leading-5 whitespace-nowrap">@lastSurveyCategoryMetric.Name</p>
+                    </div>
+                </div>
             </div>
         }
     </div>
@@ -34,6 +52,7 @@
         new SurveyMetric("Survey 3", 0.72),
         new SurveyMetric("Survey 4", 0.72)
     };
+
     private List<LastSurveyCategoryMetric> _lastSurveyCategoryMetrics = new List<LastSurveyCategoryMetric>()
     {
         new LastSurveyCategoryMetric("Real team", 0.72, false),
@@ -41,7 +60,6 @@
         new LastSurveyCategoryMetric("Expert coaching", 0.78, true),
         new LastSurveyCategoryMetric("Supportive org coaching", 0.75, true),
         new LastSurveyCategoryMetric("Compelling direction", 0.81, true)
-
     };
 
     public Metrics MetricsData { get; set; }
@@ -55,4 +73,5 @@
     {
         return $"{(value * 100):0}%";
     }
+
 }
