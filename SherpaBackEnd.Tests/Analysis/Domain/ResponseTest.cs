@@ -54,4 +54,20 @@ public class ResponseTest
         bool actual = new Response<string>("Real Team","1",true, options).IsPositive();
         Assert.True(actual);
     }
+    
+    [Fact]
+    public void ShouldReturnFalseIfResponseIsNeutralWithOddNumber()
+    {
+        var options = new List<string>(){"1","2","3","4","5"};
+        bool actual = new Response<string>("Real Team","3",false, options).IsPositive();
+        Assert.False(actual);
+    }
+    
+    [Fact]
+    public void ShouldReturnFalseIfResponseIsNeutralWithOddNumberOfReverseOptions()
+    {
+        var options = new List<string>(){"1","2","3","4","5"};
+        bool actual = new Response<string>("Real Team","3",true, options).IsPositive();
+        Assert.False(actual);
+    }
 }
