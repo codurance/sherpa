@@ -26,7 +26,10 @@
             @if (Surveys is { Count: > 0 })
             {
                 <h2 class="font-normal text-title-h2--semibold leading-6 mt-9 mb-9 text-primary-dark-principal ml-3.5">General results</h2>
-                <GeneralResultsColumnChart GeneralResults="@GeneralResults" />
+                <section class="flex flex-col lg:flex-row w-full gap-6">
+                    <GeneralResultsColumnChart GeneralResults="@GeneralResults" />
+                    <GeneralResultsMetrics />
+                </section>
             }
             @if (Surveys is { Count: 0 })
             {

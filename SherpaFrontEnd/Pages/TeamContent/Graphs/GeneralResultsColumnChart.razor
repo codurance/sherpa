@@ -1,6 +1,6 @@
 @using SherpaFrontEnd.Dtos.Analysis
 @inject IJSRuntime Js
-<div id="@_chartId"></div>
+<div id="@_chartId" class="w-full"></div>
 @code {
     [Parameter] public GeneralResultsDto? GeneralResults { get; set; }
     private string _chartId = "general-results-column-chart";

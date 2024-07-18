@@ -14,7 +14,7 @@ window.generateColumnsChart = function (elementId, chartData, generalMetrics) {
         series: chartData.series,
         chart: {
             type: 'bar',
-            height: 350,
+            height: 400,
             animations: {
                 enabled: false,
             },
