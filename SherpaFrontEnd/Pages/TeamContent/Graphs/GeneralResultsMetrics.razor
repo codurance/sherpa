@@ -43,32 +43,8 @@
 </div>
 
 @code {
-    private GeneralMetrics _generalMetrics = null;
-
-    private List<SurveyMetric> _survey = new List<SurveyMetric>()
-    {
-        new SurveyMetric("Survey 1", 0.72),
-        new SurveyMetric("Survey 2", 0.72),
-        new SurveyMetric("Survey 3", 0.72),
-        new SurveyMetric("Survey 4", 0.72)
-    };
-
-    private List<LastSurveyCategoryMetric> _lastSurveyCategoryMetrics = new List<LastSurveyCategoryMetric>()
-    {
-        new LastSurveyCategoryMetric("Real team", 0.72, false),
-        new LastSurveyCategoryMetric("Enable Structure", 0.68, false),
-        new LastSurveyCategoryMetric("Expert coaching", 0.78, true),
-        new LastSurveyCategoryMetric("Supportive org coaching", 0.75, true),
-        new LastSurveyCategoryMetric("Compelling direction", 0.81, true)
-    };
-
-    public Metrics MetricsData { get; set; }
-
-    protected override void OnInitialized()
-    {
-        MetricsData = new Metrics(_generalMetrics, _survey, _lastSurveyCategoryMetrics);
-    }
-
+    [Parameter] public Metrics MetricsData { get; set; }
+    
     private string ToPercentage(double value)
     {
         return $"{(value * 100):0}%";
