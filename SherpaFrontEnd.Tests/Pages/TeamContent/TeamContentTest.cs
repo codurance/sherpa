@@ -537,23 +537,13 @@ public class TeamContentTest
         var teamContentComponent =
             _testContext.RenderComponent<TeamContent>(ComponentParameter.CreateParameter("TeamId", teamId));
         
-        var firstSurveyMetricName = teamContentComponent.FindElementByCssSelectorAndTextContent("p", "[SURVEY 1]");
-        Assert.NotNull(firstSurveyMetricName);
-        var firstSurveyMetricAverage = teamContentComponent.FindElementByCssSelectorAndTextContent("p", "50%");
-        Assert.NotNull(firstSurveyMetricAverage);
-            var thirdSurveyMetricName = teamContentComponent.FindElementByCssSelectorAndTextContent("p", "[SURVEY 3]");
-        Assert.NotNull(thirdSurveyMetricName);
-        var thirdSurveyMetricAverage = teamContentComponent.FindElementByCssSelectorAndTextContent("p", "70%");
-        Assert.NotNull(thirdSurveyMetricAverage);
+        AssertSurveyMetricsSection(teamContentComponent);
         
         var informativeMessage = teamContentComponent.FindElementByCssSelectorAndTextContent("p",
             "The following numbers are a comparison between the last and previous survey assessment");
         Assert.NotNull(informativeMessage);
         
-        var firstSurveyCategoryName = teamContentComponent.FindElementByCssSelectorAndTextContent("p", "Real team");
-        Assert.NotNull(firstSurveyCategoryName);
-        var firstSurveyCategoryAverage = teamContentComponent.FindElementByCssSelectorAndTextContent("p", "74%");
-        Assert.NotNull(firstSurveyCategoryAverage);
+        AssertCategoriesMetricsSection(teamContentComponent);
         
         var arrowUp = teamContentComponent.Find(".text-states-success-800");
         Assert.NotNull(arrowUp);
@@ -563,6 +553,54 @@ public class TeamContentTest
         Assert.NotNull(arrowDown);
         Assert.Equal(3, teamContentComponent.FindAll(".text-states-error-800").Count);
 
+    }
+    
+    private static void AssertCategoriesMetricsSection(IRenderedComponent<TeamContent> teamComponent)
+    {
+        var firstSurveyCategoryName = teamComponent.FindElementByCssSelectorAndTextContent("p", "Real team");
+        Assert.NotNull(firstSurveyCategoryName);
+        var firstSurveyCategoryAverage = teamComponent.FindElementByCssSelectorAndTextContent("p", "74%");
+        Assert.NotNull(firstSurveyCategoryAverage);
+        
+        var secondSurveyCategoryName = teamComponent.FindElementByCssSelectorAndTextContent("p", "Enable Structure");
+        Assert.NotNull(secondSurveyCategoryName);
+        var secondSurveyCategoryAverage = teamComponent.FindElementByCssSelectorAndTextContent("p", "68%");
+        Assert.NotNull(secondSurveyCategoryAverage);
+        
+        var thirdSurveyCategoryName = teamComponent.FindElementByCssSelectorAndTextContent("p", "Expert coaching");
+        Assert.NotNull(thirdSurveyCategoryName);
+        var thirdSurveyCategoryAverage = teamComponent.FindElementByCssSelectorAndTextContent("p", "81%");
+        Assert.NotNull(thirdSurveyCategoryAverage);
+        
+        var fourthSurveyCategoryName = teamComponent.FindElementByCssSelectorAndTextContent("p", "Supportive org coaching");
+        Assert.NotNull(fourthSurveyCategoryName);
+        var fourthSurveyCategoryAverage = teamComponent.FindElementByCssSelectorAndTextContent("p", "88%");
+        Assert.NotNull(fourthSurveyCategoryAverage);
+        
+        var fifthSurveyCategoryName = teamComponent.FindElementByCssSelectorAndTextContent("p", "Compelling direction");
+        Assert.NotNull(fifthSurveyCategoryName);
+        var fifthSurveyCategoryAverage = teamComponent.FindElementByCssSelectorAndTextContent("p", "64%");
+        Assert.NotNull(fifthSurveyCategoryAverage);
+    }
+
+    private void AssertSurveyMetricsSection(IRenderedComponent<TeamContent> teamComponent)
+    {
+        var firstSurveyMetricName = teamComponent.FindElementByCssSelectorAndTextContent("p", "[SURVEY 1]");
+        Assert.NotNull(firstSurveyMetricName);
+        var firstSurveyMetricAverage = teamComponent.FindElementByCssSelectorAndTextContent("p", "50%");
+        Assert.NotNull(firstSurveyMetricAverage);
+        var secondSurveyMetricName = teamComponent.FindElementByCssSelectorAndTextContent("p", "[SURVEY 2]");
+        Assert.NotNull(secondSurveyMetricName);
+        var secondSurveyMetricAverage = teamComponent.FindElementByCssSelectorAndTextContent("p", "66%");
+        Assert.NotNull(secondSurveyMetricAverage);
+        var thirdSurveyMetricName = teamComponent.FindElementByCssSelectorAndTextContent("p", "[SURVEY 3]");
+        Assert.NotNull(thirdSurveyMetricName);
+        var thirdSurveyMetricAverage = teamComponent.FindElementByCssSelectorAndTextContent("p", "70%");
+        Assert.NotNull(thirdSurveyMetricAverage);
+        var fourthSurveyMetricName = teamComponent.FindElementByCssSelectorAndTextContent("p", "[SURVEY 4]");
+        Assert.NotNull(fourthSurveyMetricName);
+        var fourthSurveyMetricAverage = teamComponent.FindElementByCssSelectorAndTextContent("p", "83%");
+        Assert.NotNull(fourthSurveyMetricAverage);
     }
     
     private static void GoToTab(IRenderedComponent<TeamContent> teamContentComponent, string tabName)
