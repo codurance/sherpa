@@ -166,19 +166,25 @@ public class AnalysisAcceptanceTest
         });
 
 
-        var firstSurveyMetricName = appComponent.FindElementByCssSelectorAndTextContent("p", "[SURVEY 1]");
-        Assert.NotNull(firstSurveyMetricName);
-        var firstSurveyMetricAverage = appComponent.FindElementByCssSelectorAndTextContent("p", "50%");
-        Assert.NotNull(firstSurveyMetricAverage);
-        var thirdSurveyMetricName = appComponent.FindElementByCssSelectorAndTextContent("p", "[SURVEY 3]");
-        Assert.NotNull(thirdSurveyMetricName);
-        var thirdSurveyMetricAverage = appComponent.FindElementByCssSelectorAndTextContent("p", "70%");
-        Assert.NotNull(thirdSurveyMetricAverage);
+        AssertSurveyMetricsSection(appComponent);
 
         var informativeMessage = appComponent.FindElementByCssSelectorAndTextContent("p",
             "The following numbers are a comparison between the last and previous survey assessment");
         Assert.NotNull(informativeMessage);
 
+        AssertCategoriesMetricsSection(appComponent);
+
+        var arrowUp = appComponent.Find(".text-states-success-800");
+        Assert.NotNull(arrowUp);
+        Assert.Equal(2, appComponent.FindAll(".text-states-success-800").Count);
+
+        var arrowDown = appComponent.Find(".text-states-error-800");
+        Assert.NotNull(arrowDown);
+        Assert.Equal(3, appComponent.FindAll(".text-states-error-800").Count);
+    }
+
+    private static void AssertCategoriesMetricsSection(IRenderedComponent<App> appComponent)
+    {
         var firstSurveyCategoryName = appComponent.FindElementByCssSelectorAndTextContent("p", "Real team");
         Assert.NotNull(firstSurveyCategoryName);
         var firstSurveyCategoryAverage = appComponent.FindElementByCssSelectorAndTextContent("p", "74%");
@@ -191,25 +197,37 @@ public class AnalysisAcceptanceTest
         
         var thirdSurveyCategoryName = appComponent.FindElementByCssSelectorAndTextContent("p", "Expert coaching");
         Assert.NotNull(thirdSurveyCategoryName);
-        var thirdSurveyCategoryAverage = appComponent.FindElementByCssSelectorAndTextContent("p", "78%");
+        var thirdSurveyCategoryAverage = appComponent.FindElementByCssSelectorAndTextContent("p", "81%");
         Assert.NotNull(thirdSurveyCategoryAverage);
         
         var fourthSurveyCategoryName = appComponent.FindElementByCssSelectorAndTextContent("p", "Supportive org coaching");
         Assert.NotNull(fourthSurveyCategoryName);
-        var fourthSurveyCategoryAverage = appComponent.FindElementByCssSelectorAndTextContent("p", "75%");
+        var fourthSurveyCategoryAverage = appComponent.FindElementByCssSelectorAndTextContent("p", "88%");
         Assert.NotNull(fourthSurveyCategoryAverage);
         
         var fifthSurveyCategoryName = appComponent.FindElementByCssSelectorAndTextContent("p", "Compelling direction");
         Assert.NotNull(fifthSurveyCategoryName);
-        var fifthSurveyCategoryAverage = appComponent.FindElementByCssSelectorAndTextContent("p", "81%");
+        var fifthSurveyCategoryAverage = appComponent.FindElementByCssSelectorAndTextContent("p", "64%");
         Assert.NotNull(fifthSurveyCategoryAverage);
+    }
 
-        var arrowUp = appComponent.Find(".text-states-success-800");
-        Assert.NotNull(arrowUp);
-        Assert.Equal(2, appComponent.FindAll(".text-states-success-800").Count);
-
-        var arrowDown = appComponent.Find(".text-states-error-800");
-        Assert.NotNull(arrowDown);
-        Assert.Equal(3, appComponent.FindAll(".text-states-error-800").Count);
+    private void AssertSurveyMetricsSection(IRenderedComponent<App> appComponent)
+    {
+        var firstSurveyMetricName = appComponent.FindElementByCssSelectorAndTextContent("p", "[SURVEY 1]");
+        Assert.NotNull(firstSurveyMetricName);
+        var firstSurveyMetricAverage = appComponent.FindElementByCssSelectorAndTextContent("p", "50%");
+        Assert.NotNull(firstSurveyMetricAverage);
+        var secondSurveyMetricName = appComponent.FindElementByCssSelectorAndTextContent("p", "[SURVEY 2]");
+        Assert.NotNull(secondSurveyMetricName);
+        var secondSurveyMetricAverage = appComponent.FindElementByCssSelectorAndTextContent("p", "66%");
+        Assert.NotNull(secondSurveyMetricAverage);
+        var thirdSurveyMetricName = appComponent.FindElementByCssSelectorAndTextContent("p", "[SURVEY 3]");
+        Assert.NotNull(thirdSurveyMetricName);
+        var thirdSurveyMetricAverage = appComponent.FindElementByCssSelectorAndTextContent("p", "70%");
+        Assert.NotNull(thirdSurveyMetricAverage);
+        var fourthSurveyMetricName = appComponent.FindElementByCssSelectorAndTextContent("p", "[SURVEY 4]");
+        Assert.NotNull(fourthSurveyMetricName);
+        var fourthSurveyMetricAverage = appComponent.FindElementByCssSelectorAndTextContent("p", "83%");
+        Assert.NotNull(fourthSurveyMetricAverage);
     }
 }
